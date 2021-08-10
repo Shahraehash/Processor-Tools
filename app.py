@@ -1,7 +1,7 @@
 'FLASK_APP=app.py flask run'
 
 from flask import Flask, render_template, g, jsonify, request, redirect, url_for, session, flash, make_response, send_file
-#from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import pandas as pd
 import numpy as np
