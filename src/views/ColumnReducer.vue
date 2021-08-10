@@ -1,9 +1,24 @@
 <template>
   <v-container outlined>
     <v-card outlined class="ma-3 pa-3">
-      <v-card-title>
-        Tool Details
-      </v-card-title>
+
+      <div >
+        <v-row>
+          <v-col cols="3">
+            <v-btn icon @click="$router.push({name: 'Landing'})"><v-icon>mdi-arrow-left</v-icon></v-btn>
+          </v-col>
+          <v-col cols="6" class="text-center">
+            <v-icon x-large>mdi-table-column-width</v-icon>
+            <span class="title">Column Reducer Tool</span>
+          </v-col>
+          <v-col cols="3">
+          </v-col>
+
+        </v-row>
+
+      </div>
+
+
       <v-card-text class="body-1">
         This tool allows to extract specific columns from your training and test data to experiment with further refinement of your model.
         <span class="black--text">All file processing is done locally. No data is transmitted to a remove server.</span>

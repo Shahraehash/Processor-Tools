@@ -1,14 +1,20 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import ColumnReducer from '../views/ColumnReducer.vue'
+import Landing from '../views/Landing.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/columnreducer',
+    name: 'ColumnReducer',
+    component: ColumnReducer
+  },
+  {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'Landing',
+    component: Landing
   },
 
 ]
