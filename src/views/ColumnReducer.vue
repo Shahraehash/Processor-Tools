@@ -23,7 +23,9 @@
         This tool allows to extract specific columns from your training and test data to experiment with further refinement of your model.
         <span class="black--text">All file processing is done locally. No data is transmitted to a remove server.</span>
       </v-card-text>
-      <v-btn @click="finalFileRequests"></v-btn>
+
+
+
 
     </v-card>
 
@@ -166,7 +168,8 @@
       </v-layout>
 
       <v-card-text >
-
+        <v-btn @click="finalFileRequests">Build Decks</v-btn>
+        <a href="/column_reducer/training_reduced_file/training_data_reduced.csv">Test</a>
       </v-card-text>
     </v-card>
 
@@ -180,6 +183,7 @@
 <script>
 import axios from 'axios'
 import _ from 'underscore'
+import FileDownload from 'js-file-download'
 
 export default {
   name: 'Home',
@@ -345,15 +349,34 @@ export default {
       }
     },
     finalFileRequests() {
-      let target = this.target
-      let selectedColumns = this.selectedColumns
-      let reductionData = {target,selectedColumns}
-      axios.post('return-files', reductionData, {
-          headers: {
-          'X-inbound': 'reductionData'
-        }
+      let finalColumns = []
+      this.selectedColumns.forEach(column => {
+        finalColumns.push(column)
+      })
+      finalColumns.push(this.target)
+
+      let hasTestData = !this.testingMetadata == null
+
+      let reductionData = {finalColumns, hasTestData}
+      axios.post('column_reducer/build_files', reductionData, {
+        headers: {
+        'Content-Type': 'application/json',
+      }
+
+      })
+      .then(() => {
+        return axios.get('/column_reducer/training_reduced_file')
       }).then(response => {
         console.log(response)
+        FileDownload(response.data, 'training_reduced_file.csv')
+
+        if (this.testingMetadata != null) {
+          return axios.get('/column_reducer/testing_reduced_file')
+        }
+      }).then(response => {
+        if (this.testingMetadata != null) {
+          FileDownload(response.data, 'testing_reduced_file.csv')
+        }
       })
 
 

@@ -137,10 +137,41 @@ def upload():
     else:
         return None
 
+@app.route('/column_reducer/build_files',methods=["POST"])
+def build_files():
+    final_columns = request.json['finalColumns']
+    has_test_data = request.json['hasTestData']
+    paths = {}
+
+    training_save_path = os.path.join(app.config['UPLOAD_FOLDER'], "training_data_reduced.csv")
+    testing_save_path = os.path.join(app.config['UPLOAD_FOLDER'], "testing_data_reduced.csv")
 
 
+    training_data[final_columns].to_csv(training_save_path, index=False)
+    paths['training'] = training_save_path
 
-@app.route('/return-files',methods=["POST"])
+    if has_test_data: ##FIX
+        test_data[final_columns].to_csv(testing_save_path, index=False)
+        paths['testing'] = testing_save_path
+
+    return jsonify(paths)
+
+@app.route('/column_reducer/training_reduced_file',methods=["GET"])
+def return_training_reduced_file():
+	try:
+		return send_file(UPLOAD_FOLDER + "/training_data_reduced.csv", attachment_filename='training_data_reduced.csv', as_attachment=True)
+	except Exception as e:
+		return str(e)
+
+@app.route('/column_reducer/testing_reduced_file')
+def return_testing_reduced_file():
+	try:
+		return send_file(UPLOAD_FOLDER + "/testing_data_reduced.csv", attachment_filename='testing_data_reduced.csv', as_attachment=True)
+	except Exception as e:
+		return str(e)
+
+
+@app.route('/return-files',methods=["GET"])
 def return_files_tut():
 
 	try:
