@@ -179,6 +179,14 @@ def return_files_tut():
 	except Exception as e:
 		return str(e)
 
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def index(path):
+    try:
+        return render_template('index.html')
+    except TemplateNotFound:
+        abort(404)
+
 @socketio.on('connect')
 def handleMessage():
     print ("# User Connected ...")
