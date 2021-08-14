@@ -11,6 +11,12 @@
           <span class="title">Column Reducer Tool</span>
         </v-card>
       </v-col>
+      <v-col cols="6" class="mt-3">
+        <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'TrainTestSplit'})">
+          <v-icon x-large>mdi-call-split</v-icon>
+          <span class="title">Train and Test Builder</span>
+        </v-card>
+      </v-col>
 
     </v-row>
   </v-container>

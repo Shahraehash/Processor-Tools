@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import ColumnReducer from '../views/ColumnReducer.vue'
 import Landing from '../views/Landing.vue'
+import ColumnReducer from '../views/ColumnReducer.vue'
+import TrainTestSplit from '../views/TrainTestSplit.vue'
 
 Vue.use(VueRouter)
 
@@ -10,6 +11,11 @@ const routes = [
     path: '/columnreducer',
     name: 'ColumnReducer',
     component: ColumnReducer
+  },
+  {
+    path: '/traintestsplit',
+    name: 'TrainTestSplit',
+    component: TrainTestSplit
   },
   {
     path: '/',
