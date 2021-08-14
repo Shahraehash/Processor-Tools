@@ -34,7 +34,7 @@ def ping_pong():
 
 @app.route('/')
 def home():
-    clearFiles()
+    #clearFiles()
     return render_template("index.html")
 
 
@@ -185,7 +185,7 @@ def return_files_tut():
 @app.route('/<path:path>')
 def index(path):
     try:
-        clearFiles()
+        #clearFiles()
         return render_template('index.html')
     except Exception as e:
         print(e)
