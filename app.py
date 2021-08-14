@@ -181,16 +181,16 @@ def return_files_tut():
 	except Exception as e:
 		return str(e)
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def index(path):
-    try:
-        #clearFiles()
-        return render_template('index.html')
-    except Exception as e:
-        print(e)
-        print('change')
-        return str(e)
+# @app.route('/', defaults={'path': ''})
+# @app.route('/<path:path>')
+# def index(path):
+#     try:
+#         #clearFiles()
+#         return render_template('index.html')
+#     except Exception as e:
+#         print(e)
+#         print('change')
+#         return str(e)
 
 @socketio.on('connect')
 def handleMessage():
