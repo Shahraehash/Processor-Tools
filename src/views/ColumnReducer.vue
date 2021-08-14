@@ -197,6 +197,43 @@
       </v-card-text>
     </v-card>
 
+    <v-dialog max-width="700" v-model="miloDialog">
+      <v-card flat class="pa-3 pb-6">
+        <v-card-title>
+          <p>Import Columns from MILO Results "report.csv" File</p>
+          <v-spacer></v-spacer>
+          <v-btn @click="miloDialog = false" icon flat class="mt-n5">
+            <v-icon medium>mdi-close</v-icon>
+          </v-btn>
+
+        </v-card-title>
+        <v-card-text class="mx-0 py-0">
+          <v-file-input prepend-icon="mdi-file" chips truncate-length="200" outlined label="MILO Data File"  @change="miloFileUpload"></v-file-input>
+          <v-spacer></v-spacer>
+
+          <div>
+            <div class="ml-8 mb-3" >Select columns based on the feature selector method.</div>
+            <v-select v-if="miloMetadata" :items="miloMetadata" v-model="miloColumns" class="ml-8"  outlined  label="Feature Selector Method"></v-select>
+            <div>
+              {{miloColumns}}
+            </div>
+          </div>
+
+
+
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn class="mr-2" rounded large dark color="grey darken-3" @click="setMiloColumns">Select Columns</v-btn>
+
+        </v-card-actions>
+
+
+
+      </v-card>
+
+    </v-dialog>
+
 
 
 
@@ -227,6 +264,8 @@ export default {
       errorColumns: null,
       trainingOutputFilename: 'training_reduced',
       testingOutputFilename: 'testing_reduced',
+      miloColumns: [],
+      miloDialog: false,
     }
   },
   sockets: {
@@ -280,7 +319,6 @@ export default {
       })
       this.selectedColumns = this.selectedColumns.flat()
 
-
       //Validate Columns
       this.errorColumns = []
       this.selectedColumns.forEach(item => {
@@ -300,6 +338,8 @@ export default {
 
       //Unique values only
       this.selectedColumns = _.uniq(this.selectedColumns)
+
+
     },
     targetColumnChanged(value) {
       if (value == null) {
@@ -380,7 +420,7 @@ export default {
           let data = JSON.parse(result.data.result).selected_features
           for (let i in data) {
             this.miloMetadata.push({
-              key: i,
+              text: i,
               value: JSON.parse(data[i])
             })
           }
@@ -391,6 +431,10 @@ export default {
       else {
         this.miloMetadata = null
       }
+    },
+    setMiloColumns() {
+      this.selectedColumns = this.miloColumns
+      this.miloDialog = false
     },
     finalFileRequests() {
       let finalColumns = []
