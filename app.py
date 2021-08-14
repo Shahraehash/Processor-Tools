@@ -190,7 +190,7 @@ def index(path):
     except Exception as e:
         print(e)
         print('change')
-        abort(404)
+        return str(e)
 
 @socketio.on('connect')
 def handleMessage():
