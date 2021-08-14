@@ -187,7 +187,8 @@ def index(path):
     try:
         clearFiles()
         return render_template('index.html')
-    except TemplateNotFound:
+    except err:
+        print(err)
         abort(404)
 
 @socketio.on('connect')
