@@ -1,7 +1,6 @@
 <template>
   <v-container outlined>
     <v-card outlined class="ma-3 pa-3">
-
       <div >
         <v-row>
           <v-col cols="3">
@@ -13,20 +12,11 @@
           </v-col>
           <v-col cols="3">
           </v-col>
-
         </v-row>
-
       </div>
-
-
       <v-card-text class="body-1">
         This tool allows to extract specific columns from your training and test data to experiment with further refinement of your model.
-        <span class="black--text">All file processing is done locally. No data is transmitted to a remove server.</span>
       </v-card-text>
-
-
-
-
     </v-card>
 
     <v-card outlined class="ma-3 pa-3 ">
@@ -137,7 +127,7 @@
 
 
 
-      <p>Click below to selected columns or paste a comma seperated list of columns to be outputted. <br /> You can also <a >import from a MILO run file</a>.</p>
+      <p>Click below to selected columns or paste a comma seperated list of columns to be outputted. <br /> You can also <a @click="miloDialog = true">import from a MILO results "report.csv" file</a>.</p>
       <v-layout class="ma-5">
 
         <v-row wrap>
@@ -168,8 +158,42 @@
       </v-layout>
 
       <v-card-text >
+
+      </v-card-text>
+    </v-card>
+
+    <v-card class="ma-3 pa-3" v-if="errorColumns == null && selectedColumns.length > 0">
+      <v-card-title>Step 4 - Save Files</v-card-title>
+      <v-card-text>
+        <v-row>
+
+          <v-col cols="3" class="mr-0 pr-1">
+            <v-text-field v-model="trainingOutputFilename" label="Training Output" outlined></v-text-field>
+          </v-col>
+          <v-col cols="1" class="ml-0 pl-0 pt-7">
+            <div class="body-1 black--text" >
+              .csv
+            </div>
+
+          </v-col>
+
+
+          <v-col cols="3" class="mr-0 pr-1">
+            <v-text-field v-model="testingOutputFilename" label="Testing Output" outlined></v-text-field>
+          </v-col>
+          <v-col cols="1" class="ml-0 pl-0 pt-7">
+            <div class="body-1 black--text" >
+              .csv
+            </div>
+
+          </v-col>
+        </v-row>
         <v-btn @click="finalFileRequests">Build Decks</v-btn>
-        <a href="/column_reducer/training_reduced_file/training_data_reduced.csv">Test</a>
+        {{trainingMetadata}}
+
+
+
+
       </v-card-text>
     </v-card>
 
@@ -201,6 +225,8 @@ export default {
       toggle: null,
       selectedColumns: [],
       errorColumns: null,
+      trainingOutputFilename: 'training_reduced',
+      testingOutputFilename: 'testing_reduced',
     }
   },
   sockets: {
@@ -229,6 +255,19 @@ export default {
     },
   },
   methods: {
+    resetStepOne() {
+
+    },
+    resetStepTwo() {
+
+    },
+    resetStepThree() {
+
+    },
+    resetStepFour() {
+
+    },
+
     splitPasted() {
       //Split Pasted Text
       this.selectedColumns.forEach((item, index) => {
@@ -296,16 +335,19 @@ export default {
         }).then(result => {
           this.trainingMetadata = result.data
           this.targetColumnList = this.trainingMetadata.column_names.reverse()
+          this.trainingOutputFilename = file.name.replace('.csv','') + '_reduced'
         })
       }
       else {
         this.trainingMetadata = null
+        this.trainingOutputFilename = ''
       }
 
     },
     testingFileUpload(file){
       if (file != null) {
         var formData = new FormData();
+        console.log(file)
 
         formData.append("file", file);
         axios.post('data_upload', formData, {
@@ -315,10 +357,12 @@ export default {
           }
         }).then(result => {
           this.testingMetadata = result.data
+          this.testingOutputFilename = file.name.replace('.csv','') + '_reduced'
         })
       }
       else {
         this.testingMetadata = null
+        this.testingOutputFilename = ''
       }
     },
     miloFileUpload(file){
@@ -365,17 +409,24 @@ export default {
 
       })
       .then(() => {
-        return axios.get('/column_reducer/training_reduced_file')
+
+
+        return axios.post('/column_reducer/training_reduced_file', {name: this.trainingOutputFilename}, {
+          headers: {
+          'Content-Type': 'application/json',
+          }
+        })
+
       }).then(response => {
         console.log(response)
-        FileDownload(response.data, 'training_reduced_file.csv')
+        FileDownload(response.data, this.trainingOutputFilename + '.csv')
 
         if (this.testingMetadata != null) {
           return axios.get('/column_reducer/testing_reduced_file')
         }
       }).then(response => {
         if (this.testingMetadata != null) {
-          FileDownload(response.data, 'testing_reduced_file.csv')
+          FileDownload(response.data, this.testingOutputFilename + '.csv')
         }
       })
 

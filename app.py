@@ -156,12 +156,12 @@ def build_files():
 
     return jsonify(paths)
 
-@app.route('/column_reducer/training_reduced_file',methods=["GET"])
+@app.route('/column_reducer/training_reduced_file',methods=["POST"])
 def return_training_reduced_file():
-	try:
-		return send_file(UPLOAD_FOLDER + "/training_data_reduced.csv", attachment_filename='training_data_reduced.csv', as_attachment=True)
-	except Exception as e:
-		return str(e)
+    try:
+        return send_file(UPLOAD_FOLDER + "/training_data_reduced.csv", attachment_filename='training_data_reduced.csv', as_attachment=True)
+    except Exception as e:
+        return str(e)
 
 @app.route('/column_reducer/testing_reduced_file')
 def return_testing_reduced_file():
