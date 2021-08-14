@@ -34,6 +34,7 @@ def ping_pong():
 
 @app.route('/')
 def home():
+    clearFiles()
     return render_template("index.html")
 
 
@@ -184,6 +185,7 @@ def return_files_tut():
 @app.route('/<path:path>')
 def index(path):
     try:
+        clearFiles()
         return render_template('index.html')
     except TemplateNotFound:
         abort(404)
@@ -200,8 +202,12 @@ def render():
 
 
 
+def clearFiles():
+    print('clear files')
+    for f in os.listdir(UPLOAD_FOLDER):
+        os.remove(os.path.join(UPLOAD_FOLDER, f))
 
-
+clearFiles()
 
 # port = os.getenv('PORT', '5006')
 # if __name__ == "__main__":
@@ -211,3 +217,4 @@ def render():
 if __name__ == '__main__':
     socketio.run(app)
     print('RUNNING')
+    print('laksjhdfkjsdfkjshdf')
