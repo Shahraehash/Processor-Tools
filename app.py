@@ -207,7 +207,6 @@ def clearFiles():
     for f in os.listdir(UPLOAD_FOLDER):
         os.remove(os.path.join(UPLOAD_FOLDER, f))
 
-clearFiles()
 
 # port = os.getenv('PORT', '5006')
 # if __name__ == "__main__":
