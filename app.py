@@ -189,6 +189,7 @@ def index(path):
         return render_template('index.html')
     except Exception as e:
         print(e)
+        print('change')
         abort(404)
 
 @socketio.on('connect')
