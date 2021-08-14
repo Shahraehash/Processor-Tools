@@ -1,4 +1,4 @@
-'FLASK_APP=app.py flask run'
+#'FLASK_APP=app.py FLASK_ENV=development flask run'
 
 from flask import Flask, render_template, g, jsonify, request, redirect, url_for, session, flash, make_response, send_file
 from flask_socketio import SocketIO, emit
@@ -140,7 +140,7 @@ def upload():
 @app.route('/column_reducer/build_files',methods=["POST"])
 def build_files():
     final_columns = request.json['finalColumns']
-    has_test_data = request.json['hasTestData']
+    has_testing_data = request.json['hasTestData']
     paths = {}
 
     training_save_path = os.path.join(app.config['UPLOAD_FOLDER'], "training_data_reduced.csv")
@@ -150,8 +150,9 @@ def build_files():
     training_data[final_columns].to_csv(training_save_path, index=False)
     paths['training'] = training_save_path
 
-    if has_test_data: ##FIX
-        test_data[final_columns].to_csv(testing_save_path, index=False)
+    if has_testing_data:
+        print('build testing')
+        testing_data[final_columns].to_csv(testing_save_path, index=False)
         paths['testing'] = testing_save_path
 
     return jsonify(paths)
@@ -163,7 +164,7 @@ def return_training_reduced_file():
     except Exception as e:
         return str(e)
 
-@app.route('/column_reducer/testing_reduced_file')
+@app.route('/column_reducer/testing_reduced_file',methods=["POST"])
 def return_testing_reduced_file():
 	try:
 		return send_file(UPLOAD_FOLDER + "/testing_data_reduced.csv", attachment_filename='testing_data_reduced.csv', as_attachment=True)

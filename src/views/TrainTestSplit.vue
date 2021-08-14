@@ -20,20 +20,20 @@
     </v-card>
 
     <v-card outlined class="ma-3 pa-3">
-      <v-file-input outlined label="Data File"></v-file-input>
+      <v-file-input disabled outlined label="Data File"></v-file-input>
       <div class="">
         % of Data Used for Training
       </div>
       <v-row>
         <v-col cols="2">
-          <v-select outlined label :items='["10%","20%","30%"]'></v-select>
+          <v-select disabled outlined label :items='["10%","20%","30%"]'></v-select>
         </v-col>
       </v-row>
 
       <div class="">
         Prevelence in Validation Data Set
       </div>
-      <v-radio-group v-model="prevalenceOption">
+      <v-radio-group disabled v-model="prevalenceOption">
         <v-radio label="Maintain Original Prevalence in Validation File (some data will be removed)"></v-radio>
         <v-radio label="Use All Remaining Data After Training Data Removed"></v-radio>
       </v-radio-group>

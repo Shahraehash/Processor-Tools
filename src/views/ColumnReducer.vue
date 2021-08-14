@@ -167,7 +167,7 @@
       <v-card-text>
         <v-row>
 
-          <v-col cols="3" class="mr-0 pr-1">
+          <v-col cols="5" class="mr-0 pr-1">
             <v-text-field v-model="trainingOutputFilename" label="Training Output" outlined></v-text-field>
           </v-col>
           <v-col cols="1" class="ml-0 pl-0 pt-7">
@@ -178,7 +178,7 @@
           </v-col>
 
 
-          <v-col cols="3" class="mr-0 pr-1">
+          <v-col cols="5" class="mr-0 pr-1">
             <v-text-field v-model="testingOutputFilename" label="Testing Output" outlined></v-text-field>
           </v-col>
           <v-col cols="1" class="ml-0 pl-0 pt-7">
@@ -188,8 +188,7 @@
 
           </v-col>
         </v-row>
-        <v-btn @click="finalFileRequests">Build Decks</v-btn>
-        {{trainingMetadata}}
+        <v-btn rounded large dark color="grey darken-3" @click="finalFileRequests">Build Decks</v-btn>
 
 
 
@@ -443,7 +442,7 @@ export default {
       })
       finalColumns.push(this.target)
 
-      let hasTestData = !this.testingMetadata == null
+      let hasTestData = !(this.testingMetadata == null)
 
       let reductionData = {finalColumns, hasTestData}
       axios.post('column_reducer/build_files', reductionData, {
@@ -466,9 +465,14 @@ export default {
         FileDownload(response.data, this.trainingOutputFilename + '.csv')
 
         if (this.testingMetadata != null) {
-          return axios.get('/column_reducer/testing_reduced_file')
+          return axios.post('/column_reducer/testing_reduced_file', {name: this.testingOutputFilename}, {
+            headers: {
+            'Content-Type': 'application/json',
+            }
+          })
         }
       }).then(response => {
+        console.log(response)
         if (this.testingMetadata != null) {
           FileDownload(response.data, this.testingOutputFilename + '.csv')
         }
