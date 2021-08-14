@@ -8,6 +8,9 @@ import numpy as np
 import os
 import time
 
+if not os.path.exists('files'):
+    os.makedirs('files')
+
 app = Flask(__name__,
             static_folder = "./dist/static",
             template_folder = "./dist")
