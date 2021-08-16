@@ -8,6 +8,12 @@ import numpy as np
 import os
 import time
 
+# Make TinyDB
+import uuid
+from tinydb import TinyDB, Query
+from datetime import datetime
+db = TinyDB('db.json')
+
 if not os.path.exists('files'):
     os.makedirs('files')
 
@@ -39,6 +45,44 @@ def ping_pong():
 def home():
     clearFiles()
     return render_template("index.html")
+
+@app.route('/train_test_split/upload',methods=["POST"])
+def train_test_split_upload():
+
+    file_obj = request.files['file']
+    file_name = request.headers['X-filename']
+
+
+
+    if file_obj is None:
+        # Indicates that no file was sent
+        return "File not uploaded"
+
+    storage_id = str(uuid.uuid4())
+
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
+    file_obj.save(file_path)
+
+
+    df = pd.read_csv(file_path)
+    rows = df.shape[0]
+    columns = df.shape[1]
+    column_names = list(df.columns.values)
+
+    entry = {
+    'storage_id': storage_id,
+    'file_name':  file_name,
+    'file_type': file_obj.content_type,
+    'upload_time': datetime.timestamp(datetime.now()),
+    'rows': rows,
+    'columns': columns,
+    'column_names': column_names
+    }
+
+    db.insert(entry)
+
+    return jsonify(entry)
+
 
 
 @app.route('/data_upload',methods=["POST"]) # The method should be consistent with the front end

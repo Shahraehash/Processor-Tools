@@ -20,7 +20,7 @@
     </v-card>
 
     <v-card outlined class="ma-3 pa-3">
-      <v-file-input disabled outlined label="Data File"></v-file-input>
+      <v-file-input outlined label="Data File" @change="splitFileUpload"></v-file-input>
       <div class="">
         % of Data Used for Training
       </div>
@@ -50,6 +50,7 @@
 
 </template>
 <script>
+import axios from 'axios'
 export default {
   name: 'TrainTestSplit',
   data() {
@@ -57,6 +58,26 @@ export default {
       prevalenceOption: 0
 
     }
+  },
+  methods: {
+    splitFileUpload(file) {
+      var formData = new FormData();
+      console.log(file)
+
+      formData.append("file", file);
+      axios.post('/train_test_split/upload', formData, {
+          headers: {
+          'Content-Type': 'multipart/form-data',
+          'X-filename': file.name
+
+        }
+      }).then(result => {
+        console.log(result)
+      })
+    }
+
+
   }
+
 }
 </script>
