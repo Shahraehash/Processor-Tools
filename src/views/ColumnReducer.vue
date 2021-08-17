@@ -192,7 +192,7 @@
 
           </v-col>
         </v-row>
-        <v-btn rounded large dark color="grey darken-3" @click="finalFileRequests">Build Decks</v-btn>
+        <v-btn rounded large dark color="grey darken-3" @click="finalFileRequests">Build New File<span v-if="trainingMetadata != null">s</span></v-btn>
 
 
 

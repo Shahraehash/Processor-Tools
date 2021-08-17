@@ -20,16 +20,30 @@
     </v-card>
 
     <v-card outlined class="ma-3 pa-3">
-      <v-file-input outlined label="Data File" @change="splitFileUpload"></v-file-input>
-      <div class="">
-        % of Data Used for Training
+      <div class="title">
+        Step 1 - Select Data File
       </div>
-      <v-row>
-        <v-col cols="2">
-          <v-select disabled outlined label :items='["10%","20%","30%"]'></v-select>
-        </v-col>
-      </v-row>
+      <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Data File" @change="splitFileUpload"></v-file-input>
+      {{fileData}}
+    </v-card>
+    <v-card outlined class="ma-3 pa-3">
+      <div class="title">
+        Step 2 - Select Target Column
+      </div>
 
+
+      <v-row>
+
+        <v-col cols="6">
+          <v-select v-if="fileData" v-model="targetColumn" outlined label :items='fileData.column_names' @change="determinePrevalence"></v-select>
+        </v-col>
+      </v-row>\
+
+
+      <v-progress-circular color="blue" class="ma-3" size="100" width="15" :value="(value / fileData.rows) * 100" v-for="(value, key) in prevalence" :key="key">{{key}}</v-progress-circular>
+
+    </v-card>
+    <v-card outlined class="ma-3 pa-3">
       <div class="">
         Prevelence in Validation Data Set
       </div>
@@ -55,8 +69,10 @@ export default {
   name: 'TrainTestSplit',
   data() {
     return {
-      prevalenceOption: 0
-
+      prevalenceOption: 0,
+      fileData: null,
+      targetColumn: null,
+      prevalence: null,
     }
   },
   methods: {
@@ -72,7 +88,22 @@ export default {
 
         }
       }).then(result => {
-        console.log(result)
+        this.fileData = result.data
+      })
+    },
+    determinePrevalence(field){
+      console.log(field)
+      let data = {
+        target_column: this.targetColumn,
+        storage_id: this.fileData.storage_id
+      }
+      return axios.post('train_test_split/prevalence', data, {
+        headers: {
+        'Content-Type': 'application/json',
+        }
+      }).then(result => {
+
+        this.prevalence = JSON.parse(result.data)
       })
     }
 

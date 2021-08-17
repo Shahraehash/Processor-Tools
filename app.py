@@ -86,6 +86,25 @@ def train_test_split_upload():
 
 
 
+
+@app.route('/train_test_split/prevalence',methods=["POST"])
+def train_test_split_prevalence():
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], request.json['storage_id'])
+    df = pd.read_csv(file_path)
+
+    target_column = request.json['target_column']
+    result = df[target_column].value_counts().to_json()
+
+
+    return jsonify(result)
+
+@app.route('/train_test_split/process',methods=["POST"])
+def train_test_split_process():
+
+    return 'nothing'
+
+
+
 @app.route('/data_upload',methods=["POST"]) # The method should be consistent with the front end
 def upload():
     global training_data
