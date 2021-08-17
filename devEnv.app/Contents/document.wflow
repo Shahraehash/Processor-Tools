@@ -61,7 +61,7 @@
 					<key>COMMAND_STRING</key>
 					<string>osascript -e 'tell app "Terminal"
     do script "cd /Users/brandon/local_only/milo-pp2;Atom ./;npm run serve" 
-	do script "cd /Users/brandon/local_only/milo-pp2; FLASK_APP=app.py FLASK_ENV=development flask run"
+	do script "cd /Users/brandon/local_only/milo-pp2; source venv/bin/activate; FLASK_APP=app.py FLASK_ENV=development flask run"
 end tell'
 
 </string>
