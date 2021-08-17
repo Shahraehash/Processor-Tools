@@ -52,8 +52,6 @@ def train_test_split_upload():
     file_obj = request.files['file']
     file_name = request.headers['X-filename']
 
-
-
     if file_obj is None:
         # Indicates that no file was sent
         return "File not uploaded"
@@ -70,9 +68,11 @@ def train_test_split_upload():
     column_names = list(df.columns.values)
 
     entry = {
+    'user_id': 'ui000001',
     'storage_id': storage_id,
     'file_name':  file_name,
-    'file_type': file_obj.content_type,
+    'content_type': file_obj.content_type,
+    'file_group': 'train_test_split', #training,testing,milo_results,train_test_split
     'upload_time': datetime.timestamp(datetime.now()),
     'rows': rows,
     'columns': columns,
