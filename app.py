@@ -46,6 +46,7 @@ def home():
     clearFiles()
     return render_template("index.html")
 
+#Train Test Split Tools
 @app.route('/train_test_split/upload',methods=["POST"])
 def train_test_split_upload():
 
@@ -120,7 +121,7 @@ def upload():
             200,
         )
         response.headers["Content-Type"] = "application/json"
-
+        time.sleep(1)
         return response
 
 
@@ -147,7 +148,7 @@ def upload():
             200,
         )
         response.headers["Content-Type"] = "application/json"
-
+        time.sleep(1)
         return response
 
     if (inbound_file == 'milo_file'):
@@ -175,7 +176,7 @@ def upload():
             200,
         )
         response.headers["Content-Type"] = "application/json"
-
+        time.sleep(1)
         return response
 
 

@@ -31,13 +31,17 @@
         <v-layout class="ma-5">
           <v-row>
             <v-col cols="6" >
+
               <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="trainingFileUpload"></v-file-input>
+              <v-progress-linear v-if="trainingDataLoading" indeterminate></v-progress-linear>
               <span v-if="trainingMetadata != null">
                 Columns: {{trainingMetadata.columns}} | Rows: {{trainingMetadata.rows}}
               </span>
             </v-col>
             <v-col cols="6">
+
               <v-file-input  prepend-icon="mdi-file" chips truncate-length="100" outlined label="Testing Data File (optional)" @change="testingFileUpload" :disabled="trainingMetadata == null"></v-file-input>
+              <v-progress-linear v-if="testingDataLoading" indeterminate></v-progress-linear>
               <span  v-if="testingMetadata != null">
                 Columns: {{testingMetadata.columns}} | Rows: {{testingMetadata.rows}}
               </span>
@@ -208,6 +212,7 @@
         </v-card-title>
         <v-card-text class="mx-0 py-0">
           <v-file-input prepend-icon="mdi-file" chips truncate-length="200" outlined label="MILO Data File"  @change="miloFileUpload"></v-file-input>
+          <v-progress-linear v-if="miloDataLoading" indeterminate></v-progress-linear>
           <v-spacer></v-spacer>
 
           <div>
@@ -253,8 +258,11 @@ export default {
       loading: false,
       serverData: null,
       trainingMetadata: null,
+      trainingDataLoading: false,
       testingMetadata: null,
+      testingDataLoading: false,
       miloMetadata: null,
+      miloDataLoading: false,
       targetColumnList: null,
       nontargetColumnList: null,
       target: null,
@@ -363,6 +371,7 @@ export default {
     },
     trainingFileUpload(file){
       if (file != null) {
+        this.trainingDataLoading = true
         var formData = new FormData();
 
         formData.append("file", file);
@@ -375,16 +384,19 @@ export default {
           this.trainingMetadata = result.data
           this.targetColumnList = this.trainingMetadata.column_names.reverse()
           this.trainingOutputFilename = file.name.replace('.csv','') + '_reduced'
+          this.trainingDataLoading = false
         })
       }
       else {
         this.trainingMetadata = null
         this.trainingOutputFilename = ''
+        this.trainingDataLoading = false
       }
 
     },
     testingFileUpload(file){
       if (file != null) {
+        this.testingDataLoading = true
         var formData = new FormData();
         console.log(file)
 
@@ -397,16 +409,19 @@ export default {
         }).then(result => {
           this.testingMetadata = result.data
           this.testingOutputFilename = file.name.replace('.csv','') + '_reduced'
+          this.testingDataLoading = false
         })
       }
       else {
         this.testingMetadata = null
         this.testingOutputFilename = ''
+        this.testingDataLoading = false
       }
     },
     miloFileUpload(file){
       if (file != null) {
         var formData = new FormData();
+        this.miloDataLoading = true
 
         formData.append("file", file);
         axios.post('data_upload', formData, {
@@ -423,12 +438,13 @@ export default {
               value: JSON.parse(data[i])
             })
           }
-          console.log(this.miloMetadata)
+          this.miloDataLoading = false
 
         })
       }
       else {
         this.miloMetadata = null
+        this.miloDataLoading = false
       }
     },
     setMiloColumns() {
