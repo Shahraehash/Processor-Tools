@@ -1,4 +1,5 @@
 #'FLASK_APP=app.py FLASK_ENV=development flask run'
+#docker run -d -p 5000:5000 fennell/ml-pp:latest
 
 from flask import Flask, render_template, g, jsonify, request, redirect, url_for, session, flash, make_response, send_file
 from flask_socketio import SocketIO, emit
@@ -87,15 +88,38 @@ def train_test_split_upload():
 
 
 
-@app.route('/train_test_split/prevalence',methods=["POST"])
-def train_test_split_prevalence():
+@app.route('/train_test_split/metadata',methods=["POST"])
+def train_test_split_metadata():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], request.json['storage_id'])
     df = pd.read_csv(file_path)
 
     target_column = request.json['target_column']
-    result = df[target_column].value_counts().to_json()
+    #new code
+    class_counts = df[target_column].value_counts()
+    total_count = class_counts.sum()
+    prevalence = class_counts[1] / total_count
 
+    minority_class = 1
 
+    if (class_counts[0] < class_counts[1]):
+        minority_class = 0
+
+    training_class_sample_size = 0
+
+    minority_half = int(round(class_counts[minority_class]/2))
+
+    if minority_half < 50:
+        training_class_sample_size = 50
+    else:
+        training_class_sample_size = minority_half
+
+    result = {
+        'class_counts': class_counts.to_json(),
+        'total_count': int(total_count),
+        'prevalence': float(prevalence),
+        'minority_class': int(minority_class),
+        'training_class_sample_size': int(training_class_sample_size)
+    }
     return jsonify(result)
 
 @app.route('/train_test_split/process',methods=["POST"])

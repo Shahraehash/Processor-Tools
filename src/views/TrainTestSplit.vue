@@ -35,14 +35,24 @@
       <v-row>
 
         <v-col cols="6">
-          <v-select v-if="fileData" v-model="targetColumn" outlined label :items='fileData.column_names' @change="determinePrevalence"></v-select>
+          <v-select v-if="fileData" v-model="targetColumn" outlined label :items='fileData.column_names' @change="determineClassMetadata"></v-select>
         </v-col>
-      </v-row>\
+        {{classMetadata}}
+      </v-row>
+      <div class="w3-light-grey w3-round">
+        <div class="w3-container w3-round w3-blue" style="width:25%">25%</div>
+      </div>
 
 
-      <v-progress-circular color="blue" class="ma-3" size="100" width="15" :value="(value / fileData.rows) * 100" v-for="(value, key) in prevalence" :key="key">{{key}}</v-progress-circular>
+
+
+
+
+      <!-- <v-progress-circular color="blue" class="ma-3" size="100" width="15" :value="(value / fileData.rows) * 100" v-for="(value, key) in prevalence" :key="key">{{key}}</v-progress-circular> -->
 
     </v-card>
+
+
     <v-card outlined class="ma-3 pa-3">
       <div class="">
         Prevelence in Validation Data Set
@@ -72,7 +82,7 @@ export default {
       prevalenceOption: 0,
       fileData: null,
       targetColumn: null,
-      prevalence: null,
+      classMetadata: null,
     }
   },
   methods: {
@@ -91,19 +101,20 @@ export default {
         this.fileData = result.data
       })
     },
-    determinePrevalence(field){
+    determineClassMetadata(field){
       console.log(field)
       let data = {
         target_column: this.targetColumn,
         storage_id: this.fileData.storage_id
       }
-      return axios.post('train_test_split/prevalence', data, {
+      return axios.post('train_test_split/metadata', data, {
         headers: {
         'Content-Type': 'application/json',
         }
       }).then(result => {
 
-        this.prevalence = JSON.parse(result.data)
+        this.classMetadata = result.data
+        this.classMetadata.class_counts = JSON.parse(this.classMetadata.class_counts)
       })
     }
 
