@@ -39,9 +39,7 @@
         </v-col>
         {{classMetadata}}
       </v-row>
-      <div class="w3-light-grey w3-round">
-        <div class="w3-container w3-round w3-blue" style="width:25%">25%</div>
-      </div>
+
 
 
 
@@ -65,8 +63,22 @@
       <div class="">
         Build Files
       </div>
-      {{sampleSize}}<v-slider v-model="sampleSize"></v-slider>
+      {{sampleSize}}<v-slider v-model="sampleSize" @change="calculatePercentage"></v-slider>
       <v-btn color="blue" @click="processFiles">Build Files</v-btn>
+
+
+    </v-card>
+
+    <v-card >
+      <div style="width:100%">
+        <div class="distrobution-box" v-bind:style="{ background: '#009688', width: barSizes.train0 + '%' }">Train 0</div>
+        <div class="distrobution-box" v-bind:style="{ background: '#26A69A', width: barSizes.train1 + '%' }">Train 1</div>
+        <div class="distrobution-box" v-bind:style="{ background: '#2196F3', width: barSizes.test0 + '%' }">Test 0</div>
+        <div class="distrobution-box" v-bind:style="{ background: '#29B6F6', width: barSizes.test1 + '%' }">Test 1</div>
+        <div class="distrobution-box" v-bind:style="{ background: '#D1C4E9', width: barSizes.extra + '%' }">Not Used</div>
+      </div>
+      {{barSizes}}
+
 
 
     </v-card>
@@ -87,6 +99,14 @@ export default {
       targetColumn: null,
       classMetadata: null,
       sampleSize: 10,
+      widthTest: 30,
+      barSizes: {
+        train0: 25,
+        train1: 25,
+        test0: 25,
+        test1: 25,
+        extra: 0
+      }
     }
   },
   methods: {
@@ -119,6 +139,7 @@ export default {
 
         this.classMetadata = result.data
         this.classMetadata.class_counts = JSON.parse(this.classMetadata.class_counts)
+        this.calculatePercentage()
       })
     },
     processFiles() {
@@ -138,6 +159,14 @@ export default {
         FileDownload(response.data.testing, 'testing.csv')
       })
 
+    },
+    calculatePercentage() {
+      this.barSizes.train0 = 100 * (this.sampleSize / this.classMetadata.total_count)
+      this.barSizes.train1 = 100 * (this.sampleSize / this.classMetadata.total_count)
+      this.barSizes.test0 = 100 * (this.classMetadata.class_counts[0] - this.sampleSize) / this.classMetadata.total_count
+      this.barSizes.test1 = 100 * (this.classMetadata.class_counts[1] - this.sampleSize) / this.classMetadata.total_count
+      this.barSizes.extra = 0
+
     }
 
 
@@ -145,3 +174,15 @@ export default {
 
 }
 </script>
+<style>
+.distrobution-box {
+  padding-top:16px;
+  height: 60px;
+  transition: width 0.5s;
+  display: inline-block;
+  text-align: center;
+  color: white;
+}
+
+
+</style>
