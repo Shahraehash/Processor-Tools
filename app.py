@@ -124,8 +124,40 @@ def train_test_split_metadata():
 
 @app.route('/train_test_split/process',methods=["POST"])
 def train_test_split_process():
+    storage_id = request.json['storage_id']
+    target_column = request.json['target_column']
+    training_class_sample_size = request.json['training_class_sample_size']
+    prevalence = request.json['prevalence']
 
-    return 'nothing'
+
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
+    df = pd.read_csv(file_path)
+
+    train_0 = df[df[target_column] == 0].sample(training_class_sample_size)
+    train_1 = df[df[target_column] == 1].sample(training_class_sample_size)
+
+    train_combine = pd.concat([train_0,train_1])
+
+    test_filtered = df.drop(train_0.index).drop(train_1.index)
+    #
+    # total_test = test_filtered.size
+    # counts_test = test_filtered[target_column].value_counts()
+    # total_hold_prevalence = int(round(counts_test[1] / prevalence))
+    #
+    # difference = total_test - total_hold_prevalence
+    #
+    # test_combine = test_filtered.copy()
+    #
+    # if True: #minorty_class == 1
+    #     reduction = test_filtered[test_filtered == 0].sample(difference)
+    #     test_combine = test_combine.drop(reduction.index)
+
+    return make_response({
+        'training': train_combine.to_csv(),
+        'testing': test_filtered.to_csv()
+        })
+
+
 
 
 

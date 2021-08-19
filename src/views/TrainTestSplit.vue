@@ -65,7 +65,8 @@
       <div class="">
         Build Files
       </div>
-      <v-btn disabled color="blue">Build Files</v-btn>
+      {{sampleSize}}<v-slider v-model="sampleSize"></v-slider>
+      <v-btn color="blue" @click="processFiles">Build Files</v-btn>
 
 
     </v-card>
@@ -75,6 +76,8 @@
 </template>
 <script>
 import axios from 'axios'
+import FileDownload from 'js-file-download'
+
 export default {
   name: 'TrainTestSplit',
   data() {
@@ -83,6 +86,7 @@ export default {
       fileData: null,
       targetColumn: null,
       classMetadata: null,
+      sampleSize: 10,
     }
   },
   methods: {
@@ -116,6 +120,24 @@ export default {
         this.classMetadata = result.data
         this.classMetadata.class_counts = JSON.parse(this.classMetadata.class_counts)
       })
+    },
+    processFiles() {
+      let data = {
+        target_column: this.targetColumn,
+        storage_id: this.fileData.storage_id,
+        training_class_sample_size: this.sampleSize, //Not matched to output
+        prevalence: this.classMetadata.prevalence
+      }
+      return axios.post('train_test_split/process', data, {
+        headers: {
+        'Content-Type': 'application/json',
+        }
+      }).then(response => {
+        console.log(response)
+        FileDownload(response.data.training, 'training.csv')
+        FileDownload(response.data.testing, 'testing.csv')
+      })
+
     }
 
 
