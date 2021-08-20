@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.a5ef72c3412a036e1f2438a5e11d731e.js"
+  "/precache-manifest.8d234f47524eec64c176130d1601719c.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "flask-prototype"});
