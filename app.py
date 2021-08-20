@@ -100,9 +100,11 @@ def train_test_split_metadata():
     prevalence = class_counts[1] / total_count
 
     minority_class = 1
+    majority_class = 0
 
     if (class_counts[0] < class_counts[1]):
         minority_class = 0
+        majority_class = 1
 
     training_class_sample_size = 0
 
@@ -118,6 +120,7 @@ def train_test_split_metadata():
         'total_count': int(total_count),
         'prevalence': float(prevalence),
         'minority_class': int(minority_class),
+        'majority_class': int(majority_class),
         'training_class_sample_size': int(training_class_sample_size)
     }
     return jsonify(result)

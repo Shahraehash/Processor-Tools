@@ -20,68 +20,104 @@
     </v-card>
 
     <v-card outlined class="ma-3 pa-3">
-      <div class="title">
+      <v-card-title class="">
         Step 1 - Select Data File
-      </div>
-      <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Data File" @change="splitFileUpload"></v-file-input>
-      {{fileData}}
-    </v-card>
-    <v-card outlined class="ma-3 pa-3">
-      <div class="title">
-        Step 2 - Select Target Column
-      </div>
-
-
+      </v-card-title>
       <v-row>
-
         <v-col cols="6">
-          <v-select v-if="fileData" v-model="targetColumn" outlined label :items='fileData.column_names' @change="determineClassMetadata"></v-select>
+          <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Data File" @change="splitFileUpload"></v-file-input>
+          <div class="overline">
+          </div>
         </v-col>
-        {{classMetadata}}
       </v-row>
-
-
-
-
-
-
-
-      <!-- <v-progress-circular color="blue" class="ma-3" size="100" width="15" :value="(value / fileData.rows) * 100" v-for="(value, key) in prevalence" :key="key">{{key}}</v-progress-circular> -->
+    </v-card>
+    <v-card outlined class="ma-3 pa-3">
+      <v-card-title class="">
+        Step 2 - Select Target Column
+      </v-card-title>
+      <v-row>
+        <v-col cols="6">
+          <v-select prepend-icon="mdi-bullseye" color="teal" background="teal" v-if="fileData" v-model="targetColumn" outlined label :items='fileData.column_names' @change="determineClassMetadata"></v-select>
+        </v-col>
+      </v-row>
+      <div style="width:100%">
+        <div class="distrobution-box" v-bind:style="{ background: '#2196F3', width: class0percent + '%' }">Class 0: {{class0size}} ({{class0percent}}%)</div>
+        <div class="distrobution-box" v-bind:style="{ background: '#009688', width: class1percent + '%' }">Class 1: {{class1size}} ({{class1percent}}%)</div>
+      </div>
 
     </v-card>
 
 
     <v-card outlined class="ma-3 pa-3">
-      <div class="">
-        Prevelence in Validation Data Set
-      </div>
-      <v-radio-group disabled v-model="prevalenceOption">
-        <v-radio label="Maintain Original Prevalence in Validation File (some data will be removed)"></v-radio>
+      <v-card-title class="">
+        Step 3 - Select Split
+      </v-card-title>
+      <v-radio-group v-model="prevalenceOption" @change="calculatePercentage">
         <v-radio label="Use All Remaining Data After Training Data Removed"></v-radio>
+        <v-radio label="Maintain Original Prevalence in Validation File (some data will be removed)"></v-radio>
       </v-radio-group>
 
       <div class="">
-        Build Files
+
       </div>
-      {{sampleSize}}<v-slider v-model="sampleSize" @change="calculatePercentage"></v-slider>
-      <v-btn color="blue" @click="processFiles">Build Files</v-btn>
+        <v-row>
+          <v-col cols="1"></v-col>
+          <v-col cols="5">
+            <v-card outlined>
+              <v-slider outlined v-model="sampleSize" @change="calculatePercentage"></v-slider>
+            </v-card>
+          </v-col>
+          <v-col cols="1">
+            {{sampleSize}}
+          </v-col>
+
+        </v-row>
+
+        <v-card class="mb-10">
+          <div style="width:100%">
+            <div class="title-box" v-bind:style="{ background: '#7E57C2', width: barSizes.train0 + barSizes.train1 + '%' }">
+              Training Data
+
+            </div>
+            <div class="title-box" v-bind:style="{ background: '#5C6BC0', width: barSizes.test0 + barSizes.test1 + '%' }">
+              Global Generalization Testing Data
+
+            </div>
+
+          </div>
+          <div style="width:100%">
+            <div class="distrobution-box" v-bind:style="{ background: '#82B1FF', width: barSizes.train0 + '%' }">
+              <div>Train 0</div>
+              <div>n={{sampleSize}}</div>
+
+            </div>
+            <div class="distrobution-box" v-bind:style="{ background: '#4DB6AC', width: barSizes.train1 + '%' }">
+              <div>Train 1</div>
+              <div>n={{sampleSize}}</div>
+            </div>
+            <div class="distrobution-box" v-bind:style="{ background: '#82B1FF', width: barSizes.test0 + '%' }">
+              <div>Test 0</div>
+              <div>n={{barData.test0global}}</div>
+            </div>
+            <div class="distrobution-box" v-bind:style="{ background: '#4DB6AC', width: barSizes.test1 + '%' }">
+              <div>Test 1</div>
+              <div>n={{barData.test1global}}</div>
+            </div>
+            <div class="distrobution-box" v-bind:style="{ background: '#F48FB1', width: barSizes.extra + '%' }">
+              <div>Not Used</div>
+              <div>n={{barData.extra}}</div>
+            </div>
+          </div>
+        </v-card>
+
+
+
+        <v-btn dark float="right" color="blue" @click="processFiles">Build Files</v-btn>
 
 
     </v-card>
 
-    <v-card >
-      <div style="width:100%">
-        <div class="distrobution-box" v-bind:style="{ background: '#009688', width: barSizes.train0 + '%' }">Train 0</div>
-        <div class="distrobution-box" v-bind:style="{ background: '#26A69A', width: barSizes.train1 + '%' }">Train 1</div>
-        <div class="distrobution-box" v-bind:style="{ background: '#2196F3', width: barSizes.test0 + '%' }">Test 0</div>
-        <div class="distrobution-box" v-bind:style="{ background: '#29B6F6', width: barSizes.test1 + '%' }">Test 1</div>
-        <div class="distrobution-box" v-bind:style="{ background: '#D1C4E9', width: barSizes.extra + '%' }">Not Used</div>
-      </div>
-      {{barSizes}}
 
-
-
-    </v-card>
 
   </v-container>
 
@@ -98,13 +134,24 @@ export default {
       fileData: null,
       targetColumn: null,
       classMetadata: null,
+      //class computed
+      class0size: 0,
+      class0percent: 0,
+      class1size: 0,
+      class1percent: 0,
+
       sampleSize: 10,
       widthTest: 30,
       barSizes: {
-        train0: 25,
-        train1: 25,
-        test0: 25,
-        test1: 25,
+        train0: 0,
+        train1: 0,
+        test0: 0,
+        test1: 0,
+        extra: 0
+      },
+      barData: {
+        test0global: 0,
+        test1global: 0,
         extra: 0
       }
     }
@@ -126,21 +173,26 @@ export default {
       })
     },
     determineClassMetadata(field){
-      console.log(field)
-      let data = {
-        target_column: this.targetColumn,
-        storage_id: this.fileData.storage_id
-      }
-      return axios.post('train_test_split/metadata', data, {
-        headers: {
-        'Content-Type': 'application/json',
+      if (field != null) {
+        let data = {
+          target_column: this.targetColumn,
+          storage_id: this.fileData.storage_id
         }
-      }).then(result => {
+        return axios.post('train_test_split/metadata', data, {
+          headers: {
+          'Content-Type': 'application/json',
+          }
+        }).then(result => {
+          this.classMetadata = result.data
+          this.classMetadata.class_counts = JSON.parse(this.classMetadata.class_counts)
+          this.calculateMetadataMetrics()
+          this.calculatePercentage()
+        })
+      }
+      else {
+        this.classMetadata = null
+      }
 
-        this.classMetadata = result.data
-        this.classMetadata.class_counts = JSON.parse(this.classMetadata.class_counts)
-        this.calculatePercentage()
-      })
     },
     processFiles() {
       let data = {
@@ -160,12 +212,65 @@ export default {
       })
 
     },
+    calculateMetadataMetrics() {
+      this.class0size = this.classMetadata.class_counts[0]
+      this.class1size = this.classMetadata.class_counts[1]
+      this.class0percent = Math.round(1000 * (this.classMetadata.class_counts[0] / this.classMetadata.total_count)) / 10
+      this.class1percent = Math.round(1000 * (this.classMetadata.class_counts[1] / this.classMetadata.total_count)) / 10
+    },
     calculatePercentage() {
-      this.barSizes.train0 = 100 * (this.sampleSize / this.classMetadata.total_count)
-      this.barSizes.train1 = 100 * (this.sampleSize / this.classMetadata.total_count)
-      this.barSizes.test0 = 100 * (this.classMetadata.class_counts[0] - this.sampleSize) / this.classMetadata.total_count
-      this.barSizes.test1 = 100 * (this.classMetadata.class_counts[1] - this.sampleSize) / this.classMetadata.total_count
-      this.barSizes.extra = 0
+      if (this.prevalenceOption == 0) {
+        this.barSizes.train0 = 100 * (this.sampleSize / this.classMetadata.total_count)
+        this.barSizes.train1 = 100 * (this.sampleSize / this.classMetadata.total_count)
+        this.barSizes.test0 = 100 * (this.classMetadata.class_counts[0] - this.sampleSize) / this.classMetadata.total_count
+        this.barSizes.test1 = 100 * (this.classMetadata.class_counts[1] - this.sampleSize) / this.classMetadata.total_count
+        this.barSizes.extra = 0
+
+        this.barData.test0global = this.classMetadata.class_counts[0] - this.sampleSize
+        this.barData.test1global = this.classMetadata.class_counts[1] - this.sampleSize
+        this.barData.extra = 0
+      }
+      else if (this.prevalenceOption == 1) {
+        console.log('swap')
+        this.barSizes.train0 = 100 * (this.sampleSize / this.classMetadata.total_count)
+        this.barSizes.train1 = 100 * (this.sampleSize / this.classMetadata.total_count)
+
+
+        let percentMajority = this.classMetadata.class_counts[this.classMetadata.majority_class] / this.classMetadata.total_count
+        let percentMinority = this.classMetadata.class_counts[this.classMetadata.minority_class] / this.classMetadata.total_count
+        let minorityRemain = this.classMetadata.class_counts[this.classMetadata.minority_class] - this.sampleSize
+        let totalRemain = Math.round(minorityRemain / percentMinority)
+        let majorityRemain = Math.round(percentMajority * totalRemain)
+        let numberToDrop = this.classMetadata.class_counts[this.classMetadata.majority_class] - this.sampleSize - majorityRemain
+
+
+        console.log({
+          percentMajority,
+          percentMinority,
+          minorityRemain,
+          totalRemain,
+          majorityRemain,
+          numberToDrop
+        })
+
+        if (this.classMetadata.majority_class == 0) {
+          this.barSizes.test0 = 100 * majorityRemain / this.classMetadata.total_count
+          this.barSizes.test1 = 100 * minorityRemain / this.classMetadata.total_count
+          this.barData.test0global = majorityRemain
+          this.barData.test1global = minorityRemain
+
+        }
+        else if (this.classMetadata.majority_class == 1) {
+          this.barSizes.test0 = 100 * minorityRemain / this.classMetadata.total_count
+          this.barSizes.test1 = 100 * majorityRemain / this.classMetadata.total_count
+          this.barData.test0global = minorityRemain
+          this.barData.test1global = majorityRemain
+        }
+        this.barData.extra = numberToDrop
+        this.barSizes.extra = 100 * numberToDrop / this.classMetadata.total_count
+
+      }
+
 
     }
 
@@ -177,11 +282,21 @@ export default {
 <style>
 .distrobution-box {
   padding-top:16px;
-  height: 60px;
+  height: 80px;
   transition: width 0.5s;
   display: inline-block;
   text-align: center;
   color: white;
+  overflow: hidden;
+}
+.title-box {
+  padding-top:5px;
+  height: 30px;
+  transition: width 0.5s;
+  display: inline-block;
+  text-align: center;
+  color: white;
+  overflow: hidden;
 }
 
 
