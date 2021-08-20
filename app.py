@@ -106,14 +106,6 @@ def train_test_split_metadata():
         minority_class = 0
         majority_class = 1
 
-    training_class_sample_size = 0
-
-    minority_half = int(round(class_counts[minority_class]/2))
-
-    if minority_half < 50:
-        training_class_sample_size = 50
-    else:
-        training_class_sample_size = minority_half
 
     result = {
         'class_counts': class_counts.to_json(),
@@ -121,7 +113,7 @@ def train_test_split_metadata():
         'prevalence': float(prevalence),
         'minority_class': int(minority_class),
         'majority_class': int(majority_class),
-        'training_class_sample_size': int(training_class_sample_size)
+
     }
     return jsonify(result)
 
@@ -130,8 +122,9 @@ def train_test_split_process():
     storage_id = request.json['storage_id']
     target_column = request.json['target_column']
     training_class_sample_size = request.json['training_class_sample_size']
-    prevalence = request.json['prevalence']
-
+    prevalence_option = request.json['prevalence_option']
+    majority_class = request.json['majority_class']
+    extra = request.json['extra']
 
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file_path)
@@ -142,23 +135,20 @@ def train_test_split_process():
     train_combine = pd.concat([train_0,train_1])
 
     test_filtered = df.drop(train_0.index).drop(train_1.index)
-    #
-    # total_test = test_filtered.size
-    # counts_test = test_filtered[target_column].value_counts()
-    # total_hold_prevalence = int(round(counts_test[1] / prevalence))
-    #
-    # difference = total_test - total_hold_prevalence
-    #
-    # test_combine = test_filtered.copy()
-    #
-    # if True: #minorty_class == 1
-    #     reduction = test_filtered[test_filtered == 0].sample(difference)
-    #     test_combine = test_combine.drop(reduction.index)
 
-    return make_response({
-        'training': train_combine.to_csv(),
-        'testing': test_filtered.to_csv()
-        })
+    final_data = {
+        'training': train_combine.to_csv(index=False),
+        'testing': test_filtered.to_csv(index=False)
+    }
+
+    if prevalence_option == 1:
+        reduction = test_filtered[test_filtered[target_column] == majority_class].sample(extra)
+        test_reduced = test_filtered.copy()
+        test_reduced = test_reduced.drop(reduction.index)
+        final_data['testing'] = test_reduced.to_csv(index=False)
+        final_data['extra'] = reduction.to_csv(index=False)
+
+    return make_response(final_data)
 
 
 
