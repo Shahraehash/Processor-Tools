@@ -5,8 +5,19 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    //UI Component
+    snackbarMessage: {
+      show: false,
+      color: 'blue',
+      message: 'Test message'
+    },
   },
   mutations: {
+    snackbarMessageSet(state, val) {
+      state.snackbarMessage.show = true
+      state.snackbarMessage.message = val.message
+      state.snackbarMessage.color = val.color
+    },    
   },
   actions: {
   },
