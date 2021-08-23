@@ -1,12 +1,23 @@
 <template>
   <v-container>
-    <v-card outlined class="ma-3 pa-3">
-      <div >
+    <v-card
+      class="ma-3 pa-3"
+      outlined
+    >
+      <div>
         <v-row>
           <v-col cols="3">
-            <v-btn icon @click="$router.push({name: 'Landing'})"><v-icon>mdi-arrow-left</v-icon></v-btn>
+            <v-btn
+              icon
+              @click="$router.push({name: 'Landing'})"
+            >
+              <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
           </v-col>
-          <v-col cols="6" class="text-center">
+          <v-col
+            cols="6"
+            class="text-center"
+          >
             <v-icon x-large>mdi-call-split</v-icon>
             <span class="title">Train and Test Builder</span>
           </v-col>
@@ -19,16 +30,50 @@
       </v-card-text>
     </v-card>
 
-    <v-card outlined class="ma-3 pa-3">
-      <v-card-title class="">
+    <v-card
+      class="ma-3 px-4 py-2"
+      outlined
+    >
+      <div class="overline mb-3">
         Step 1 - Select Data File
-      </v-card-title>
+      </div>
       <v-row>
         <v-col cols="6">
-          <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Data File" @change="splitFileUpload"></v-file-input>
-          <div class="overline">
-          </div>
+          <v-file-input
+            chips
+            clearable
+            label="Data File"
+            outlined
+            prepend-icon="mdi-file"
+            truncate-length="100"
+            v-model="file"
+            @change="trainTestFileUpload"
+          ></v-file-input>
         </v-col>
+        <v-col cols="6">
+          <v-card
+            class="pt-3"
+            flat
+            v-if="fileData"
+          >
+            <v-icon large>mdi-table-column</v-icon>
+            {{fileData.columns}} columns
+            <v-icon large>mdi-table-row</v-icon>
+            {{fileData.rows}} rows
+          </v-card>
+        </v-col>
+        <v-col cols="12"
+          v-if="fileData"
+        >
+          <v-alert
+            dense
+            text
+            type="info"
+          >
+            {{fileData.nan_count}} rows have missing data. This will affect the output (see next step).
+          </v-alert>
+        </v-col>
+
       </v-row>
     </v-card>
     <v-card outlined class="ma-3 pa-3" v-if="fileData != null">
@@ -143,8 +188,11 @@ export default {
   name: 'TrainTestSplit',
   data() {
     return {
-      prevalenceOption: 0,
+      file: null,
       fileData: null,
+
+      prevalenceOption: 0,
+
       targetColumn: null,
       classMetadata: null,
       //class computed
@@ -188,20 +236,35 @@ export default {
 
   },
   methods: {
-    splitFileUpload(file) {
-      var formData = new FormData();
-      console.log(file)
+    trainTestFileUpload(file) {
+      if (file != null) {
+        //this method uploads form data
+        var formData = new FormData();
 
-      formData.append("file", file);
-      axios.post('/train_test_split/upload', formData, {
-          headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-filename': file.name
+        //file name data stored in X-file header of post request
+        formData.append("file", file);
+        axios.post('/train_test_split/upload', formData, {
+            headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-filename': file.name
 
-        }
-      }).then(result => {
-        this.fileData = result.data
-      })
+          }
+        }).then(result => {
+          //file data stored in data field of result
+          this.fileData = result.data
+        }).catch(() => {
+          this.$store.commit('snackbarMessageSet', {
+            color: 'red lighten-1',
+            message: 'Error processing file.'
+          })
+          this.file = null
+          this.fileData = null
+        })
+      }
+      else {
+        this.fileData = null
+      }
+
     },
     determineClassMetadata(field){
       if (field != null) {

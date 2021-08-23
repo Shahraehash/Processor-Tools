@@ -37,6 +37,14 @@ training_data = ''
 testing_data = ''
 milo_data = ''
 
+#helper functions
+def convert_blanks_to_nan(df):
+    return df.replace(r'^\s*$', np.nan, regex=True)
+
+def find_nan_counts(df):
+    return df[df.isna().any(axis=1)].shape[0]
+
+
 # sanity check route
 @app.route('/ping', methods=['GET'])
 def ping_pong():
@@ -52,7 +60,7 @@ def home():
 def train_test_split_upload():
 
     file_obj = request.files['file']
-    file_name = request.headers['X-filename']
+    file_name = request.headers['X-filename'] #filename stored in special header
 
     if file_obj is None:
         # Indicates that no file was sent
@@ -63,27 +71,38 @@ def train_test_split_upload():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
     file_obj.save(file_path)
 
+    #Script will try to read file and return data. If it fails it will delete
+    #the file.
+    try:
+        df = pd.read_csv(file_path)
 
-    df = pd.read_csv(file_path)
-    rows = df.shape[0]
-    columns = df.shape[1]
-    column_names = list(df.columns.values)
+        #helper function to clean up nan rows
+        df = convert_blanks_to_nan(df)
 
-    entry = {
-    'user_id': 'ui000001',
-    'storage_id': storage_id,
-    'file_name':  file_name,
-    'content_type': file_obj.content_type,
-    'file_group': 'train_test_split', #training,testing,milo_results,train_test_split
-    'upload_time': datetime.timestamp(datetime.now()),
-    'rows': rows,
-    'columns': columns,
-    'column_names': column_names
-    }
+        entry = {
+        'user_id': 'ui000001',
+        'storage_id': storage_id,
+        'file_name':  file_name,
+        'content_type': file_obj.content_type,
+        'file_group': 'train_test_split', #training,testing,milo_results,train_test_split
+        'upload_time': datetime.timestamp(datetime.now()),
+        'rows': int(df.shape[0]),
+        'columns': int(df.shape[1]),
+        'column_names': list(df.columns.values),
+        'nan_count': int(find_nan_counts(df))
+        }
 
-    db.insert(entry)
+        db.insert(entry)
 
-    return jsonify(entry)
+        return jsonify(entry)
+
+    except Exception as e:
+
+        os.remove(file_path)
+        return abort(500)
+
+
+
 
 
 
