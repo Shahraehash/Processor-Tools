@@ -116,7 +116,11 @@ def train_test_split_metadata():
     #new code
     class_counts = df[target_column].value_counts()
     total_count = class_counts.sum()
-    prevalence = class_counts[1] / total_count
+
+
+    nan_counts = None
+    if (find_nan_counts(df) > 0):
+        nan_counts = df[df.isna().any(axis=1)][target_column].value_counts().to_json()
 
     minority_class = 1
     majority_class = 0
@@ -129,9 +133,10 @@ def train_test_split_metadata():
     result = {
         'class_counts': class_counts.to_json(),
         'total_count': int(total_count),
-        'prevalence': float(prevalence),
+
         'minority_class': int(minority_class),
         'majority_class': int(majority_class),
+        'nan_class_counts': nan_counts
 
     }
     return jsonify(result)

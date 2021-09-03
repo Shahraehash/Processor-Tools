@@ -38,7 +38,10 @@
         Step 1 - Select Data File
       </div>
       <v-row>
-        <v-col cols="6">
+        <v-col
+          cols="6"
+          class="pb-0"
+        >
           <v-file-input
             chips
             clearable
@@ -50,7 +53,10 @@
             @change="trainTestFileUpload"
           ></v-file-input>
         </v-col>
-        <v-col cols="6">
+        <v-col
+          cols="6"
+          class="pb-0"
+        >
           <v-card
             class="pt-3"
             flat
@@ -62,8 +68,10 @@
             {{fileData.rows}} rows
           </v-card>
         </v-col>
-        <v-col cols="12"
-          v-if="fileData"
+        <v-col
+          cols="12"
+          class="mt-0 pt-0"
+          v-if="fileData && fileData.nan_count > 0"
         >
           <v-alert
             dense
@@ -73,22 +81,34 @@
             {{fileData.nan_count}} rows have missing data. This will affect the output (see next step).
           </v-alert>
         </v-col>
-
       </v-row>
     </v-card>
-    <v-card outlined class="ma-3 pa-3" v-if="fileData != null">
-      <v-card-title class="">
+
+    <v-card
+      class="ma-3 px-4 py-2"
+      outlined
+      v-if="fileData != null"
+    >
+      <div class="overline mb-3">
         Step 2 - Select Target Column
-      </v-card-title>
+      </div>
       <v-row>
         <v-col cols="6">
-          <v-select prepend-icon="mdi-bullseye" color="teal" background="teal" v-if="fileData" v-model="targetColumn" outlined label :items='fileData.column_names' @change="determineClassMetadata"></v-select>
+          <v-select
+            outlined
+            label="Target Column"
+            prepend-icon="mdi-bullseye"
+            v-if="fileData"
+            v-model="targetColumn"
+            :items='fileData.column_names'
+            @change="determineClassMetadata"
+          ></v-select>
         </v-col>
       </v-row>
       <div style="width:100%" >
         <div class="distrobution-box" v-bind:style="{ background: '#2196F3', width: class0percent + '%' }">Class 0: {{class0size}} ({{class0percent}}%)</div>
         <div class="distrobution-box" v-bind:style="{ background: '#009688', width: class1percent + '%' }">Class 1: {{class1size}} ({{class1percent}}%)</div>
-        <div class="distrobution-box" v-bind:style="{ background: 'grey', width: placeholderSlot + '%' }">Data Distrobution Displayed After Selection</div>
+        <div class="distrobution-box" v-bind:style="{ background: '#d3d3d3', width: placeholderSlot + '%' }">Data Distrobution Displayed After Selection</div>
       </div>
 
       <v-alert
@@ -198,8 +218,13 @@ export default {
       //class computed
       class0size: 0,
       class0percent: 0,
+      class0nanSize: 0,
+      class0nanPercent: 0,
       class1size: 0,
       class1percent: 0,
+      class1nanSize: 0,
+      class1nanPercent: 0,
+
       placeholderSlot: 100,
 
       minSampleSize:50,
@@ -279,8 +304,16 @@ export default {
         }).then(result => {
           this.classMetadata = result.data
           this.classMetadata.class_counts = JSON.parse(this.classMetadata.class_counts)
+
+          if (this.classMetadata.nan_class_counts != null) {
+            this.classMetadata.nan_class_counts = JSON.parse(this.classMetadata.nan_class_counts)
+          }
+
+
+          console.log(this.classMetadata)
           this.calculateMetadataMetrics()
           this.calculatePercentage()
+          this.findTrainingClassSampleSize()
         })
       }
       else {
@@ -329,7 +362,6 @@ export default {
       this.class0percent = Math.round(1000 * (this.classMetadata.class_counts[0] / this.classMetadata.total_count)) / 10
       this.class1percent = Math.round(1000 * (this.classMetadata.class_counts[1] / this.classMetadata.total_count)) / 10
       this.placeholderSlot = 0
-      this.findTrainingClassSampleSize()
     },
     calculatePercentage() {
       if (this.prevalenceOption == 0) {
