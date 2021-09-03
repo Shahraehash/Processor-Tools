@@ -105,11 +105,98 @@
           ></v-select>
         </v-col>
       </v-row>
+      <v-alert
+        dense
+        text
+        type="info"
+        v-if="class0nanSize >0 || class1nanSize > 0"
+      >
+        Some data cannot be used.
+        <span v-if="class0nanSize >0">For class 0, {{class0nanSize}} row
+          <span v-if="class0nanSize == 1"> is </span>
+          <span v-if="class0nanSize > 1">s are </span>excluded.
+        </span>
+        <span v-if="class1nanSize >0">For class 1, {{class1nanSize}} row
+          <span v-if="class1nanSize == 1"> is </span>
+          <span v-if="class1nanSize > 1">s are </span>excluded.
+        </span>
+
+
+      </v-alert>
       <div style="width:100%" >
-        <div class="distrobution-box" v-bind:style="{ background: '#2196F3', width: class0percent + '%' }">Class 0: {{class0size}} ({{class0percent}}%)</div>
-        <div class="distrobution-box" v-bind:style="{ background: '#009688', width: class1percent + '%' }">Class 1: {{class1size}} ({{class1percent}}%)</div>
+        <div
+          class="distrobution-box"
+          v-bind:style="{
+            background: '#2196F3',
+            width: class0percent + '%'
+            }"
+          >
+          <div
+            v-bind:style="{
+              opacity: 0.3,
+              background:'white',
+              width: class0nanPercent + '%',
+              position:'absolute',
+              left:'16px',
+              bottom:'15px'
+              }"
+            class="distrobution-box"
+          >
+          </div>
+          <p class="pa-0 ma-0">
+            Class 0 ({{class0percent}}%)
+          </p>
+          <p class="pa-0 ma-0" v-if="class0nanSize == 0">
+            N={{class0size}}
+          </p>
+          <p class="pa-0 ma-0" v-if="class0nanSize > 0">
+            <span style="text-decoration: line-through">{{class0size}}</span>
+            <v-icon color="white">mdi-arrow-right</v-icon>
+            {{class0size - class0nanSize}}
+          </p>
+        </div>
+        <div
+          class="distrobution-box"
+          v-bind:style="{
+            background: '#009688',
+            width: class1percent + '%'
+            }"
+          >
+
+
+          <div
+            v-bind:style="{
+              opacity: 0.3,
+              background:'white',
+              width: class1nanPercent + '%',
+              position:'absolute',
+              right:'16px',
+              bottom:'15px'
+              }"
+            class="distrobution-box"
+          >
+          </div>
+          <p class="pa-0 ma-0">
+            Class 1 ({{class1percent}}%)
+          </p>
+          <p class="pa-0 ma-0" v-if="class1nanSize == 0">
+            N={{class1size}}
+          </p>
+          <p class="pa-0 ma-0" v-if="class1nanSize > 0">
+            <span style="text-decoration: line-through">{{class1size}}</span>
+            <v-icon color="white">mdi-arrow-right</v-icon>
+            {{class1size - class1nanSize}}
+          </p>
+        </div>
+
+
+
         <div class="distrobution-box" v-bind:style="{ background: '#d3d3d3', width: placeholderSlot + '%' }">Data Distrobution Displayed After Selection</div>
       </div>
+
+
+
+
 
       <v-alert
         v-if="minSampleSizeError"
@@ -309,11 +396,17 @@ export default {
             this.classMetadata.nan_class_counts = JSON.parse(this.classMetadata.nan_class_counts)
           }
 
-
           console.log(this.classMetadata)
           this.calculateMetadataMetrics()
           this.calculatePercentage()
           this.findTrainingClassSampleSize()
+        }).catch(() => {
+          this.$store.commit('snackbarMessageSet', {
+            color: 'red lighten-1',
+            message: 'Invalid column selection. Values are not binary.'
+          })
+          this.targetColumn = null
+
         })
       }
       else {
@@ -362,6 +455,14 @@ export default {
       this.class0percent = Math.round(1000 * (this.classMetadata.class_counts[0] / this.classMetadata.total_count)) / 10
       this.class1percent = Math.round(1000 * (this.classMetadata.class_counts[1] / this.classMetadata.total_count)) / 10
       this.placeholderSlot = 0
+      if (this.classMetadata.nan_class_counts != null) {
+        this.class0nanSize = this.classMetadata.nan_class_counts[0]
+        this.class0nanPercent = Math.round(1000 * (this.classMetadata.nan_class_counts[0] / this.classMetadata.class_counts[0])) / 10
+
+        this.class1nanSize = this.classMetadata.nan_class_counts[1]
+        this.class1nanPercent = Math.round(1000 * (this.classMetadata.nan_class_counts[1] / this.classMetadata.class_counts[1])) / 10
+
+      }
     },
     calculatePercentage() {
       if (this.prevalenceOption == 0) {

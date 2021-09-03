@@ -78,6 +78,8 @@ def train_test_split_upload():
 
         #helper function to clean up nan rows
         df = convert_blanks_to_nan(df)
+        #update file with cleaned up fields
+        df.to_csv(file_path)
 
         entry = {
         'user_id': 'ui000001',
@@ -120,7 +122,14 @@ def train_test_split_metadata():
 
     nan_counts = None
     if (find_nan_counts(df) > 0):
-        nan_counts = df[df.isna().any(axis=1)][target_column].value_counts().to_json()
+        nan_counts = df[df.isna().any(axis=1)][target_column].value_counts()
+        #ensure all values carried to front end
+        if not 1 in nan_counts:
+            nan_counts[1] = 0
+        if not 0 in nan_counts:
+            nan_counts[0] = 0
+
+        nan_counts = nan_counts.to_json()
 
     minority_class = 1
     majority_class = 0
