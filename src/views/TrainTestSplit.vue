@@ -30,340 +30,419 @@
       </v-card-text>
     </v-card>
 
-    <v-card
-      class="ma-3 px-4 py-2"
-      outlined
-    >
-      <div class="overline mb-3">
-        Step 1 - Select Data File
-      </div>
-      <v-row>
-        <v-col
-          cols="6"
-          class="pb-0"
-        >
-          <v-file-input
-            chips
-            clearable
-            label="Data File"
-            outlined
-            prepend-icon="mdi-file"
-            truncate-length="100"
-            v-model="file"
-            @change="trainTestFileUpload"
-          ></v-file-input>
-        </v-col>
-        <v-col
-          cols="6"
-          class="pb-0"
-        >
-          <v-card
-            class="pt-3"
-            flat
-            v-if="fileData"
+
+
+
+
+
+    <v-stepper v-model="e1">
+        <v-stepper-header>
+          <v-stepper-step
+            :complete="e1 > 1"
+            step="1"
           >
-            <v-icon large>mdi-table-column</v-icon>
-            {{fileData.columns}} columns
-            <v-icon large>mdi-table-row</v-icon>
-            {{fileData.rows}} rows
-          </v-card>
-        </v-col>
-        <v-col
-          cols="12"
-          class="mt-0 pt-0"
-          v-if="fileData && fileData.nan_count > 0"
-        >
-          <v-alert
-            dense
-            text
-            type="info"
+            Select Data File
+          </v-stepper-step>
+
+          <v-divider></v-divider>
+
+          <v-stepper-step
+            :complete="e1 > 2"
+            step="2"
           >
-            {{fileData.nan_count}} rows have missing data. This will affect the output (see next step).
-          </v-alert>
-        </v-col>
-      </v-row>
-    </v-card>
+            Select Target Column
+          </v-stepper-step>
 
-    <v-card
-      class="ma-3 px-4 py-2"
-      outlined
-      v-if="fileData != null"
-    >
-      <div class="overline mb-3">
-        Step 2 - Select Target Column
-      </div>
-      <v-row>
-        <v-col cols="6">
-          <v-select
-            clearable
-            outlined
-            label="Target Column"
-            prepend-icon="mdi-bullseye"
-            v-if="fileData"
-            v-model="targetColumn"
-            :items='fileData.column_names'
-            @change="determineClassMetadata"
-          ></v-select>
-        </v-col>
-      </v-row>
-      <v-alert
-        dense
-        text
-        type="info"
-        v-if="class0nanSize >0 || class1nanSize > 0"
-      >
-        Some data cannot be used.
-        <span v-if="class0nanSize >0">For class 0, {{class0nanSize}} row
-          <span v-if="class0nanSize == 1"> is </span>
-          <span v-if="class0nanSize > 1">s are </span>excluded.
-        </span>
-        <span v-if="class1nanSize >0">For class 1, {{class1nanSize}} row
-          <span v-if="class1nanSize == 1"> is </span>
-          <span v-if="class1nanSize > 1">s are </span>excluded.
-        </span>
+          <v-divider></v-divider>
 
+          <v-stepper-step step="3">
+            Select Split
+          </v-stepper-step>
+        </v-stepper-header>
 
-      </v-alert>
-      <div style="width:100%" >
-        <div
-          class="distrobution-box"
-          v-bind:style="{
-            background: '#2196F3',
-            width: class0percent + '%'
-            }"
-          >
-          <div
-            v-bind:style="{
-              opacity: 0.3,
-              background:'white',
-              width: class0nanPercent + '%',
-              position:'absolute',
-              left:'16px',
-              bottom:'15px'
-              }"
-            class="distrobution-box"
-          >
-          </div>
-          <p class="pa-0 ma-0">
-            Class 0 ({{class0percent}}%)
-          </p>
-          <p class="pa-0 ma-0" v-if="class0nanSize == 0">
-            N={{class0size}}
-          </p>
-          <p class="pa-0 ma-0" v-if="class0nanSize > 0">
-            <span style="text-decoration: line-through">{{class0size}}</span>
-            <v-icon color="white">mdi-arrow-right</v-icon>
-            {{class0size - class0nanSize}}
-          </p>
-        </div>
-        <div
-          class="distrobution-box"
-          v-bind:style="{
-            background: '#009688',
-            width: class1percent + '%'
-            }"
-          >
-          <div
-            v-bind:style="{
-              opacity: 0.3,
-              background:'white',
-              width: class1nanPercent + '%',
-              position:'absolute',
-              right:'16px',
-              bottom:'15px'
-              }"
-            class="distrobution-box"
-          >
-          </div>
-          <p class="pa-0 ma-0">
-            Class 1 ({{class1percent}}%)
-          </p>
-          <p class="pa-0 ma-0" v-if="class1nanSize == 0">
-            N={{class1size}}
-          </p>
-          <p class="pa-0 ma-0" v-if="class1nanSize > 0">
-            <span style="text-decoration: line-through">{{class1size}}</span>
-            <v-icon color="white">mdi-arrow-right</v-icon>
-            {{class1size - class1nanSize}}
-          </p>
-        </div>
-
-
-
-        <div class="distrobution-box" v-bind:style="{ background: '#d3d3d3', width: placeholderSlot + '%' }">Data Distrobution Displayed After Selection</div>
-      </div>
-
-
-
-
-
-      <v-alert
-        v-if="minSampleSizeError"
-        color="red"
-        type="error"
-      >To use this tool, each class must have a an N greater than {{minSampleSize}}.</v-alert>
-
-    </v-card>
-
-
-
-    <v-card
-      class="ma-3 px-4 py-2"
-      outlined
-      v-if="!minSampleSizeError && targetColumn != null"
-    >
-      <div class="overline mb-3">
-        Step 3 - Select Split
-      </div>
-      <div >
-        Select amount of training data. {{minSampleSize}} is the minimum supported sample size. We have automatically selected a value that you may adjust below.
-      </div>
-      <v-row>
-        <v-col cols="5">
-          <v-slider
-            :min="minSampleSize"
-            :max="maxSampleSize"
-            v-model="trainingClassSampleSize"
-            @change="calculatePercentage"
-          ></v-slider>
-        </v-col>
-        <v-col cols="1">
-          {{trainingClassSampleSize}}
-        </v-col>
-      </v-row>
-      <div >
-        Select how you would like to use remain data in the global generalization testing set.
-      </div>
-      <v-radio-group v-model="prevalenceOption" @change="calculatePercentage">
-        <v-radio label="Use All Remaining Data After Training Data Removed"></v-radio>
-        <v-radio label="Maintain Original Prevalence in Validation File (some data will be removed)"></v-radio>
-      </v-radio-group>
-
-        <v-card class="mb-10">
-          <div style="width:100%">
-
-            <div
-              class="title-box"
-              v-bind:style="{
-                background: 'white',
-                width: barSizes.nan + '%'
-                }"
+        <v-stepper-items>
+          <v-stepper-content step="1">
+            <v-card
+              class="ma-3 px-4 py-2"
+              flat
+            >
+              <!-- <div class="overline mb-3">
+                Step 1 - Select Data File
+              </div> -->
+              <v-row>
+                <v-col
+                  cols="6"
+                  class="pb-0"
+                >
+                  <v-file-input
+                    chips
+                    clearable
+                    label="Data File"
+                    outlined
+                    prepend-icon="mdi-file"
+                    truncate-length="100"
+                    v-model="file"
+                    @change="trainTestFileUpload"
+                  ></v-file-input>
+                </v-col>
+                <v-col
+                  cols="6"
+                  class="pb-0"
+                >
+                  <v-card
+                    class="pt-3"
+                    flat
+                    v-if="fileData"
+                  >
+                    <v-icon large>mdi-table-column</v-icon>
+                    {{fileData.columns}} columns
+                    <v-icon large>mdi-table-row</v-icon>
+                    {{fileData.rows}} rows
+                  </v-card>
+                </v-col>
+                <v-col
+                  cols="12"
+                  class="mt-0 pt-0"
+                  v-if="fileData && fileData.nan_count > 0"
+                >
+                  <v-alert
+                    dense
+                    text
+                    type="info"
+                  >
+                    {{fileData.nan_count}} rows have missing data. This will affect the output (see next step).
+                  </v-alert>
+                </v-col>
+              </v-row>
+            </v-card>
+            <div class="text-right">
+              <v-btn
+                color="primary"
+                @click="e1 = 2"
+                :disabled="fileData == null"
               >
+                Continue
+              </v-btn>
+
             </div>
 
 
-            <div
-              class="title-box"
-              v-bind:style="{
-                background: '#7E57C2',
-                width: barSizes.train0 + barSizes.train1 + '%'
-                }"
-              >
-              Training Data
-            </div>
-            <div
-              class="title-box"
-              v-bind:style="{
-                background: '#5C6BC0',
-                width: barSizes.test0 + barSizes.test1 + '%'
-                }"
-              >
-              Generalization Testing Data
-            </div>
-          </div>
-          <div style="width:100%">
 
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
+
+          </v-stepper-content>
+
+          <v-stepper-content step="2">
+            <v-card
+              class="ma-3 px-4 py-2"
+              flat
+            >
+
+              <v-row>
+                <v-col cols="6">
+                  <v-select
+                    clearable
+                    outlined
+                    label="Target Column"
+                    prepend-icon="mdi-bullseye"
+                    v-if="fileData"
+                    v-model="targetColumn"
+                    :items='fileData.column_names'
+                    @change="determineClassMetadata"
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-alert
+                dense
+                text
+                type="info"
+                v-if="class0nanSize >0 || class1nanSize > 0"
+              >
+                Some data cannot be used.
+                <span v-if="class0nanSize >0">For class 0, {{class0nanSize}} row
+                  <span v-if="class0nanSize == 1"> is </span>
+                  <span v-if="class0nanSize > 1">s are </span>excluded.
+                </span>
+                <span v-if="class1nanSize >0">For class 1, {{class1nanSize}} row
+                  <span v-if="class1nanSize == 1"> is </span>
+                  <span v-if="class1nanSize > 1">s are </span>excluded.
+                </span>
+
+
+              </v-alert>
+              <div style="width:100%" >
                 <div
                   class="distrobution-box"
-                  v-bind="attrs"
-                  v-on="on"
                   v-bind:style="{
-                    background: 'grey',
-                    width: barSizes.nan + '%'
+                    background: '#2196F3',
+                    width: class0percent + '%'
                     }"
                   >
-                  <div>n={{fileData.nan_count}}</div>
+                  <div
+                    v-bind:style="{
+                      opacity: 0.3,
+                      background:'white',
+                      width: class0nanPercent + '%',
+                      position:'absolute',
+                      left:'16px',
+                      bottom:'15px'
+                      }"
+                    class="distrobution-box"
+                  >
+                  </div>
+                  <p class="pa-0 ma-0">
+                    Class 0 ({{class0percent}}%)
+                  </p>
+                  <p class="pa-0 ma-0" v-if="class0nanSize == 0">
+                    N={{class0size}}
+                  </p>
+                  <p class="pa-0 ma-0" v-if="class0nanSize > 0">
+                    <span style="text-decoration: line-through">{{class0size}}</span>
+                    <v-icon color="white">mdi-arrow-right</v-icon>
+                    {{class0size - class0nanSize}}
+                  </p>
+                </div>
+                <div
+                  class="distrobution-box"
+                  v-bind:style="{
+                    background: '#009688',
+                    width: class1percent + '%'
+                    }"
+                  >
+                  <div
+                    v-bind:style="{
+                      opacity: 0.3,
+                      background:'white',
+                      width: class1nanPercent + '%',
+                      position:'absolute',
+                      right:'16px',
+                      bottom:'15px'
+                      }"
+                    class="distrobution-box"
+                  >
+                  </div>
+                  <p class="pa-0 ma-0">
+                    Class 1 ({{class1percent}}%)
+                  </p>
+                  <p class="pa-0 ma-0" v-if="class1nanSize == 0">
+                    N={{class1size}}
+                  </p>
+                  <p class="pa-0 ma-0" v-if="class1nanSize > 0">
+                    <span style="text-decoration: line-through">{{class1size}}</span>
+                    <v-icon color="white">mdi-arrow-right</v-icon>
+                    {{class1size - class1nanSize}}
+                  </p>
                 </div>
 
-              </template>
-              <span>{{fileData.nan_count}} rows are missing data and cannot be used in the final data set</span>
-            </v-tooltip>
+                <div class="distrobution-box" v-bind:style="{ background: '#d3d3d3', width: placeholderSlot + '%' }">Data Distrobution Displayed After Selection</div>
+              </div>
 
 
 
 
-            <div
-              class="distrobution-box"
-              v-bind:style="{
-                background: '#64B5F6',
-                width: barSizes.train0 + '%'
-                }"
+
+              <v-alert
+                v-if="minSampleSizeError"
+                color="red"
+                type="error"
+              >To use this tool, each class must have a an N greater than {{minSampleSize}}.</v-alert>
+
+            </v-card>
+
+            <div class="text-right">
+              <v-btn class="mr-3" @click="e1 = 1">
+                <v-icon>mdi-chevron-left</v-icon>
+              </v-btn>
+              <v-btn
+                color="primary"
+                @click="e1 = 3"
+                :disabled="!(!minSampleSizeError && targetColumn != null)"
               >
-              <div>Train 0</div>
-              <div>n={{trainingClassSampleSize}}</div>
+                Continue
+              </v-btn>
+
             </div>
-            <div
-              class="distrobution-box"
-              v-bind:style="{
-                background: '#4DB6AC',
-                width: barSizes.train1 + '%'
-                }"
-              >
-              <div>Train 1</div>
-              <div>n={{trainingClassSampleSize}}</div>
-            </div>
-            <div
-              class="distrobution-box"
-              v-bind:style="{
-                background: '#42A5F5',
-                width: barSizes.test0 + '%'
-                }"
-              >
-              <div>Test 0</div>
-              <div>n={{barData.test0global}}</div>
-            </div>
-            <div
-              class="distrobution-box"
-              v-bind:style="{
-                background: '#26A69A',
-                width: barSizes.test1 + '%'
-                }"
-              >
-              <div>Test 1</div>
-              <div>n={{barData.test1global}}</div>
-            </div>
-            <div
-              class="distrobution-box"
-              v-bind:style="{
-                background: '#F48FB1',
-                width: barSizes.extra + '%'
-                }"
-              >
-              <div>Not Used</div>
-              <div>n={{barData.extra}}</div>
-            </div>
-          </div>
-        </v-card>
-        <div class="text-right">
-            <v-btn
-              dark
-              float="right"
-              color="grey"
-              rounded
-              @click="processFiles"
+          </v-stepper-content>
+
+          <v-stepper-content step="3">
+            <v-card
+              class="ma-3 px-4 py-2"
+              flat
+              v-if="!minSampleSizeError && targetColumn != null"
+
             >
-              Build Files
-            </v-btn>
-        </div>
+              <div >
+                Select amount of training data. {{minSampleSize}} is the minimum supported sample size. We have automatically selected a value that you may adjust below.
+              </div>
+              <v-row>
+                <v-col cols="5">
+                  <v-slider
+                    :min="minSampleSize"
+                    :max="maxSampleSize"
+                    v-model="trainingClassSampleSize"
+                    @change="calculatePercentage"
+                  ></v-slider>
+                </v-col>
+                <v-col cols="1">
+                  {{trainingClassSampleSize}}
+                </v-col>
+              </v-row>
+              <div >
+                Select how you would like to use remain data in the global generalization testing set.
+              </div>
+              <v-radio-group v-model="prevalenceOption" @change="calculatePercentage">
+                <v-radio label="Use All Remaining Data After Training Data Removed"></v-radio>
+                <v-radio label="Maintain Original Prevalence in Validation File (some data will be removed)"></v-radio>
+              </v-radio-group>
+
+                <v-card flat class="mb-10">
+                  <div style="width:100%">
+
+                    <div
+                      class="title-box"
+                      v-bind:style="{
+                        background: 'white',
+                        width: barSizes.nan + '%'
+                        }"
+                      >
+                    </div>
+
+
+                    <div
+                      class="title-box"
+                      v-bind:style="{
+                        background: '#7E57C2',
+                        width: barSizes.train0 + barSizes.train1 + '%'
+                        }"
+                      >
+                      Training Data
+                    </div>
+                    <div
+                      class="title-box"
+                      v-bind:style="{
+                        background: '#5C6BC0',
+                        width: barSizes.test0 + barSizes.test1 + '%'
+                        }"
+                      >
+                      Generalization Testing Data
+                    </div>
+                  </div>
+                  <div style="width:100%">
+
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <div
+                          class="distrobution-box"
+                          v-bind="attrs"
+                          v-on="on"
+                          v-bind:style="{
+                            background: 'grey',
+                            width: barSizes.nan + '%'
+                            }"
+                          >
+                          <div>n={{fileData.nan_count}}</div>
+                        </div>
+
+                      </template>
+                      <span>{{fileData.nan_count}} rows are missing data and cannot be used in the final data set</span>
+                    </v-tooltip>
+
+
+
+
+                    <div
+                      class="distrobution-box"
+                      v-bind:style="{
+                        background: '#64B5F6',
+                        width: barSizes.train0 + '%'
+                        }"
+                      >
+                      <div>Train 0</div>
+                      <div>n={{trainingClassSampleSize}}</div>
+                    </div>
+                    <div
+                      class="distrobution-box"
+                      v-bind:style="{
+                        background: '#4DB6AC',
+                        width: barSizes.train1 + '%'
+                        }"
+                      >
+                      <div>Train 1</div>
+                      <div>n={{trainingClassSampleSize}}</div>
+                    </div>
+                    <div
+                      class="distrobution-box"
+                      v-bind:style="{
+                        background: '#42A5F5',
+                        width: barSizes.test0 + '%'
+                        }"
+                      >
+                      <div>Test 0</div>
+                      <div>n={{barData.test0global}}</div>
+                    </div>
+                    <div
+                      class="distrobution-box"
+                      v-bind:style="{
+                        background: '#26A69A',
+                        width: barSizes.test1 + '%'
+                        }"
+                      >
+                      <div>Test 1</div>
+                      <div>n={{barData.test1global}}</div>
+                    </div>
+                    <div
+                      class="distrobution-box"
+                      v-bind:style="{
+                        background: '#F48FB1',
+                        width: barSizes.extra + '%'
+                        }"
+                      >
+                      <div>Not Used</div>
+                      <div>n={{barData.extra}}</div>
+                    </div>
+                  </div>
+                </v-card>
 
 
 
 
 
 
-    </v-card>
+
+            </v-card>
+
+            <div class="text-right">
+              <v-btn class="mr-3" @click="e1 = 2">
+                <v-icon>mdi-chevron-left</v-icon>
+              </v-btn>
+              <v-btn
+                dark
+                float="right"
+                color="purple"
+                rounded
+                @click="processFiles"
+              >
+                Build Files
+              </v-btn>
+
+            </div>
+
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -378,6 +457,8 @@ export default {
   name: 'TrainTestSplit',
   data() {
     return {
+      e1: 1,
+
       file: null,
       fileData: null,
 
