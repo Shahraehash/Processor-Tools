@@ -1,4 +1,4 @@
 
-docker build ./local_only/milo-pp2 -t fennell/ml-p
-docker save fennell/ml-pp ml-pp-21-08-20.tar
+docker build ./-t fennell/ml-pp
+docker save fennell/ml-pp -o ml-pp-21-09-04.tar
 docker run -d -p 5000:5000 fennell/ml-pp:latest
