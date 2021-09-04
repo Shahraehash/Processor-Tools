@@ -95,6 +95,7 @@
       <v-row>
         <v-col cols="6">
           <v-select
+            clearable
             outlined
             label="Target Column"
             prepend-icon="mdi-bullseye"
@@ -162,8 +163,6 @@
             width: class1percent + '%'
             }"
           >
-
-
           <div
             v-bind:style="{
               opacity: 0.3,
@@ -207,16 +206,26 @@
     </v-card>
 
 
-    <v-card outlined class="ma-3 pa-3" v-if="!minSampleSizeError && targetColumn != null">
-      <v-card-title class="">
+
+    <v-card
+      class="ma-3 px-4 py-2"
+      outlined
+      v-if="!minSampleSizeError && targetColumn != null"
+    >
+      <div class="overline mb-3">
         Step 3 - Select Split
-      </v-card-title>
+      </div>
       <div >
         Select amount of training data. {{minSampleSize}} is the minimum supported sample size. We have automatically selected a value that you may adjust below.
       </div>
       <v-row>
         <v-col cols="5">
-          <v-slider :min="minSampleSize" :max="maxSampleSize" v-model="trainingClassSampleSize" @change="calculatePercentage"></v-slider>
+          <v-slider
+            :min="minSampleSize"
+            :max="maxSampleSize"
+            v-model="trainingClassSampleSize"
+            @change="calculatePercentage"
+          ></v-slider>
         </v-col>
         <v-col cols="1">
           {{trainingClassSampleSize}}
@@ -230,49 +239,123 @@
         <v-radio label="Maintain Original Prevalence in Validation File (some data will be removed)"></v-radio>
       </v-radio-group>
 
-      <div class="">
-
-      </div>
-
-
         <v-card class="mb-10">
           <div style="width:100%">
-            <div class="title-box" v-bind:style="{ background: '#7E57C2', width: barSizes.train0 + barSizes.train1 + '%' }">
+
+            <div
+              class="title-box"
+              v-bind:style="{
+                background: 'white',
+                width: barSizes.nan + '%'
+                }"
+              >
+            </div>
+
+
+            <div
+              class="title-box"
+              v-bind:style="{
+                background: '#7E57C2',
+                width: barSizes.train0 + barSizes.train1 + '%'
+                }"
+              >
               Training Data
-
             </div>
-            <div class="title-box" v-bind:style="{ background: '#5C6BC0', width: barSizes.test0 + barSizes.test1 + '%' }">
-              Global Generalization Testing Data
-
+            <div
+              class="title-box"
+              v-bind:style="{
+                background: '#5C6BC0',
+                width: barSizes.test0 + barSizes.test1 + '%'
+                }"
+              >
+              Generalization Testing Data
             </div>
-
           </div>
           <div style="width:100%">
-            <div class="distrobution-box" v-bind:style="{ background: '#64B5F6', width: barSizes.train0 + '%' }">
+
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="distrobution-box"
+                  v-bind="attrs"
+                  v-on="on"
+                  v-bind:style="{
+                    background: 'grey',
+                    width: barSizes.nan + '%'
+                    }"
+                  >
+                  <div>n={{fileData.nan_count}}</div>
+                </div>
+
+              </template>
+              <span>{{fileData.nan_count}} rows are missing data and cannot be used in the final data set</span>
+            </v-tooltip>
+
+
+
+
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#64B5F6',
+                width: barSizes.train0 + '%'
+                }"
+              >
               <div>Train 0</div>
               <div>n={{trainingClassSampleSize}}</div>
-
             </div>
-            <div class="distrobution-box" v-bind:style="{ background: '#4DB6AC', width: barSizes.train1 + '%' }">
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#4DB6AC',
+                width: barSizes.train1 + '%'
+                }"
+              >
               <div>Train 1</div>
               <div>n={{trainingClassSampleSize}}</div>
             </div>
-            <div class="distrobution-box" v-bind:style="{ background: '#42A5F5', width: barSizes.test0 + '%' }">
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#42A5F5',
+                width: barSizes.test0 + '%'
+                }"
+              >
               <div>Test 0</div>
               <div>n={{barData.test0global}}</div>
             </div>
-            <div class="distrobution-box" v-bind:style="{ background: '#26A69A', width: barSizes.test1 + '%' }">
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#26A69A',
+                width: barSizes.test1 + '%'
+                }"
+              >
               <div>Test 1</div>
               <div>n={{barData.test1global}}</div>
             </div>
-            <div class="distrobution-box" v-bind:style="{ background: '#F48FB1', width: barSizes.extra + '%' }">
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#F48FB1',
+                width: barSizes.extra + '%'
+                }"
+              >
               <div>Not Used</div>
               <div>n={{barData.extra}}</div>
             </div>
           </div>
         </v-card>
         <div class="text-right">
-            <v-btn dark float="right" color="grey" rounded @click="processFiles">Build Files</v-btn>
+            <v-btn
+              dark
+              float="right"
+              color="grey"
+              rounded
+              @click="processFiles"
+            >
+              Build Files
+            </v-btn>
         </div>
 
 
@@ -300,6 +383,7 @@ export default {
 
       prevalenceOption: 0,
 
+      //STEP 2
       targetColumn: null,
       classMetadata: null,
       //class computed
@@ -319,6 +403,7 @@ export default {
       trainingClassSampleSize: 0,
       widthTest: 30,
       barSizes: {
+        nan: 0,
         train0: 0,
         train1: 0,
         test0: 0,
@@ -348,6 +433,31 @@ export default {
 
   },
   methods: {
+    resetStep1() {
+      this.file = null
+      this.fileData = null
+      this.resetStep2()
+    },
+    resetStep2() {
+      this.targetColumn = null
+      this.classMetadata = null
+      this.class0size = 0
+      this.class0percent = 0
+      this.class0nanSize = 0
+      this.class0nanPercent = 0
+      this.class1size = 0
+      this.class1percent = 0
+      this.class1nanSize = 0
+      this.class1nanPercent = 0
+      this.placeholderSlot = 100
+
+      this.resetStep3()
+    },
+    resetStep3() {
+      console.log('reset step 3')
+
+    },
+
     trainTestFileUpload(file) {
       if (file != null) {
         //this method uploads form data
@@ -369,12 +479,11 @@ export default {
             color: 'red lighten-1',
             message: 'Error processing file.'
           })
-          this.file = null
-          this.fileData = null
+          this.resetStep1()
         })
       }
       else {
-        this.fileData = null
+        this.resetStep1()
       }
 
     },
@@ -389,28 +498,34 @@ export default {
           'Content-Type': 'application/json',
           }
         }).then(result => {
+          //Parse JSON in subobjects
           this.classMetadata = result.data
           this.classMetadata.class_counts = JSON.parse(this.classMetadata.class_counts)
 
+          //If missing data, process the counts
           if (this.classMetadata.nan_class_counts != null) {
             this.classMetadata.nan_class_counts = JSON.parse(this.classMetadata.nan_class_counts)
           }
 
-          console.log(this.classMetadata)
-          this.calculateMetadataMetrics()
-          this.calculatePercentage()
+          //Calculated values and UI parameters
+          //Step 2
+          this.calculateMetadataMetrics() //for Step 2 bar
+          //Step 3
           this.findTrainingClassSampleSize()
+          this.calculatePercentage() //for Step 3
+
+
         }).catch(() => {
           this.$store.commit('snackbarMessageSet', {
             color: 'red lighten-1',
             message: 'Invalid column selection. Values are not binary.'
           })
-          this.targetColumn = null
+          this.resetStep2()
 
         })
       }
       else {
-        this.classMetadata = null
+        this.resetStep2()
       }
 
     },
@@ -466,54 +581,107 @@ export default {
     },
     calculatePercentage() {
       if (this.prevalenceOption == 0) {
-        this.barSizes.train0 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
-        this.barSizes.train1 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
-        this.barSizes.test0 = 100 * (this.classMetadata.class_counts[0] - this.trainingClassSampleSize) / this.classMetadata.total_count
-        this.barSizes.test1 = 100 * (this.classMetadata.class_counts[1] - this.trainingClassSampleSize) / this.classMetadata.total_count
-        this.barSizes.extra = 0
 
-        this.barData.test0global = this.classMetadata.class_counts[0] - this.trainingClassSampleSize
-        this.barData.test1global = this.classMetadata.class_counts[1] - this.trainingClassSampleSize
-        this.barData.extra = 0
+        if (this.classMetadata.nan_class_counts != null) {
+          this.barSizes.nan = 100 * ( (this.classMetadata.nan_class_counts[0] +  this.classMetadata.nan_class_counts[1]) / this.classMetadata.total_count)
+
+          this.barSizes.train0 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+          this.barSizes.train1 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+
+          this.barSizes.test0 = 100 * (this.classMetadata.class_counts[0] - this.trainingClassSampleSize - (this.classMetadata.nan_class_counts[0] +  this.classMetadata.nan_class_counts[1])) / this.classMetadata.total_count
+          this.barSizes.test1 = 100 * (this.classMetadata.class_counts[1] - this.trainingClassSampleSize - (this.classMetadata.nan_class_counts[0] +  this.classMetadata.nan_class_counts[1])) / this.classMetadata.total_count
+          this.barSizes.extra = 0
+
+          this.barData.test0global = this.classMetadata.class_counts[0] - this.trainingClassSampleSize - this.classMetadata.nan_class_counts[0]
+          this.barData.test1global = this.classMetadata.class_counts[1] - this.trainingClassSampleSize - this.classMetadata.nan_class_counts[1]
+          this.barData.extra = 0
+
+        }
+
+        else {
+          this.barSizes.train0 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+          this.barSizes.train1 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+          this.barSizes.test0 = 100 * (this.classMetadata.class_counts[0] - this.trainingClassSampleSize) / this.classMetadata.total_count
+          this.barSizes.test1 = 100 * (this.classMetadata.class_counts[1] - this.trainingClassSampleSize) / this.classMetadata.total_count
+          this.barSizes.extra = 0
+
+          this.barData.test0global = this.classMetadata.class_counts[0] - this.trainingClassSampleSize
+          this.barData.test1global = this.classMetadata.class_counts[1] - this.trainingClassSampleSize
+          this.barData.extra = 0
+
+        }
+
       }
       else if (this.prevalenceOption == 1) {
-        console.log('swap')
-        this.barSizes.train0 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
-        this.barSizes.train1 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+
+        if (this.classMetadata.nan_class_counts != null) {
+
+          this.barSizes.nan = 100 * ( (this.classMetadata.nan_class_counts[0] +  this.classMetadata.nan_class_counts[1]) / this.classMetadata.total_count)
+
+          this.barSizes.train0 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+          this.barSizes.train1 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+
+          let percentMajority = this.classMetadata.class_counts[this.classMetadata.majority_class] / this.classMetadata.total_count
+          let percentMinority = this.classMetadata.class_counts[this.classMetadata.minority_class] / this.classMetadata.total_count
+
+          let minorityRemain = this.classMetadata.class_counts[this.classMetadata.minority_class] - this.trainingClassSampleSize - this.classMetadata.nan_class_counts[this.classMetadata.minority_class]
+          let totalRemain = Math.round(minorityRemain / percentMinority)
+          let majorityRemain = Math.round(percentMajority * totalRemain)
+
+          let numberToDrop = this.classMetadata.class_counts[this.classMetadata.majority_class] - this.trainingClassSampleSize - majorityRemain - this.classMetadata.nan_class_counts[this.classMetadata.majority_class]
 
 
-        let percentMajority = this.classMetadata.class_counts[this.classMetadata.majority_class] / this.classMetadata.total_count
-        let percentMinority = this.classMetadata.class_counts[this.classMetadata.minority_class] / this.classMetadata.total_count
-        let minorityRemain = this.classMetadata.class_counts[this.classMetadata.minority_class] - this.trainingClassSampleSize
-        let totalRemain = Math.round(minorityRemain / percentMinority)
-        let majorityRemain = Math.round(percentMajority * totalRemain)
-        let numberToDrop = this.classMetadata.class_counts[this.classMetadata.majority_class] - this.trainingClassSampleSize - majorityRemain
+          if (this.classMetadata.majority_class == 0) {
+            this.barSizes.test0 = 100 * majorityRemain / this.classMetadata.total_count
+            this.barSizes.test1 = 100 * minorityRemain / this.classMetadata.total_count
+            this.barData.test0global = majorityRemain
+            this.barData.test1global = minorityRemain
+
+          }
+          else if (this.classMetadata.majority_class == 1) {
+            this.barSizes.test0 = 100 * minorityRemain / this.classMetadata.total_count
+            this.barSizes.test1 = 100 * majorityRemain / this.classMetadata.total_count
+            this.barData.test0global = minorityRemain
+            this.barData.test1global = majorityRemain
+          }
+          this.barData.extra = numberToDrop
+          this.barSizes.extra = 100 * numberToDrop / this.classMetadata.total_count
 
 
-        console.log({
-          percentMajority,
-          percentMinority,
-          minorityRemain,
-          totalRemain,
-          majorityRemain,
-          numberToDrop
-        })
-
-        if (this.classMetadata.majority_class == 0) {
-          this.barSizes.test0 = 100 * majorityRemain / this.classMetadata.total_count
-          this.barSizes.test1 = 100 * minorityRemain / this.classMetadata.total_count
-          this.barData.test0global = majorityRemain
-          this.barData.test1global = minorityRemain
 
         }
-        else if (this.classMetadata.majority_class == 1) {
-          this.barSizes.test0 = 100 * minorityRemain / this.classMetadata.total_count
-          this.barSizes.test1 = 100 * majorityRemain / this.classMetadata.total_count
-          this.barData.test0global = minorityRemain
-          this.barData.test1global = majorityRemain
+
+        else {
+          this.barSizes.train0 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+          this.barSizes.train1 = 100 * (this.trainingClassSampleSize / this.classMetadata.total_count)
+
+
+          let percentMajority = this.classMetadata.class_counts[this.classMetadata.majority_class] / this.classMetadata.total_count
+          let percentMinority = this.classMetadata.class_counts[this.classMetadata.minority_class] / this.classMetadata.total_count
+          let minorityRemain = this.classMetadata.class_counts[this.classMetadata.minority_class] - this.trainingClassSampleSize
+          let totalRemain = Math.round(minorityRemain / percentMinority)
+          let majorityRemain = Math.round(percentMajority * totalRemain)
+          let numberToDrop = this.classMetadata.class_counts[this.classMetadata.majority_class] - this.trainingClassSampleSize - majorityRemain
+
+
+          if (this.classMetadata.majority_class == 0) {
+            this.barSizes.test0 = 100 * majorityRemain / this.classMetadata.total_count
+            this.barSizes.test1 = 100 * minorityRemain / this.classMetadata.total_count
+            this.barData.test0global = majorityRemain
+            this.barData.test1global = minorityRemain
+
+          }
+          else if (this.classMetadata.majority_class == 1) {
+            this.barSizes.test0 = 100 * minorityRemain / this.classMetadata.total_count
+            this.barSizes.test1 = 100 * majorityRemain / this.classMetadata.total_count
+            this.barData.test0global = minorityRemain
+            this.barData.test1global = majorityRemain
+          }
+          this.barData.extra = numberToDrop
+          this.barSizes.extra = 100 * numberToDrop / this.classMetadata.total_count
+
         }
-        this.barData.extra = numberToDrop
-        this.barSizes.extra = 100 * numberToDrop / this.classMetadata.total_count
+
 
       }
 
