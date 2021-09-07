@@ -52,7 +52,7 @@ def ping_pong():
 
 @app.route('/')
 def home():
-    clearFiles()
+    #clearFiles()
     return render_template("index.html")
 
 #Train Test Split Tools
@@ -79,6 +79,7 @@ def train_test_split_upload():
         #helper function to clean up nan rows
         df = convert_blanks_to_nan(df)
         #update file with cleaned up fields
+
         df.to_csv(file_path)
 
         entry = {
@@ -180,6 +181,8 @@ def train_test_split_process():
         test_reduced = test_reduced.drop(reduction.index)
         final_data['testing'] = test_reduced.to_csv(index=False)
         final_data['extra'] = reduction.to_csv(index=False)
+
+    time.sleep(3)
 
     return make_response(final_data)
 
@@ -334,7 +337,7 @@ def return_files_tut():
 @app.route('/<path:path>')
 def index(path):
     try:
-        clearFiles()
+        #clearFiles()
         return render_template('index.html')
     except Exception as e:
         print(e)

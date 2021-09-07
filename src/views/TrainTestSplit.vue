@@ -55,8 +55,17 @@
 
           <v-divider></v-divider>
 
-          <v-stepper-step step="3">
+          <v-stepper-step
+            :complete="e1 > 3"
+            step="3"
+          >
             Select Split
+          </v-stepper-step>
+
+          <v-divider></v-divider>
+
+          <v-stepper-step step="4">
+            Output
           </v-stepper-step>
         </v-stepper-header>
 
@@ -115,13 +124,14 @@
                 </v-col>
               </v-row>
             </v-card>
-            <div class="text-right">
+            <div class="text-right pa-2">
               <v-btn
                 color="primary"
                 @click="e1 = 2"
                 :disabled="fileData == null"
               >
-                Continue
+                Next
+                <v-icon>mdi-chevron-right</v-icon>
               </v-btn>
 
             </div>
@@ -248,19 +258,36 @@
 
             </v-card>
 
-            <div class="text-right">
-              <v-btn class="mr-3" @click="e1 = 1">
-                <v-icon>mdi-chevron-left</v-icon>
-              </v-btn>
-              <v-btn
-                color="primary"
-                @click="e1 = 3"
-                :disabled="!(!minSampleSizeError && targetColumn != null)"
-              >
-                Continue
-              </v-btn>
 
-            </div>
+            <v-row class="pa-2">
+              <v-col cols="6" class="text-left">
+                <v-btn
+                  class="mr-3"
+                  text
+                  @click="e1 = 1"
+                >
+                  <v-icon>mdi-chevron-left</v-icon>
+                  Previous
+                </v-btn>
+
+              </v-col>
+              <v-col cols="6" class="text-right">
+                <v-btn
+                  float="right"
+                  color="primary"
+                  @click="e1 = 3"
+                  :disabled="!(!minSampleSizeError && targetColumn != null)"
+                >
+                  Next
+                  <v-icon>mdi-chevron-right</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+
+
+
+
+
           </v-stepper-content>
 
           <v-stepper-content step="3">
@@ -401,34 +428,173 @@
                     </div>
                   </div>
                 </v-card>
-
-
-
-
-
-
-
             </v-card>
 
-            <div class="text-right">
-              <v-btn class="mr-3" @click="e1 = 2">
-                <v-icon>mdi-chevron-left</v-icon>
-              </v-btn>
-              <v-btn
-                dark
-                float="right"
-                color="purple"
-                rounded
-                @click="processFiles"
-              >
-                Build Files
-              </v-btn>
+
+            <v-row class="pa-2">
+              <v-col cols="6" class="text-left">
+                <v-btn
+                  class="mr-3"
+                  text
+                  @click="e1 = 2"
+                >
+                  <v-icon>mdi-chevron-left</v-icon>
+                  Previous
+                </v-btn>
+
+              </v-col>
+              <v-col cols="6" class="text-right">
+                <v-btn
+                  dark
+                  float="right"
+                  color="primary"
+                  @click="e1 = 4"
+                >
+                  Next
+                  <v-icon>mdi-chevron-right</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-stepper-content>
+          <v-stepper-content step="4">
+
+            <div class="overline mb-5">Training and Testing Data File Outputs</div>
+            <v-row>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="outputFiles.training"
+                  outlined
+                  dense
+                  label="Training Data File Name"
+                  suffix=".csv"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  v-model="outputFiles.testing"
+                  outlined
+                  dense
+                  label="Testing Data File Name"
+                  suffix=".csv"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+
+            <div v-if="e1 == 4">
+              <div class="overline">Additional File Outputs</div>
+              <v-row>
+                <v-col cols="6"
+                  v-if="prevalenceOption == 1"
+
+                >
+
+                  <v-switch
+                  label="Export unused data from the majority class."
+                  v-model="outputSettings.extraFile"
+                  ></v-switch>
+
+                  <v-text-field
+                    outlined
+                    dense
+                    label="Extra Data File"
+                    suffix=".csv"
+                    v-model="outputFiles.extra"
+                    v-if="outputSettings.extraFile"
+                  ></v-text-field>
+                </v-col>
+
+                <v-col cols="6"
+
+                  v-if="fileData.nan_count > 0"
+                >
+                  <div>
+                    <v-switch
+                    label="Export the rows missing data."
+                    v-model="outputSettings.nanFile"
+                    ></v-switch>
+                  </div>
+                  <v-text-field
+                    outlined
+                    dense
+                    label="Rows with Missing Data File"
+                    suffix=".csv"
+                    v-model="outputFiles.nan"
+                    v-if="outputSettings.nanFile"
+                  ></v-text-field>
+                </v-col>
+
+              </v-row>
 
             </div>
+
+            <v-row class="pa-2">
+              <v-col cols="6" class="text-left">
+                <v-btn
+                  class="mr-3"
+                  text
+                  @click="e1 = 3"
+                >
+                  <v-icon>mdi-chevron-left</v-icon>
+                  Previous
+                </v-btn>
+
+              </v-col>
+              <v-col cols="6" class="text-right">
+                <v-btn
+                  dark
+                  float="right"
+                  color="primary"
+                  @click="processFiles()"
+                >
+                  Create Files
+                  <v-icon class="pl-2">mdi-file</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+
 
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>
+
+
+      <v-dialog
+        v-model="completionDialog"
+      >
+        <v-card class="text-center pa-10 loaders-transition">
+          <v-progress-circular
+            color="blue"
+            size="160"
+            width="15"
+            indeterminate
+            v-if="processFileLoading == true"
+          >
+            Processing
+          </v-progress-circular>
+          <div v-if="processFileLoading == false">
+
+
+            <v-icon
+              style="font-size:160px"
+              class="loaders-transition"
+              color="green"
+            >mdi-check-circle-outline</v-icon>
+            <div class="display-1">
+              <v-icon x-large>mdi-arrow-down</v-icon>
+              Your files are available below.
+              <v-icon x-large>mdi-arrow-down</v-icon>
+            </div>
+            <div class="mt-5">
+              <v-btn class="mx-2" @click="completionDialog = false">Make Edits</v-btn>
+              <v-btn color="primary" @click="$router.push({name:'Landing'})">Close Tool</v-btn>
+            </div>
+
+          </div>
+
+
+
+        </v-card>
+      </v-dialog>
 
 
 
@@ -495,7 +661,19 @@ export default {
         test0global: 0,
         test1global: 0,
         extra: 0
-      }
+      },
+      outputFiles: {
+        training: null,
+        testing: null,
+        nan: null,
+        extra:null
+      },
+      outputSettings: {
+        nanFile: false,
+        extraFile: false
+      },
+      completionDialog: false,
+      processFileLoading: false,
     }
   },
   computed: {
@@ -594,6 +772,9 @@ export default {
           //Step 3
           this.findTrainingClassSampleSize()
           this.calculatePercentage() //for Step 3
+          //Step 4
+          this.makeFileNames()
+
 
 
         }).catch(() => {
@@ -610,6 +791,15 @@ export default {
       }
 
     },
+    makeFileNames() {
+      let fn = this.file.name.trim()
+      fn = fn.replace('.csv', '')
+      fn = fn.trim()
+      this.outputFiles.training = fn + '_training'
+      this.outputFiles.testing = fn + '_testing'
+      this.outputFiles.extra = fn + '_extra'
+      this.outputFiles.nan = fn + '_missing_data'
+    },
     processFiles() {
       let data = {
         target_column: this.targetColumn,
@@ -620,16 +810,35 @@ export default {
         extra: this.barData.extra // extra data used in maintaining inital prevalence
 
       }
+
+      //UI elements
+      this.completionDialog = true
+      this.processFileLoading = true
+
       return axios.post('train_test_split/process', data, {
         headers: {
         'Content-Type': 'application/json',
         }
       }).then(response => {
         console.log(response)
-        FileDownload(response.data.training, 'training.csv')
-        FileDownload(response.data.testing, 'testing.csv')
-        if ('extra' in response.data) {
-          FileDownload(response.data.extra, 'extra.csv')
+
+        //UI elements
+        this.processFileLoading = false
+
+        //File elements
+        FileDownload(response.data.training, this.outputFiles.training + '.csv')
+        FileDownload(response.data.testing, this.outputFiles.testing + '.csv')
+        if (this.outputSettings.extraFile) {
+          FileDownload(response.data.extra, this.outputFiles.extra + '.csv')
+        }
+        if (this.outputSettings.nanFile) {
+          try {
+            FileDownload(response.data.nan, this.outputFiles.nan + '.csv')
+          }
+          catch(err) {
+            console.log('error')
+          }
+
         }
       })
 
@@ -645,6 +854,7 @@ export default {
         this.trainingClassSampleSize = halfMinorityCount
       }
     },
+
     calculateMetadataMetrics() {
       this.class0size = this.classMetadata.class_counts[0]
       this.class1size = this.classMetadata.class_counts[1]
@@ -767,7 +977,8 @@ export default {
       }
 
 
-    }
+    },
+
 
 
   }
@@ -792,6 +1003,10 @@ export default {
   text-align: center;
   color: white;
   overflow: hidden;
+}
+
+.loaders-transition {
+  transition: 0.5s;
 }
 
 
