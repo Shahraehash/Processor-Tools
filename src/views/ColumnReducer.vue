@@ -19,11 +19,14 @@
       </v-card-text>
     </v-card>
 
+
+
+
     <v-card outlined class="ma-3 pa-3 ">
-      <v-card-title class="">
+      <div>
         Step 1 - Select Data File(s)
-      </v-card-title>
-      <v-card-text class="">
+      </div>
+      <div>
 
         <p>
           Select your training data file. You may also select a second testing data file.
@@ -32,7 +35,64 @@
           <v-row>
             <v-col cols="6" >
 
-              <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="trainingFileUpload"></v-file-input>
+              <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="dataFileUploadTraining"></v-file-input>
+              <v-progress-linear v-if="trainingDataLoading" indeterminate></v-progress-linear>
+              <span v-if="trainingMetadata != null">
+                <DataValidation
+                  :fileData="trainingMetadata"
+                  @dataValid="dataValidationTrainingData"
+                />
+              </span>
+            </v-col>
+            <v-col cols="6">
+
+              <v-file-input  prepend-icon="mdi-file" chips truncate-length="100" outlined label="Testing Data File (optional)" @change="dataFileUploadTesting" :disabled="trainingMetadata == null"></v-file-input>
+              <v-progress-linear v-if="testingDataLoading" indeterminate></v-progress-linear>
+              <span v-if="testingMetadata != null">
+                <DataValidation
+                  :fileData="testingMetadata"
+                  @dataValid="dataValidationTestingData"
+                />
+              </span>
+            </v-col>
+          </v-row>
+
+        </v-layout>
+        <v-layout>
+          <v-row>
+            <v-col cols="12" class="text-center">
+              <div>
+                <v-icon x-large>mdi-arrow-right-bottom</v-icon>
+                <v-icon x-large>mdi-arrow-left-bottom</v-icon>
+              </div>
+            </v-col>
+            <v-col cols="12" class="text-center my-n8 ">
+              <div>
+                <v-icon x-large>mdi-arrow-down</v-icon>
+              </div>
+            </v-col>
+          </v-row>
+        </v-layout>
+      </div>
+    </v-card>
+
+
+
+    <!-- <v-card outlined class="ma-3 pa-3 ">
+      <div>
+        <strong>ERROR FUNCTIONS</strong>
+        Step 1 - Select Data File(s) -- error functions
+      </div>
+      <div>
+
+        <p>
+          Select your training data file. You may also select a second testing data file.
+        </p>
+        <v-layout class="ma-5">
+          <v-row>
+            <v-col cols="6" >
+
+              <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="dataFileUploadTraining"></v-file-input>
               <v-progress-linear v-if="trainingDataLoading" indeterminate></v-progress-linear>
               <span v-if="trainingMetadata != null">
                 Columns: {{trainingMetadata.columns}} | Rows: {{trainingMetadata.rows}}
@@ -93,12 +153,16 @@
 
 
 
-      </v-card-text>
+      </div>
 
 
-    </v-card>
+    </v-card> -->
 
 
+
+
+
+<!--
 
 
 
@@ -198,7 +262,7 @@
 
 
       </v-card-text>
-    </v-card>
+    </v-card> -->
 
     <v-dialog max-width="700" v-model="miloDialog">
       <v-card flat class="pa-3 pb-6">
@@ -249,9 +313,13 @@
 import axios from 'axios'
 import _ from 'underscore'
 import FileDownload from 'js-file-download'
+import DataValidation from '@/components/DataValidation'
 
 export default {
   name: 'Home',
+  components: {
+    DataValidation
+  },
   data() {
     return {
       file: '',
@@ -259,8 +327,12 @@ export default {
       serverData: null,
       trainingMetadata: null,
       trainingDataLoading: false,
+      trainingDataValid: true,
+
       testingMetadata: null,
       testingDataLoading: false,
+      testingDataValid: true,
+
       miloMetadata: null,
       miloDataLoading: false,
       targetColumnList: null,
@@ -285,22 +357,94 @@ export default {
     }
   },
   computed: {
-    dataColumnsMatch() {
-      if (this.trainingMetadata != null && this.testingMetadata != null) {
-        let numberOfColumnsMatch = this.trainingMetadata.columns == this.testingMetadata.columns
-
-        let inTrainNotTest = _.difference(this.trainingMetadata.column_names, this.testingMetadata.column_names)
-        let inTestNotTrain = _.difference(this.testingMetadata.column_names, this.trainingMetadata.column_names)
-
-        let columnNamesMatch = inTestNotTrain.length == 0 && inTrainNotTest.length == 0
-        return {numberOfColumnsMatch, columnNamesMatch, inTrainNotTest, inTestNotTrain}
-      }
-      else {
-        return null
-      }
-    },
+    // dataColumnsMatch() {
+    //   if (this.trainingMetadata != null && this.testingMetadata != null) {
+    //     let numberOfColumnsMatch = this.trainingMetadata.columns == this.testingMetadata.columns
+    //
+    //     let inTrainNotTest = _.difference(this.trainingMetadata.column_names, this.testingMetadata.column_names)
+    //     let inTestNotTrain = _.difference(this.testingMetadata.column_names, this.trainingMetadata.column_names)
+    //
+    //     let columnNamesMatch = inTestNotTrain.length == 0 && inTrainNotTest.length == 0
+    //     return {numberOfColumnsMatch, columnNamesMatch, inTrainNotTest, inTestNotTrain}
+    //   }
+    //   else {
+    //     return null
+    //   }
+    // },
   },
   methods: {
+    dataFileUploadTraining(file) {
+      if (file != null) {
+        this.trainingDataLoading = true
+
+        this.dataFileUpload(file, 'training_data')
+        .then(response => {
+          this.trainingMetadata = response.data
+          this.trainingDataLoading = false
+        })
+      }
+      else {
+        this.trainingMetadata = null
+      }
+
+
+    },
+
+    dataFileUploadTesting(file) {
+      if (file != null) {
+        this.testingDataLoading = true
+
+        this.dataFileUpload(file, 'testing_data')
+        .then(response => {
+          this.testingMetadata = response.data
+          this.testingDataLoading = false
+        })
+      }
+      else {
+        this.testingMetadata = null
+      }
+
+
+    },
+
+    dataFileUpload(file, type) {
+      if (file != null) {
+        //this method uploads form data
+        var formData = new FormData();
+
+        //file name data stored in X-file header of post request
+        formData.append("file", file);
+        return axios.post('/data_file_upload', formData, {
+            headers: {
+            'Content-Type': 'multipart/form-data',
+            'X-filename': file.name,
+            'X-filegroup': type
+          }
+        }).then(response => {
+          return response
+        }).catch(() => {
+          this.$store.commit('snackbarMessageSet', {
+            color: 'red lighten-1',
+            message: 'Error processing file.'
+          })
+          // this.resetStep1()
+        })
+      }
+      else {
+        return 'nothing'
+        //this.resetStep1()
+      }
+
+    },
+    dataValidationTrainingData(result) {
+      this.trainingDataValid = result
+    },
+    dataValidationTestingData(result) {
+      this.testingDataValid = result
+    },
+
+
+
     resetStepOne() {
 
     },
