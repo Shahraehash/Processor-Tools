@@ -22,57 +22,77 @@
 
 
 
-    <v-card outlined class="ma-3 pa-3 ">
-      <div>
-        Step 1 - Select Data File(s)
+    <v-card outlined class="ma-3 pa-5 ">
+      <div class="headline">
+        <v-chip class="mt-n2" dark color="primary">1</v-chip> Select Data File(s)
       </div>
       <div>
+        <!-- Training -->
+        <v-card outlined class="ma-5 pa-3">
+          <div class="overline ml-5 mb-3">
+            Training File
+          </div>
 
-        <p>
-          Select your training data file. You may also select a second testing data file.
-        </p>
-        <v-layout class="ma-5">
-          <v-row>
-            <v-col cols="6" >
+          <v-layout class="ml-5">
+            <v-row>
+              <v-col cols="6" >
 
-              <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="dataFileUploadTraining"></v-file-input>
-              <v-progress-linear v-if="trainingDataLoading" indeterminate></v-progress-linear>
-              <span v-if="trainingMetadata != null">
+                <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="dataFileUploadTraining"></v-file-input>
+              </v-col>
+              <v-col cols="6" class="text-center">
+                <v-progress-circular color="blue" size="50" width="10" v-if="trainingDataLoading" indeterminate></v-progress-circular>
                 <DataValidation
                   :fileData="trainingMetadata"
                   @dataValid="dataValidationTrainingData"
                 />
-              </span>
-            </v-col>
-            <v-col cols="6">
+              </v-col>
+            </v-row>
+          </v-layout>
+        </v-card>
 
-              <v-file-input  prepend-icon="mdi-file" chips truncate-length="100" outlined label="Testing Data File (optional)" @change="dataFileUploadTesting" :disabled="trainingMetadata == null"></v-file-input>
-              <v-progress-linear v-if="testingDataLoading" indeterminate></v-progress-linear>
-              <span v-if="testingMetadata != null">
+        <v-alert text color="blue" class="ml-5" v-if="trainingMetadata != null">
+          Do you have a second generalization testing file?
+          <v-btn v-if="testingFile != true" class="" @click="testingFile = true">
+            Yes
+          </v-btn>
+          <v-btn dark v-if="testingFile == true" color="blue"  @click="testingFile = true">
+            Yes
+          </v-btn>
+          <v-btn v-if="testingFile != false" class="ml-2" @click="testingFile = false">
+            No
+          </v-btn>
+          <v-btn dark v-if="testingFile == false" color="blue" class="ml-2" @click="testingFile = false">
+            No
+          </v-btn>
+        </v-alert>
+
+
+
+        <v-card outlined class="ma-5 pa-3" v-if="testingFile == true">
+          <div class="overline ml-5 mb-3">
+            Generalization Testing File
+          </div>
+
+
+          <v-layout class="ml-5" >
+            <v-row>
+              <v-col cols="6" >
+
+                <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Testing Data File"  @change="dataFileUploadTesting"></v-file-input>
+              </v-col>
+              <v-col cols="6" class="text-center">
+                <v-progress-circular color="blue" size="50" width="10" v-if="testingDataLoading" indeterminate></v-progress-circular>
                 <DataValidation
                   :fileData="testingMetadata"
                   @dataValid="dataValidationTestingData"
                 />
-              </span>
-            </v-col>
-          </v-row>
+              </v-col>
+            </v-row>
+          </v-layout>
+        </v-card>
 
-        </v-layout>
-        <v-layout>
-          <v-row>
-            <v-col cols="12" class="text-center">
-              <div>
-                <v-icon x-large>mdi-arrow-right-bottom</v-icon>
-                <v-icon x-large>mdi-arrow-left-bottom</v-icon>
-              </div>
-            </v-col>
-            <v-col cols="12" class="text-center my-n8 ">
-              <div>
-                <v-icon x-large>mdi-arrow-down</v-icon>
-              </div>
-            </v-col>
-          </v-row>
-        </v-layout>
+
+
       </div>
     </v-card>
 
@@ -329,6 +349,8 @@ export default {
       trainingDataLoading: false,
       trainingDataValid: true,
 
+
+      testingFile: null,
       testingMetadata: null,
       testingDataLoading: false,
       testingDataValid: true,
