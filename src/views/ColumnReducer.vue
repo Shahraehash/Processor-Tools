@@ -19,13 +19,11 @@
       </v-card-text>
     </v-card>
 
-
-
-
     <v-card outlined class="ma-3 pa-5 ">
-      <div class="headline">
-        <v-chip class="mt-n2" dark color="primary">1</v-chip> Select Data File(s)
-      </div>
+      <StepHeading
+        stepNumber="1"
+        stepTitle="Select Data File(s)"
+      />
       <div>
         <!-- Training -->
         <v-card outlined class="ma-5 pa-3">
@@ -42,6 +40,7 @@
               <v-col cols="6" class="text-center">
                 <v-progress-circular color="blue" size="50" width="10" v-if="trainingDataLoading" indeterminate></v-progress-circular>
                 <DataValidation
+                  class="mt-n3"
                   :fileData="trainingMetadata"
                   @dataValid="dataValidationTrainingData"
                 />
@@ -50,18 +49,18 @@
           </v-layout>
         </v-card>
 
-        <v-alert text color="blue" class="ml-5" v-if="trainingMetadata != null">
+        <v-alert dense text color="blue" class="ml-5" v-if="trainingMetadata != null">
           Do you have a second generalization testing file?
-          <v-btn v-if="testingFile != true" class="" @click="testingFile = true">
+          <v-btn text v-if="testingFile != true" class="ml-3" @click="testingFile = true">
             Yes
           </v-btn>
-          <v-btn dark v-if="testingFile == true" color="blue"  @click="testingFile = true">
+          <v-btn text dark v-if="testingFile == true" color="blue" class="ml-3"  @click="testingFile = true">
             Yes
           </v-btn>
-          <v-btn v-if="testingFile != false" class="ml-2" @click="testingFile = false">
+          <v-btn text v-if="testingFile != false" @click="testingFile = false">
             No
           </v-btn>
-          <v-btn dark v-if="testingFile == false" color="blue" class="ml-2" @click="testingFile = false">
+          <v-btn text dark v-if="testingFile == false" color="blue" @click="testingFile = false">
             No
           </v-btn>
         </v-alert>
@@ -72,8 +71,6 @@
           <div class="overline ml-5 mb-3">
             Generalization Testing File
           </div>
-
-
           <v-layout class="ml-5" >
             <v-row>
               <v-col cols="6" >
@@ -83,6 +80,7 @@
               <v-col cols="6" class="text-center">
                 <v-progress-circular color="blue" size="50" width="10" v-if="testingDataLoading" indeterminate></v-progress-circular>
                 <DataValidation
+                  class="mt-n3"
                   :fileData="testingMetadata"
                   @dataValid="dataValidationTestingData"
                 />
@@ -91,92 +89,115 @@
           </v-layout>
         </v-card>
 
+        <v-card outlined class="ma-5 pa-3" v-if="testingFile == true && testingMetadata != null">
+          <div class="overline ml-5 mb-3">
+            Cross-File Validation
+          </div>
+          <v-layout class="ml-5" >
+            <v-row>
+              <v-col cols="12" >
+                <div v-if="dataColumnsMatch != null" class="body-1">
+                  <div>
+                    <div v-if="dataColumnsMatch.numberOfColumnsMatch">
+                      <v-icon color="green" >mdi-check-circle</v-icon> Number of Columns Match Between Files
+                    </div>
+                    <div v-if="!dataColumnsMatch.numberOfColumnsMatch">
+                      <v-icon color="red" >mdi-alert-circle</v-icon> Number of Columns Differ Between Files
+                    </div>
 
+                  </div>
+                  <div>
+                    <div v-if="dataColumnsMatch.columnNamesMatch">
+                      <v-icon color="green" >mdi-check-circle</v-icon> Column Names Match Between Files
+                    </div>
+                    <div v-if="!dataColumnsMatch.columnNamesMatch">
+                      <v-icon color="red" >mdi-alert-circle</v-icon> Column Names Differ Between Files
+
+                      <div class="pl-10 pb-5">
+                        <div>
+                          Columns in Test File Missing from Training:
+                          <v-chip outlined v-for="(i, j) in dataColumnsMatch.inTestNotTrain" :key="j">{{i}}</v-chip>
+                        </div>
+                        <div>
+                          Columns in Training File Missing from Training:
+                          <v-chip outlined v-for="(i, j) in dataColumnsMatch.inTrainNotTest" :key="j">{{i}}</v-chip>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </v-col>
+            </v-row>
+          </v-layout>
+        </v-card>
+      </div>
+    </v-card>
+
+
+    <v-card
+      outlined
+      class="ma-3 pa-5"
+      v-if="showStep2"
+    >
+      <StepHeading
+        stepNumber="2"
+        stepTitle="Target Selection"
+      />
+      <div>
+        <p>
+          Identify the column containing your target variable to ensure it is maintain in the output.
+        </p>
+        <v-layout class="ma-5">
+
+          <v-row wrap>
+            <v-col cols="6">
+              <v-autocomplete
+                clearable
+                outlined
+                label="Target Column"
+                v-model="target"
+                :items="targetColumnList"
+                @change="targetColumnChanged"
+
+
+              ></v-autocomplete>
+              <!-- v-model="target"
+              label="Target Column"
+
+              @change="targetColumnChanged" -->
+            </v-col>
+
+          </v-row>
+        </v-layout>
+        <div v-if="target != null" class="body-1">
+          <div>
+            <v-icon color="green" >mdi-check-circle</v-icon> Valid Target Field
+          </div>
+        </div>
 
       </div>
     </v-card>
 
 
+    <v-card
+      outlined
+      class="ma-3 pa-5"
+      v-if="showStep3"
+    >
+      <StepHeading
+        stepNumber="3"
+        stepTitle="X"
+      />
 
-    <!-- <v-card outlined class="ma-3 pa-3 ">
       <div>
-        <strong>ERROR FUNCTIONS</strong>
-        Step 1 - Select Data File(s) -- error functions
       </div>
-      <div>
-
-        <p>
-          Select your training data file. You may also select a second testing data file.
-        </p>
-        <v-layout class="ma-5">
-          <v-row>
-            <v-col cols="6" >
-
-              <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="dataFileUploadTraining"></v-file-input>
-              <v-progress-linear v-if="trainingDataLoading" indeterminate></v-progress-linear>
-              <span v-if="trainingMetadata != null">
-                Columns: {{trainingMetadata.columns}} | Rows: {{trainingMetadata.rows}}
-              </span>
-            </v-col>
-            <v-col cols="6">
-
-              <v-file-input  prepend-icon="mdi-file" chips truncate-length="100" outlined label="Testing Data File (optional)" @change="testingFileUpload" :disabled="trainingMetadata == null"></v-file-input>
-              <v-progress-linear v-if="testingDataLoading" indeterminate></v-progress-linear>
-              <span  v-if="testingMetadata != null">
-                Columns: {{testingMetadata.columns}} | Rows: {{testingMetadata.rows}}
-              </span>
-            </v-col>
-          </v-row>
-        </v-layout>
-
-        <div v-if="dataColumnsMatch == null && trainingMetadata != null" class="body-1">
-          <div>
-            <v-icon color="green" >mdi-check-circle</v-icon> Valid Data File
-          </div>
-        </div>
-
-        <div v-if="dataColumnsMatch != null" class="body-1">
-          <div>
-            <div v-if="dataColumnsMatch.numberOfColumnsMatch">
-              <v-icon color="green" >mdi-check-circle</v-icon> Number of Columns Match Between Files
-            </div>
-            <div v-if="!dataColumnsMatch.numberOfColumnsMatch">
-              <v-icon color="red" >mdi-alert-circle</v-icon> Number of Columns Differ Between Files
-            </div>
-
-          </div>
-          <div>
-            <div v-if="dataColumnsMatch.columnNamesMatch">
-              <v-icon color="green" >mdi-check-circle</v-icon> Column Names Match Between Files
-            </div>
-            <div v-if="!dataColumnsMatch.columnNamesMatch">
-              <v-icon color="red" >mdi-alert-circle</v-icon> Column Names Differ Between Files
-
-              <div class="pl-10 pb-5">
-                <div>
-                  Columns in Test File Missing from Training:
-                  <v-chip outlined v-for="(i, j) in dataColumnsMatch.inTestNotTrain" :key="j">{{i}}</v-chip>
-                </div>
-                <div>
-                  Columns in Training File Missing from Training:
-                  <v-chip outlined v-for="(i, j) in dataColumnsMatch.inTrainNotTest" :key="j">{{i}}</v-chip>
-                </div>
-              </div>
-            </div>
-
-
-          </div>
-
-        </div>
+    </v-card>
 
 
 
 
 
-      </div>
 
-
-    </v-card> -->
 
 
 
@@ -334,11 +355,13 @@ import axios from 'axios'
 import _ from 'underscore'
 import FileDownload from 'js-file-download'
 import DataValidation from '@/components/DataValidation'
+import StepHeading from '@/components/StepHeading'
 
 export default {
   name: 'Home',
   components: {
-    DataValidation
+    DataValidation,
+    StepHeading
   },
   data() {
     return {
@@ -379,20 +402,46 @@ export default {
     }
   },
   computed: {
-    // dataColumnsMatch() {
-    //   if (this.trainingMetadata != null && this.testingMetadata != null) {
-    //     let numberOfColumnsMatch = this.trainingMetadata.columns == this.testingMetadata.columns
-    //
-    //     let inTrainNotTest = _.difference(this.trainingMetadata.column_names, this.testingMetadata.column_names)
-    //     let inTestNotTrain = _.difference(this.testingMetadata.column_names, this.trainingMetadata.column_names)
-    //
-    //     let columnNamesMatch = inTestNotTrain.length == 0 && inTrainNotTest.length == 0
-    //     return {numberOfColumnsMatch, columnNamesMatch, inTrainNotTest, inTestNotTrain}
-    //   }
-    //   else {
-    //     return null
-    //   }
-    // },
+    dataColumnsMatch() {
+      if (this.trainingMetadata != null && this.testingMetadata != null) {
+        let numberOfColumnsMatch = this.trainingMetadata.columns == this.testingMetadata.columns
+
+        let inTrainNotTest = _.difference(this.trainingMetadata.column_names, this.testingMetadata.column_names)
+        let inTestNotTrain = _.difference(this.testingMetadata.column_names, this.trainingMetadata.column_names)
+
+        let columnNamesMatch = inTestNotTrain.length == 0 && inTrainNotTest.length == 0
+        return {numberOfColumnsMatch, columnNamesMatch, inTrainNotTest, inTestNotTrain}
+      }
+      else {
+        return null
+      }
+    },
+    showStep2() {
+      if (this.trainingMetadata != null && this.testingFile == false) {
+        return true
+      }
+      else if (
+        this.trainingMetadata != null
+        && this.testingFile == true
+        && this.testingMetadata != null
+      ) {
+        return true
+
+      }
+      else {
+        return false
+      }
+    },
+    showStep3() {
+      if (this.showStep2 && this.targetColumn != null) {
+        console.log('step 3')
+        return true
+      }
+      else {
+        return false
+      }
+
+    }
   },
   methods: {
     dataFileUploadTraining(file) {
@@ -403,6 +452,9 @@ export default {
         .then(response => {
           this.trainingMetadata = response.data
           this.trainingDataLoading = false
+          let identity = (x) => x
+          this.targetColumnList = this.trainingMetadata.column_names.map(identity)
+          this.targetColumnList = this.targetColumnList.reverse()
         })
       }
       else {
@@ -420,6 +472,7 @@ export default {
         .then(response => {
           this.testingMetadata = response.data
           this.testingDataLoading = false
+          this.targetColumnList = this.trainingMetadata.column_names.reverse()
         })
       }
       else {

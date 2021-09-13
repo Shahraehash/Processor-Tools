@@ -245,7 +245,7 @@ def data_file_upload():
             200,
         )
         response.headers["Content-Type"] = "application/json"
-        time.sleep(3)
+        time.sleep(1)
         return response
 
     except Exception as e:
