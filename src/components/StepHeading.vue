@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div class="headline">
-      <v-chip class="mt-n2" dark color="primary">{{stepNumber}}</v-chip>
+  <div class="mb-3">
+    <div class="title primary--text">
+      <v-chip class="mt-n1" dark color="primary">{{stepNumber}}</v-chip>
       <span class="ml-2">{{stepTitle}}</span>
     </div>
   </div>

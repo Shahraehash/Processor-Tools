@@ -19,7 +19,11 @@
       </v-card-text>
     </v-card>
 
-    <v-card outlined class="ma-3 pa-5 ">
+    <v-card
+      v-bind:style="{'opacity': setTransparencyFromStepProgress(1)}"
+      outlined
+      class="ma-3 pa-5"
+    >
       <StepHeading
         stepNumber="1"
         stepTitle="Select Data File(s)"
@@ -49,21 +53,16 @@
           </v-layout>
         </v-card>
 
-        <v-alert dense text color="blue" class="ml-5" v-if="trainingMetadata != null">
-          Do you have a second generalization testing file?
-          <v-btn text v-if="testingFile != true" class="ml-3" @click="testingFile = true">
-            Yes
-          </v-btn>
-          <v-btn text dark v-if="testingFile == true" color="blue" class="ml-3"  @click="testingFile = true">
-            Yes
-          </v-btn>
-          <v-btn text v-if="testingFile != false" @click="testingFile = false">
-            No
-          </v-btn>
-          <v-btn text dark v-if="testingFile == false" color="blue" @click="testingFile = false">
-            No
-          </v-btn>
-        </v-alert>
+
+
+        <Decision
+          v-if="trainingMetadata != null"
+          :decision="testingFile"
+          @decide="setTestingFileState"
+          message="Do you have a second generalization testing file?"
+          trueVal="Yes"
+          falseVal="No"
+        />
 
 
 
@@ -135,6 +134,7 @@
 
 
     <v-card
+      v-bind:style="{'opacity': setTransparencyFromStepProgress(2)}"
       outlined
       class="ma-3 pa-5"
       v-if="showStep2"
@@ -170,8 +170,12 @@
           </v-row>
         </v-layout>
         <div v-if="target != null" class="body-1">
-          <div>
-            <v-icon color="green" >mdi-check-circle</v-icon> Valid Target Field
+          <div v-if="targetValid == true" >
+            <v-icon color="green" >mdi-check-circle</v-icon> Valid target column.
+
+          </div>
+          <div v-if="targetValid == false" >
+            <v-icon color="red" >mdi-alert-circle</v-icon> The selected target column is not valid. There must be two unique values.
           </div>
         </div>
 
@@ -180,20 +184,73 @@
 
 
     <v-card
+      v-bind:style="{'opacity': setTransparencyFromStepProgress(3)}"
       outlined
       class="ma-3 pa-5"
       v-if="showStep3"
     >
       <StepHeading
         stepNumber="3"
-        stepTitle="X"
+        stepTitle="Column Selection"
       />
-
       <div>
+        <p>Click below to selected columns or paste a comma seperated list of columns to be outputted. <br /> You can also <a @click="miloDialog = true">import from a MILO results "report.csv" file</a>.</p>
+        <v-layout class="ma-5">
+
+          <v-row wrap>
+
+
+            <v-col cols="12">
+
+              <v-combobox clearable v-model="selectedColumns" multiple chips class="ml-8" :items="nontargetColumnList"  outlined label="Selected Columns" @change="splitPasted()"></v-combobox>
+              <div>
+              </div>
+              <div v-if="selectedColumns.length > 0" class="body-1">
+                <div>
+                  <v-icon color="green" >mdi-check-circle</v-icon> {{selectedColumns.length}} columns selected.
+                </div>
+              </div>
+              <div v-if="errorColumns != null">
+                <div v-if="errorColumns.length > 0">
+                  <v-alert class="mt-3" text type="error" dismissible dense>
+                    <span>The following column<span v-if="errorColumns.length > 1">s</span> are invalid:</span>
+                    <v-chip class="ml-2" small dark color="red lighten-3" v-for="(item,key) in errorColumns" :key="key">{{item}}</v-chip>
+                  </v-alert>
+
+
+                </div>
+              </div>
+
+              <p>
+
+              </p>
+            </v-col>
+
+          </v-row>
+        </v-layout>
+
+      </div>
+      <div class="text-right" v-if="selectedColumns.length > 0">
+        <v-btn color="primary" rounded @click="proceedToStep4()">Confirm Column Selection</v-btn>
       </div>
     </v-card>
 
 
+    <v-card
+      v-bind:style="{'opacity': setTransparencyFromStepProgress(4)}"
+      outlined
+      class="ma-3 pa-5"
+      v-if="showStep4"
+    >
+      <StepHeading
+        stepNumber="4"
+        stepTitle="Step 4"
+      />
+
+
+      <div>
+      </div>
+    </v-card>
 
 
 
@@ -356,12 +413,14 @@ import _ from 'underscore'
 import FileDownload from 'js-file-download'
 import DataValidation from '@/components/DataValidation'
 import StepHeading from '@/components/StepHeading'
+import Decision from '@/components/Decision'
 
 export default {
   name: 'Home',
   components: {
     DataValidation,
-    StepHeading
+    StepHeading,
+    Decision
   },
   data() {
     return {
@@ -380,12 +439,19 @@ export default {
 
       miloMetadata: null,
       miloDataLoading: false,
+
       targetColumnList: null,
       nontargetColumnList: null,
       target: null,
+      targetValid: null,
+
+
       toggle: null,
       selectedColumns: [],
       errorColumns: null,
+      confirmColumnSelection: false,
+
+
       trainingOutputFilename: 'training_reduced',
       testingOutputFilename: 'testing_reduced',
       miloColumns: [],
@@ -416,14 +482,33 @@ export default {
         return null
       }
     },
+    stepNumber() {
+      if (this.showStep4) {
+        return 4
+      }
+      else if (this.showStep3) {
+        return 3
+      }
+      else if (this.showStep2) {
+        return 2
+      }
+      else {
+        return 1
+      }
+    },
     showStep2() {
-      if (this.trainingMetadata != null && this.testingFile == false) {
+      if (
+        this.trainingMetadata != null
+        && this.testingFile == false
+      ) {
         return true
       }
       else if (
         this.trainingMetadata != null
         && this.testingFile == true
         && this.testingMetadata != null
+        //Ensure the files are compatible and no errors
+        && (this.dataColumnsMatch.numberOfColumnsMatch && this.dataColumnsMatch.columnNamesMatch)
       ) {
         return true
 
@@ -433,8 +518,22 @@ export default {
       }
     },
     showStep3() {
-      if (this.showStep2 && this.targetColumn != null) {
-        console.log('step 3')
+      if (this.showStep2
+          && this.target != null
+          && this.targetValid == true
+        ) {
+        return true
+      }
+      else {
+        return false
+      }
+
+    },
+    showStep4() {
+      if (this.showStep3
+          && this.selectedColumns.length > 0
+          && this.confirmColumnSelection
+      ) {
         return true
       }
       else {
@@ -570,8 +669,25 @@ export default {
     targetColumnChanged(value) {
       if (value == null) {
         this.nontargetColumnList = null
+        this.targetValid = null
       }
       else {
+
+        let payload = {
+          target: this.target,
+          storage_id: this.trainingMetadata.storage_id
+        }
+
+        axios.post('/validate/target_column', payload, {
+            headers: {
+            'Content-Type': 'application/json',
+            'X-inbound': 'validation'
+          }
+        }).then(result => {
+          this.targetValid = result.data.validation
+        })
+
+
         this.nontargetColumnList = []
         this.trainingMetadata.column_names.reverse().forEach(item => {
 
@@ -714,9 +830,35 @@ export default {
       })
 
 
+    },
+    //Support Functions
+    proceedToStep4() {
+      this.confirmColumnSelection = true
+      window.scrollTo(0,document.body.scrollHeight);
+    },
+    //UI Functions
+    setTransparencyFromStepProgress(step) {
+      if (this.stepNumber > step) {
+        return 0.6
+      }
+      else {
+        return 1.0
+      }
+    },
+
+    //Helper functions
+    setTestingFileState(bool) {
+      console.log(bool)
+      this.testingFile = bool
     }
+
+
   }
 
 
 }
 </script>
+<style>
+
+
+</style>
