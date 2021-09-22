@@ -253,6 +253,24 @@ def data_file_upload():
         os.remove(file_path)
         return abort(500)
 
+@app.route('/column_reducer/process',methods=["POST"])
+def column_reducer_process():
+    training_storage_id = request.json['training_storage_id']
+
+    # file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
+    # df = pd.read_csv(file_path)
+
+
+    final_data = {
+        'training': 'Test',
+        'testing': 'Test'
+    }
+
+    time.sleep(3)
+
+    return make_response(final_data)
+
+
 
 
 

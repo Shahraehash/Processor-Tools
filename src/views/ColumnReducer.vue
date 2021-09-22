@@ -231,7 +231,14 @@
 
       </div>
       <div class="text-right" v-if="selectedColumns.length > 0">
-        <v-btn color="primary" rounded @click="proceedToStep4()">Confirm Column Selection</v-btn>
+        <v-btn
+          v-if="confirmColumnSelection == false"
+          color="primary"
+          rounded
+          @click="proceedToStep4()"
+        >
+          Confirm Column Selection
+        </v-btn>
       </div>
     </v-card>
 
@@ -244,11 +251,69 @@
     >
       <StepHeading
         stepNumber="4"
-        stepTitle="Step 4"
+        stepTitle="Output Files"
       />
-
-
       <div>
+        <v-layout>
+          <v-row>
+            <v-col cols="6">
+              <v-card class="px-3 py-1 mt" flat outlined>
+                <div class="overline">
+                  Output Summary
+                </div>
+                <div>
+                  Feature Columns: {{selectedColumns.length}} of {{nontargetColumnList.length}}
+                </div>
+                <div>
+                  Target Column: {{target}}
+                </div>
+                <div>
+                  Training Rows: {{trainingMetadata.rows}}
+                </div>
+                <div v-if="testingMetadata != null">
+                  Testing Rows: {{testingMetadata.rows}}
+                </div>
+              </v-card>
+
+            </v-col>
+            <v-col cols="6">
+              <div>
+                <v-text-field
+                  label="Training File Output"
+                  v-model="trainingOutputFilename"
+                  suffix=".csv"
+                  outlined
+                  dense
+                >
+                </v-text-field>
+              </div>
+
+              <div>
+                <v-text-field
+                  v-if="testingMetadata != null"
+                  label="Testing File Output"
+                  v-model="testingOutputFilename"
+                  suffix=".csv"
+                  outlined
+                  dense
+                >
+                </v-text-field>
+              </div>
+              <div class="text-right">
+                <v-btn
+                  color="primary"
+                  rounded
+                  @click="processFiles()"
+
+                >
+                  Build Files
+                </v-btn>
+
+              </div>
+            </v-col>
+
+          </v-row>
+        </v-layout>
       </div>
     </v-card>
 
@@ -400,6 +465,8 @@
 
     </v-dialog>
 
+    <FileProcessingDialog :isOpen="fileProcessingDialog" :loading="fileProcessingInProgress" />
+
 
 
 
@@ -414,13 +481,15 @@ import FileDownload from 'js-file-download'
 import DataValidation from '@/components/DataValidation'
 import StepHeading from '@/components/StepHeading'
 import Decision from '@/components/Decision'
+import FileProcessingDialog from '@/components/FileProcessingDialog'
 
 export default {
   name: 'Home',
   components: {
     DataValidation,
     StepHeading,
-    Decision
+    Decision,
+    FileProcessingDialog
   },
   data() {
     return {
@@ -454,6 +523,10 @@ export default {
 
       trainingOutputFilename: 'training_reduced',
       testingOutputFilename: 'testing_reduced',
+      fileProcessingDialog: false,
+      fileProcessingInProgress: true,
+
+
       miloColumns: [],
       miloDialog: false,
     }
@@ -615,6 +688,45 @@ export default {
     },
     dataValidationTestingData(result) {
       this.testingDataValid = result
+    },
+    processFiles() {
+      let data = {
+        training_storage_id: this.trainingMetadata.storage_id
+
+      }
+
+      //UI elements
+      this.fileProcessingDialog = true
+      this.fileProcessingInProgress = true
+
+
+      return axios.post('/column_reducer/process', data, {
+        headers: {
+        'Content-Type': 'application/json',
+        }
+      }).then(response => {
+        console.log(response)
+
+        //UI elements
+        this.fileProcessingInProgress = false
+
+        //File elements
+        // FileDownload(response.data.training, this.outputFiles.training + '.csv')
+        // FileDownload(response.data.testing, this.outputFiles.testing + '.csv')
+        // if (this.outputSettings.extraFile) {
+        //   FileDownload(response.data.extra, this.outputFiles.extra + '.csv')
+        // }
+        // if (this.outputSettings.nanFile) {
+        //   try {
+        //     FileDownload(response.data.nan, this.outputFiles.nan + '.csv')
+        //   }
+        //   catch(err) {
+        //     console.log('error')
+        //   }
+        //
+        // }
+      })
+
     },
 
 
