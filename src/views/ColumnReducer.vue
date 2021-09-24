@@ -39,13 +39,14 @@
             <v-row>
               <v-col cols="6" >
 
-                <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="dataFileUploadTraining"></v-file-input>
+                <v-file-input v-model="trainingFileData" prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="dataFileUploadTraining"></v-file-input>
               </v-col>
               <v-col cols="6" class="text-center">
                 <v-progress-circular color="blue" size="50" width="10" v-if="trainingDataLoading" indeterminate></v-progress-circular>
                 <DataValidation
                   class="mt-n3"
                   :fileData="trainingMetadata"
+                  dataType="training"
                   @dataValid="dataValidationTrainingData"
                 />
               </v-col>
@@ -74,13 +75,14 @@
             <v-row>
               <v-col cols="6" >
 
-                <v-file-input prepend-icon="mdi-file" chips truncate-length="100" outlined label="Testing Data File"  @change="dataFileUploadTesting"></v-file-input>
+                <v-file-input v-model="testingFileData" prepend-icon="mdi-file" chips truncate-length="100" outlined label="Testing Data File"  @change="dataFileUploadTesting"></v-file-input>
               </v-col>
               <v-col cols="6" class="text-center">
                 <v-progress-circular color="blue" size="50" width="10" v-if="testingDataLoading" indeterminate></v-progress-circular>
                 <DataValidation
                   class="mt-n3"
                   :fileData="testingMetadata"
+                  dataType="testing"
                   @dataValid="dataValidationTestingData"
                 />
               </v-col>
@@ -496,13 +498,15 @@ export default {
       file: '',
       loading: false,
       serverData: null,
+      trainingFileData: null,
       trainingMetadata: null,
       trainingDataLoading: false,
       trainingDataValid: true,
 
 
-      testingFile: null,
-      testingMetadata: null,
+      testingFile: null, //boolean to control flow
+      testingFileData: null, //link to file
+      testingMetadata: null, //link to server meta data extacted
       testingDataLoading: false,
       testingDataValid: true,
 
@@ -624,6 +628,7 @@ export default {
         .then(response => {
           this.trainingMetadata = response.data
           this.trainingDataLoading = false
+          this.trainingOutputFilename = this.trainingFileData.name.replace('.csv', '') + '_reduced'
           let identity = (x) => x
           this.targetColumnList = this.trainingMetadata.column_names.map(identity)
           this.targetColumnList = this.targetColumnList.reverse()
@@ -644,7 +649,8 @@ export default {
         .then(response => {
           this.testingMetadata = response.data
           this.testingDataLoading = false
-          this.targetColumnList = this.trainingMetadata.column_names.reverse()
+          this.testingOutputFilename = this.testingFileData.name.replace('.csv', '') + '_reduced'
+
         })
       }
       else {
@@ -690,10 +696,11 @@ export default {
       this.testingDataValid = result
     },
     processFiles() {
-      let data = {
-        training_storage_id: this.trainingMetadata.storage_id
-
-      }
+      let data = {}
+      data.training_storage_id = this.trainingMetadata.storage_id
+      data.testing_storage_id = this.testingMetadata != null ? this.testingMetadata.storage_id : null
+      data.selected_columns = this.selectedColumns
+      data.target_column = this.target
 
       //UI elements
       this.fileProcessingDialog = true
@@ -705,26 +712,19 @@ export default {
         'Content-Type': 'application/json',
         }
       }).then(response => {
-        console.log(response)
+
 
         //UI elements
         this.fileProcessingInProgress = false
 
         //File elements
-        // FileDownload(response.data.training, this.outputFiles.training + '.csv')
-        // FileDownload(response.data.testing, this.outputFiles.testing + '.csv')
-        // if (this.outputSettings.extraFile) {
-        //   FileDownload(response.data.extra, this.outputFiles.extra + '.csv')
-        // }
-        // if (this.outputSettings.nanFile) {
-        //   try {
-        //     FileDownload(response.data.nan, this.outputFiles.nan + '.csv')
-        //   }
-        //   catch(err) {
-        //     console.log('error')
-        //   }
-        //
-        // }
+        FileDownload(response.data.training, this.trainingOutputFilename + '.csv')
+
+        if (response.data.testing != 'null') {
+          FileDownload(response.data.testing, this.testingOutputFilename + '.csv')
+        }
+
+
       })
 
     },
@@ -951,7 +951,7 @@ export default {
     //UI Functions
     setTransparencyFromStepProgress(step) {
       if (this.stepNumber > step) {
-        return 0.6
+        return 0.7
       }
       else {
         return 1.0

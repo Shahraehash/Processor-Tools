@@ -256,17 +256,33 @@ def data_file_upload():
 @app.route('/column_reducer/process',methods=["POST"])
 def column_reducer_process():
     training_storage_id = request.json['training_storage_id']
+    testing_storage_id = request.json['testing_storage_id']
+    selected_columns = request.json['selected_columns']
+    target_column = request.json['target_column']
 
-    # file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
-    # df = pd.read_csv(file_path)
-
+    #create single column list
+    output_columns = selected_columns.copy()
+    output_columns.append(target_column)
+    print(output_columns)
 
     final_data = {
-        'training': 'Test',
-        'testing': 'Test'
+        'training': 'null',
+        'testing': 'null'
     }
 
-    time.sleep(3)
+    if (training_storage_id is not None):
+        training_file = os.path.join(app.config['UPLOAD_FOLDER'], training_storage_id)
+        training_data_df = pd.read_csv(training_file)
+        training_data_df_reduced = training_data_df[output_columns]
+        final_data['training'] = training_data_df_reduced.to_csv(index=False)
+
+    if (testing_storage_id is not None):
+        testing_file = os.path.join(app.config['UPLOAD_FOLDER'], testing_storage_id)
+        testing_data_df = pd.read_csv(testing_file)
+        testing_data_df_reduced = testing_data_df[output_columns]
+        final_data['testing'] = testing_data_df_reduced.to_csv(index=False)
+
+    time.sleep(2)
 
     return make_response(final_data)
 

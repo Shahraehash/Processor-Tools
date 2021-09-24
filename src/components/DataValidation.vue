@@ -47,7 +47,7 @@
       <div>
         <div v-if="errors.maxTrainingRows">
           <v-alert dense outlined color="error">
-            Data set has {{fileData.row}} rows. Max permitted is {{rules.maxTrainingRows}}.
+            Data set has {{fileData.rows}} rows. Max is {{rules.maxTrainingRows}}.
           </v-alert>
         </div>
       </div>
@@ -55,7 +55,7 @@
       <div>
         <div v-if="errors.maxTestingRows">
           <v-alert dense outlined color="error">
-            Data set has {{fileData.row}} rows. Max permitted is {{rules.maxTestingRows}}.
+            Data set has {{fileData.rows}} rows. Max is {{rules.maxTestingRows}}.
           </v-alert>
         </div>
       </div>
@@ -117,11 +117,11 @@ export default {
         this.fileData.columns > this.rules.maxFeatures ? this.errors.maxFeatures = true : this.errors.maxFeatures = false
 
         if (this.dataType == 'training') {
-          this.fileData.rows > this.rules.maxTrainingRows ? this.error.maxTrainingRows = true : this.error.maxTrainingRows = false
+          this.fileData.rows > this.rules.maxTrainingRows ? this.errors.maxTrainingRows = true : this.errors.maxTrainingRows = false
         }
 
         if (this.dataType == 'testing') {
-          this.fileData.rows > this.rules.maxTestingRows ? this.error.maxTestingRows = true : this.error.maxTestingRows = false
+          this.fileData.rows > this.rules.maxTestingRows ? this.errors.maxTestingRows = true : this.errors.maxTestingRows = false
         }
 
 
