@@ -525,8 +525,8 @@ export default {
       confirmColumnSelection: false,
 
 
-      trainingOutputFilename: 'training_reduced',
-      testingOutputFilename: 'testing_reduced',
+      trainingOutputFilename: '',
+      testingOutputFilename: '',
       fileProcessingDialog: false,
       fileProcessingInProgress: true,
 
@@ -635,7 +635,7 @@ export default {
         })
       }
       else {
-        this.trainingMetadata = null
+        this.resetStep1Training()
       }
 
 
@@ -731,16 +731,41 @@ export default {
 
 
 
-    resetStepOne() {
+    resetStep1Training() {
+      this.trainingFileData = null
+      this.trainingMetadata = null
+      this.trainingDataValid = true
+      this.targetColumnList = null
+      this.nontargetColumnList = null
+      this.trainingOutputFilename = ''
+      this.testingFile = null
+
+      this.resetStep1Testing()
+      this.resetStep2()
 
     },
-    resetStepTwo() {
+    resetStep1Testing() {
+
+      // this.testingFile = null
+      this.testingFileData = null
+      this.testingMetadata = null
+      this.testingDataValid = true
+      this.testingOutputFilename = ''
 
     },
-    resetStepThree() {
+    resetStep2() {
+      this.target = null
+      this.targteValid = null
+      this.resetStep3()
+    },
+    resetStep3() {
+      this.selectedColumns = []
+      this.errorColumns = null
+      this.confirmColumnSelection = false
+      this.resetStep4()
 
     },
-    resetStepFour() {
+    resetStep4() {
 
     },
 
@@ -780,8 +805,7 @@ export default {
     },
     targetColumnChanged(value) {
       if (value == null) {
-        this.nontargetColumnList = null
-        this.targetValid = null
+        this.resetStep2()
       }
       else {
 
@@ -801,7 +825,7 @@ export default {
 
 
         this.nontargetColumnList = []
-        this.trainingMetadata.column_names.reverse().forEach(item => {
+        this.trainingMetadata.column_names.forEach(item => {
 
           if (item != value) {
 
