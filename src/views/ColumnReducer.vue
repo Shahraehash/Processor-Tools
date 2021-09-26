@@ -448,7 +448,8 @@
             <div class="ml-8 mb-3" >Select columns based on the feature selector method.</div>
             <v-select v-if="miloMetadata" :items="miloMetadata" v-model="miloColumns" class="ml-8"  outlined  label="Feature Selector Method"></v-select>
             <div>
-              {{miloColumns}}
+              <v-chip small color="grey lighten-2" v-for="(item, key) in miloColumns" :key="key">{{item}}</v-chip>
+
             </div>
           </div>
 
@@ -457,7 +458,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn class="mr-2" rounded large dark color="grey darken-3" @click="setMiloColumns">Select Columns</v-btn>
+          <v-btn class="mr-2" rounded dark color="primary" @click="setMiloColumns">Select Columns</v-btn>
 
         </v-card-actions>
 

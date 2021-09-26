@@ -57,57 +57,6 @@ def home():
     return render_template("index.html")
 
 #Train Test Split Tools
-@app.route('/train_test_split/upload',methods=["POST"])
-def train_test_split_upload():
-
-    file_obj = request.files['file']
-    file_name = request.headers['X-filename'] #filename stored in special header
-
-    if file_obj is None:
-        # Indicates that no file was sent
-        return "File not uploaded"
-
-    storage_id = str(uuid.uuid4())
-
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
-    file_obj.save(file_path)
-
-    #Script will try to read file and return data. If it fails it will delete
-    #the file.
-    try:
-        df = pd.read_csv(file_path)
-
-        #helper function to clean up nan rows
-        df = convert_blanks_to_nan(df)
-        #update file with cleaned up fields
-
-        df.to_csv(file_path)
-
-        entry = {
-        'user_id': 'ui000001',
-        'storage_id': storage_id,
-        'file_name':  file_name,
-        'content_type': file_obj.content_type,
-        'file_group': 'train_test_split', #training,testing,milo_results,train_test_split
-        'upload_time': datetime.timestamp(datetime.now()),
-        'rows': int(df.shape[0]),
-        'columns': int(df.shape[1]),
-        'column_names': list(df.columns.values),
-        'nan_count': int(find_nan_counts(df))
-        }
-
-        db.insert(entry)
-
-        return jsonify(entry)
-
-    except Exception as e:
-
-        os.remove(file_path)
-        return abort(500)
-
-
-
-
 
 
 

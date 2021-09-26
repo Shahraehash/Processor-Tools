@@ -35,7 +35,7 @@
 
 
 
-    <v-stepper v-model="e1">
+    <!-- <v-stepper v-model="e1">
         <v-stepper-header>
           <v-stepper-step
             :complete="e1 > 1"
@@ -71,59 +71,7 @@
 
         <v-stepper-items>
           <v-stepper-content step="1">
-            <v-card
-              class="ma-3 px-4 py-2"
-              flat
-            >
-              <!-- <div class="overline mb-3">
-                Step 1 - Select Data File
-              </div> -->
-              <v-row>
-                <v-col
-                  cols="6"
-                  class="pb-0"
-                >
-                  <v-file-input
-                    chips
-                    clearable
-                    label="Data File"
-                    outlined
-                    prepend-icon="mdi-file"
-                    truncate-length="100"
-                    v-model="file"
-                    @change="trainTestFileUpload"
-                  ></v-file-input>
-                </v-col>
-                <v-col
-                  cols="6"
-                  class="pb-0"
-                >
-                  <v-card
-                    class="pt-3"
-                    flat
-                    v-if="fileData"
-                  >
-                    <v-icon large>mdi-table-column</v-icon>
-                    {{fileData.columns}} columns
-                    <v-icon large>mdi-table-row</v-icon>
-                    {{fileData.rows}} rows
-                  </v-card>
-                </v-col>
-                <v-col
-                  cols="12"
-                  class="mt-0 pt-0"
-                  v-if="fileData && fileData.nan_count > 0"
-                >
-                  <v-alert
-                    dense
-                    text
-                    type="info"
-                  >
-                    {{fileData.nan_count}} rows have missing data. This will affect the output (see next step).
-                  </v-alert>
-                </v-col>
-              </v-row>
-            </v-card>
+
             <div class="text-right pa-2">
               <v-btn
                 color="primary"
@@ -133,12 +81,7 @@
                 Next
                 <v-icon>mdi-chevron-right</v-icon>
               </v-btn>
-
             </div>
-
-
-
-
           </v-stepper-content>
 
           <v-stepper-content step="2">
@@ -545,6 +488,7 @@
                   float="right"
                   color="primary"
                   @click="processFiles()"
+
                 >
                   Create Files
                   <v-icon class="pl-2">mdi-file</v-icon>
@@ -555,7 +499,414 @@
 
           </v-stepper-content>
         </v-stepper-items>
-      </v-stepper>
+      </v-stepper> -->
+
+
+
+
+      <!-- STEP 1 -->
+      <v-card
+
+        outlined
+        class="ma-3 pa-5"
+      >
+        <StepHeading
+          stepNumber="1"
+          stepTitle="Select Data File"
+        />
+        <div>
+          <!-- Training -->
+          <v-card outlined class="ma-5 pa-3">
+            <div class="overline ml-5 mb-3">
+              Single Data File
+            </div>
+
+            <v-layout class="ml-5">
+              <v-row>
+                <v-col cols="6" >
+
+                  <v-file-input v-model="file" prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="fileUpload"></v-file-input>
+                </v-col>
+                <v-col cols="6" class="text-center">
+                  <v-progress-circular color="blue" size="50" width="10" v-if="fileDataLoading" indeterminate></v-progress-circular>
+                  <DataValidation
+                    class="mt-n3"
+                    :fileData="fileData"
+                    dataType="testing"
+                    @dataValid="fileValidationData"
+                  />
+                </v-col>
+              </v-row>
+            </v-layout>
+          </v-card>
+        </div>
+      </v-card>
+
+      <!-- STEP 2 -->
+      <v-card
+        v-if="showStep2"
+        outlined
+        class="ma-3 pa-5"
+      >
+        <StepHeading
+          stepNumber="2"
+          stepTitle="Select Target Column"
+        />
+        <div>
+
+          <v-row>
+              <v-col cols="6">
+                <v-select
+                  clearable
+                  outlined
+                  label="Target Column"
+                  prepend-icon="mdi-bullseye"
+                  v-if="fileData"
+                  v-model="targetColumn"
+                  :items='fileData.column_names'
+                  @change="determineClassMetadata"
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-alert
+              dense
+              text
+              type="info"
+              v-if="class0nanSize >0 || class1nanSize > 0"
+            >
+              Some data cannot be used.
+              <span v-if="class0nanSize >0">For class 0, {{class0nanSize}} row
+                <span v-if="class0nanSize == 1"> is </span>
+                <span v-if="class0nanSize > 1">s are </span>excluded.
+              </span>
+              <span v-if="class1nanSize >0">For class 1, {{class1nanSize}} row
+                <span v-if="class1nanSize == 1"> is </span>
+                <span v-if="class1nanSize > 1">s are </span>excluded.
+              </span>
+
+
+            </v-alert>
+            <div style="width:100%" >
+              <div
+                class="distrobution-box"
+                v-bind:style="{
+                  background: '#2196F3',
+                  width: class0percent + '%'
+                  }"
+                >
+                <div
+                  v-bind:style="{
+                    opacity: 0.3,
+                    background:'white',
+                    width: class0nanPercent + '%',
+                    position:'absolute',
+                    left:'16px',
+                    bottom:'15px'
+                    }"
+                  class="distrobution-box"
+                >
+                </div>
+                <p class="pa-0 ma-0">
+                  Class 0 ({{class0percent}}%)
+                </p>
+                <p class="pa-0 ma-0" v-if="class0nanSize == 0">
+                  N={{class0size}}
+                </p>
+                <p class="pa-0 ma-0" v-if="class0nanSize > 0">
+                  <span style="text-decoration: line-through">{{class0size}}</span>
+                  <v-icon color="white">mdi-arrow-right</v-icon>
+                  {{class0size - class0nanSize}}
+                </p>
+              </div>
+              <div
+                class="distrobution-box"
+                v-bind:style="{
+                  background: '#009688',
+                  width: class1percent + '%'
+                  }"
+                >
+                <div
+                  v-bind:style="{
+                    opacity: 0.3,
+                    background:'white',
+                    width: class1nanPercent + '%',
+                    position:'absolute',
+                    right:'16px',
+                    bottom:'15px'
+                    }"
+                  class="distrobution-box"
+                >
+                </div>
+                <p class="pa-0 ma-0">
+                  Class 1 ({{class1percent}}%)
+                </p>
+                <p class="pa-0 ma-0" v-if="class1nanSize == 0">
+                  N={{class1size}}
+                </p>
+                <p class="pa-0 ma-0" v-if="class1nanSize > 0">
+                  <span style="text-decoration: line-through">{{class1size}}</span>
+                  <v-icon color="white">mdi-arrow-right</v-icon>
+                  {{class1size - class1nanSize}}
+                </p>
+              </div>
+
+              <div class="distrobution-box" v-bind:style="{ background: '#d3d3d3', width: placeholderSlot + '%' }">Data Distrobution Displayed After Selection</div>
+            </div>
+            <v-alert
+              v-if="minSampleSizeError"
+              color="red"
+              type="error"
+            >To use this tool, each class must have a an N greater than {{minSampleSize}}.
+          </v-alert>
+
+
+        </div>
+      </v-card>
+
+      <!-- STEP 3 -->
+      <v-card
+        outlined
+        class="ma-3 pa-5"
+        v-if="showStep3"
+      >
+        <StepHeading
+          stepNumber="3"
+          stepTitle="Select X"
+        />
+        <div>
+
+          <div>
+            Select amount of training data. {{minSampleSize}} is the minimum supported sample size. We have automatically selected a value that you may adjust below.
+          </div>
+          <v-row>
+            <v-col cols="5">
+              <v-slider
+                :min="minSampleSize"
+                :max="maxSampleSize"
+                v-model="trainingClassSampleSize"
+                @change="calculatePercentage"
+              ></v-slider>
+            </v-col>
+            <v-col cols="1">
+              {{trainingClassSampleSize}}
+            </v-col>
+          </v-row>
+          <div >
+            Select how you would like to use remain data in the global generalization testing set.
+          </div>
+          <v-radio-group v-model="prevalenceOption" @change="calculatePercentage">
+            <v-radio label="Use All Remaining Data After Training Data Removed"></v-radio>
+            <v-radio label="Maintain Original Prevalence in Validation File (some data will be removed)"></v-radio>
+          </v-radio-group>
+          <v-card flat class="mb-10">
+            <div style="width:100%">
+
+              <div
+                class="title-box"
+                v-bind:style="{
+                  background: 'white',
+                  width: barSizes.nan + '%'
+                  }"
+                >
+              </div>
+
+
+              <div
+                class="title-box"
+                v-bind:style="{
+                  background: '#7E57C2',
+                  width: barSizes.train0 + barSizes.train1 + '%'
+                  }"
+                >
+                Training Data
+              </div>
+              <div
+                class="title-box"
+                v-bind:style="{
+                  background: '#5C6BC0',
+                  width: barSizes.test0 + barSizes.test1 + '%'
+                  }"
+                >
+                Generalization Testing Data
+              </div>
+            </div>
+            <div style="width:100%">
+
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <div
+                  class="distrobution-box"
+                  v-bind="attrs"
+                  v-on="on"
+                  v-bind:style="{
+                    background: 'grey',
+                    width: barSizes.nan + '%'
+                    }"
+                  >
+                  <div>n={{fileData.nan_count}}</div>
+                </div>
+
+              </template>
+              <span>{{fileData.nan_count}} rows are missing data and cannot be used in the final data set</span>
+            </v-tooltip>
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#64B5F6',
+                width: barSizes.train0 + '%'
+                }"
+              >
+              <div>Train 0</div>
+              <div>n={{trainingClassSampleSize}}</div>
+            </div>
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#4DB6AC',
+                width: barSizes.train1 + '%'
+                }"
+              >
+              <div>Train 1</div>
+              <div>n={{trainingClassSampleSize}}</div>
+            </div>
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#42A5F5',
+                width: barSizes.test0 + '%'
+                }"
+              >
+              <div>Test 0</div>
+              <div>n={{barData.test0global}}</div>
+            </div>
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#26A69A',
+                width: barSizes.test1 + '%'
+                }"
+              >
+              <div>Test 1</div>
+              <div>n={{barData.test1global}}</div>
+            </div>
+            <div
+              class="distrobution-box"
+              v-bind:style="{
+                background: '#F48FB1',
+                width: barSizes.extra + '%'
+                }"
+              >
+              <div>Not Used</div>
+              <div>n={{barData.extra}}</div>
+            </div>
+          </div>
+        </v-card>
+
+        </div>
+      </v-card>
+
+      <!-- STEP 4 -->
+      <v-card
+        v-if="showStep4"
+        outlined
+        class="ma-3 pa-5"
+      >
+        <StepHeading
+          stepNumber="4"
+          stepTitle="Output Files"
+        />
+        <div>
+
+          <v-row>
+            <v-col cols="6">
+              <v-text-field
+                v-model="outputFiles.training"
+                outlined
+                dense
+                label="Training Data File Name"
+                suffix=".csv"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-text-field
+                v-model="outputFiles.testing"
+                outlined
+                dense
+                label="Testing Data File Name"
+                suffix=".csv"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <div v-if="e1 == 4">
+            <div class="overline">Additional File Outputs</div>
+            <v-row>
+              <v-col cols="6"
+                v-if="prevalenceOption == 1"
+
+              >
+
+                <v-switch
+                label="Export unused data from the majority class."
+                v-model="outputSettings.extraFile"
+                ></v-switch>
+
+                <v-text-field
+                  outlined
+                  dense
+                  label="Extra Data File"
+                  suffix=".csv"
+                  v-model="outputFiles.extra"
+                  v-if="outputSettings.extraFile"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="6"
+
+                v-if="fileData.nan_count > 0"
+              >
+                <div>
+                  <v-switch
+                  label="Export the rows missing data."
+                  v-model="outputSettings.nanFile"
+                  ></v-switch>
+                </div>
+                <v-text-field
+                  outlined
+                  dense
+                  label="Rows with Missing Data File"
+                  suffix=".csv"
+                  v-model="outputFiles.nan"
+                  v-if="outputSettings.nanFile"
+                ></v-text-field>
+              </v-col>
+
+            </v-row>
+
+          </div>
+          <div class="text-right">
+            <v-btn
+              dark
+              rounded
+              float="right"
+              color="primary"
+              @click="processFiles()"
+            >
+              Create Files
+              <v-icon class="pl-2">mdi-file</v-icon>
+            </v-btn>
+
+          </div>
+
+
+
+
+
+
+        </div>
+      </v-card>
+
+
 
 
       <v-dialog
@@ -618,15 +969,23 @@
 <script>
 import axios from 'axios'
 import FileDownload from 'js-file-download'
+import DataValidation from '@/components/DataValidation'
+import StepHeading from '@/components/StepHeading'
 
 export default {
   name: 'TrainTestSplit',
+  components: {
+    DataValidation,
+    StepHeading
+  },
   data() {
     return {
       e1: 1,
 
       file: null,
       fileData: null,
+      fileDataValid: null,
+      fileDataLoading: false,
 
       prevalenceOption: 0,
 
@@ -677,6 +1036,41 @@ export default {
     }
   },
   computed: {
+    //Control Which Steps Shows,
+    showStep2() {
+      if (
+        this.fileData != null
+        && (this.fileDataValid ? this.fileDataValid.bool : false) // if data field exists
+      ) {
+        return true
+      } else {
+        return false
+      }
+
+    },
+    showStep3() {
+      if (
+        this.showStep2
+        && this.targetColumn != null
+        // && !this.minSampleSizeError
+      ) {
+        return true
+      } else {
+        return false
+      }
+
+    },
+    showStep4() {
+      if (
+        this.showStep3
+      ) {
+        return true
+      } else {
+        return false
+      }
+
+    },
+    //Errors
     minSampleSizeError() {
       if (this.classMetadata != null) {
         if (this.classMetadata.class_counts[0] < this.minSampleSize || this.classMetadata.class_counts[1] < this.minSampleSize) {
@@ -717,23 +1111,29 @@ export default {
 
     },
 
-    trainTestFileUpload(file) {
+    fileUpload(file) {
       if (file != null) {
         //this method uploads form data
         var formData = new FormData();
 
+        //UI
+        this.fileDataLoading = true
+
         //file name data stored in X-file header of post request
         formData.append("file", file);
-        axios.post('/train_test_split/upload', formData, {
+        axios.post('/data_file_upload', formData, {
             headers: {
             'Content-Type': 'multipart/form-data',
-            'X-filename': file.name
+            'X-filename': file.name,
+            'X-filegroup': 'train_test_split'
 
           }
         }).then(result => {
+          this.fileDataLoading = false
           //file data stored in data field of result
           this.fileData = result.data
         }).catch(() => {
+          this.fileDataLoading = false
           this.$store.commit('snackbarMessageSet', {
             color: 'red lighten-1',
             message: 'Error processing file.'
@@ -742,10 +1142,17 @@ export default {
         })
       }
       else {
+        this.fileDataLoading = false
         this.resetStep1()
       }
 
     },
+    fileValidationData(result){
+      console.log(result)
+      this.fileDataValid = result
+    },
+
+
     determineClassMetadata(field){
       if (field != null) {
         let data = {
