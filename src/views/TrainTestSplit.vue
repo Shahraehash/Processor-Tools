@@ -532,7 +532,7 @@
                   <DataValidation
                     class="mt-n3"
                     :fileData="fileData"
-                    dataType="testing"
+                    dataType="combined"
                     @dataValid="fileValidationData"
                   />
                 </v-col>
@@ -675,7 +675,7 @@
       >
         <StepHeading
           stepNumber="3"
-          stepTitle="Select X"
+          stepTitle="Select Split"
         />
         <div>
 
@@ -820,6 +820,10 @@
           stepTitle="Output Files"
         />
         <div>
+          <div>
+
+            <v-switch v-model="outputSettings.includeRowIndex" label="Include row index in output"></v-switch>
+          </div>
 
           <v-row>
             <v-col cols="6">
@@ -842,7 +846,7 @@
             </v-col>
           </v-row>
 
-          <div v-if="e1 == 4">
+          <div >
             <div class="overline">Additional File Outputs</div>
             <v-row>
               <v-col cols="6"
@@ -1035,8 +1039,9 @@ export default {
         extra:null
       },
       outputSettings: {
+        includeRowIndex: false,
         nanFile: false,
-        extraFile: false
+        extraFile: false,
       },
       completionDialog: false,
       processFileLoading: false,
@@ -1228,7 +1233,8 @@ export default {
         training_class_sample_size: this.trainingClassSampleSize, //Not matched to output
         prevalence_option: this.prevalenceOption, //0 = use all data, 1 = maintain initail prevalence
         majority_class: this.classMetadata.majority_class,
-        extra: this.barData.extra // extra data used in maintaining inital prevalence
+        extra: this.barData.extra, // extra data used in maintaining inital prevalence
+        include_index: this.outputSettings.includeRowIndex
 
       }
 

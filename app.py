@@ -109,9 +109,14 @@ def train_test_split_process():
     prevalence_option = request.json['prevalence_option']
     majority_class = request.json['majority_class']
     extra = request.json['extra']
+    include_index = request.json['include_index']
 
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file_path)
+
+    #get missing data
+    missing = df[df.isna().any(axis=1)]
+    df = df.drop(missing.index)
 
     train_0 = df[df[target_column] == 0].sample(training_class_sample_size)
     train_1 = df[df[target_column] == 1].sample(training_class_sample_size)
@@ -121,16 +126,19 @@ def train_test_split_process():
     test_filtered = df.drop(train_0.index).drop(train_1.index)
 
     final_data = {
-        'training': train_combine.to_csv(index=False),
-        'testing': test_filtered.to_csv(index=False)
+        'training': train_combine.to_csv(index=include_index),
+        'testing': test_filtered.to_csv(index=include_index),
+        'nan': missing.to_csv(index=include_index)
     }
+
+
 
     if prevalence_option == 1:
         reduction = test_filtered[test_filtered[target_column] == majority_class].sample(extra)
         test_reduced = test_filtered.copy()
         test_reduced = test_reduced.drop(reduction.index)
-        final_data['testing'] = test_reduced.to_csv(index=False)
-        final_data['extra'] = reduction.to_csv(index=False)
+        final_data['testing'] = test_reduced.to_csv(index=include_index)
+        final_data['extra'] = reduction.to_csv(index=include_index)
 
     time.sleep(3)
 

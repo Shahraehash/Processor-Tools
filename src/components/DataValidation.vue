@@ -30,6 +30,19 @@
               <span class="grey--text">(Max is {{rules.maxTestingRows}})</span>
             </div>
           </div>
+          <div v-if="dataType == 'combined'">
+            <div v-if="errors.maxCombinedRows">
+              <v-icon color="red" >mdi-alert-circle</v-icon>
+              {{fileData.rows}} rows
+              <span class="grey--text">(Max is {{rules.maxTestingRows + rules.maxTrainingRows}})</span>
+            </div>
+            <div v-if="!errors.maxCombinedRows">
+              <v-icon color="green" >mdi-check-circle</v-icon>
+              {{fileData.rows}} rows
+              <span class="grey--text">(Max is {{rules.maxTestingRows + rules.maxTrainingRows}})</span>
+            </div>
+          </div>
+
         </div>
         <!-- Column Errors -->
         <div>
@@ -46,11 +59,11 @@
         </div>
         <!-- Missing Data Error -->
         <div>
-          <div v-if="errors.missingData">
+          <div v-if="alerts.missingData">
             <v-icon color="orange" >mdi-alert-circle</v-icon>
-            {{fileData.nan_count}} rows are missing data. These rows cannot be used.
+            {{fileData.nan_count}} rows are missing data. These rows will be dropped.
           </div>
-          <div v-if="!errors.missingData">
+          <div v-if="!alerts.missingData">
             <v-icon color="green" >mdi-check-circle</v-icon> All rows have complete data.
           </div>
         </div>
@@ -100,12 +113,15 @@ export default {
         maxTrainingRows: 10000,
         maxTestingRows: 100000
       },
-      errors: {
+      alerts: {
         missingData: false,
+      },
+      errors: {
         textData: false,
         maxFeatures: false,
         maxTrainingRows: false,
         maxTestingRows: false,
+        maxCombinedRows: false,
       }
 
     }
@@ -122,7 +138,7 @@ export default {
   methods: {
     validateData() {
       if (this.fileData != null) {
-        this.fileData.nan_count > 0 ? this.errors.missingData = true : this.errors.missingData = false
+        this.fileData.nan_count > 0 ? this.alerts.missingData = true : this.alerts.missingData = false
         this.fileData.invalid_columns.length > 0 ? this.errors.textData = true : this.errors.textData = false
 
         this.fileData.columns > this.rules.maxFeatures ? this.errors.maxFeatures = true : this.errors.maxFeatures = false
@@ -135,14 +151,18 @@ export default {
           this.fileData.rows > this.rules.maxTestingRows ? this.errors.maxTestingRows = true : this.errors.maxTestingRows = false
         }
 
+        if (this.dataType == 'combined') {
+          this.fileData.rows > (this.rules.maxTestingRows + this.rules.maxTrainingRows) ? this.errors.maxCombinedRows = true : this.errors.maxCombinedRows = false
+        }
+
 
         let validData = true
-        for (let i in this.errors) {
-          if (this.errors[i] == true) {
-            validData = false
-          }
-
-        }
+        // for (let i in this.errors) {
+        //   if (this.errors[i] == true) {
+        //     validData = false
+        //   }
+        //
+        // }
         this.$emit('dataValid', {bool: validData, errors: this.errors})
 
       }
