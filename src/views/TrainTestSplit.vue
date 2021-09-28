@@ -539,6 +539,10 @@
               </v-row>
             </v-layout>
           </v-card>
+
+          <ErrorMessage v-if="fileDataValid ? fileDataValid.errors.missingData : false" type="warning" text="Rows with missing data will be dropped during processing." />
+          <ErrorMessage v-if="fileDataValid ? fileDataValid.errors.textData : false" type="error" text="Milo cannot use columns with non-numerical data. This must be fixed before the tool can proceed." />
+
         </div>
       </v-card>
 
@@ -652,12 +656,12 @@
 
               <div class="distrobution-box" v-bind:style="{ background: '#d3d3d3', width: placeholderSlot + '%' }">Data Distrobution Displayed After Selection</div>
             </div>
-            <v-alert
+            <ErrorMessage
               v-if="minSampleSizeError"
-              color="red"
               type="error"
-            >To use this tool, each class must have a an N greater than {{minSampleSize}}.
-          </v-alert>
+              :text="'To use this tool, each class must have a an N greater than ' + minSampleSize "
+              />
+
 
 
         </div>
@@ -971,12 +975,14 @@ import axios from 'axios'
 import FileDownload from 'js-file-download'
 import DataValidation from '@/components/DataValidation'
 import StepHeading from '@/components/StepHeading'
+import ErrorMessage from '@/components/ErrorMessage'
 
 export default {
   name: 'TrainTestSplit',
   components: {
     DataValidation,
-    StepHeading
+    StepHeading,
+    ErrorMessage
   },
   data() {
     return {
@@ -991,6 +997,7 @@ export default {
 
       //STEP 2
       targetColumn: null,
+      targetColumnList: [],
       classMetadata: null,
       //class computed
       class0size: 0,
@@ -1052,7 +1059,7 @@ export default {
       if (
         this.showStep2
         && this.targetColumn != null
-        // && !this.minSampleSizeError
+        && !this.minSampleSizeError
       ) {
         return true
       } else {
@@ -1089,7 +1096,10 @@ export default {
     resetStep1() {
       this.file = null
       this.fileData = null
+      this.fileDataValid = null
+      this.targetColumnList = []
       this.resetStep2()
+
     },
     resetStep2() {
       this.targetColumn = null
@@ -1132,6 +1142,10 @@ export default {
           this.fileDataLoading = false
           //file data stored in data field of result
           this.fileData = result.data
+
+          //set target column options
+          this.targetColumnList = this.fileData.column_names.reverse()
+
         }).catch(() => {
           this.fileDataLoading = false
           this.$store.commit('snackbarMessageSet', {
