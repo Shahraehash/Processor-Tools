@@ -26,8 +26,8 @@
           <v-icon x-large>mdi-arrow-down</v-icon>
         </div>
         <div class="mt-5">
-          <v-btn class="mx-2" @click="isOpen = false">Make Edits</v-btn>
-          <v-btn color="primary" @click="$router.push({name:'Landing'})">Close Tool</v-btn>
+          <v-btn class="primary" @click="isOpen = false">Edit output</v-btn>
+          <v-btn @click="$router.push({name:'Landing'})">Exit tool</v-btn>
         </div>
 
       </div>

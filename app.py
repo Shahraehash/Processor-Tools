@@ -70,8 +70,10 @@ def train_test_split_metadata():
     class_counts = df[target_column].value_counts()
     total_count = class_counts.sum()
 
+    #default value
+    nan_counts = {0:0, 1:0}
+    nan_counts = json.dumps(nan_counts)
 
-    nan_counts = None
     if (find_nan_counts(df) > 0):
         nan_counts = df[df.isna().any(axis=1)][target_column].value_counts()
         #ensure all values carried to front end
@@ -125,10 +127,16 @@ def train_test_split_process():
 
     test_filtered = df.drop(train_0.index).drop(train_1.index)
 
+    #Remove extra index column
+    train_combine = train_combine.drop(df.columns[[0]], axis=1)
+    test_filtered = test_filtered.drop(df.columns[[0]], axis=1)
+    missing = missing.drop(df.columns[[0]], axis=1)
+
     final_data = {
-        'training': train_combine.to_csv(index=include_index),
-        'testing': test_filtered.to_csv(index=include_index),
-        'nan': missing.to_csv(index=include_index)
+        'training': train_combine.to_csv(index=include_index, index_label="source_row"),
+        'testing': test_filtered.to_csv(index=include_index, index_label="source_row"),
+        #Rows missing value export. Index should always be included.
+        'nan': missing.to_csv(index=True, index_label="source_row")
     }
 
 
@@ -138,7 +146,9 @@ def train_test_split_process():
         test_reduced = test_filtered.copy()
         test_reduced = test_reduced.drop(reduction.index)
         final_data['testing'] = test_reduced.to_csv(index=include_index)
-        final_data['extra'] = reduction.to_csv(index=include_index)
+
+        #Extra data export. Index should always be included.
+        final_data['extra'] = reduction.to_csv(index=True, index_label="source_row")
 
     time.sleep(3)
 
@@ -168,6 +178,9 @@ def data_file_upload():
         #helper function to clean up nan rows
         df = convert_blanks_to_nan(df)
         #update file with cleaned up fields
+
+        #trim column names
+        df.columns = df.columns.str.replace(' ', '')
 
         df.to_csv(file_path)
 
@@ -259,59 +272,6 @@ def upload():
     if file_obj is None:
         # Indicates that no file was sent
         return "File not uploaded"
-
-    if (inbound_file == 'training_data'):
-
-    #save document
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], "training_data.csv")
-        file_obj.save(file_path)
-        training_data = pd.read_csv(file_path)
-
-        ##clean up column names
-        training_data.columns = training_data.columns.str.replace(' ', '')
-
-        rows = training_data.shape[0]
-        columns = training_data.shape[1]
-        column_names = training_data.columns.values.tolist()
-
-        response = make_response(
-            jsonify({
-                "rows": rows,
-                "columns": columns,
-                "column_names": column_names
-            }),
-            200,
-        )
-        response.headers["Content-Type"] = "application/json"
-        time.sleep(1)
-        return response
-
-
-    if (inbound_file == 'testing_data'):
-
-    #save document
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], "testing_data.csv")
-        file_obj.save(file_path)
-        testing_data = pd.read_csv(file_path)
-
-        ##clean up column names
-        testing_data.columns = testing_data.columns.str.replace(' ', '')
-
-        rows = testing_data.shape[0]
-        columns = testing_data.shape[1]
-        column_names = testing_data.columns.values.tolist()
-
-        response = make_response(
-            jsonify({
-                "rows": rows,
-                "columns": columns,
-                "column_names": column_names
-            }),
-            200,
-        )
-        response.headers["Content-Type"] = "application/json"
-        time.sleep(1)
-        return response
 
     if (inbound_file == 'milo_file'):
 

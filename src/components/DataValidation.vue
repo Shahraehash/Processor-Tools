@@ -4,64 +4,75 @@
       <v-card class="py-2 px-3 mt-3 mr-5" flat outlined>
         <div class="overline">File Validation</div>
 
-        <!-- Row Errors -->
+        <!-- Row alerts -->
         <div>
           <div v-if="dataType == 'training'">
-            <div v-if="errors.maxTrainingRows">
+            <div v-if="alerts.maxTrainingRows">
               <v-icon color="red" >mdi-alert-circle</v-icon>
               {{fileData.rows}} rows
-              <span class="grey--text">(Max is {{rules.maxTrainingRows}})</span>
+              <span class="grey--text">(Max in MILO is {{rules.maxTrainingRows}})</span>
             </div>
-            <div v-if="!errors.maxTrainingRows">
+            <div v-if="!alerts.maxTrainingRows">
               <v-icon color="green" >mdi-check-circle</v-icon>
               {{fileData.rows}} rows
-              <span class="grey--text">(Max is {{rules.maxTrainingRows}})</span>
+              <span class="grey--text">(Max in MILO is {{rules.maxTrainingRows}})</span>
             </div>
           </div>
           <div v-if="dataType == 'testing'">
-            <div v-if="errors.maxTestingRows">
+            <div v-if="alerts.maxTestingRows">
               <v-icon color="red" >mdi-alert-circle</v-icon>
               {{fileData.rows}} rows
-              <span class="grey--text">(Max is {{rules.maxTestingRows}})</span>
+              <span class="grey--text">(Max in MILO is {{rules.maxTestingRows}})</span>
             </div>
-            <div v-if="!errors.maxTestingRows">
+            <div v-if="!alerts.maxTestingRows">
               <v-icon color="green" >mdi-check-circle</v-icon>
               {{fileData.rows}} rows
-              <span class="grey--text">(Max is {{rules.maxTestingRows}})</span>
+              <span class="grey--text">(Max in MILO is {{rules.maxTestingRows}})</span>
             </div>
           </div>
           <div v-if="dataType == 'combined'">
-            <div v-if="errors.maxCombinedRows">
+            <!-- <div v-if="alerts.maxCombinedRows">
               <v-icon color="red" >mdi-alert-circle</v-icon>
               {{fileData.rows}} rows
               <span class="grey--text">(Max is {{rules.maxTestingRows + rules.maxTrainingRows}})</span>
-            </div>
-            <div v-if="!errors.maxCombinedRows">
+            </div> -->
+            <div>
               <v-icon color="green" >mdi-check-circle</v-icon>
               {{fileData.rows}} rows
-              <span class="grey--text">(Max is {{rules.maxTestingRows + rules.maxTrainingRows}})</span>
             </div>
           </div>
 
         </div>
-        <!-- Column Errors -->
+        <!-- Column alerts -->
         <div>
-          <div v-if="errors.maxFeatures">
+          <div v-if="alerts.maxFeatures">
             <v-icon color="red" >mdi-alert-circle</v-icon>
             {{fileData.columns}} columns
-            <span class="grey--text">(Max is {{rules.maxFeatures}})</span>
+            <span class="grey--text">(Max in MILO is {{rules.maxFeatures}})</span>
           </div>
-          <div v-if="!errors.maxFeatures">
+          <div v-if="!alerts.maxFeatures">
             <v-icon color="green" >mdi-check-circle</v-icon>
             {{fileData.columns}} columns
-            <span class="grey--text">(Max is {{rules.maxFeatures}})</span>
+            <span class="grey--text">(Max in MILO is {{rules.maxFeatures}})</span>
           </div>
         </div>
+        <!-- More columns thans rows alerts -->
+        <div>
+          <div v-if="alerts.moreColthanRow">
+            <v-icon color="red" >mdi-alert-circle</v-icon>
+            <span class="grey--text">File has more columns than rows. We do not recommend this.</span>
+          </div>
+          <div v-if="!alerts.moreColthanRow">
+            <!-- Nothing -->
+          </div>
+        </div>
+
+
         <!-- Missing Data Error -->
         <div>
           <div v-if="alerts.missingData">
             <v-icon color="orange" >mdi-alert-circle</v-icon>
-            {{fileData.nan_count}} rows are missing data. These rows will be dropped.
+            {{fileData.nan_count}} rows are missing data.
           </div>
           <div v-if="!alerts.missingData">
             <v-icon color="green" >mdi-check-circle</v-icon> All rows have complete data.
@@ -69,7 +80,7 @@
         </div>
         <!-- Text Data Error -->
         <div>
-          <div v-if="errors.textData">
+          <div v-if="alerts.textData">
             <v-icon color="orange" >mdi-alert-circle</v-icon>
             {{fileData.invalid_columns.length}} column<span v-if="fileData.invalid_columns.length > 1">s</span> (
             <v-chip dark small color="orange lighten-3" v-for="(item, key) in fileData.invalid_columns" :key="key">{{item}}</v-chip>
@@ -77,7 +88,7 @@
 
 
           </div>
-          <div v-if="!errors.textData">
+          <div v-if="!alerts.textData">
             <v-icon color="green" >mdi-check-circle</v-icon> All rows have numerical data.
           </div>
         </div>
@@ -110,18 +121,17 @@ export default {
     return {
       rules: {
         maxFeatures: 2000,
-        maxTrainingRows: 10000,
-        maxTestingRows: 100000
+        maxTrainingRows: 5000,
+        maxTestingRows: 20000
       },
       alerts: {
         missingData: false,
-      },
-      errors: {
         textData: false,
         maxFeatures: false,
         maxTrainingRows: false,
         maxTestingRows: false,
-        maxCombinedRows: false,
+        moreColthanRow: false,
+        // maxCombinedRows: false,
       }
 
     }
@@ -139,31 +149,33 @@ export default {
     validateData() {
       if (this.fileData != null) {
         this.fileData.nan_count > 0 ? this.alerts.missingData = true : this.alerts.missingData = false
-        this.fileData.invalid_columns.length > 0 ? this.errors.textData = true : this.errors.textData = false
+        this.fileData.invalid_columns.length > 0 ? this.alerts.textData = true : this.alerts.textData = false
 
-        this.fileData.columns > this.rules.maxFeatures ? this.errors.maxFeatures = true : this.errors.maxFeatures = false
+        this.fileData.columns > this.rules.maxFeatures ? this.alerts.maxFeatures = true : this.alerts.maxFeatures = false
+
+        this.fileData.columns > this.fileData.rows ? this.alerts.moreColthanRow = true : this.alerts.moreColthanRow = false
 
         if (this.dataType == 'training') {
-          this.fileData.rows > this.rules.maxTrainingRows ? this.errors.maxTrainingRows = true : this.errors.maxTrainingRows = false
+          this.fileData.rows > this.rules.maxTrainingRows ? this.alerts.maxTrainingRows = true : this.alerts.maxTrainingRows = false
         }
 
         if (this.dataType == 'testing') {
-          this.fileData.rows > this.rules.maxTestingRows ? this.errors.maxTestingRows = true : this.errors.maxTestingRows = false
+          this.fileData.rows > this.rules.maxTestingRows ? this.alerts.maxTestingRows = true : this.alerts.maxTestingRows = false
         }
 
-        if (this.dataType == 'combined') {
-          this.fileData.rows > (this.rules.maxTestingRows + this.rules.maxTrainingRows) ? this.errors.maxCombinedRows = true : this.errors.maxCombinedRows = false
-        }
+        // if (this.dataType == 'combined') {
+        //   this.fileData.rows > (this.rules.maxTestingRows + this.rules.maxTrainingRows) ? this.alerts.maxCombinedRows = true : this.alerts.maxCombinedRows = false
+        // }
 
 
         let validData = true
-        // for (let i in this.errors) {
-        //   if (this.errors[i] == true) {
+        // for (let i in this.alerts) {
+        //   if (this.alerts[i] == true) {
         //     validData = false
         //   }
         //
         // }
-        this.$emit('dataValid', {bool: validData, errors: this.errors})
+        this.$emit('dataValid', {bool: validData, alerts: this.alerts})
 
       }
 

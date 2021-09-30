@@ -1,23 +1,12 @@
 <template>
   <v-container outlined>
-    <v-card outlined class="ma-3 pa-3">
-      <div >
-        <v-row>
-          <v-col cols="3">
-            <v-btn icon @click="$router.push({name: 'Landing'})"><v-icon>mdi-arrow-left</v-icon></v-btn>
-          </v-col>
-          <v-col cols="6" class="text-center">
-            <v-icon x-large>mdi-table-column-width</v-icon>
-            <span class="title">Column Reducer Tool</span>
-          </v-col>
-          <v-col cols="3">
-          </v-col>
-        </v-row>
-      </div>
-      <v-card-text class="body-1">
-        This tool allows to extract specific columns from your training and test data to experiment with further refinement of your model.
-      </v-card-text>
-    </v-card>
+    <MenuBar
+      title="Column Reducer Tool"
+      icon="mdi-table-column-width"
+      description="This tool allows to extract specific columns from your training and test data to experiment with further refinement of your model."
+      @reset="resetStep1Training"
+    />
+
 
     <v-card
       v-bind:style="{'opacity': setTransparencyFromStepProgress(1)}"
@@ -485,6 +474,7 @@ import DataValidation from '@/components/DataValidation'
 import StepHeading from '@/components/StepHeading'
 import Decision from '@/components/Decision'
 import FileProcessingDialog from '@/components/FileProcessingDialog'
+import MenuBar from '@/components/MenuBar'
 
 export default {
   name: 'Home',
@@ -492,7 +482,8 @@ export default {
     DataValidation,
     StepHeading,
     Decision,
-    FileProcessingDialog
+    FileProcessingDialog,
+    MenuBar
   },
   data() {
     return {
@@ -638,10 +629,7 @@ export default {
       else {
         this.resetStep1Training()
       }
-
-
     },
-
     dataFileUploadTesting(file) {
       if (file != null) {
         this.testingDataLoading = true
@@ -651,16 +639,12 @@ export default {
           this.testingMetadata = response.data
           this.testingDataLoading = false
           this.testingOutputFilename = this.testingFileData.name.replace('.csv', '') + '_reduced'
-
         })
       }
       else {
         this.testingMetadata = null
       }
-
-
     },
-
     dataFileUpload(file, type) {
       if (file != null) {
         //this method uploads form data
@@ -696,6 +680,7 @@ export default {
     dataValidationTestingData(result) {
       this.testingDataValid = result
     },
+
     processFiles() {
       let data = {}
       data.training_storage_id = this.trainingMetadata.storage_id
@@ -714,7 +699,6 @@ export default {
         }
       }).then(response => {
 
-
         //UI elements
         this.fileProcessingInProgress = false
 
@@ -724,13 +708,8 @@ export default {
         if (response.data.testing != 'null') {
           FileDownload(response.data.testing, this.testingOutputFilename + '.csv')
         }
-
-
       })
-
     },
-
-
 
     resetStep1Training() {
       this.trainingFileData = null
@@ -740,19 +719,18 @@ export default {
       this.nontargetColumnList = null
       this.trainingOutputFilename = ''
       this.testingFile = null
+      this.fileProcessingDialog = false
 
       this.resetStep1Testing()
       this.resetStep2()
 
     },
     resetStep1Testing() {
-
       // this.testingFile = null
       this.testingFileData = null
       this.testingMetadata = null
       this.testingDataValid = true
       this.testingOutputFilename = ''
-
     },
     resetStep2() {
       this.target = null
@@ -764,10 +742,9 @@ export default {
       this.errorColumns = null
       this.confirmColumnSelection = false
       this.resetStep4()
-
     },
     resetStep4() {
-
+      console.log('nothing')
     },
 
     splitPasted() {
@@ -801,6 +778,7 @@ export default {
 
       //Unique values only
       this.selectedColumns = _.uniq(this.selectedColumns)
+      console.log(this.selectedColumns)
 
 
     },
@@ -841,55 +819,7 @@ export default {
       this.$socket.emit('custom')
       this.loading = true
     },
-    trainingFileUpload(file){
-      if (file != null) {
-        this.trainingDataLoading = true
-        var formData = new FormData();
 
-        formData.append("file", file);
-        axios.post('data_upload', formData, {
-            headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-inbound': 'training_data'
-          }
-        }).then(result => {
-          this.trainingMetadata = result.data
-          this.targetColumnList = this.trainingMetadata.column_names.reverse()
-          this.trainingOutputFilename = file.name.replace('.csv','') + '_reduced'
-          this.trainingDataLoading = false
-        })
-      }
-      else {
-        this.trainingMetadata = null
-        this.trainingOutputFilename = ''
-        this.trainingDataLoading = false
-      }
-
-    },
-    testingFileUpload(file){
-      if (file != null) {
-        this.testingDataLoading = true
-        var formData = new FormData();
-        console.log(file)
-
-        formData.append("file", file);
-        axios.post('data_upload', formData, {
-            headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-inbound': 'testing_data'
-          }
-        }).then(result => {
-          this.testingMetadata = result.data
-          this.testingOutputFilename = file.name.replace('.csv','') + '_reduced'
-          this.testingDataLoading = false
-        })
-      }
-      else {
-        this.testingMetadata = null
-        this.testingOutputFilename = ''
-        this.testingDataLoading = false
-      }
-    },
     miloFileUpload(file){
       if (file != null) {
         var formData = new FormData();
@@ -920,54 +850,12 @@ export default {
       }
     },
     setMiloColumns() {
+
       this.selectedColumns = this.miloColumns
+      console.log(this.selectedColumns)
       this.miloDialog = false
     },
-    finalFileRequests() {
-      let finalColumns = []
-      this.selectedColumns.forEach(column => {
-        finalColumns.push(column)
-      })
-      finalColumns.push(this.target)
 
-      let hasTestData = !(this.testingMetadata == null)
-
-      let reductionData = {finalColumns, hasTestData}
-      axios.post('column_reducer/build_files', reductionData, {
-        headers: {
-        'Content-Type': 'application/json',
-      }
-
-      })
-      .then(() => {
-
-
-        return axios.post('/column_reducer/training_reduced_file', {name: this.trainingOutputFilename}, {
-          headers: {
-          'Content-Type': 'application/json',
-          }
-        })
-
-      }).then(response => {
-        console.log(response)
-        FileDownload(response.data, this.trainingOutputFilename + '.csv')
-
-        if (this.testingMetadata != null) {
-          return axios.post('/column_reducer/testing_reduced_file', {name: this.testingOutputFilename}, {
-            headers: {
-            'Content-Type': 'application/json',
-            }
-          })
-        }
-      }).then(response => {
-        console.log(response)
-        if (this.testingMetadata != null) {
-          FileDownload(response.data, this.testingOutputFilename + '.csv')
-        }
-      })
-
-
-    },
     //Support Functions
     proceedToStep4() {
       this.confirmColumnSelection = true
