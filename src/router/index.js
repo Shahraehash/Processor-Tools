@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Landing from '../views/Landing.vue'
 import ColumnReducer from '../views/ColumnReducer.vue'
 import TrainTestSplit from '../views/TrainTestSplit.vue'
+import Colinearity from '../views/Colinearity.vue'
 
 Vue.use(VueRouter)
 
@@ -11,6 +12,11 @@ const routes = [
     path: '/columnreducer',
     name: 'ColumnReducer',
     component: ColumnReducer
+  },
+  {
+    path: '/colinearity',
+    name: 'Colinearity',
+    component: Colinearity
   },
   {
     path: '/traintestsplit',

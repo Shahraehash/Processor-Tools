@@ -4,7 +4,7 @@
       Milo Preprocessing Tools
     </v-card>
 
-    <v-row>
+    <v-row wrap>
       <v-col cols="6" class="mt-3">
         <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'ColumnReducer'})">
           <v-icon x-large>mdi-table-column-width</v-icon>
@@ -15,6 +15,12 @@
         <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'TrainTestSplit'})">
           <v-icon x-large>mdi-call-split</v-icon>
           <span class="title">Train and Test Builder</span>
+        </v-card>
+      </v-col>
+      <v-col cols="6" class="mt-3">
+        <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'Colinearity'})">
+          <v-icon x-large>mdi-chart-bell-curve-cumulative</v-icon>
+          <span class="title">Colinearity Removal</span>
         </v-card>
       </v-col>
 

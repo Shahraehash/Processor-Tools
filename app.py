@@ -223,6 +223,41 @@ def data_file_upload():
         os.remove(file_path)
         return abort(500)
 
+@app.route('/calc/cor',methods=["POST"])
+def calc_corr():
+    storage_id = request.json['storage_id']
+    target = request.json['target']
+    file = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
+    df = pd.read_csv(file)
+
+    df = df.drop(columns=[target])
+    correlation_mat = df.corr()
+
+    series = []
+    for ind in correlation_mat.index:
+        obj = {}
+        obj['name'] = ind
+        obj['data'] = []
+        for x,y in correlation_mat[ind].iteritems():
+            obj['data'].append({
+                'x':x,
+                'y':y
+            })
+        series.append(obj)
+
+
+    response = make_response(
+        jsonify({
+            "graph": series,
+        }),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
+
 @app.route('/column_reducer/process',methods=["POST"])
 def column_reducer_process():
     training_storage_id = request.json['training_storage_id']
