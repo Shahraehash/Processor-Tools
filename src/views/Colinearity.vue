@@ -41,7 +41,7 @@
                   outlined
                   :disabled="fileObj.dataSet == null"
                   :label="fileObj.dataSet + ' file'"
-                  @change="fileObj.uploadFile()"
+                  @change="fileObj.dataFileUpload()"
                 ></v-file-input>
               </v-col>
               <v-col cols="6" class="text-center">
@@ -54,8 +54,40 @@
               </v-col>
             </v-row>
           </v-layout>
+          <v-expansion-panels
+            v-if="files[0].fileMetadata"
+            >
+            <v-expansion-panel
+            >
+              <v-expansion-panel-header>
+                View Data Descriptions
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <v-data-table
+                  :headers="[
+                    {text: 'Column', value:'feature'},
+                    {text: 'Count', value:'count'},
+                    {text: 'Mean', value:'mean'},
+                    {text: 'STDEV', value:'std'},
+                    {text: 'Min', value:'min'},
+                    {text: '25%', value:'25%'},
+                    {text: '50%', value:'50%'},
+                    {text: '75%', value:'75%'},
+                    {text: 'Max', value:'max'},
+                    {text: 'Skew', value:'skew'},
+                    ]"
+                  :items="files[0].fileMetadata.describe"
+                  :items-per-page="5"
+                  class="elevation-1"
+                >
+                </v-data-table>
+
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
         </v-card>
       </div>
+
     </v-card>
 
     <!-- STEP 2 -->
@@ -79,67 +111,35 @@
                 prepend-icon="mdi-bullseye"
 
                 v-model="files[0].target"
-                :items='files[0].fileMetadata.column_names'
+                :items='files[0].fileMetadata.column_names_reversed'
                 @change="files[0].validateTarget(files[0].target)"
               ></v-select>
             </v-col>
           </v-row>
         </div>
+        <div class="text-right">
+          <v-btn
+            color="primary"
+            v-if="files[0].target"
+            dark
+            @click="files[0].generateCorrelation()"
+            :disabled="files[0].correlation != null"
+          >Calculate Correlations</v-btn>
+        </div>
 
       </v-card>
 
 
-      <!-- STEP 3 -->
 
+      <!-- STEP 4 -->
       <v-card
+        v-if="files[0].correlation"
         outlined
         class="ma-3 pa-5"
         >
         <StepHeading
           stepNumber="3"
-          stepTitle="Data Details"
-        />
-        <div v-if="files[0].fileMetadata">
-
-          <v-data-table
-            :headers="[
-              {text: 'Feature', value:'feature'},
-              {text: 'Count', value:'count'},
-              {text: 'Mean', value:'mean'},
-              {text: 'STDEV', value:'std'},
-              {text: 'Min', value:'min'},
-              {text: '25%', value:'25%'},
-              {text: '50%', value:'50%'},
-              {text: '75%', value:'75%'},
-              {text: 'Max', value:'max'},
-              {text: 'Skew', value:'skew'},
-              ]"
-            :items="files[0].fileMetadata.describe"
-            :items-per-page="30"
-            class="elevation-1"
-          >
-          </v-data-table>
-
-        </div>
-        <div class="text-right">
-          <v-btn
-            color="primary"
-            dark
-            small
-            @click="files[0].generateCorrelation()"
-          >Calculate Correlations</v-btn>
-        </div>
-      </v-card>
-
-
-      <!-- STEP 4 -->
-      <v-card
-        outlined
-        class="ma-3 pa-5"
-        >
-        <StepHeading
-          stepNumber="4"
-          stepTitle="Find Pairs"
+          stepTitle="Select Columns to be Removed"
         />
 
         <div>
@@ -167,7 +167,7 @@
         </div>
         <v-data-table
           :headers="[{text: 'Feature Pair', value:'features'}, {text:'Value', value:'value'}]"
-          :items="files[0].filteredList()"
+          :items="files[0].correlationFilteredList()"
           :items-per-page="5"
           class="elevation-1"
         >
@@ -230,6 +230,7 @@ export default {
       files: [],
       showGraph: false,
 
+
       options: {
         chart: {
           animations: {
@@ -245,7 +246,7 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     //create new file object
     this.files.push(CustObjs.newFileObject())
   },

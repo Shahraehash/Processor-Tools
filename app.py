@@ -210,6 +210,7 @@ def data_file_upload():
         'rows': int(df.shape[0]),
         'columns': int(df.shape[1]),
         'column_names': list(df.columns.values),
+        'column_names_reversed': list(np.flip(df.columns.values)),
         'nan_count': int(find_nan_counts(df)),
         'dtypes_count': json.loads(df.dtypes.value_counts().to_json()),
         'nan_by_column': json.loads(df.isna().sum().to_json()),

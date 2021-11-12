@@ -6,31 +6,31 @@ export default {
 
   newFileObject() {
     return {
-      file: null,
-      uploading: false,
-      dataSet: null,
-      fileMetadata: null,
+      //core properties
+      file: null, //actual file
+      uploading: false, //for UI
+      dataSet: null, //type of data set (training, test, combined, etc.)
+      fileMetadata: null, //calculated as part of the data_file_upload() method
       fileValid: null,
-      target: null,
-      featureList: null,
+      target: null, //set by calling validateTarget() to validate_target_column()
+      featureList: null, //set by validateTarget()
+
+      //output
+      fileOutputName: '',
+
+      //tool specific
+      //correlation
       correlation: null,
       correlationThreshold: 0.85,
       correlationFeatureRemovalList: [],
-      fileOutputName: '',
+      correlationOutputFiles: null,
 
-      filteredList() {
-        if (this.correlation) {
-          return this.correlation.list.filter(item => {return item.value > this.correlationThreshold})
-        }
-        else return []
 
-      },
-      toggleFeatureRemoval(feature) {
-        !this.correlationFeatureRemovalList.includes(feature) ? this.correlationFeatureRemovalList.push(feature) : this.correlationFeatureRemovalList.splice(this.correlationFeatureRemovalList.indexOf(feature),1)
-      },
+
+
 
       //upload file
-      uploadFile() {
+      dataFileUpload() {
         if (this.file != null) {
           //this method uploads form data
           var formData = new FormData();
@@ -47,13 +47,24 @@ export default {
             }
           }).then(result => {
             this.fileMetadata = result.data
+
+            //fileMetadata that needs further parsing
             this.fileMetadata.describe = JSON.parse(this.fileMetadata.describe)
+
+            //UI changes post upload
             this.uploading = false
+
+            //filename extraction with successful upload
             this.fileOutputName = this.file.name.split('.csv')[0]
           })
         }
       },
       validateTarget(column) {
+        //reset downstream properities if value changes
+        this.correlation = null
+
+        //based on column
+
         if (column != null ) {
           let payload = {
             target: column,
@@ -82,6 +93,22 @@ export default {
           })
         }
       },
+
+
+
+      //Tool Specific Methods
+      correlationFilteredList() {
+        if (this.correlation) {
+          return this.correlation.list.filter(item => {return item.value > this.correlationThreshold})
+        }
+        else return []
+
+      },
+      toggleFeatureRemoval(feature) {
+        !this.correlationFeatureRemovalList.includes(feature) ? this.correlationFeatureRemovalList.push(feature) : this.correlationFeatureRemovalList.splice(this.correlationFeatureRemovalList.indexOf(feature),1)
+      },
+
+
       generateCorrelation() {
         if (this.target != null) {
           let payload = {
@@ -115,6 +142,7 @@ export default {
             'Content-Type': 'application/json',
           }
         }).then(response => {
+          this.correlationOutputFiles = response.data
           FileDownload(response.data.output, this.fileOutputName + '.csv')
           FileDownload(response.data.nan, this.fileOutputName + '_nan.csv')
           return true
