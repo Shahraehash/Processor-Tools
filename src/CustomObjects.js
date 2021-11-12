@@ -47,6 +47,7 @@ export default {
             }
           }).then(result => {
             this.fileMetadata = result.data
+            this.fileMetadata.describe = JSON.parse(this.fileMetadata.describe)
             this.uploading = false
             this.fileOutputName = this.file.name.split('.csv')[0]
           })
@@ -58,22 +59,26 @@ export default {
             target: column,
             storage_id: this.fileMetadata.storage_id
           }
-          axios.post('/validate/target_column', payload, {
+          return axios.post('/validate/target_column', payload, {
               headers: {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'
             }
           }).then(result => {
-            console.log(result)
-            if(!result.data.validation) {
-              this.target = null
-            }
             this.featureList = []
-            this.fileMetadata.column_names.forEach(item => {
-              if (item != column) {
-                this.featureList.push(item)
-              }
-            })
+
+            if(result.data.validation) {
+              this.fileMetadata.column_names.forEach(item => {
+                if (item != column) {
+                  this.featureList.push(item)
+                }
+              })
+              return true
+            }
+            else {
+              this.target = null
+              return Error('Invalid target column.')
+            }
           })
         }
       },
@@ -83,14 +88,20 @@ export default {
             target: this.target,
             storage_id: this.fileMetadata.storage_id
           }
-          axios.post('/calc/cor', payload, {
+          return axios.post('/calc/cor', payload, {
               headers: {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'
             }
           }).then(result => {
             this.correlation = result.data
+            return true
+          }).catch(error => {
+            return error
           })
+        }
+        else {
+          return Promise.reject(Error('No target is selected.'))
         }
 
       },

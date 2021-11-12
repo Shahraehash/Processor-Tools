@@ -85,43 +85,109 @@
             </v-col>
           </v-row>
         </div>
-        <v-btn @click="files[0].generateCorrelation()">Cor</v-btn>
+
       </v-card>
 
 
       <!-- STEP 3 -->
+
       <v-card
         outlined
         class="ma-3 pa-5"
         >
         <StepHeading
           stepNumber="3"
-          stepTitle="Find Pairs"
+          stepTitle="Data Details"
         />
-        <v-text-field dense outlined v-model="files[0].correlationThreshold" type="number" max="1" min="-1"></v-text-field>
-        <v-icon x-large @click="files[0].correlationThreshold += 0.01">mdi-plus-box</v-icon>
-        <v-icon x-large @click="files[0].correlationThreshold -= 0.01">mdi-minus-box</v-icon>
-        <div v-if="files[0].correlation">
-          <v-row>
-            <v-col cols="4">Varible Pairs</v-col>
-            <v-col cols="4">Correlation Value</v-col>
-          </v-row>
-          <div v-for="(item, key) in files[0].filteredList()" :key="key">
+        <div v-if="files[0].fileMetadata">
 
-            <v-row>
-              <v-col v-for="feature in item.features" cols="2" :key="feature">
-                <v-chip dark :color="files[0].correlationFeatureRemovalList.includes(feature)? 'red' : 'blue'"   @click="files[0].toggleFeatureRemoval(feature)">{{feature}} </v-chip>
-              </v-col>
-              <v-col cols="2"><v-chip>{{item.value}}</v-chip></v-col>
-            </v-row>
-
-
-
-          </div>
-
+          <v-data-table
+            :headers="[
+              {text: 'Feature', value:'feature'},
+              {text: 'Count', value:'count'},
+              {text: 'Mean', value:'mean'},
+              {text: 'STDEV', value:'std'},
+              {text: 'Min', value:'min'},
+              {text: '25%', value:'25%'},
+              {text: '50%', value:'50%'},
+              {text: '75%', value:'75%'},
+              {text: 'Max', value:'max'},
+              {text: 'Skew', value:'skew'},
+              ]"
+            :items="files[0].fileMetadata.describe"
+            :items-per-page="30"
+            class="elevation-1"
+          >
+          </v-data-table>
 
         </div>
-        {{files[0].correlationFeatureRemovalList}}
+        <div class="text-right">
+          <v-btn
+            color="primary"
+            dark
+            small
+            @click="files[0].generateCorrelation()"
+          >Calculate Correlations</v-btn>
+        </div>
+      </v-card>
+
+
+      <!-- STEP 4 -->
+      <v-card
+        outlined
+        class="ma-3 pa-5"
+        >
+        <StepHeading
+          stepNumber="4"
+          stepTitle="Find Pairs"
+        />
+
+        <div>
+          Select your minimum correlation threshold.
+        </div>
+        <v-text-field
+          dense
+          outlined
+          v-model="files[0].correlationThreshold"
+          type="number" max="1" min="-1"
+        ></v-text-field>
+
+        <div>
+          Correlated selected for removal.
+        </div>
+        <div>
+          {{files[0].correlationFeatureRemovalList}}
+        </div>
+
+
+
+
+        <div>
+          Click on the features you wish to remove.
+        </div>
+        <v-data-table
+          :headers="[{text: 'Feature Pair', value:'features'}, {text:'Value', value:'value'}]"
+          :items="files[0].filteredList()"
+          :items-per-page="5"
+          class="elevation-1"
+        >
+          <template v-slot:item.features="{ item }">
+            <v-chip
+              dark
+              v-for="feature in item.features"
+              :key="feature"
+              :color="determineCorrelationColors(feature,files[0].correlationFeatureRemovalList)"
+              @click="files[0].toggleFeatureRemoval(feature)"
+            >
+              {{ feature }}
+            </v-chip>
+          </template>
+        </v-data-table>
+
+
+
+
+
 
         <div>
           <v-switch label="Show Graph" v-model="showGraph"></v-switch>
@@ -199,6 +265,27 @@ export default {
       console.log(result)
       this.fileDataValid = result
     },
+
+    determineCorrelationColors(item, correlationList) {
+      let colors = [
+        'deep-purple lighten-4',
+        'teal lighten-4',
+        'green lighten-4',
+        'orange lighten-4',
+        'pink lighten-4'
+      ]
+      let index = correlationList.indexOf(item)
+      if (index == -1) {
+        return 'blue'
+      }
+      else if (index < colors.length - 1) {
+        return colors[index]
+      }
+      else {
+        return 'grey lighten-2'
+      }
+
+    }
   }
 
 }

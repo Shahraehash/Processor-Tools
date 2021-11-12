@@ -191,6 +191,15 @@ def data_file_upload():
             if df.dtypes[item] not in valid_data_types:
                 invalid_columns.append(item)
 
+        #params
+        skew = df.skew()
+        skew.name = 'skew'
+
+        describe = df.describe().append(skew).transpose()
+        describe.reset_index(inplace=True)
+        describe = describe.rename(columns={'index':'feature'})
+
+
         entry = {
         'user_id': 'ui000001',
         'storage_id': storage_id,
@@ -204,7 +213,8 @@ def data_file_upload():
         'nan_count': int(find_nan_counts(df)),
         'dtypes_count': json.loads(df.dtypes.value_counts().to_json()),
         'nan_by_column': json.loads(df.isna().sum().to_json()),
-        'invalid_columns': list(invalid_columns)
+        'invalid_columns': list(invalid_columns),
+        'describe': describe.to_json(orient="records")
 
         }
 
