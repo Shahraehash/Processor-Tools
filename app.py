@@ -233,7 +233,8 @@ def calc_corr():
     df = df.drop(columns=[target])
     correlation_mat = df.corr()
 
-    series = []
+    #Graph
+    graph_series = []
     for ind in correlation_mat.index:
         obj = {}
         obj['name'] = ind
@@ -243,18 +244,65 @@ def calc_corr():
                 'x':x,
                 'y':y
             })
-        series.append(obj)
+        graph_series.append(obj)
+
+    #List Data
+    corr_pairs = correlation_mat.unstack()
+    sorted_pairs = corr_pairs.sort_values(kind="quicksort", ascending=False)
+
+    list_of_pairs = []
+
+    for item in sorted_pairs.index:
+        l = list(item)
+        l.sort()
+        if l[0] != l[1]:
+            entry = {
+                'features': l,
+                'value': sorted_pairs[item]
+            }
+            if entry not in list_of_pairs:
+                list_of_pairs.append(entry)
 
 
     response = make_response(
         jsonify({
-            "graph": series,
+            "graph": graph_series,
+            "list": list_of_pairs
         }),
         200,
     )
     response.headers["Content-Type"] = "application/json"
 
     return response
+
+
+
+@app.route('/calc/cor/process',methods=["POST"])
+def calc_corr_process():
+    storage_id = request.json['storage_id']
+    feature_removal_list = request.json['feature_removal_list']
+
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
+    df = pd.read_csv(file_path)
+
+    df = df.drop(columns=feature_removal_list)
+
+    #get missing data
+    missing = df[df.isna().any(axis=1)]
+    df = df.drop(missing.index)
+
+
+    final_data = {
+        'output': df.to_csv(index=False, index_label="source_row"),
+        'nan': missing.to_csv(index=True, index_label="source_row")
+    }
+
+    time.sleep(3)
+
+    return make_response(final_data)
+
+
+
 
 
 

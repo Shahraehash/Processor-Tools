@@ -1,4 +1,6 @@
 import axios from 'axios'
+import FileDownload from 'js-file-download'
+
 
 export default {
 
@@ -12,6 +14,20 @@ export default {
       target: null,
       featureList: null,
       correlation: null,
+      correlationThreshold: 0.85,
+      correlationFeatureRemovalList: [],
+      fileOutputName: '',
+
+      filteredList() {
+        if (this.correlation) {
+          return this.correlation.list.filter(item => {return item.value > this.correlationThreshold})
+        }
+        else return []
+
+      },
+      toggleFeatureRemoval(feature) {
+        !this.correlationFeatureRemovalList.includes(feature) ? this.correlationFeatureRemovalList.push(feature) : this.correlationFeatureRemovalList.splice(this.correlationFeatureRemovalList.indexOf(feature),1)
+      },
 
       //upload file
       uploadFile() {
@@ -32,6 +48,7 @@ export default {
           }).then(result => {
             this.fileMetadata = result.data
             this.uploading = false
+            this.fileOutputName = this.file.name.split('.csv')[0]
           })
         }
       },
@@ -76,7 +93,23 @@ export default {
           })
         }
 
-      }
+      },
+      buildCorrelationFile() {
+        let payload = {
+          storage_id: this.fileMetadata.storage_id,
+          feature_removal_list: this.correlationFeatureRemovalList
+        }
+        return axios.post('/calc/cor/process', payload, {
+            headers: {
+            'Content-Type': 'application/json',
+          }
+        }).then(response => {
+          FileDownload(response.data.output, this.fileOutputName + '.csv')
+          FileDownload(response.data.nan, this.fileOutputName + '_nan.csv')
+          return true
+        })
+      },
+
 
     }
   },

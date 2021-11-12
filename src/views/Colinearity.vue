@@ -58,7 +58,6 @@
       </div>
     </v-card>
 
-
     <!-- STEP 2 -->
     <v-card
       v-if="files[0].fileMetadata"
@@ -89,7 +88,52 @@
         <v-btn @click="files[0].generateCorrelation()">Cor</v-btn>
       </v-card>
 
-    <apexchart v-if="files[0].correlation" width="1000" type="heatmap" :options="options" :series="files[0].correlation.graph"></apexchart>
+
+      <!-- STEP 3 -->
+      <v-card
+        outlined
+        class="ma-3 pa-5"
+        >
+        <StepHeading
+          stepNumber="3"
+          stepTitle="Find Pairs"
+        />
+        <v-text-field dense outlined v-model="files[0].correlationThreshold" type="number" max="1" min="-1"></v-text-field>
+        <v-icon x-large @click="files[0].correlationThreshold += 0.01">mdi-plus-box</v-icon>
+        <v-icon x-large @click="files[0].correlationThreshold -= 0.01">mdi-minus-box</v-icon>
+        <div v-if="files[0].correlation">
+          <v-row>
+            <v-col cols="4">Varible Pairs</v-col>
+            <v-col cols="4">Correlation Value</v-col>
+          </v-row>
+          <div v-for="(item, key) in files[0].filteredList()" :key="key">
+
+            <v-row>
+              <v-col v-for="feature in item.features" cols="2" :key="feature">
+                <v-chip dark :color="files[0].correlationFeatureRemovalList.includes(feature)? 'red' : 'blue'"   @click="files[0].toggleFeatureRemoval(feature)">{{feature}} </v-chip>
+              </v-col>
+              <v-col cols="2"><v-chip>{{item.value}}</v-chip></v-col>
+            </v-row>
+
+
+
+          </div>
+
+
+        </div>
+        {{files[0].correlationFeatureRemovalList}}
+
+        <div>
+          <v-switch label="Show Graph" v-model="showGraph"></v-switch>
+          <apexchart v-if="files[0].correlation && showGraph" width="1000" type="heatmap" :options="options" :series="files[0].correlation.graph"></apexchart>
+        </div>
+
+        <v-btn @click="files[0].buildCorrelationFile()">Build Correlatoin File</v-btn>
+
+
+      </v-card>
+
+
   </v-container>
 
 
@@ -118,6 +162,7 @@ export default {
   data() {
     return {
       files: [],
+      showGraph: false,
 
       options: {
         chart: {
@@ -137,6 +182,10 @@ export default {
   mounted() {
     //create new file object
     this.files.push(CustObjs.newFileObject())
+  },
+  computed: {
+
+
   },
   methods: {
 
