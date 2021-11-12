@@ -7,19 +7,38 @@ export default {
       file: null,
       uploading: false,
       dataSet: null,
-      tool: null,
       fileMetadata: null,
       fileValid: null,
       target: null,
       featureList: null,
       correlation: null,
-      validateFile() {
-        this.fileValid = true
+
+      //upload file
+      uploadFile() {
+        if (this.file != null) {
+          //this method uploads form data
+          var formData = new FormData();
+          //file name data stored in X-file header of post request
+          formData.append("file", this.file);
+
+          this.uploading = true
+
+          return axios.post('/data_file_upload', formData, {
+              headers: {
+              'Content-Type': 'multipart/form-data',
+              'X-filename': this.file.name,
+              'X-filegroup': this.dataSet
+            }
+          }).then(result => {
+            this.fileMetadata = result.data
+            this.uploading = false
+          })
+        }
       },
-      validateTarget(col) {
-        if (col != null ) {
+      validateTarget(column) {
+        if (column != null ) {
           let payload = {
-            target: col,
+            target: column,
             storage_id: this.fileMetadata.storage_id
           }
           axios.post('/validate/target_column', payload, {
@@ -34,7 +53,7 @@ export default {
             }
             this.featureList = []
             this.fileMetadata.column_names.forEach(item => {
-              if (item != col) {
+              if (item != column) {
                 this.featureList.push(item)
               }
             })
@@ -62,29 +81,5 @@ export default {
     }
   },
 
-  uploadFile(file, fileGroup) {
-    if (file != null) {
-      //this method uploads form data
-      var formData = new FormData();
-      //file name data stored in X-file header of post request
-      formData.append("file", file);
-      return axios.post('/data_file_upload', formData, {
-          headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-filename': file.name,
-          'X-filegroup': fileGroup
-        }
-      }).then(result => {
-        return result.data
 
-      }).catch((err) => {
-        return err
-      })
-    }
-    else {
-      Promise.resolve(null);
-    }
-
-
-  }
 }
