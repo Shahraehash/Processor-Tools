@@ -3,6 +3,21 @@ import FileDownload from 'js-file-download'
 
 
 export default {
+  queryFileList() {
+    let payload = {
+      user_id: 'ui000001' //replace in future
+    }
+    return axios.post('/query/all_files', payload, {
+        headers: {
+        'Content-Type': 'application/json',
+      }
+    }).then(response => {
+      return response
+    }).catch(error => {
+      throw error
+    })
+  },
+
 
   newFileObject() {
     return {

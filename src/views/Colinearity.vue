@@ -55,9 +55,11 @@
             </v-row>
           </v-layout>
           <v-expansion-panels
+            class="pa-5"
             v-if="files[0].fileMetadata"
             >
             <v-expansion-panel
+              dark
             >
               <v-expansion-panel-header>
                 View Data Descriptions
@@ -145,23 +147,20 @@
         <div>
           Select your minimum correlation threshold.
         </div>
-        <v-text-field
-          dense
-          outlined
-          v-model="files[0].correlationThreshold"
-          type="number" max="1" min="-1"
-        ></v-text-field>
-
-        <div>
-          Correlated selected for removal.
-        </div>
-        <div>
-          {{files[0].correlationFeatureRemovalList}}
-        </div>
-
-
-
-
+        <v-row>
+          <v-col cols="2">
+            <v-text-field
+              dense
+              outlined
+              v-model="files[0].correlationThreshold"
+              type="number" max="1" min="-1"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2">
+            <v-btn icon large @click="files[0].correlationThreshold += 0.01"><v-icon>mdi-plus-box</v-icon></v-btn>
+            <v-btn icon large @click="files[0].correlationThreshold -= 0.01"><v-icon>mdi-minus-box</v-icon></v-btn>
+          </v-col>
+        </v-row>
         <div>
           Click on the features you wish to remove.
         </div>
@@ -184,11 +183,12 @@
           </template>
         </v-data-table>
 
-
-
-
-
-
+        <div>
+          Correlated selected for removal.
+        </div>
+        <div>
+          {{files[0].correlationFeatureRemovalList}}
+        </div>
         <div>
           <v-switch label="Show Graph" v-model="showGraph"></v-switch>
           <apexchart v-if="files[0].correlation && showGraph" width="1000" type="heatmap" :options="options" :series="files[0].correlation.graph"></apexchart>
@@ -198,6 +198,7 @@
 
 
       </v-card>
+      <!-- <RecentFileList @loadFile="loadFile"/> -->
 
 
   </v-container>
@@ -212,6 +213,7 @@
 import CustObjs from '@/CustomObjects.js'
 
 //components
+// import RecentFileList from '@/components/RecentFileList'
 import MenuBar from '@/components/MenuBar'
 import DataValidation from '@/components/DataValidation'
 import StepHeading from '@/components/StepHeading'
@@ -220,6 +222,7 @@ import StepHeading from '@/components/StepHeading'
 export default {
   name: 'Colinearity',
   components: {
+    // RecentFileList,
     MenuBar,
     DataValidation,
     StepHeading,
@@ -255,6 +258,11 @@ export default {
 
   },
   methods: {
+    // loadFile(file) {
+    //   console.log(file)
+    //   this.files[0].fileMetadata = file
+    //   this.files[0].file = new File(["foo"], file.file_name)
+    // },
 
     //State Resetting
     resetStep1() {
