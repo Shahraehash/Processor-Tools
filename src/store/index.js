@@ -11,6 +11,10 @@ export default new Vuex.Store({
       color: 'blue',
       message: 'Test message'
     },
+    fileProcessingDialog: {
+      loading: false,
+      open: false
+    },
     dataSet: [
       {name: 'Training', value: 'training'},
       {name: 'Testing', value: 'testing'},
@@ -18,10 +22,18 @@ export default new Vuex.Store({
     ]
   },
   mutations: {
+    //MessageSnackbar
     snackbarMessageSet(state, val) {
       state.snackbarMessage.show = true
       state.snackbarMessage.message = val.message
       state.snackbarMessage.color = val.color
+    },
+    //FileProcessingDialog
+    FileProcessingDialogOpenSet(state, val) {
+      state.fileProcessingDialog.open = val
+    },
+    FileProcessingDialogLoadingSet(state, val) {
+      state.fileProcessingDialog.loading = val
     },
   },
   actions: {

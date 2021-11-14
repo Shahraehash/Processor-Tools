@@ -194,7 +194,7 @@
           <apexchart v-if="files[0].correlation && showGraph" width="1000" type="heatmap" :options="options" :series="files[0].correlation.graph"></apexchart>
         </div>
 
-        <v-btn @click="files[0].buildCorrelationFile()">Build Correlatoin File</v-btn>
+        <v-btn @click="buildFiles()">Build Correlatoin File</v-btn>
 
 
       </v-card>
@@ -208,7 +208,7 @@
 </template>
 <script>
 //packages
-
+import FileDownload from 'js-file-download'
 //support code
 import CustObjs from '@/CustomObjects.js'
 
@@ -258,6 +258,17 @@ export default {
 
   },
   methods: {
+    buildFiles() {
+      this.$store.commit('FileProcessingDialogLoadingSet', true)
+      this.$store.commit('FileProcessingDialogOpenSet', true)
+      this.files[0].buildCorrelationFiles().then(files => {
+        this.$store.commit('FileProcessingDialogLoadingSet', false)
+        FileDownload(files.output, this.files[0].fileOutputName + '.csv')
+        FileDownload(files.nan, this.files[0].fileOutputName + '_nan.csv')
+      })
+
+
+    },
     // loadFile(file) {
     //   console.log(file)
     //   this.files[0].fileMetadata = file

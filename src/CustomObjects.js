@@ -1,5 +1,5 @@
 import axios from 'axios'
-import FileDownload from 'js-file-download'
+
 
 
 export default {
@@ -38,7 +38,6 @@ export default {
       correlation: null,
       correlationThreshold: 0.85,
       correlationFeatureRemovalList: [],
-      correlationOutputFiles: null,
 
 
 
@@ -147,7 +146,7 @@ export default {
         }
 
       },
-      buildCorrelationFile() {
+      buildCorrelationFiles() {
         let payload = {
           storage_id: this.fileMetadata.storage_id,
           feature_removal_list: this.correlationFeatureRemovalList
@@ -158,9 +157,8 @@ export default {
           }
         }).then(response => {
           this.correlationOutputFiles = response.data
-          FileDownload(response.data.output, this.fileOutputName + '.csv')
-          FileDownload(response.data.nan, this.fileOutputName + '_nan.csv')
-          return true
+
+          return response.data //two files (output and nan)
         })
       },
 
