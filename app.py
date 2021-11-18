@@ -2,7 +2,6 @@
 #docker run -d -p 5000:5000 fennell/ml-pp:latest
 
 from flask import Flask, render_template, g, jsonify, request, redirect, url_for, session, flash, make_response, send_file
-from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import pandas as pd
 import numpy as np
@@ -28,8 +27,6 @@ app.config['firstConnect'] = False
 UPLOAD_FOLDER = 'files'
 app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
-#socketio
-socketio = SocketIO(app, logger=True, engineio_logger=True)
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
@@ -540,30 +537,7 @@ def index(path):
         print('change')
         return str(e)
 
-@socketio.on('connect')
-def handleMessage():
-    print ("# User Connected ...")
-
-@socketio.on('custom')
-def render():
-    global df
-    time.sleep(4)
-    emit('customEmit', str(df))
-
-
-
 def clearFiles():
     print('clear files')
     for f in os.listdir(UPLOAD_FOLDER):
         os.remove(os.path.join(UPLOAD_FOLDER, f))
-
-
-# port = os.getenv('PORT', '5006')
-# if __name__ == "__main__":
-# 	app.run(host='0.0.0.0', port=int(port),debug=True)
-#     #serve(app, url_scheme='http', threads=4, port=int(port))
-
-if __name__ == '__main__':
-    socketio.run(app)
-    print('RUNNING')
-    print('laksjhdfkjsdfkjshdf')
