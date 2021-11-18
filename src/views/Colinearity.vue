@@ -79,7 +79,6 @@
                     {text: 'Skew', value:'skew'},
                     ]"
                   :items="files[0].fileMetadata.describe"
-                  :items-per-page="5"
                   class="elevation-1"
                 >
                 </v-data-table>
@@ -232,6 +231,8 @@ export default {
     return {
       files: [],
       showGraph: false,
+
+
 
 
       options: {

@@ -26,8 +26,8 @@
           <v-icon x-large>mdi-arrow-down</v-icon>
         </div>
         <div class="mt-5">
-          <v-btn class="primary" @click="isOpen = false">Edit output</v-btn>
-          <v-btn @click="$router.push({name:'Landing'})">Exit tool</v-btn>
+          <v-btn class="primary" @click="close()">Edit output</v-btn>
+          <v-btn @click="home()">Exit tool</v-btn>
         </div>
 
       </div>
@@ -45,6 +45,16 @@ export default {
   props: ['isOpen','loading'],
   data() {
     return {
+      methods: {
+        close() {
+          this.$store.commit('FileProcessingDialogOpenSet', false)
+        },
+        home() {
+          this.$store.commit('FileProcessingDialogOpenSet', false)
+          this.$router.push({name:'Landing'})
+
+        }
+      }
 
     }
   }
