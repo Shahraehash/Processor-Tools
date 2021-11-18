@@ -245,6 +245,12 @@
         stepTitle="Output Files"
       />
       <div>
+        <div>
+          <v-switch
+            v-model="removeNanRows"
+            label="Remove Rows with Missing Data"
+            ></v-switch>
+        </div>
         <v-layout>
           <v-row>
             <v-col cols="6">
@@ -290,12 +296,30 @@
                 >
                 </v-text-field>
               </div>
+
+
+
+
+
+              <div class="overline">Additional File Outputs</div>
+
+              <div>
+                <v-switch
+                  label="Export rows with missing data."
+                  v-model="exportNanRows"
+
+
+                ></v-switch>
+              </div>
+
+
+
+
               <div class="text-right">
                 <v-btn
                   color="primary"
                   rounded
                   @click="processFiles()"
-
                 >
                   Build Files
                 </v-btn>
@@ -307,116 +331,6 @@
         </v-layout>
       </div>
     </v-card>
-
-
-
-
-
-
-
-
-
-<!--
-
-
-
-    <v-card class="ma-3 pa-3" v-if="trainingMetadata">
-      <v-card-title>Step 2 - Target Selection</v-card-title>
-      <v-card-text >
-        <p>
-          Identify the column containing your target variable to ensure it is maintain in the output.
-        </p>
-        <v-layout class="ma-5">
-
-          <v-row wrap>
-            <v-col cols="6">
-              <v-autocomplete clearable :items="targetColumnList" outlined v-model="target" label="Target Column" @change="targetColumnChanged"></v-autocomplete>
-            </v-col>
-
-          </v-row>
-        </v-layout>
-        <div v-if="target != null" class="body-1">
-          <div>
-            <v-icon color="green" >mdi-check-circle</v-icon> Valid Target Field
-          </div>
-        </div>
-      </v-card-text>
-    </v-card>
-
-    <v-card class="ma-3 pa-3" v-if="target">
-      <v-card-title>Step 3 - Column Selection</v-card-title>
-
-
-
-
-      <p>Click below to selected columns or paste a comma seperated list of columns to be outputted. <br /> You can also <a @click="miloDialog = true">import from a MILO results "report.csv" file</a>.</p>
-      <v-layout class="ma-5">
-
-        <v-row wrap>
-
-
-          <v-col cols="12">
-
-            <v-combobox clearable v-model="selectedColumns" multiple chips class="ml-8" :items="nontargetColumnList"  outlined label="Selected Columns" @change="splitPasted()"></v-combobox>
-            <div v-if="errorColumns == null && selectedColumns.length > 0" class="body-1">
-              <div>
-                <v-icon color="green" >mdi-check-circle</v-icon> Valid Column Selection
-              </div>
-            </div>
-            <div v-if="errorColumns != null">
-              <div v-if="errorColumns.length > 0">
-                <v-icon color="red" >mdi-alert-circle</v-icon>
-                <span>The following column<span v-if="errorColumns.length > 1">s</span> are invalid and have been removed from the list:</span>
-                <v-chip small outlined v-for="(item,key) in errorColumns" :key="key">{{item}}</v-chip>
-              </div>
-            </div>
-
-            <p>
-
-            </p>
-          </v-col>
-
-        </v-row>
-      </v-layout>
-
-      <v-card-text >
-
-      </v-card-text>
-    </v-card>
-
-    <v-card class="ma-3 pa-3" v-if="errorColumns == null && selectedColumns.length > 0">
-      <v-card-title>Step 4 - Save Files</v-card-title>
-      <v-card-text>
-        <v-row>
-
-          <v-col cols="5" class="mr-0 pr-1">
-            <v-text-field v-model="trainingOutputFilename" label="Training Output" outlined></v-text-field>
-          </v-col>
-          <v-col cols="1" class="ml-0 pl-0 pt-7">
-            <div class="body-1 black--text" >
-              .csv
-            </div>
-
-          </v-col>
-
-
-          <v-col cols="5" class="mr-0 pr-1">
-            <v-text-field v-model="testingOutputFilename" label="Testing Output" outlined></v-text-field>
-          </v-col>
-          <v-col cols="1" class="ml-0 pl-0 pt-7">
-            <div class="body-1 black--text" >
-              .csv
-            </div>
-
-          </v-col>
-        </v-row>
-        <v-btn rounded large dark color="grey darken-3" @click="finalFileRequests">Build New File<span v-if="trainingMetadata != null">s</span></v-btn>
-
-
-
-
-      </v-card-text>
-    </v-card> -->
 
     <v-dialog max-width="700" v-model="miloDialog">
       <v-card flat class="pa-3 pb-6">
@@ -516,7 +430,8 @@ export default {
       errorColumns: null,
       confirmColumnSelection: false,
 
-
+      removeNanRows: true,
+      exportNanRows: true,
       trainingOutputFilename: '',
       testingOutputFilename: '',
       fileProcessingDialog: false,
@@ -687,6 +602,7 @@ export default {
       data.testing_storage_id = this.testingMetadata != null ? this.testingMetadata.storage_id : null
       data.selected_columns = this.selectedColumns
       data.target_column = this.target
+      data.remove_nan_rows = this.removeNanRows
 
       //UI elements
       this.fileProcessingDialog = true
@@ -705,9 +621,22 @@ export default {
         //File elements
         FileDownload(response.data.training, this.trainingOutputFilename + '.csv')
 
+        //If Second Testing File
         if (response.data.testing != 'null') {
           FileDownload(response.data.testing, this.testingOutputFilename + '.csv')
         }
+
+        //If missing data files
+        if (response.data.training_missing != 'null') {
+          FileDownload(response.data.training_missing, this.trainingOutputFilename + '_missing_data.csv')
+        }
+
+        if (response.data.testing_missing != 'null') {
+          FileDownload(response.data.training_missing, this.testingOutputFilename + '_missing_data.csv')
+        }
+
+
+
       })
     },
 
