@@ -343,7 +343,9 @@ def column_reducer_process():
         'training': 'null',
         'testing': 'null',
         'training_missing': 'null',
-        'testing_missing': 'null'
+        'testing_missing': 'null',
+        'training_missing_count': 0,
+        'testing_missing_count': 0
     }
 
     if (training_storage_id is not None):
@@ -359,6 +361,7 @@ def column_reducer_process():
         #Check for missing rows
         training_missing = training_data_df_reduced[training_data_df_reduced.isna().any(axis=1)]
         training_missing_count = training_missing.shape[0]
+        final_data['training_missing_count'] = training_missing_count
 
         #If front end dictates row removal and there are missing rows
         if (remove_nan_rows and training_missing_count > 0):
@@ -385,6 +388,7 @@ def column_reducer_process():
         #Check for missing rows
         testing_missing = testing_data_df_reduced[testing_data_df_reduced.isna().any(axis=1)]
         testing_missing_count = testing_missing.shape[0]
+        final_data['testing_missing_count'] = testing_missing_count
 
         #If front end dictates row removal and there are missing rows
         if (remove_nan_rows and testing_missing_count > 0):
@@ -396,8 +400,8 @@ def column_reducer_process():
             testing_data_df_reduced = testing_data_df_reduced.drop(testing_missing.index)
             final_data['training'] = testing_data_df_reduced.to_csv(index=False)
 
-    #Wait to make front end UI appear to be processing
     time.sleep(2)
+
 
     return make_response(final_data)
 
@@ -406,48 +410,50 @@ def column_reducer_process():
 
 
 
-@app.route('/data_upload',methods=["POST"]) # The method should be consistent with the front end
+@app.route('/milo_file_upload',methods=["POST"]) # The method should be consistent with the front end
 def upload():
-    global training_data
-    global testing_data
-    global milo_data
 
-    inbound_file = request.headers.get('X-inbound')
     file_obj = request.files['file']  # Get files in Flask
     if file_obj is None:
         # Indicates that no file was sent
         return "File not uploaded"
 
-    if (inbound_file == 'milo_file'):
-
     #save document
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], "milo_file.csv")
-        file_obj.save(file_path)
-        milo_data = pd.read_csv(file_path)
+    storage_id = str(uuid.uuid4())
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
+    file_obj.save(file_path)
+    milo_data = pd.read_csv(file_path)
 
-        milo_data['selected_features'] = milo_data['selected_features'].apply(lambda x: sorted(x.replace(" ","").replace("'","")[1:-1].split(',')))
-        milo_data['length'] = milo_data['selected_features'].apply(lambda x: len(x))
-        milo_data['selected_features'] = milo_data['selected_features'].apply(lambda x: str(x))
-        milo_data['selected_features'] = milo_data['selected_features'].apply(lambda x: x.replace("'", '"'))
-        df_red = milo_data[['feature_selector', 'selected_features', 'length']]
+    milo_data['selected_features'] = milo_data['selected_features'].apply(lambda x: sorted(x.replace(" ","").replace("'","")[1:-1].split(',')))
+    milo_data['length'] = milo_data['selected_features'].apply(lambda x: len(x))
+    milo_data['selected_features'] = milo_data['selected_features'].apply(lambda x: str(x))
+    milo_data['selected_features'] = milo_data['selected_features'].apply(lambda x: x.replace("'", '"'))
 
-        test = df_red[df_red['length'] < df_red.length.max()]
-        result = test.drop_duplicates().sort_values(by='feature_selector').set_index('feature_selector')
-        final = result[~result.index.duplicated()]
+    #remove random forest
+    rf_filter = milo_data['feature_selector'].str.contains("random forest", case=False)
+    milo_data = milo_data[~rf_filter]
+
+    #select only needed columns
+    milo_data_reduced = milo_data[['feature_selector', 'selected_features', 'length']]
+
+    #remove any options that preserve all columns
+    no_full_columns = milo_data_reduced[milo_data_reduced['length'] < milo_data_reduced.length.max()]
+
+    #prepare output
+    result = no_full_columns.drop_duplicates().sort_values(by='feature_selector').set_index('feature_selector')
+    final = result[~result.index.duplicated()]
+
+    response = make_response(
+        jsonify({
+            "result": final.to_json(),
+        }),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+    time.sleep(1)
+    return response
 
 
-        response = make_response(
-            jsonify({
-                "result": final.to_json(),
-            }),
-            200,
-        )
-        response.headers["Content-Type"] = "application/json"
-        time.sleep(1)
-        return response
-
-    else:
-        return None
 
 @app.route('/validate/target_column',methods=["POST"])
 def validate_target_column():

@@ -245,12 +245,6 @@
         stepTitle="Output Files"
       />
       <div>
-        <div>
-          <v-switch
-            v-model="removeNanRows"
-            label="Remove Rows with Missing Data"
-            ></v-switch>
-        </div>
         <v-layout>
           <v-row>
             <v-col cols="6">
@@ -259,17 +253,40 @@
                   Output Summary
                 </div>
                 <div>
-                  Feature Columns: {{selectedColumns.length}} of {{nontargetColumnList.length}}
+                  <div v-if="fileOutputs == null">
+                    <v-progress-circular color="blue" size="50" width="10" indeterminate></v-progress-circular>
+
+                  </div>
+                  <div v-if="fileOutputs != null">
+                    <div>
+                      Feature Columns: {{selectedColumns.length}} of {{nontargetColumnList.length}}
+                    </div>
+                    <div>
+                      Target Column: {{target}}
+                    </div>
+                    <div>
+                      Training Rows Total: {{trainingMetadata.rows}}
+                    </div>
+                    <div>
+                      Training Rows Used: {{trainingMetadata.rows - fileOutputs.training_missing_count}}
+                    </div>
+                    <div>
+                      Training Rows Missing Data: {{fileOutputs.training_missing_count}}
+                    </div>
+                    <div v-if="testingMetadata != null">
+                      Testing Rows Total: {{testingMetadata.rows}}
+                    </div>
+                    <div v-if="testingMetadata != null">
+                      Testing Rows Used: {{testingMetadata.rows - fileOutputs.testing_missing_count}}
+                    </div>
+                    <div v-if="testingMetadata != null">
+                      Testing Rows Missing Data: {{fileOutputs.testing_missing_count}}
+                    </div>
+
+                  </div>
+
                 </div>
-                <div>
-                  Target Column: {{target}}
-                </div>
-                <div>
-                  Training Rows: {{trainingMetadata.rows}}
-                </div>
-                <div v-if="testingMetadata != null">
-                  Testing Rows: {{testingMetadata.rows}}
-                </div>
+
               </v-card>
 
             </v-col>
@@ -296,13 +313,7 @@
                 >
                 </v-text-field>
               </div>
-
-
-
-
-
               <div class="overline">Additional File Outputs</div>
-
               <div>
                 <v-switch
                   label="Export rows with missing data."
@@ -311,15 +322,12 @@
 
                 ></v-switch>
               </div>
-
-
-
-
               <div class="text-right">
                 <v-btn
                   color="primary"
                   rounded
-                  @click="processFiles()"
+                  @click="buildFiles()"
+                  v-if="fileOutputs != null"
                 >
                   Build Files
                 </v-btn>
@@ -348,7 +356,7 @@
           <v-spacer></v-spacer>
 
           <div>
-            <div class="ml-8 mb-3" >Select columns based on the feature selector method.</div>
+            <div class="ml-8 mb-3" >Select columns based on the feature selector method. Note: Random Forest options are not included because each is run specific. Also, any method that does not reduced the number of columns is not included.</div>
             <v-select v-if="miloMetadata" :items="miloMetadata" v-model="miloColumns" class="ml-8"  outlined  label="Feature Selector Method"></v-select>
             <div>
               <v-chip small color="grey lighten-2" v-for="(item, key) in miloColumns" :key="key">{{item}}</v-chip>
@@ -430,10 +438,11 @@ export default {
       errorColumns: null,
       confirmColumnSelection: false,
 
-      removeNanRows: true,
+      removeNanRows: true, //not exposed to user
       exportNanRows: true,
       trainingOutputFilename: '',
       testingOutputFilename: '',
+      fileOutputs: null,
       fileProcessingDialog: false,
       fileProcessingInProgress: true,
 
@@ -595,8 +604,14 @@ export default {
     dataValidationTestingData(result) {
       this.testingDataValid = result
     },
+    proceedToStep4() {
+      this.confirmColumnSelection = true
+      window.scrollTo(0,document.body.scrollHeight);
+      this.processFiles()
+    },
 
     processFiles() {
+      this.fileOutputs = null
       let data = {}
       data.training_storage_id = this.trainingMetadata.storage_id
       data.testing_storage_id = this.testingMetadata != null ? this.testingMetadata.storage_id : null
@@ -604,40 +619,32 @@ export default {
       data.target_column = this.target
       data.remove_nan_rows = this.removeNanRows
 
-      //UI elements
-      this.fileProcessingDialog = true
-      this.fileProcessingInProgress = true
-
-
       return axios.post('/column_reducer/process', data, {
         headers: {
         'Content-Type': 'application/json',
         }
       }).then(response => {
-
-        //UI elements
-        this.fileProcessingInProgress = false
-
-        //File elements
-        FileDownload(response.data.training, this.trainingOutputFilename + '.csv')
-
-        //If Second Testing File
-        if (response.data.testing != 'null') {
-          FileDownload(response.data.testing, this.testingOutputFilename + '.csv')
-        }
-
-        //If missing data files
-        if (response.data.training_missing != 'null') {
-          FileDownload(response.data.training_missing, this.trainingOutputFilename + '_missing_data.csv')
-        }
-
-        if (response.data.testing_missing != 'null') {
-          FileDownload(response.data.training_missing, this.testingOutputFilename + '_missing_data.csv')
-        }
-
-
-
+        this.fileOutputs = response.data
       })
+    },
+    buildFiles() {
+      //File elements
+      FileDownload(this.fileOutputs.training, this.trainingOutputFilename + '.csv')
+
+      //If Second Testing File
+      if (this.fileOutputs.testing != 'null') {
+        FileDownload(this.fileOutputs.testing, this.testingOutputFilename + '.csv')
+      }
+
+      //If missing data files
+      if (this.fileOutputs.training_missing != 'null' && this.exportNanRows) {
+        FileDownload(this.fileOutputs.training_missing, this.trainingOutputFilename + '_missing_data.csv')
+      }
+
+      if (this.fileOutputs.testing_missing != 'null' && this.exportNanRows) {
+        FileDownload(this.fileOutputs.training_missing, this.testingOutputFilename + '_missing_data.csv')
+      }
+
     },
 
     resetStep1Training() {
@@ -673,7 +680,7 @@ export default {
       this.resetStep4()
     },
     resetStep4() {
-      console.log('nothing')
+      this.confirmColumnSelection = false
     },
 
     splitPasted() {
@@ -708,6 +715,9 @@ export default {
       //Unique values only
       this.selectedColumns = _.uniq(this.selectedColumns)
       console.log(this.selectedColumns)
+
+      //Reset step 4 when columns change
+      this.resetStep4()
 
 
     },
@@ -755,7 +765,7 @@ export default {
         this.miloDataLoading = true
 
         formData.append("file", file);
-        axios.post('data_upload', formData, {
+        axios.post('milo_file_upload', formData, {
             headers: {
             'Content-Type': 'multipart/form-data',
             'X-inbound': 'milo_file'
@@ -786,10 +796,7 @@ export default {
     },
 
     //Support Functions
-    proceedToStep4() {
-      this.confirmColumnSelection = true
-      window.scrollTo(0,document.body.scrollHeight);
-    },
+
     //UI Functions
     setTransparencyFromStepProgress(step) {
       if (this.stepNumber > step) {
