@@ -18,7 +18,7 @@ export default new Vuex.Store({
     dataSet: [
       {name: 'Training', value: 'training'},
       {name: 'Testing', value: 'testing'},
-      {name: 'Combined Train/Test', value: 'combined_train_test'},
+      {name: 'Combined Train/Test', value: 'combined'},
     ]
   },
   mutations: {

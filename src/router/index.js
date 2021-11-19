@@ -4,6 +4,7 @@ import Landing from '../views/Landing.vue'
 import ColumnReducer from '../views/ColumnReducer.vue'
 import TrainTestSplit from '../views/TrainTestSplit.vue'
 import Colinearity from '../views/Colinearity.vue'
+import FeatureSelector from '../views/FeatureSelector.vue'
 
 Vue.use(VueRouter)
 
@@ -17,6 +18,11 @@ const routes = [
     path: '/colinearity',
     name: 'Colinearity',
     component: Colinearity
+  },
+  {
+    path: '/featureselector',
+    name: 'FeatureSelector',
+    component: FeatureSelector
   },
   {
     path: '/traintestsplit',

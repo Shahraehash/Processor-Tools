@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <MenuBar
-      title="Colinearity Removal"
+      title="Multicollinearity Assessment & Removal Tool"
       icon="mdi-chart-bell-curve-cumulative"
       description="This tool allows you to detect covariance in datasets."
       @reset="resetStep1"
@@ -165,7 +165,7 @@
         </div>
         <v-data-table
           :headers="[{text: 'Feature Pair', value:'features'}, {text:'Value', value:'value'}]"
-          :items="files[0].correlationFilteredList()"
+          :items="files[0].correlationObject.correlationFilteredList()"
           :items-per-page="5"
           class="elevation-1"
         >

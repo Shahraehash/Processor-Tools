@@ -26,7 +26,7 @@ export default {
       uploading: false, //for UI
       dataSet: null, //type of data set (training, test, combined, etc.)
       fileMetadata: null, //calculated as part of the data_file_upload() method
-      fileValid: null,
+      fileValidation: null,
       target: null, //set by calling validateTarget() to validate_target_column()
       featureList: null, //set by validateTarget()
 
@@ -34,12 +34,6 @@ export default {
       fileOutputName: '',
 
       //tool specific
-      //correlation
-      correlation: null,
-      correlationThreshold: 0.85,
-      correlationFeatureRemovalList: [],
-
-
 
 
 
@@ -108,21 +102,20 @@ export default {
         }
       },
 
+      //Correlation
+      correlation: null,
+      correlationThreshold: 0.85,
+      correlationFeatureRemovalList: [],
 
-
-      //Tool Specific Methods
       correlationFilteredList() {
         if (this.correlation) {
           return this.correlation.list.filter(item => {return item.value > this.correlationThreshold})
         }
         else return []
-
       },
       toggleFeatureRemoval(feature) {
         !this.correlationFeatureRemovalList.includes(feature) ? this.correlationFeatureRemovalList.push(feature) : this.correlationFeatureRemovalList.splice(this.correlationFeatureRemovalList.indexOf(feature),1)
       },
-
-
       generateCorrelation() {
         if (this.target != null) {
           let payload = {
@@ -144,7 +137,6 @@ export default {
         else {
           return Promise.reject(Error('No target is selected.'))
         }
-
       },
       buildCorrelationFiles() {
         let payload = {
