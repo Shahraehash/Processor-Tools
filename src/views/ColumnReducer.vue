@@ -259,7 +259,10 @@
                   </div>
                   <div v-if="fileOutputs != null">
                     <div>
-                      Feature Columns: {{selectedColumns.length}} of {{nontargetColumnList.length}}
+                      Total Columns: {{selectedColumns.length + 1}} (including target)
+                    </div>
+                    <div>
+                      Feature Columns: {{selectedColumns.length}} of {{nontargetColumnList.length}} original
                     </div>
                     <div>
                       Target Column: {{target}}
