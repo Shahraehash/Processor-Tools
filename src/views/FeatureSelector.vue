@@ -6,12 +6,13 @@
       description="This tool allows you to find the most important features in your data."
       @reset="resetStep1"
     />
-    <FileUploadSingle
+    <StepFileUploadMultiple
       stepNumber="1"
       stepTitle="File Upload"
-      :fileObject="file"
+      :file0="file0"
+      :file1="file1"
       fileName="Single File"
-
+      @hasSecondFile="hasSecondFile"
     />
 
 
@@ -27,27 +28,36 @@ import CustObjs from '@/CustomObjects.js'
 
 //components
 import MenuBar from '@/components/MenuBar'
-import FileUploadSingle from '@/components/FileUploadSingle'
+import StepFileUploadMultiple from '@/components/StepFileUploadMultiple'
 
 export default {
   name: 'FeatureSelector',
   components: {
     MenuBar,
-    FileUploadSingle
+    StepFileUploadMultiple
   },
   props: [],
   created() {
-    this.file = CustObjs.newFileObject()
+    this.file0 = CustObjs.newFileObject()
   },
   data() {
     return {
-      file: null
-
+      file0: null,
+      file1: null,
     }
   },
   methods: {
     resetStep1() {
-      this.file = CustObjs.newFileObject()
+      this.file0 = CustObjs.newFileObject()
+      this.file1 = null
+    },
+    hasSecondFile(state) {
+      if (state) {
+        this.file1 = CustObjs.newFileObject()
+      }
+      else {
+        this.file1 = null
+      }
     }
   }
 }
