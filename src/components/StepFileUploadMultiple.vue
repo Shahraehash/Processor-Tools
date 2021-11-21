@@ -73,8 +73,8 @@ export default {
   },
   methods: {
     setSecondFileState(state) {
-      this.hasSecondFile = state
       this.$emit('hasSecondFile', state)
+      this.hasSecondFile = state
     }
 
   }

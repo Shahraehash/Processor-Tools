@@ -253,17 +253,40 @@
                   Output Summary
                 </div>
                 <div>
-                  Feature Columns: {{selectedColumns.length}} of {{nontargetColumnList.length}}
+                  <div v-if="fileOutputs == null">
+                    <v-progress-circular color="blue" size="50" width="10" indeterminate></v-progress-circular>
+
+                  </div>
+                  <div v-if="fileOutputs != null">
+                    <div>
+                      Feature Columns: {{selectedColumns.length}} of {{nontargetColumnList.length}}
+                    </div>
+                    <div>
+                      Target Column: {{target}}
+                    </div>
+                    <div>
+                      Training Rows Total: {{trainingMetadata.rows}}
+                    </div>
+                    <div>
+                      Training Rows Used: {{trainingMetadata.rows - fileOutputs.training_missing_count}}
+                    </div>
+                    <div>
+                      Training Rows Missing Data: {{fileOutputs.training_missing_count}}
+                    </div>
+                    <div v-if="testingMetadata != null">
+                      Testing Rows Total: {{testingMetadata.rows}}
+                    </div>
+                    <div v-if="testingMetadata != null">
+                      Testing Rows Used: {{testingMetadata.rows - fileOutputs.testing_missing_count}}
+                    </div>
+                    <div v-if="testingMetadata != null">
+                      Testing Rows Missing Data: {{fileOutputs.testing_missing_count}}
+                    </div>
+
+                  </div>
+
                 </div>
-                <div>
-                  Target Column: {{target}}
-                </div>
-                <div>
-                  Training Rows: {{trainingMetadata.rows}}
-                </div>
-                <div v-if="testingMetadata != null">
-                  Testing Rows: {{testingMetadata.rows}}
-                </div>
+
               </v-card>
 
             </v-col>
@@ -290,12 +313,21 @@
                 >
                 </v-text-field>
               </div>
+              <div class="overline">Additional File Outputs</div>
+              <div>
+                <v-switch
+                  label="Export rows with missing data."
+                  v-model="exportNanRows"
+
+
+                ></v-switch>
+              </div>
               <div class="text-right">
                 <v-btn
                   color="primary"
                   rounded
-                  @click="processFiles()"
-
+                  @click="buildFiles()"
+                  v-if="fileOutputs != null"
                 >
                   Build Files
                 </v-btn>
@@ -307,116 +339,6 @@
         </v-layout>
       </div>
     </v-card>
-
-
-
-
-
-
-
-
-
-<!--
-
-
-
-    <v-card class="ma-3 pa-3" v-if="trainingMetadata">
-      <v-card-title>Step 2 - Target Selection</v-card-title>
-      <v-card-text >
-        <p>
-          Identify the column containing your target variable to ensure it is maintain in the output.
-        </p>
-        <v-layout class="ma-5">
-
-          <v-row wrap>
-            <v-col cols="6">
-              <v-autocomplete clearable :items="targetColumnList" outlined v-model="target" label="Target Column" @change="targetColumnChanged"></v-autocomplete>
-            </v-col>
-
-          </v-row>
-        </v-layout>
-        <div v-if="target != null" class="body-1">
-          <div>
-            <v-icon color="green" >mdi-check-circle</v-icon> Valid Target Field
-          </div>
-        </div>
-      </v-card-text>
-    </v-card>
-
-    <v-card class="ma-3 pa-3" v-if="target">
-      <v-card-title>Step 3 - Column Selection</v-card-title>
-
-
-
-
-      <p>Click below to selected columns or paste a comma seperated list of columns to be outputted. <br /> You can also <a @click="miloDialog = true">import from a MILO results "report.csv" file</a>.</p>
-      <v-layout class="ma-5">
-
-        <v-row wrap>
-
-
-          <v-col cols="12">
-
-            <v-combobox clearable v-model="selectedColumns" multiple chips class="ml-8" :items="nontargetColumnList"  outlined label="Selected Columns" @change="splitPasted()"></v-combobox>
-            <div v-if="errorColumns == null && selectedColumns.length > 0" class="body-1">
-              <div>
-                <v-icon color="green" >mdi-check-circle</v-icon> Valid Column Selection
-              </div>
-            </div>
-            <div v-if="errorColumns != null">
-              <div v-if="errorColumns.length > 0">
-                <v-icon color="red" >mdi-alert-circle</v-icon>
-                <span>The following column<span v-if="errorColumns.length > 1">s</span> are invalid and have been removed from the list:</span>
-                <v-chip small outlined v-for="(item,key) in errorColumns" :key="key">{{item}}</v-chip>
-              </div>
-            </div>
-
-            <p>
-
-            </p>
-          </v-col>
-
-        </v-row>
-      </v-layout>
-
-      <v-card-text >
-
-      </v-card-text>
-    </v-card>
-
-    <v-card class="ma-3 pa-3" v-if="errorColumns == null && selectedColumns.length > 0">
-      <v-card-title>Step 4 - Save Files</v-card-title>
-      <v-card-text>
-        <v-row>
-
-          <v-col cols="5" class="mr-0 pr-1">
-            <v-text-field v-model="trainingOutputFilename" label="Training Output" outlined></v-text-field>
-          </v-col>
-          <v-col cols="1" class="ml-0 pl-0 pt-7">
-            <div class="body-1 black--text" >
-              .csv
-            </div>
-
-          </v-col>
-
-
-          <v-col cols="5" class="mr-0 pr-1">
-            <v-text-field v-model="testingOutputFilename" label="Testing Output" outlined></v-text-field>
-          </v-col>
-          <v-col cols="1" class="ml-0 pl-0 pt-7">
-            <div class="body-1 black--text" >
-              .csv
-            </div>
-
-          </v-col>
-        </v-row>
-        <v-btn rounded large dark color="grey darken-3" @click="finalFileRequests">Build New File<span v-if="trainingMetadata != null">s</span></v-btn>
-
-
-
-
-      </v-card-text>
-    </v-card> -->
 
     <v-dialog max-width="700" v-model="miloDialog">
       <v-card flat class="pa-3 pb-6">
@@ -434,7 +356,7 @@
           <v-spacer></v-spacer>
 
           <div>
-            <div class="ml-8 mb-3" >Select columns based on the feature selector method.</div>
+            <div class="ml-8 mb-3" >Select columns based on the feature selector method. Note: Random Forest options are not included because each is run specific. Also, any method that does not reduced the number of columns is not included.</div>
             <v-select v-if="miloMetadata" :items="miloMetadata" v-model="miloColumns" class="ml-8"  outlined  label="Feature Selector Method"></v-select>
             <div>
               <v-chip small color="grey lighten-2" v-for="(item, key) in miloColumns" :key="key">{{item}}</v-chip>
@@ -516,9 +438,11 @@ export default {
       errorColumns: null,
       confirmColumnSelection: false,
 
-
+      removeNanRows: true, //not exposed to user
+      exportNanRows: true,
       trainingOutputFilename: '',
       testingOutputFilename: '',
+      fileOutputs: null,
       fileProcessingDialog: false,
       fileProcessingInProgress: true,
 
@@ -680,35 +604,47 @@ export default {
     dataValidationTestingData(result) {
       this.testingDataValid = result
     },
+    proceedToStep4() {
+      this.confirmColumnSelection = true
+      window.scrollTo(0,document.body.scrollHeight);
+      this.processFiles()
+    },
 
     processFiles() {
+      this.fileOutputs = null
       let data = {}
       data.training_storage_id = this.trainingMetadata.storage_id
       data.testing_storage_id = this.testingMetadata != null ? this.testingMetadata.storage_id : null
       data.selected_columns = this.selectedColumns
       data.target_column = this.target
-
-      //UI elements
-      this.fileProcessingDialog = true
-      this.fileProcessingInProgress = true
-
+      data.remove_nan_rows = this.removeNanRows
 
       return axios.post('/column_reducer/process', data, {
         headers: {
         'Content-Type': 'application/json',
         }
       }).then(response => {
-
-        //UI elements
-        this.fileProcessingInProgress = false
-
-        //File elements
-        FileDownload(response.data.training, this.trainingOutputFilename + '.csv')
-
-        if (response.data.testing != 'null') {
-          FileDownload(response.data.testing, this.testingOutputFilename + '.csv')
-        }
+        this.fileOutputs = response.data
       })
+    },
+    buildFiles() {
+      //File elements
+      FileDownload(this.fileOutputs.training, this.trainingOutputFilename + '.csv')
+
+      //If Second Testing File
+      if (this.fileOutputs.testing != 'null') {
+        FileDownload(this.fileOutputs.testing, this.testingOutputFilename + '.csv')
+      }
+
+      //If missing data files
+      if (this.fileOutputs.training_missing != 'null' && this.exportNanRows) {
+        FileDownload(this.fileOutputs.training_missing, this.trainingOutputFilename + '_missing_data.csv')
+      }
+
+      if (this.fileOutputs.testing_missing != 'null' && this.exportNanRows) {
+        FileDownload(this.fileOutputs.training_missing, this.testingOutputFilename + '_missing_data.csv')
+      }
+
     },
 
     resetStep1Training() {
@@ -744,7 +680,7 @@ export default {
       this.resetStep4()
     },
     resetStep4() {
-      console.log('nothing')
+      this.confirmColumnSelection = false
     },
 
     splitPasted() {
@@ -779,6 +715,9 @@ export default {
       //Unique values only
       this.selectedColumns = _.uniq(this.selectedColumns)
       console.log(this.selectedColumns)
+
+      //Reset step 4 when columns change
+      this.resetStep4()
 
 
     },
@@ -826,7 +765,7 @@ export default {
         this.miloDataLoading = true
 
         formData.append("file", file);
-        axios.post('data_upload', formData, {
+        axios.post('milo_file_upload', formData, {
             headers: {
             'Content-Type': 'multipart/form-data',
             'X-inbound': 'milo_file'
@@ -857,10 +796,7 @@ export default {
     },
 
     //Support Functions
-    proceedToStep4() {
-      this.confirmColumnSelection = true
-      window.scrollTo(0,document.body.scrollHeight);
-    },
+
     //UI Functions
     setTransparencyFromStepProgress(step) {
       if (this.stepNumber > step) {
