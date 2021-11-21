@@ -647,8 +647,19 @@ export default {
         this.fileProcessingInProgress = false
 
         //File elements
-        FileDownload(response.data.training, this.outputFiles.training + '.csv')
-        FileDownload(response.data.testing, this.outputFiles.testing + '.csv')
+        //Change file name if index included in main output
+        if (this.outputSettings.includeRowIndex) {
+
+          FileDownload(response.data.training, this.outputFiles.training + '_with_index.csv')
+          FileDownload(response.data.testing, this.outputFiles.testing + '_with_index.csv')
+        }
+        else {
+          FileDownload(response.data.training, this.outputFiles.training + '.csv')
+          FileDownload(response.data.testing, this.outputFiles.testing + '.csv')
+        }
+
+
+
         if (this.outputSettings.extraFile) {
           FileDownload(response.data.extra, this.outputFiles.extra + '.csv')
         }
