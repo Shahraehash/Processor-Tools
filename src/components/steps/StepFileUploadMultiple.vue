@@ -22,7 +22,7 @@
         falseVal="No"
       />
       <FileUploadSingle
-        v-if="hasSecondFile"
+        v-if="hasSecondFile && file1 != null"
         :fileObject="file1"
         fileName="Second File"
       />
@@ -50,7 +50,7 @@ import Decision from '@/components/Decision'
 import FilesCrossValidation from '@/components/FilesCrossValidation'
 
 export default {
-  name: 'FeatureSelector',
+  name: 'StepFileUploadMultiple',
   components: {
     StepHeading,
     FileUploadSingle,
@@ -71,11 +71,14 @@ export default {
   created() {
 
   },
+  computed: {
+  },
   methods: {
     setSecondFileState(state) {
+      console.log('decide', state)
       this.$emit('hasSecondFile', state)
       this.hasSecondFile = state
-    }
+    },
 
   }
 }

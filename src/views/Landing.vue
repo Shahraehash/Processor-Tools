@@ -20,7 +20,7 @@
       <v-col cols="6" class="mt-3">
         <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'Colinearity'})">
           <v-icon x-large>mdi-chart-bell-curve-cumulative</v-icon>
-          <span class="title">Colinearity Removal</span>
+          <span class="title">Multicollinearity Assessment</span>
         </v-card>
       </v-col>
       <v-col cols="6" class="mt-3">

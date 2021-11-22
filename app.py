@@ -208,7 +208,16 @@ def data_file_upload():
         describe = df.describe().append(skew).transpose()
         describe.reset_index(inplace=True)
         describe = describe.rename(columns={'index':'feature'})
-
+        describe = describe.round({
+            'mean': 1,
+            'std': 1,
+            'min': 1,
+            '25%': 1,
+            '50%': 1,
+            '75%': 1,
+            'max': 1,
+            'skew': 1
+        })
 
         entry = {
         'user_id': 'ui000001',
@@ -312,10 +321,10 @@ def calc_corr_process():
     missing = df[df.isna().any(axis=1)]
     df = df.drop(missing.index)
 
-
     final_data = {
-        'output': df.to_csv(index=False, index_label="source_row"),
-        'nan': missing.to_csv(index=True, index_label="source_row")
+        'output_file': df.to_csv(index=False),
+        'missing_file': missing.to_csv(index=True, index_label="source_row"),
+        'missing_count': int(missing.shape[0])
     }
 
     time.sleep(3)

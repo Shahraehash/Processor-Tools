@@ -106,6 +106,7 @@ export default {
       correlation: null,
       correlationThreshold: 0.85,
       correlationFeatureRemovalList: [],
+      correlationOutputFiles: null,
 
       correlationFilteredList() {
         if (this.correlation) {

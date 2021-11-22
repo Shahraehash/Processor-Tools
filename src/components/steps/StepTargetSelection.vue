@@ -19,14 +19,14 @@
               clearable
               outlined
               label="Target Column"
-              v-model="file0.target"
-              :items="file0.fileMetadata.column_names_reversed"
+              v-model="fileObject.target"
+              :items="fileObject.fileMetadata.column_names_reversed"
               @change="targetColumnChanged"
             ></v-autocomplete>
           </v-col>
         </v-row>
       </v-layout>
-      <div v-if="file0.target != null" class="body-1">
+      <div v-if="fileObject.target != null" class="body-1">
         <div v-if="targetValid == true" >
           <v-icon color="green" >mdi-check-circle</v-icon> Valid target column.
 
@@ -34,6 +34,17 @@
         <div v-if="targetValid == false" >
           <v-icon color="red" >mdi-alert-circle</v-icon> The selected target column is not valid. There must be two unique values.
         </div>
+      </div>
+
+      <div class="text-right">
+        <v-btn
+          color="primary"
+          v-if="fileObject.target"
+          dark
+          rounded
+          @click="moveToNextStep"
+          :disabled="nextStepSet"
+        >{{nextStepButtonText}}</v-btn>
       </div>
 
     </div>
@@ -52,29 +63,45 @@
 import StepHeading from '@/components/StepHeading'
 
 export default {
-  name: 'FeatureSelector',
+  name: 'StepTargetSelection',
   components: {
     StepHeading
   },
   props: [
-    'file0',
+    'fileObject',
     'stepNumber',
-    'stepTitle'
+    'stepTitle',
+    'nextStepFunction',
+    'nextStepParam',
+    'nextStepButtonText'
   ],
   data() {
     return {
       targetValid: null
-
+    }
+  },
+  computed: {
+    nextStepSet() {
+      return this.fileObject[this.nextStepParam] != null
     }
   },
   methods: {
     targetColumnChanged(target) {
-      this.file0.validateTarget(target).then(response => {
-        this.targetValid = true
-        console.log(response)
-      })
+      if (target != null) {
+        this.fileObject.validateTarget(target).then(() => {
+          this.targetValid = true
+        })
+      }
+      else {
+        this.resetStep()
+      }
+    },
+    moveToNextStep() {
+      this.fileObject[this.nextStepFunction]()
 
     }
+
+
   }
 }
 </script>

@@ -267,8 +267,6 @@ export default {
         FileDownload(files.output, this.files[0].fileOutputName + '.csv')
         FileDownload(files.nan, this.files[0].fileOutputName + '_nan.csv')
       })
-
-
     },
     // loadFile(file) {
     //   console.log(file)
