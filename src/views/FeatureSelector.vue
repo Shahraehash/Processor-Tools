@@ -29,6 +29,15 @@
       :fileObject="file0"
       @nextStep="buildFiles"
     />
+    <StepFileOutput
+      v-if="stepNumber >= 4"
+      stepNumber="4"
+      stepTitle="Output Files"
+      :file0="file0"
+      :file1="file1"
+      :loadingFileData="step4Loading"
+      :outputList="file0.correlationKeptList().length"
+    />
 
   </v-container>
 
@@ -46,6 +55,7 @@ import MenuBar from '@/components/MenuBar'
 import StepFileUploadMultiple from '@/components/steps/StepFileUploadMultiple'
 import StepTargetSelection from '@/components/steps/StepTargetSelection'
 import StepFindCorrelation from '@/components/steps/StepFindCorrelation'
+import StepFileOutput from '@/components/steps/StepFileOutput'
 
 export default {
   name: 'FeatureSelector',
@@ -53,7 +63,8 @@ export default {
     MenuBar,
     StepFileUploadMultiple,
     StepTargetSelection,
-    StepFindCorrelation
+    StepFindCorrelation,
+    StepFileOutput
   },
   props: [],
   created() {
@@ -65,6 +76,7 @@ export default {
       file0: null,
       file1: null,
       secondFile: null,
+      confirmStep3: false,
       step4Loading: false,
     }
   },
@@ -103,7 +115,13 @@ export default {
       }
     },
     showStep4() {
-      return false
+      if (this.confirmStep3) {
+        return true
+      }
+      else {
+        return false
+      }
+
     }
 
 
@@ -126,6 +144,7 @@ export default {
       }
     },
     buildFiles() {
+      this.confirmStep3 = true
       let promises = [this.file0.buildCorrelationFiles()]
 
       if (this.secondFile) {
@@ -141,18 +160,20 @@ export default {
       Promise.all(promises).then((response) => {
         this.step4Loading = false
         console.log(response)
-        FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
-        if (this.file0.correlationOutputFiles.missing_count > 0) {
-          FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
-        }
-        if (this.secondFile){
-          FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
-          if (this.file1.correlationOutputFiles.missing_count > 0) {
-            FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
-          }
 
-        }
       })
+    },
+    saveFiles() {
+      FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+      if (this.file0.correlationOutputFiles.missing_count > 0) {
+        FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+      }
+      if (this.secondFile){
+        FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+        if (this.file1.correlationOutputFiles.missing_count > 0) {
+          FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+        }
+      }
     }
 
   }

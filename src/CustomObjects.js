@@ -1,4 +1,5 @@
 import axios from 'axios'
+import _ from 'underscore'
 
 
 
@@ -107,6 +108,10 @@ export default {
       correlationThreshold: 0.85,
       correlationFeatureRemovalList: [],
       correlationOutputFiles: null,
+
+      correlationKeptList() {
+        return _.difference(this.featureList, this.correlationFeatureRemovalList)
+      },
 
       correlationFilteredList() {
         if (this.correlation) {
