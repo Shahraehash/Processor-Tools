@@ -6,6 +6,7 @@
       description="This tool allows you to find the most important features in your data."
       @reset="resetStep1"
     />
+    <v-alert type="error">Step 3 to run feature selector not yet build</v-alert>
     <StepFileUploadMultiple
       stepNumber="1"
       stepTitle="File Upload"
@@ -22,13 +23,9 @@
       nextStepParam="correlation"
       nextStepButtonText="Generate Correlation"
     />
-    <StepFindCorrelation
-      v-if="stepNumber >= 3"
-      stepNumber="3"
-      stepTitle="Find Correlations"
-      :fileObject="file0"
-      @nextStep="buildFiles"
-    />
+    <div>
+
+    </div>
     <StepFileOutput
       v-if="stepNumber >= 4"
       stepNumber="4"
@@ -54,7 +51,7 @@ import CustObjs from '@/CustomObjects.js'
 import MenuBar from '@/components/MenuBar'
 import StepFileUploadMultiple from '@/components/steps/StepFileUploadMultiple'
 import StepTargetSelection from '@/components/steps/StepTargetSelection'
-import StepFindCorrelation from '@/components/steps/StepFindCorrelation'
+
 import StepFileOutput from '@/components/steps/StepFileOutput'
 
 export default {
@@ -63,7 +60,7 @@ export default {
     MenuBar,
     StepFileUploadMultiple,
     StepTargetSelection,
-    StepFindCorrelation,
+    
     StepFileOutput
   },
   props: [],
