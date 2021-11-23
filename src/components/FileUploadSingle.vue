@@ -1,6 +1,6 @@
 <template>
-  <v-card outlined class="ma-5 pa-3">
-    <div class="overline">
+  <div outlined class="ma-1 pa-1">
+    <div class="overline mb-2">
       {{fileName}}
     </div>
     <v-layout class="ml-5">
@@ -38,7 +38,7 @@
       </v-row>
     </v-layout>
     <v-expansion-panels
-      class="pa-5"
+      class="py-3 ma-n0"
       v-if="fileObject.fileMetadata"
       >
       <v-expansion-panel
@@ -69,7 +69,7 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-  </v-card>
+  </div>
 
 
 </template>

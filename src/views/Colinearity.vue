@@ -6,306 +6,176 @@
       description="This tool allows you to detect covariance in datasets."
       @reset="resetStep1"
     />
-    <!-- STEP 1 -->
-    <v-card
-      outlined
-      class="ma-3 pa-5"
-    >
-      <StepHeading
-        stepNumber="1"
-        stepTitle="Select Data File"
-      />
-      <div>
-        <!-- Training -->
-        <v-card v-for="(fileObj, key) in files" :key="key" outlined class="ma-5 pa-3">
-          <div class="overline">
-            File {{key + 1}}
-          </div>
-          <v-layout class="ml-5">
-            <v-row>
-              <v-col cols="6" >
-                <v-select
-                  outlined
-                  dense
-                  label="Data Set Type"
-                  v-model="fileObj.dataSet"
-                  :items="$store.state.dataSet"
-                  item-text="name"
-                  item-value="value"
-                ></v-select>
-                <v-file-input
-                  v-model="fileObj.file"
-                  prepend-icon="mdi-file"
-                  chips
-                  truncate-length="100"
-                  outlined
-                  :disabled="fileObj.dataSet == null"
-                  :label="fileObj.dataSet + ' file'"
-                  @change="fileObj.dataFileUpload()"
-                ></v-file-input>
-              </v-col>
-              <v-col cols="6" class="text-center">
-                <v-progress-circular color="blue" size="50" width="10" v-if="fileObj.uploading" indeterminate></v-progress-circular>
-                <DataValidation
-                  class="mt-n3"
-                  :fileData="fileObj.fileMetadata"
-                  dataType="combined"
-                />
-              </v-col>
-            </v-row>
-          </v-layout>
-          <v-expansion-panels
-            class="pa-5"
-            v-if="files[0].fileMetadata"
-            >
-            <v-expansion-panel
-              dark
-            >
-              <v-expansion-panel-header>
-                View Data Descriptions
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-data-table
-                  :headers="[
-                    {text: 'Column', value:'feature'},
-                    {text: 'Count', value:'count'},
-                    {text: 'Mean', value:'mean'},
-                    {text: 'STDEV', value:'std'},
-                    {text: 'Min', value:'min'},
-                    {text: '25%', value:'25%'},
-                    {text: '50%', value:'50%'},
-                    {text: '75%', value:'75%'},
-                    {text: 'Max', value:'max'},
-                    {text: 'Skew', value:'skew'},
-                    ]"
-                  :items="files[0].fileMetadata.describe"
-                  class="elevation-1"
-                >
-                </v-data-table>
-
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </v-card>
-      </div>
-
-    </v-card>
-
-    <!-- STEP 2 -->
-    <v-card
-      v-if="files[0].fileMetadata"
-      outlined
-      class="ma-3 pa-5"
-    >
-      <StepHeading
-        stepNumber="2"
-        stepTitle="Select Target Column"
-      />
-      <div>
-
-        <v-row>
-            <v-col cols="6">
-              <v-select
-                clearable
-                outlined
-                label="Target Column"
-                prepend-icon="mdi-bullseye"
-
-                v-model="files[0].target"
-                :items='files[0].fileMetadata.column_names_reversed'
-                @change="files[0].validateTarget(files[0].target)"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </div>
-        <div class="text-right">
-          <v-btn
-            color="primary"
-            v-if="files[0].target"
-            dark
-            @click="files[0].generateCorrelation()"
-            :disabled="files[0].correlation != null"
-          >Calculate Correlations</v-btn>
-        </div>
-
-      </v-card>
-
-
-
-      <!-- STEP 4 -->
-      <v-card
-        v-if="files[0].correlation"
-        outlined
-        class="ma-3 pa-5"
-        >
-        <StepHeading
-          stepNumber="3"
-          stepTitle="Select Columns to be Removed"
-        />
-
-        <div>
-          Select your minimum correlation threshold.
-        </div>
-        <v-row>
-          <v-col cols="2">
-            <v-text-field
-              dense
-              outlined
-              v-model="files[0].correlationThreshold"
-              type="number" max="1" min="-1"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="2">
-            <v-btn icon large @click="files[0].correlationThreshold += 0.01"><v-icon>mdi-plus-box</v-icon></v-btn>
-            <v-btn icon large @click="files[0].correlationThreshold -= 0.01"><v-icon>mdi-minus-box</v-icon></v-btn>
-          </v-col>
-        </v-row>
-        <div>
-          Click on the features you wish to remove.
-        </div>
-        <v-data-table
-          :headers="[{text: 'Feature Pair', value:'features'}, {text:'Value', value:'value'}]"
-          :items="files[0].correlationObject.correlationFilteredList()"
-          :items-per-page="5"
-          class="elevation-1"
-        >
-          <template v-slot:item.features="{ item }">
-            <v-chip
-              dark
-              v-for="feature in item.features"
-              :key="feature"
-              :color="determineCorrelationColors(feature,files[0].correlationFeatureRemovalList)"
-              @click="files[0].toggleFeatureRemoval(feature)"
-            >
-              {{ feature }}
-            </v-chip>
-          </template>
-        </v-data-table>
-
-        <div>
-          Correlated selected for removal.
-        </div>
-        <div>
-          {{files[0].correlationFeatureRemovalList}}
-        </div>
-        <div>
-          <v-switch label="Show Graph" v-model="showGraph"></v-switch>
-          <apexchart v-if="files[0].correlation && showGraph" width="1000" type="heatmap" :options="options" :series="files[0].correlation.graph"></apexchart>
-        </div>
-
-        <v-btn @click="buildFiles()">Build Correlatoin File</v-btn>
-
-
-      </v-card>
-      <!-- <RecentFileList @loadFile="loadFile"/> -->
-
+    <StepFileUploadMultiple
+      stepNumber="1"
+      stepTitle="File Upload"
+      :file0="file0"
+      :file1="file1"
+      @hasSecondFile="hasSecondFile"
+    />
+    <StepTargetSelection
+      v-if="stepNumber >= 2"
+      stepNumber="2"
+      stepTitle="Select Target"
+      :fileObject="file0"
+      nextStepFunction="generateCorrelation"
+      nextStepParam="correlation"
+      nextStepButtonText="Generate Correlation"
+    />
+    <StepFindCorrelation
+      v-if="stepNumber >= 3"
+      stepNumber="3"
+      stepTitle="Find Correlations"
+      :fileObject="file0"
+      @nextStep="buildFiles"
+    />
+    <StepFileOutput
+      v-if="stepNumber >= 4"
+      stepNumber="4"
+      stepTitle="Output Files"
+      :file0="file0"
+      :file1="file1"
+      :loadingFileData="step4Loading"
+      :outputList="file0.correlationKeptList().length"
+    />
 
   </v-container>
 
-
-
 </template>
+
 <script>
 //packages
 import FileDownload from 'js-file-download'
+
 //support code
 import CustObjs from '@/CustomObjects.js'
 
 //components
-// import RecentFileList from '@/components/RecentFileList'
 import MenuBar from '@/components/MenuBar'
-import DataValidation from '@/components/DataValidation'
-import StepHeading from '@/components/StepHeading'
-
+import StepFileUploadMultiple from '@/components/steps/StepFileUploadMultiple'
+import StepTargetSelection from '@/components/steps/StepTargetSelection'
+import StepFindCorrelation from '@/components/steps/StepFindCorrelation'
+import StepFileOutput from '@/components/steps/StepFileOutput'
 
 export default {
-  name: 'Colinearity',
+  name: 'FeatureSelector',
   components: {
-    // RecentFileList,
     MenuBar,
-    DataValidation,
-    StepHeading,
-
+    StepFileUploadMultiple,
+    StepTargetSelection,
+    StepFindCorrelation,
+    StepFileOutput
+  },
+  props: [],
+  created() {
+    this.file0 = CustObjs.newFileObject()
+    this.file1 = null
   },
   data() {
     return {
-      files: [],
-      showGraph: false,
-
-
-
-
-      options: {
-        chart: {
-          animations: {
-            enabled:true
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-
-        colors: ["#008FFB"],
-
-      }
+      file0: null,
+      file1: null,
+      secondFile: null,
+      confirmStep3: false,
+      step4Loading: false,
     }
   },
-  created() {
-    //create new file object
-    this.files.push(CustObjs.newFileObject())
-  },
   computed: {
+    stepNumber() {
+      if (this.showStep4) {
+        return 4
+      }
+      else if (this.showStep3) {
+        return 3
+      }
+      else if (this.showStep2) {
+        return 2
+      }
+      else {
+        return 1
+      }
+    },
+    showStep2() {
+      if (this.file0.fileMetadata != null && this.secondFile == false) {
+        return true
+      }
+      else if (this.file0.fileMetadata != null && this.secondFile == true && this.file1.fileMetadata != null ) {
+        return true
+      }
+      else {
+        return false
+      }
+    },
+    showStep3() {
+      if (this.file0.target != null && this.file0.correlation != null) {
+        return true
+      }
+      else {
+        return false
+      }
+    },
+    showStep4() {
+      if (this.confirmStep3) {
+        return true
+      }
+      else {
+        return false
+      }
+
+    }
 
 
   },
   methods: {
-    buildFiles() {
-      this.$store.commit('FileProcessingDialogLoadingSet', true)
-      this.$store.commit('FileProcessingDialogOpenSet', true)
-      this.files[0].buildCorrelationFiles().then(files => {
-        this.$store.commit('FileProcessingDialogLoadingSet', false)
-        FileDownload(files.output, this.files[0].fileOutputName + '.csv')
-        FileDownload(files.nan, this.files[0].fileOutputName + '_nan.csv')
-      })
+    setStepState(e, val) {
+      console.log(e, val)
     },
-    // loadFile(file) {
-    //   console.log(file)
-    //   this.files[0].fileMetadata = file
-    //   this.files[0].file = new File(["foo"], file.file_name)
-    // },
-
-    //State Resetting
     resetStep1() {
-      console.log('reset step 1')
+      this.file0 = CustObjs.newFileObject()
+      this.file1 = null
     },
-
-
-    fileValidationData(result){
-      console.log(result)
-      this.fileDataValid = result
-    },
-
-    determineCorrelationColors(item, correlationList) {
-      let colors = [
-        'deep-purple lighten-4',
-        'teal lighten-4',
-        'green lighten-4',
-        'orange lighten-4',
-        'pink lighten-4'
-      ]
-      let index = correlationList.indexOf(item)
-      if (index == -1) {
-        return 'blue'
-      }
-      else if (index < colors.length - 1) {
-        return colors[index]
+    hasSecondFile(state) {
+      this.secondFile = state
+      if (state) {
+        this.file1 = CustObjs.newFileObject()
       }
       else {
-        return 'grey lighten-2'
+        this.file1 = null
+      }
+    },
+    buildFiles() {
+      this.confirmStep3 = true
+      let promises = [this.file0.buildCorrelationFiles()]
+
+      if (this.secondFile) {
+        //duplicate removal list
+        this.file1.target = this.file0.target
+        this.file1.correlationFeatureRemovalList = this.file0.correlationFeatureRemovalList
+        //add to promise for file processing
+        promises.push(this.file1.buildCorrelationFiles())
       }
 
-    }
-  }
+      //Data is saved on individual objects. This is just to confirm all operations complete.
+      this.step4Loading = true
+      Promise.all(promises).then((response) => {
+        this.step4Loading = false
+        console.log(response)
 
+      })
+    },
+    saveFiles() {
+      FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+      if (this.file0.correlationOutputFiles.missing_count > 0) {
+        FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+      }
+      if (this.secondFile){
+        FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+        if (this.file1.correlationOutputFiles.missing_count > 0) {
+          FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+        }
+      }
+    }
+
+  }
 }
 </script>

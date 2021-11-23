@@ -1,5 +1,5 @@
 <template>
-  <v-alert dense text color="primary" class="ml-5">
+  <v-alert dense text color="primary" class="ml-2">
     {{message}}
     <v-btn text v-if="decision != true" class="ml-3" @click="decide(true)">
       {{trueVal}}

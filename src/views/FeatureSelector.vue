@@ -45,7 +45,7 @@
 
 <script>
 //packages
-import FileDownload from 'js-file-download'
+// import FileDownload from 'js-file-download'
 
 //support code
 import CustObjs from '@/CustomObjects.js'
@@ -144,36 +144,36 @@ export default {
       }
     },
     buildFiles() {
-      this.confirmStep3 = true
-      let promises = [this.file0.buildCorrelationFiles()]
-
-      if (this.secondFile) {
-        //duplicate removal list
-        this.file1.target = this.file0.target
-        this.file1.correlationFeatureRemovalList = this.file0.correlationFeatureRemovalList
-        //add to promise for file processing
-        promises.push(this.file1.buildCorrelationFiles())
-      }
-
-      //Data is saved on individual objects. This is just to confirm all operations complete.
-      this.step4Loading = true
-      Promise.all(promises).then((response) => {
-        this.step4Loading = false
-        console.log(response)
-
-      })
+      // this.confirmStep3 = true
+      // let promises = [this.file0.buildCorrelationFiles()]
+      //
+      // if (this.secondFile) {
+      //   //duplicate removal list
+      //   this.file1.target = this.file0.target
+      //   this.file1.correlationFeatureRemovalList = this.file0.correlationFeatureRemovalList
+      //   //add to promise for file processing
+      //   promises.push(this.file1.buildCorrelationFiles())
+      // }
+      //
+      // //Data is saved on individual objects. This is just to confirm all operations complete.
+      // this.step4Loading = true
+      // Promise.all(promises).then((response) => {
+      //   this.step4Loading = false
+      //   console.log(response)
+      //
+      // })
     },
     saveFiles() {
-      FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
-      if (this.file0.correlationOutputFiles.missing_count > 0) {
-        FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
-      }
-      if (this.secondFile){
-        FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
-        if (this.file1.correlationOutputFiles.missing_count > 0) {
-          FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
-        }
-      }
+      // FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+      // if (this.file0.correlationOutputFiles.missing_count > 0) {
+      //   FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+      // }
+      // if (this.secondFile){
+      //   FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+      //   if (this.file1.correlationOutputFiles.missing_count > 0) {
+      //     FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+      //   }
+      // }
     }
 
   }
