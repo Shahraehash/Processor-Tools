@@ -192,7 +192,7 @@ def data_file_upload():
         #trim column names
         df.columns = df.columns.str.replace(' ', '')
 
-        df.to_csv(file_path)
+        df.to_csv(file_path, index=False)
 
         valid_data_types = ['int64','float64']
         invalid_columns = []
@@ -260,8 +260,9 @@ def calc_corr():
     file = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file)
 
-    df = df.drop(columns=[target])
+
     correlation_mat = df.corr()
+    correlation_mat = correlation_mat.round(2)
 
     #Graph
     graph_series = []

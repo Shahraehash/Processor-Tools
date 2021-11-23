@@ -37,6 +37,7 @@
       :file1="file1"
       :loadingFileData="step4Loading"
       :outputList="file0.correlationKeptList().length"
+      @saveFiles="saveFiles"
     />
 
   </v-container>

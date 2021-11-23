@@ -109,6 +109,10 @@ export default {
       correlationFeatureRemovalList: [],
       correlationOutputFiles: null,
 
+      allowCorrelationGraph() {
+        return this.featureList.length <= 20
+      },
+
       correlationKeptList() {
         return _.difference(this.featureList, this.correlationFeatureRemovalList)
       },

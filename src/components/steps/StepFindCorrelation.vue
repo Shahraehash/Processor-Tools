@@ -8,7 +8,7 @@
       :stepTitle="stepTitle"
     />
 
-    <div>
+    <div class="mt-5 mb-3">
       Select your minimum correlation threshold.
     </div>
     <v-row>
@@ -22,10 +22,10 @@
       </v-col>
       <v-col cols="2">
         <v-btn icon large @click="fileObject.correlationThreshold += 0.01"><v-icon>mdi-plus-box</v-icon></v-btn>
-        <v-btn icon large @click="fileObject.correlationThreshold -= 0.01"><v-icon>mdi-minus-box</v-icon></v-btn>
+        <v-btn class="ml-n3" icon large @click="fileObject.correlationThreshold -= 0.01"><v-icon>mdi-minus-box</v-icon></v-btn>
       </v-col>
     </v-row>
-    <div>
+    <div class="mt-5 mb-3">
       Click on the features you wish to remove.
     </div>
     <v-data-table
@@ -36,7 +36,7 @@
     >
       <template v-slot:item.features="{ item }">
         <v-chip
-          dark
+
           v-for="feature in item.features"
           :key="feature"
           :color="determineCorrelationColors(feature,fileObject.correlationFeatureRemovalList)"
@@ -47,16 +47,37 @@
       </template>
     </v-data-table>
 
-    <div>
+    <div class="mt-5 mb-3">
       Correlated selected for removal.
     </div>
     <div>
-      {{fileObject.correlationFeatureRemovalList}}
+      <v-select
+        chips
+        outlined
+        multiple
+        :items="fileObject.featureList"
+        v-model="fileObject.correlationFeatureRemovalList"
+        >
+      </v-select>
     </div>
+    <!-- Grpah View -->
     <div>
-      <v-switch label="Show Graph" v-model="showGraph"></v-switch>
-      <apexchart v-if="fileObject.correlation && showGraph" width="1000" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart>
+      <!-- No Graph -->
+      <div v-if="!fileObject.allowCorrelationGraph()">
+        <v-alert type="warning" text>There are too many features in this dataset to display the correlation graph.</v-alert>
+
+      </div>
+      <!-- Graph -->
+      <div v-if="fileObject.allowCorrelationGraph()">
+        <div>
+          <v-switch label="Show Graph" v-model="showGraph"></v-switch>
+          <apexchart v-if="fileObject.correlation && showGraph" width="1000" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart>
+        </div>
+      </div>
+
     </div>
+
+    <!-- Next Step -->
     <div class="text-right">
       <v-btn
         color="primary"
@@ -66,8 +87,6 @@
         >
         Confirm Features for Removal
       </v-btn>
-
-
     </div>
 
 
@@ -126,7 +145,7 @@ export default {
       ]
       let index = correlationList.indexOf(item)
       if (index == -1) {
-        return 'blue'
+        return ''
       }
       else if (index < colors.length - 1) {
         return colors[index]

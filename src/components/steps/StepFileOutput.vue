@@ -25,7 +25,7 @@
                     Total Output Columns: {{outputList + 1}} (including target)
                   </div>
                   <div>
-                    Feature Columns: {{outputList}} of {{file0.fileMetadata.column_names.length}} original
+                    Feature Columns: {{outputList}} of {{file0.featureList.length}} original
                   </div>
                   <div>
                     Target Column: {{file0.target}}
@@ -82,7 +82,7 @@
             <div class="overline">Additional File Outputs</div>
             <div>
               <v-switch
-                label="Export rows with missing data."
+                label="Export rows with missing data in seperate file (row indexes included)."
                 v-model="exportMissingRows"
 
 
@@ -90,12 +90,14 @@
             </div>
             <div class="text-right">
               <v-btn
+                v-if="!loadingFileData"
                 color="primary"
                 rounded
+                @click="$emit('saveFiles')"
 
 
               >
-                Build Files
+                Save Files
               </v-btn>
 
             </div>
