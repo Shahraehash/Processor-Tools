@@ -12,6 +12,8 @@
       :file0="file0"
       :file1="file1"
       @hasSecondFile="hasSecondFile"
+      @noFile0="resetStep1"
+      @noFile1="resetSecondFileStep1"
     />
     <StepTargetSelection
       v-if="stepNumber >= 2"
@@ -21,12 +23,14 @@
       nextStepFunction="generateCorrelation"
       nextStepParam="correlation"
       nextStepButtonText="Generate Correlation"
+      @resetStep="resetStep2"
     />
     <StepFindCorrelation
       v-if="stepNumber >= 3"
       stepNumber="3"
       stepTitle="Find Correlations"
       :fileObject="file0"
+      @changedFeatureRemoval="resetStep4"
       @nextStep="buildFiles"
     />
     <StepFileOutput
@@ -134,7 +138,36 @@ export default {
     resetStep1() {
       this.file0 = CustObjs.newFileObject()
       this.file1 = null
+      this.secondFile = null
+      this.resetStep2()
     },
+    resetSecondFileStep1() {
+      this.file1 = null
+      this.resetStep2()
+    },
+    resetStep2() {
+      this.file0.target = null
+      this.file0.correlation = null
+      this.resetStep3()
+    },
+    resetStep3() {
+      this.file0.correlationFeatureRemovalList = []
+      if (this.file1 != null) {
+        this.file1.target = null
+        this.file1.correlationFeatureRemovalList = []
+      }
+      this.resetStep4()
+    },
+    resetStep4() {
+      this.confirmStep3 = false
+      this.step4Loading = false
+      this.file0.correlationOutputFiles = null
+
+      if (this.file1 != null) {
+        this.file0.correlationOutputFiles = null
+      }
+    },
+
     hasSecondFile(state) {
       this.secondFile = state
       if (state) {

@@ -12,6 +12,7 @@
       <FileUploadSingle
         :fileObject="file0"
         fileName="First File"
+        @noFile="noFile0"
       />
       <Decision
         v-if="file0.fileMetadata != null"
@@ -25,6 +26,7 @@
         v-if="hasSecondFile && file1 != null"
         :fileObject="file1"
         fileName="Second File"
+        @noFile="noFile1"
       />
       <FilesCrossValidation
         v-if="file1 != null && file1.fileMetadata != null"
@@ -74,6 +76,12 @@ export default {
   computed: {
   },
   methods: {
+    noFile0() {
+      this.$emit('noFile0')
+    },
+    noFile1() {
+      this.$emit('noFile1')
+    },
     setSecondFileState(state) {
       console.log('decide', state)
       this.$emit('hasSecondFile', state)

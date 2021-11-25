@@ -93,7 +93,8 @@ export default {
         })
       }
       else {
-        this.resetStep()
+        this.targetValid = false
+        this.$emit('resetStep')
       }
     },
     moveToNextStep() {

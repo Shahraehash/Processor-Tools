@@ -57,6 +57,7 @@
         multiple
         :items="fileObject.featureList"
         v-model="fileObject.correlationFeatureRemovalList"
+        @change="changedFeatureRemoval"
         >
       </v-select>
     </div>
@@ -80,6 +81,8 @@
     <!-- Next Step -->
     <div class="text-right">
       <v-btn
+        v-if="fileObject.correlationFeatureRemovalList.length > 0"
+        :disabled="confirmStep"
         color="primary"
         rounded
         dark
@@ -99,7 +102,7 @@
 
 <script>
 //packages
-import FileDownload from 'js-file-download'
+
 //support code
 
 //components
@@ -117,6 +120,7 @@ export default {
   ],
   data() {
     return {
+      confirmStep: false,
       showGraph: false,
       options: {
         chart: {
@@ -155,19 +159,16 @@ export default {
       }
 
     },
+    changedFeatureRemoval() {
+      this.confirmStep = false
+      this.$emit('changedFeatureRemoval')
+    },
     nexStep() {
+      this.confirmStep = true
       this.$emit('nextStep')
 
     },
-    buildFiles() {
-      this.$store.commit('FileProcessingDialogLoadingSet', true)
-      this.$store.commit('FileProcessingDialogOpenSet', true)
-      this.files[0].buildCorrelationFiles().then(files => {
-        this.$store.commit('FileProcessingDialogLoadingSet', false)
-        FileDownload(files.output, this.files[0].fileOutputName + '.csv')
-        FileDownload(files.nan, this.files[0].fileOutputName + '_nan.csv')
-      })
-    },
+
   }
 }
 </script>

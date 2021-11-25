@@ -23,7 +23,7 @@
             outlined
             :disabled="fileObject.dataSet == null"
             :label="fileObject.dataSet + ' file'"
-            @change="fileObject.dataFileUpload()"
+            @change="fileChanged"
           ></v-file-input>
         </v-col>
         <v-col cols="6" class="text-center">
@@ -92,6 +92,14 @@ export default {
     }
   },
   methods: {
+    fileChanged(file) {
+      if (file != null) {
+        this.fileObject.dataFileUpload()
+      }
+      else {
+        this.$emit('noFile')
+      }
+    },
     //Receives $emit from DataValidation component
     fileValidationSet(validation) {
       this.fileObject.fileValidation = validation
