@@ -24,7 +24,7 @@
         </v-card>
       </v-col>
       <v-col cols="6" class="mt-3">
-        <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'FeatureSelector'})">
+        <v-card disabled hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'FeatureSelector'})">
           <v-icon x-large>mdi-select-all</v-icon>
           <span class="title">Feature Selector</span>
         </v-card>

@@ -83,6 +83,7 @@ export default {
       secondFile: null,
       confirmStep3: false,
       step4Loading: false,
+      fileSuffix: '_corr_removal'
     }
   },
   computed: {
@@ -104,7 +105,7 @@ export default {
       if (this.file0.fileMetadata != null && this.secondFile == false) {
         return true
       }
-      else if (this.file0.fileMetadata != null && this.secondFile == true && this.file1.fileMetadata != null ) {
+      else if (this.file0.fileMetadata != null && this.secondFile == true && this.file1 != null && this.file1.fileMetadata != null ) {
         return true
       }
       else {
@@ -142,7 +143,7 @@ export default {
       this.resetStep2()
     },
     resetSecondFileStep1() {
-      this.file1 = null
+      this.file1 = CustObjs.newFileObject()
       this.resetStep2()
     },
     resetStep2() {
@@ -181,10 +182,16 @@ export default {
       this.confirmStep3 = true
       let promises = [this.file0.buildCorrelationFiles()]
 
+      //add suffix
+      this.file0.customFileOutputSuffix(this.fileSuffix)
+
       if (this.secondFile) {
         //duplicate removal list
         this.file1.target = this.file0.target
         this.file1.correlationFeatureRemovalList = this.file0.correlationFeatureRemovalList
+
+        //add fileSuffix
+        this.file1.customFileOutputSuffix(this.fileSuffix)
         //add to promise for file processing
         promises.push(this.file1.buildCorrelationFiles())
       }
@@ -197,14 +204,15 @@ export default {
 
       })
     },
-    saveFiles() {
+    saveFiles(exportSettings) {
+      console.log(exportSettings)
       FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
-      if (this.file0.correlationOutputFiles.missing_count > 0) {
+      if (this.file0.correlationOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
         FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
       }
       if (this.secondFile){
         FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
-        if (this.file1.correlationOutputFiles.missing_count > 0) {
+        if (this.file1.correlationOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
           FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
         }
       }

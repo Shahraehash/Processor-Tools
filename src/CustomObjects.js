@@ -29,6 +29,7 @@ export default {
       fileMetadata: null, //calculated as part of the data_file_upload() method
       fileValidation: null,
       target: null, //set by calling validateTarget() to validate_target_column()
+      targetValid: null,
       featureList: null, //set by validateTarget()
 
       //output
@@ -86,6 +87,7 @@ export default {
             }
           }).then(result => {
             this.featureList = []
+            this.targetValid = result.data.validation
 
             if(result.data.validation) {
               this.fileMetadata.column_names.forEach(item => {
@@ -95,12 +97,12 @@ export default {
               })
               return true
             }
-            else {
-              this.target = null
-              return Error('Invalid target column.')
-            }
+
           })
         }
+      },
+      customFileOutputSuffix(suffix) {
+        this.fileOutputName = this.file.name.split('.csv')[0] + suffix
       },
 
       //Correlation
@@ -110,7 +112,7 @@ export default {
       correlationOutputFiles: null,
 
       allowCorrelationGraph() {
-        return this.featureList.length <= 20
+        return this.featureList.length <= 40
       },
 
       correlationKeptList() {

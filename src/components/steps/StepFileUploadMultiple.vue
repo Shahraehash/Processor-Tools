@@ -78,12 +78,18 @@ export default {
   methods: {
     noFile0() {
       this.$emit('noFile0')
+
     },
     noFile1() {
+
       this.$emit('noFile1')
+
     },
     setSecondFileState(state) {
       console.log('decide', state)
+      if (state == false) {
+        this.$emit('noFile1')
+      }
       this.$emit('hasSecondFile', state)
       this.hasSecondFile = state
     },

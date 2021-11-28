@@ -83,7 +83,7 @@
             <div>
               <v-switch
                 label="Export rows with missing data in seperate file (row indexes included)."
-                v-model="exportMissingRows"
+                v-model="exportSettings.exportMissingRows"
 
 
               ></v-switch>
@@ -93,7 +93,7 @@
                 v-if="!loadingFileData"
                 color="primary"
                 rounded
-                @click="$emit('saveFiles')"
+                @click="$emit('saveFiles', exportSettings)"
 
 
               >
@@ -132,11 +132,14 @@ export default {
     'loadingFileData',
     'file0',
     'file1',
-    'outputList'
+    'outputList',
   ],
   data() {
     return {
-      exportMissingRows: true
+      exportSettings: {
+        exportMissingRows: true
+      }
+
     }
   }
 }

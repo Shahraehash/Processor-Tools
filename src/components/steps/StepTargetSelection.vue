@@ -39,7 +39,7 @@
       <div class="text-right">
         <v-btn
           color="primary"
-          v-if="fileObject.target"
+          v-if="fileObject.target && fileObject.targetValid"
           dark
           rounded
           @click="moveToNextStep"
@@ -89,13 +89,10 @@ export default {
     targetColumnChanged(target) {
       if (target != null) {
         this.fileObject.validateTarget(target).then(() => {
-          this.targetValid = true
+          this.targetValid = this.fileObject.targetValid
         })
       }
-      else {
-        this.targetValid = false
-        this.$emit('resetStep')
-      }
+
     },
     moveToNextStep() {
       this.fileObject[this.nextStepFunction]()
