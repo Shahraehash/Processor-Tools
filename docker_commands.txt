@@ -1,10 +1,11 @@
 source venv/bin/activate
 pip freeze > requirements.txt
 
+npm run build
 
 
 docker build ./ -t fennell/ml-pp
-docker save fennell/ml-pp -o ml-pp-21-11-18.tar
-docker load -i ml-pp-21-11-18.tar
+docker save fennell/ml-pp -o ml-pp-21-11-28.tar
+docker load -i ml-pp-21-11-28.tar
 
 docker run -d -p 4998 fennell/ml-pp:latest
