@@ -19,6 +19,7 @@
           v-model="fileObject.correlationThreshold"
           type="number" max="1" min="-1"
           step="0.01"
+          @change="updatedThreshold"
         ></v-text-field>
       </v-col>
 
@@ -81,7 +82,7 @@
       <div v-if="fileObject.allowCorrelationGraph()">
         <div>
           <v-switch label="Show Graph" v-model="showGraph"></v-switch>
-          <apexchart v-if="fileObject.correlation && showGraph" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart>
+          <apexchart :key="graphKey" v-if="fileObject.correlation && showGraph" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart>
         </div>
       </div>
 
@@ -130,11 +131,21 @@ export default {
   data() {
     return {
       confirmStep: false,
-      showGraph: false,
-      options: {
+      showGraph: true,
+      graphKey: 0,
+      options: null
+
+    }
+  },
+  created() {
+    this.options = this.makeGraphOptions()
+  },
+  methods: {
+    makeGraphOptions() {
+      return {
         chart: {
           animations: {
-            enabled:true
+            enabled: true
           }
         },
         dataLabels: {
@@ -161,7 +172,7 @@ export default {
                   from: this.fileObject.correlationThreshold,
                   to: 1,
                   color: '#FFB200',
-                  name: 'At threshold',
+                  name: 'At threshold (>' + this.fileObject.correlationThreshold.toString() + ')' ,
                 }
               ]
             }
@@ -169,10 +180,11 @@ export default {
         }
 
       }
-
-    }
-  },
-  methods: {
+    },
+    updatedThreshold() {
+      this.options = this.makeGraphOptions()
+      this.graphKey += 1
+    },
     determineCorrelationColors(item, correlationList) {
       let colors = [
         'deep-purple lighten-4',
