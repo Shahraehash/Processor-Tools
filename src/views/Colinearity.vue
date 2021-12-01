@@ -3,7 +3,7 @@
     <MenuBar
       title="Multicollinearity Assessment & Removal Tool"
       icon="mdi-chart-bell-curve-cumulative"
-      description="This tool allows you to detect covariance in datasets."
+      description="This tool allows you to assess for multicollinearity in datasets along with feature removal options, if you choose."
       @reset="resetStep1"
     />
     <StepFileUploadMultiple
