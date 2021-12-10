@@ -158,21 +158,21 @@ export default {
             colorScale: {
               ranges: [{
                   from: -1,
-                  to: this.fileObject.correlationThreshold - 0.15,
+                  to: this.fileObject.correlationThreshold - 0.10,
                   color: '#00A100',
-                  name: 'Low Correlation',
+                  name: 'Lower correlations',
                 },
                 {
-                  from: this.fileObject.correlationThreshold - 0.15,
+                  from: this.fileObject.correlationThreshold - 0.10,
                   to: this.fileObject.correlationThreshold,
                   color: '#128FD9',
-                  name: 'Borderline',
+                  name: 'Correlations within 10% of specified threshold',
                 },
                 {
                   from: this.fileObject.correlationThreshold,
                   to: 1,
                   color: '#FFB200',
-                  name: 'At threshold (>' + this.fileObject.correlationThreshold.toString() + ')' ,
+                  name: 'Correlation at or above threshold of ' + (this.fileObject.correlationThreshold * 100).toString() + '%' ,
                 }
               ]
             }
