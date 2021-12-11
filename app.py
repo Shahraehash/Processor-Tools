@@ -12,6 +12,7 @@ import json
 #Scikit learn
 from sklearn.feature_selection import f_classif
 from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 
 # Make TinyDB
 import uuid
@@ -354,15 +355,35 @@ def calc_feature_selector():
     feature_names = X.columns
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 5, stratify=y)
 
-    feature_scores = f_classif(X_train, y_train)[0]
 
-    final_data = {}
+    #Select Percentile
+    feature_scores = f_classif(X_train, y_train)[0]
+    output_select_percentile = []
 
     for score, f_name in sorted(zip(feature_scores, feature_names), reverse=True):
-        final_data[f_name] = score
+
+        output_select_percentile.append({
+            'feature': f_name,
+            'score': score
+        })
+
+    #Random Forrest
+    forest = RandomForestClassifier(random_state=0)
+    rf_best = forest.fit(X_train, y_train)
+    output_rf = []
+
+    for score, f_name in sorted(zip(rf_best.feature_importances_, feature_names), reverse=True):
+        output_rf.append({
+            'feature': f_name,
+            'score': score
+        })
 
     time.sleep(2)
-    return make_response(final_data)
+    return make_response({
+        'select_percentile': output_select_percentile,
+        'rf': output_rf,
+        'feature_number': len(output_rf)
+    })
 
 
 #TOOL SPECIFIC
