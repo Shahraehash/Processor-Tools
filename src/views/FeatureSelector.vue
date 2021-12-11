@@ -3,29 +3,35 @@
     <MenuBar
       title="Feature Selector"
       icon="mdi-select-all"
-      description="This tool allows you to find the most important features in your data."
+      description="This tool allows you to select the subset of data with the most relative value***."
       @reset="resetStep1"
     />
-    <v-alert type="error">Step 3 to run feature selector not yet build</v-alert>
     <StepFileUploadMultiple
       stepNumber="1"
       stepTitle="File Upload"
       :file0="file0"
       :file1="file1"
       @hasSecondFile="hasSecondFile"
+      @noFile0="resetStep1"
+      @noFile1="resetSecondFileStep1"
     />
     <StepTargetSelection
       v-if="stepNumber >= 2"
       stepNumber="2"
       stepTitle="Select Target"
       :fileObject="file0"
-      nextStepFunction="generateCorrelation"
-      nextStepParam="correlation"
-      nextStepButtonText="Generate Correlation"
+      nextStepFunction="generateFeatureSelection"
+      nextStepParam="featureSelectorResults"
+      nextStepButtonText="Calculate Feature Value"
+      @resetStep="resetStep2"
     />
-    <div>
-
-    </div>
+    <StepFeatureSelector
+      v-if="stepNumber >= 3"
+      stepNumber="3"
+      stepTitle="Feature Selector"
+      :fileObject="file0"
+      @nextStep="buildFiles"
+    />
     <StepFileOutput
       v-if="stepNumber >= 4"
       stepNumber="4"
@@ -34,6 +40,7 @@
       :file1="file1"
       :loadingFileData="step4Loading"
       :outputList="file0.correlationKeptList().length"
+      @saveFiles="saveFiles"
     />
 
   </v-container>
@@ -42,7 +49,7 @@
 
 <script>
 //packages
-// import FileDownload from 'js-file-download'
+import FileDownload from 'js-file-download'
 
 //support code
 import CustObjs from '@/CustomObjects.js'
@@ -51,7 +58,7 @@ import CustObjs from '@/CustomObjects.js'
 import MenuBar from '@/components/MenuBar'
 import StepFileUploadMultiple from '@/components/steps/StepFileUploadMultiple'
 import StepTargetSelection from '@/components/steps/StepTargetSelection'
-
+import StepFeatureSelector from '@/components/steps/StepFeatureSelector'
 import StepFileOutput from '@/components/steps/StepFileOutput'
 
 export default {
@@ -60,7 +67,7 @@ export default {
     MenuBar,
     StepFileUploadMultiple,
     StepTargetSelection,
-    
+    StepFeatureSelector,
     StepFileOutput
   },
   props: [],
@@ -75,6 +82,7 @@ export default {
       secondFile: null,
       confirmStep3: false,
       step4Loading: false,
+      fileSuffix: '_corr_removal'
     }
   },
   computed: {
@@ -96,7 +104,7 @@ export default {
       if (this.file0.fileMetadata != null && this.secondFile == false) {
         return true
       }
-      else if (this.file0.fileMetadata != null && this.secondFile == true && this.file1.fileMetadata != null ) {
+      else if (this.file0.fileMetadata != null && this.secondFile == true && this.file1 != null && this.file1.fileMetadata != null ) {
         return true
       }
       else {
@@ -104,7 +112,7 @@ export default {
       }
     },
     showStep3() {
-      if (this.file0.target != null && this.file0.correlation != null) {
+      if (this.file0.target != null && this.file0.featureSelectorResults != null) {
         return true
       }
       else {
@@ -130,7 +138,36 @@ export default {
     resetStep1() {
       this.file0 = CustObjs.newFileObject()
       this.file1 = null
+      this.secondFile = null
+      this.resetStep2()
     },
+    resetSecondFileStep1() {
+      this.file1 = CustObjs.newFileObject()
+      this.resetStep2()
+    },
+    resetStep2() {
+      this.file0.target = null
+      this.file0.correlation = null
+      this.resetStep3()
+    },
+    resetStep3() {
+      this.file0.correlationFeatureRemovalList = []
+      if (this.file1 != null) {
+        this.file1.target = null
+        this.file1.correlationFeatureRemovalList = []
+      }
+      this.resetStep4()
+    },
+    resetStep4() {
+      this.confirmStep3 = false
+      this.step4Loading = false
+      this.file0.correlationOutputFiles = null
+
+      if (this.file1 != null) {
+        this.file0.correlationOutputFiles = null
+      }
+    },
+
     hasSecondFile(state) {
       this.secondFile = state
       if (state) {
@@ -141,36 +178,43 @@ export default {
       }
     },
     buildFiles() {
-      // this.confirmStep3 = true
-      // let promises = [this.file0.buildCorrelationFiles()]
-      //
-      // if (this.secondFile) {
-      //   //duplicate removal list
-      //   this.file1.target = this.file0.target
-      //   this.file1.correlationFeatureRemovalList = this.file0.correlationFeatureRemovalList
-      //   //add to promise for file processing
-      //   promises.push(this.file1.buildCorrelationFiles())
-      // }
-      //
-      // //Data is saved on individual objects. This is just to confirm all operations complete.
-      // this.step4Loading = true
-      // Promise.all(promises).then((response) => {
-      //   this.step4Loading = false
-      //   console.log(response)
-      //
-      // })
+      this.confirmStep3 = true
+      let promises = [this.file0.buildCorrelationFiles()]
+
+      //add suffix
+      this.file0.customFileOutputSuffix(this.fileSuffix)
+
+      if (this.secondFile) {
+        //duplicate removal list
+        this.file1.target = this.file0.target
+        this.file1.correlationFeatureRemovalList = this.file0.correlationFeatureRemovalList
+
+        //add fileSuffix
+        this.file1.customFileOutputSuffix(this.fileSuffix)
+        //add to promise for file processing
+        promises.push(this.file1.buildCorrelationFiles())
+      }
+
+      //Data is saved on individual objects. This is just to confirm all operations complete.
+      this.step4Loading = true
+      Promise.all(promises).then((response) => {
+        this.step4Loading = false
+        console.log(response)
+
+      })
     },
-    saveFiles() {
-      // FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
-      // if (this.file0.correlationOutputFiles.missing_count > 0) {
-      //   FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
-      // }
-      // if (this.secondFile){
-      //   FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
-      //   if (this.file1.correlationOutputFiles.missing_count > 0) {
-      //     FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
-      //   }
-      // }
+    saveFiles(exportSettings) {
+      console.log(exportSettings)
+      FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+      if (this.file0.correlationOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
+        FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+      }
+      if (this.secondFile){
+        FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+        if (this.file1.correlationOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
+          FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+        }
+      }
     }
 
   }

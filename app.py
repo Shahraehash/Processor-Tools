@@ -9,6 +9,10 @@ import os
 import time
 import json
 
+#Scikit learn
+from sklearn.feature_selection import f_classif
+from sklearn.model_selection import train_test_split
+
 # Make TinyDB
 import uuid
 from tinydb import TinyDB, Query
@@ -253,6 +257,8 @@ def data_file_upload():
         os.remove(file_path)
         return abort(500)
 
+#TOOL SPECIFIC
+#Correlation Tool
 @app.route('/calc/cor',methods=["POST"])
 def calc_corr():
     storage_id = request.json['storage_id']
@@ -332,7 +338,35 @@ def calc_corr_process():
 
     return make_response(final_data)
 
+#TOOL SPECIFIC
+#Feature Selector
 
+@app.route('/calc/feature_selector',methods=["POST"])
+def calc_feature_selector():
+    storage_id = request.json['storage_id']
+    target = request.json['target']
+
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
+    df = pd.read_csv(file_path)
+
+    X = df.drop(columns=[target])
+    y = df[target]
+    feature_names = X.columns
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 5, stratify=y)
+
+    feature_scores = f_classif(X_train, y_train)[0]
+
+    final_data = {}
+
+    for score, f_name in sorted(zip(feature_scores, feature_names), reverse=True):
+        final_data[f_name] = score
+
+    time.sleep(2)
+    return make_response(final_data)
+
+
+#TOOL SPECIFIC
+#Column Reducer
 
 @app.route('/column_reducer/process',methods=["POST"])
 def column_reducer_process():

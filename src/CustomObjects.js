@@ -105,7 +105,8 @@ export default {
         this.fileOutputName = this.file.name.split('.csv')[0] + suffix
       },
 
-      //Correlation
+      //NEW SECTION
+      //Correlation Calculations
       correlation: null,
       correlationThreshold: 0.85,
       correlationFeatureRemovalList: [],
@@ -165,6 +166,36 @@ export default {
           return response.data //two files (output and nan)
         })
       },
+
+      //NEW SECTION
+      //Feature Selector
+      featureSelectorResults: null,
+
+      generateFeatureSelection() {
+        if (this.target != null) {
+          let payload = {
+            target: this.target,
+            storage_id: this.fileMetadata.storage_id
+          }
+          return axios.post('/calc/feature_selector', payload, {
+              headers: {
+              'Content-Type': 'application/json',
+              'X-inbound': 'validation'
+            }
+          }).then(result => {
+            this.featureSelectorResults = result.data
+            return true
+          }).catch(error => {
+            return error
+          })
+        }
+        else {
+          return Promise.reject(Error('No target is selected.'))
+        }
+
+      }
+
+
 
 
     }
