@@ -6,7 +6,7 @@
     <v-layout class="ml-5">
       <v-row>
         <v-col cols="6" >
-          <v-select
+          <!-- <v-select
             outlined
             dense
             label="Data Set Type"
@@ -14,7 +14,7 @@
             :items="$store.state.dataSet"
             item-text="name"
             item-value="value"
-          ></v-select>
+          ></v-select> -->
           <v-file-input
             v-model="fileObject.file"
             prepend-icon="mdi-file"
@@ -22,7 +22,7 @@
             truncate-length="100"
             outlined
             :disabled="fileObject.dataSet == null"
-            :label="fileObject.dataSet + ' file'"
+            :label="fileName"
             @change="fileChanged"
           ></v-file-input>
         </v-col>
@@ -37,18 +37,25 @@
         </v-col>
       </v-row>
     </v-layout>
-    <v-expansion-panels
-      class="py-3 ma-n0"
+    <v-card
+      hover
+      class="ma-5"
       v-if="fileObject.fileMetadata"
+      flat outlined
       >
-      <v-expansion-panel
-        dark
-      >
-        <v-expansion-panel-header>
-          View Data Descriptions
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
+      <div class="pa-3" @click="showTable = !showTable">
+        <v-btn icon tile color=""><v-icon>mdi-chart-bar</v-icon></v-btn>
+        Data Descriptions
+        <span v-if="!showTable">(click to expand)</span>
+
+        <v-icon v-if="!showTable">mdi-chevron-down</v-icon>
+        <v-icon v-if="showTable">mdi-chevron-up</v-icon>
+      </div>
+
+
+
           <v-data-table
+            v-if="showTable"
             :headers="[
               {text: 'Column', value:'feature'},
               {text: 'Count', value:'count'},
@@ -66,9 +73,7 @@
           >
           </v-data-table>
 
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
+    </v-card>
   </div>
 
 
@@ -89,6 +94,7 @@ export default {
   ],
   data() {
     return {
+      showTable: false
     }
   },
   methods: {

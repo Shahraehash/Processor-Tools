@@ -25,7 +25,7 @@ export default {
       //core properties
       file: null, //actual file
       uploading: false, //for UI
-      dataSet: null, //type of data set (training, test, combined, etc.)
+      dataSet: 'combined', //default is combined hidden for now //type of data set (training, test, combined, etc.)
       fileMetadata: null, //calculated as part of the data_file_upload() method
       fileValidation: null,
       target: null, //set by calling validateTarget() to validate_target_column()
