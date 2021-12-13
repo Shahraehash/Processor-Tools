@@ -93,6 +93,8 @@
                 v-if="!loadingFileData"
                 color="primary"
                 rounded
+                dark
+                depressed
                 @click="$emit('saveFiles', exportSettings)"
 
 
@@ -141,6 +143,9 @@ export default {
       }
 
     }
-  }
+  },
+  mounted() {
+    window.scrollTo(0,document.body.scrollHeight);
+  },
 }
 </script>

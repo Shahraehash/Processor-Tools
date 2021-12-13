@@ -40,11 +40,11 @@
     <!-- Next Step -->
     <div class="text-right">
       <v-btn
-
         :disabled="confirmStep"
         color="primary"
         rounded
         dark
+        depressed
         @click="nexStep()"
         >
         Proceed to next step
@@ -95,6 +95,9 @@ export default {
 
 
     }
+  },
+  mounted() {
+    window.scrollTo(0,document.body.scrollHeight);
   },
   computed: {
     selectedColumns() {

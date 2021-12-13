@@ -115,7 +115,10 @@ export default {
       allowCorrelationGraph() {
         return this.featureList.length <= 40
       },
-
+      correlationTimeWarning() {
+        return true
+        //return this.fileMetadata.columns > 30 || this.fileMetadata.rows > 1000
+      },
       correlationKeptList() {
         return _.difference(this.featureList, this.correlationFeatureRemovalList)
       },

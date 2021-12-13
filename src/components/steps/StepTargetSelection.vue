@@ -42,8 +42,9 @@
           v-if="fileObject.target && fileObject.targetValid"
           dark
           rounded
+          depressed
           @click="moveToNextStep"
-          :disabled="nextStepSet"
+          :disabled="confirmStep"
         >{{nextStepButtonText}}</v-btn>
       </div>
 
@@ -72,21 +73,21 @@ export default {
     'stepNumber',
     'stepTitle',
     'nextStepFunction',
-    'nextStepParam',
     'nextStepButtonText'
   ],
   data() {
     return {
-      targetValid: null
+      targetValid: null,
+      confirmStep: false,
     }
   },
-  computed: {
-    nextStepSet() {
-      return this.fileObject[this.nextStepParam] != null
-    }
+  mounted() {
+    window.scrollTo(0,document.body.scrollHeight);
   },
   methods: {
     targetColumnChanged(target) {
+      this.confirmStep = false
+      this.$emit('nextStepState', this.confirmStep)
       if (target != null) {
         this.fileObject.validateTarget(target).then(() => {
           this.targetValid = this.fileObject.targetValid
@@ -96,6 +97,8 @@ export default {
     },
     moveToNextStep() {
       this.fileObject[this.nextStepFunction]()
+      this.confirmStep = true
+      this.$emit('nextStepState', this.confirmStep)
 
     }
 
