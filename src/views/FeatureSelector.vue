@@ -23,6 +23,7 @@
       nextStepFunction="generateFeatureSelection"
       nextStepParam="featureSelectorResults"
       nextStepButtonText="Calculate Feature Value"
+      @nextStepState="confirmStep2Set"
       @resetStep="resetStep2"
     />
     <StepFeatureSelector
@@ -80,6 +81,7 @@ export default {
       file0: null,
       file1: null,
       secondFile: null,
+      confirmStep2: false,
       confirmStep3: false,
       step4Loading: false,
       fileSuffix: '_corr_removal'
@@ -112,7 +114,7 @@ export default {
       }
     },
     showStep3() {
-      if (this.file0.target != null && this.file0.featureSelectorResults != null) {
+      if (this.file0.target != null && this.confirmStep2) {
         return true
       }
       else {
@@ -148,6 +150,7 @@ export default {
     resetStep2() {
       this.file0.target = null
       this.file0.correlation = null
+      this.confirmStep2 = false
       this.resetStep3()
     },
     resetStep3() {
@@ -176,6 +179,9 @@ export default {
       else {
         this.file1 = null
       }
+    },
+    confirmStep2Set(state) {
+      this.confirmStep2 = state
     },
     buildFiles() {
       this.confirmStep3 = true
