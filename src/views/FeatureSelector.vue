@@ -31,6 +31,7 @@
       stepNumber="3"
       stepTitle="Feature Selector"
       :fileObject="file0"
+      @selectPercentileMode="selectPercentileMode"
       @nextStep="buildFiles"
     />
     <StepFileOutput
@@ -84,7 +85,8 @@ export default {
       confirmStep2: false,
       confirmStep3: false,
       step4Loading: false,
-      fileSuffix: '_corr_removal'
+      fileSuffix: null //set by emitted settings from StepFeatureSelector component
+
     }
   },
   computed: {
@@ -149,25 +151,25 @@ export default {
     },
     resetStep2() {
       this.file0.target = null
-      this.file0.correlation = null
+      this.file0.featureSelectorResults = null
       this.confirmStep2 = false
       this.resetStep3()
     },
     resetStep3() {
-      this.file0.correlationFeatureRemovalList = []
+      this.file0.featureSelectorColumns = null
       if (this.file1 != null) {
         this.file1.target = null
-        this.file1.correlationFeatureRemovalList = []
+        this.file1.featureSelectorColumns = null
       }
       this.resetStep4()
     },
     resetStep4() {
       this.confirmStep3 = false
       this.step4Loading = false
-      this.file0.correlationOutputFiles = null
+      this.file0.featureSelectorOutputFiles = null
 
       if (this.file1 != null) {
-        this.file0.correlationOutputFiles = null
+        this.file0.featureSelectorOutputFiles = null
       }
     },
 
@@ -183,9 +185,12 @@ export default {
     confirmStep2Set(state) {
       this.confirmStep2 = state
     },
+    selectPercentileMode(val) {
+      this.fileSuffix = '_fs_' + val
+    },
     buildFiles() {
       this.confirmStep3 = true
-      let promises = [this.file0.buildCorrelationFiles()]
+      let promises = [this.file0.buildFeatureSelectorFiles()]
 
       //add suffix
       this.file0.customFileOutputSuffix(this.fileSuffix)
@@ -193,12 +198,12 @@ export default {
       if (this.secondFile) {
         //duplicate removal list
         this.file1.target = this.file0.target
-        this.file1.correlationFeatureRemovalList = this.file0.correlationFeatureRemovalList
+        this.file1.featureSelectorColumns = this.file0.featureSelectorColumns
 
         //add fileSuffix
         this.file1.customFileOutputSuffix(this.fileSuffix)
         //add to promise for file processing
-        promises.push(this.file1.buildCorrelationFiles())
+        promises.push(this.file1.buildFeatureSelectorFiles())
       }
 
       //Data is saved on individual objects. This is just to confirm all operations complete.

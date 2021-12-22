@@ -173,6 +173,8 @@ export default {
       //NEW SECTION
       //Feature Selector
       featureSelectorResults: null,
+      featureSelectorColumns: null,
+      featureSelectorOutputFiles: null,
 
       generateFeatureSelection() {
         if (this.target != null) {
@@ -195,8 +197,21 @@ export default {
         else {
           return Promise.reject(Error('No target is selected.'))
         }
-
-      }
+      },
+      buildFeatureSelectorFiles() {
+        let payload = {
+          storage_id: this.fileMetadata.storage_id,
+          feature_selector_columns: this.featureSelectorColumns
+        }
+        return axios.post('/calc/feature_selector/process', payload, {
+            headers: {
+            'Content-Type': 'application/json',
+          }
+        }).then(response => {
+          this.featureSelectorOutputFiles = response.data
+          return response.data //two files (output and nan)
+        })
+      },
 
 
 

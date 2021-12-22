@@ -110,6 +110,7 @@ export default {
     }
   },
   mounted() {
+    //automatically jump to bottom of screen
     window.scrollTo(0,document.body.scrollHeight);
   },
   computed: {
@@ -124,10 +125,11 @@ export default {
           item.selectedPercentage = Math.round((item.score / selectedTotalScore) * 100) + '%'
           item.totalPercentage = Math.round((item.score / totalTotalScore) * 100) + '%'
         })
+        this.$emit('selectPercentileMode', this.method + '_' + this.percentile)
         return reducedFeatures
       }
       else {
-        []
+        return []
       }
     }
   },
@@ -135,6 +137,12 @@ export default {
   methods: {
 
     nexStep() {
+      //extract columns
+      let columns = []
+      this.featureSelectorColumns.forEach(item => {
+        columns.push(item.feature)
+      })
+      this.fileObject.featureSelectorColumns = columns
       this.confirmStep = true
       this.$emit('nextStep')
 
