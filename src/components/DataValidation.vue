@@ -169,12 +169,9 @@ export default {
 
 
         let validData = true
-        // for (let i in this.alerts) {
-        //   if (this.alerts[i] == true) {
-        //     validData = false
-        //   }
-        //
-        // }
+        if (this.alerts.textData) {
+          validData = false
+        }
         this.$emit('dataValid', {bool: validData, alerts: this.alerts})
 
       }

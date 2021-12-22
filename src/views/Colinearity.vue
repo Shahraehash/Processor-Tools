@@ -104,10 +104,19 @@ export default {
       }
     },
     showStep2() {
-      if (this.file0.fileMetadata != null && this.secondFile == false) {
+      if (this.file0.fileMetadata != null
+            && this.secondFile == false
+            && this.file0.fileValidation.bool
+          ) {
         return true
       }
-      else if (this.file0.fileMetadata != null && this.secondFile == true && this.file1 != null && this.file1.fileMetadata != null ) {
+      else if (this.file0.fileMetadata != null
+                && this.secondFile == true
+                && this.file1 != null
+                && this.file1.fileMetadata != null
+                && this.file0.fileValidation.bool
+                && this.file1.fileValidation.bool
+              ) {
         return true
       }
       else {
