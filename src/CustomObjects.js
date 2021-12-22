@@ -1,5 +1,4 @@
 import axios from 'axios'
-import _ from 'underscore'
 
 
 
@@ -119,9 +118,6 @@ export default {
         return true
         //return this.fileMetadata.columns > 30 || this.fileMetadata.rows > 1000
       },
-      correlationKeptList() {
-        return _.difference(this.featureList, this.correlationFeatureRemovalList)
-      },
 
       correlationFilteredList() {
         if (this.correlation) {
@@ -200,6 +196,7 @@ export default {
       },
       buildFeatureSelectorFiles() {
         let payload = {
+          target: this.target,
           storage_id: this.fileMetadata.storage_id,
           feature_selector_columns: this.featureSelectorColumns
         }

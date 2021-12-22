@@ -22,10 +22,11 @@
                 </div>
                 <div v-if="!loadingFileData">
                   <div>
-                    Total Output Columns: {{outputList + 1}} (including target)
+
+                    Total Output Columns: {{file0[outputFilesGroup].column_count}} (including target)
                   </div>
                   <div>
-                    Feature Columns: {{outputList}} of {{file0.featureList.length}} original
+                    Feature Columns: {{file0[outputFilesGroup].column_count - 1}} of {{file0.featureList.length}} original
                   </div>
                   <div>
                     Target Column: {{file0.target}}
@@ -34,19 +35,19 @@
                     First File Rows Total: {{file0.fileMetadata.rows}}
                   </div>
                   <div>
-                    First File Rows Used: {{file0.fileMetadata.rows - file0.correlationOutputFiles.missing_count}}
+                    First File Rows Used: {{file0.fileMetadata.rows - file0[outputFilesGroup].missing_count}}
                   </div>
                   <div>
-                    First File Rows Missing Data: {{file0.correlationOutputFiles.missing_count}}
+                    First File Rows Missing Data: {{file0[outputFilesGroup].missing_count}}
                   </div>
                   <div v-if="file1 != null">
                     Second File Rows Total: {{file1.fileMetadata.rows}}
                   </div>
                   <div v-if="file1 != null">
-                    Second File Rows Used: {{file1.fileMetadata.rows - file1.correlationOutputFiles.missing_count}}
+                    Second File Rows Used: {{file1.fileMetadata.rows - file1[outputFilesGroup].missing_count}}
                   </div>
                   <div v-if="file1 != null">
-                    Second File Rows Missing Data: {{file1.correlationOutputFiles.missing_countt}}
+                    Second File Rows Missing Data: {{file1[outputFilesGroup].missing_countt}}
                   </div>
 
                 </div>
@@ -59,7 +60,7 @@
           <v-col cols="6">
             <div>
               <v-text-field
-                label="File 1 Output"
+                label="First File Output"
                 v-model="file0.fileOutputName"
                 suffix=".csv"
                 outlined
@@ -71,7 +72,7 @@
             <div>
               <v-text-field
                 v-if="file1 != null"
-                label="File 2 Output"
+                label="Second File Output"
                 v-model="file1.fileOutputName"
                 suffix=".csv"
                 outlined
@@ -132,9 +133,9 @@ export default {
     'stepNumber',
     'stepTitle',
     'loadingFileData',
+    'outputFilesGroup',
     'file0',
     'file1',
-    'outputList',
   ],
   data() {
     return {

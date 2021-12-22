@@ -41,7 +41,7 @@
       :file0="file0"
       :file1="file1"
       :loadingFileData="step4Loading"
-      :outputList="file0.correlationKeptList().length"
+      outputFilesGroup='correlationOutputFiles'
       @saveFiles="saveFiles"
     />
 

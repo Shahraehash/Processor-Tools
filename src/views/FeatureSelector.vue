@@ -41,7 +41,7 @@
       :file0="file0"
       :file1="file1"
       :loadingFileData="step4Loading"
-      :outputList="file0.correlationKeptList().length"
+      outputFilesGroup="featureSelectorOutputFiles"
       @saveFiles="saveFiles"
     />
 
@@ -187,6 +187,7 @@ export default {
     },
     selectPercentileMode(val) {
       this.fileSuffix = '_fs_' + val
+      this.resetStep4()
     },
     buildFiles() {
       this.confirmStep3 = true
@@ -216,14 +217,14 @@ export default {
     },
     saveFiles(exportSettings) {
       console.log(exportSettings)
-      FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
-      if (this.file0.correlationOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-        FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+      FileDownload(this.file0.featureSelectorOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+      if (this.file0.featureSelectorOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
+        FileDownload(this.file0.featureSelectorOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
       }
       if (this.secondFile){
-        FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
-        if (this.file1.correlationOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-          FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+        FileDownload(this.file1.featureSelectorOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+        if (this.file1.featureSelectorOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
+          FileDownload(this.file1.featureSelectorOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
         }
       }
     }

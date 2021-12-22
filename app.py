@@ -332,16 +332,16 @@ def calc_corr_process():
     final_data = {
         'output_file': df.to_csv(index=False),
         'missing_file': missing.to_csv(index=True, index_label="source_row"),
-        'missing_count': int(missing.shape[0])
+        'missing_count': int(missing.shape[0]),
+        'column_count': int(df.shape[1])
     }
 
     time.sleep(3)
 
     return make_response(final_data)
 
-#TOOL SPECIFIC
-#Feature Selector
 
+#Feature Selector
 @app.route('/calc/feature_selector',methods=["POST"])
 def calc_feature_selector():
     storage_id = request.json['storage_id']
@@ -384,6 +384,36 @@ def calc_feature_selector():
         'rf': output_rf,
         'feature_number': len(output_rf)
     })
+
+
+@app.route('/calc/feature_selector/process',methods=["POST"])
+def calc_feature_selector_process():
+    storage_id = request.json['storage_id']
+    feature_selector_columns = request.json['feature_selector_columns']
+    target = request.json['target']
+    feature_selector_columns.append(target)
+
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
+    df = pd.read_csv(file_path)
+
+    df = df[feature_selector_columns]
+
+    #get missing data
+    missing = df[df.isna().any(axis=1)]
+    df = df.drop(missing.index)
+
+
+    final_data = {
+        'output_file': df.to_csv(index=False),
+        'missing_file': missing.to_csv(index=True, index_label="source_row"),
+        'missing_count': int(missing.shape[0]),
+        'column_count': int(df.shape[1])
+    }
+
+    time.sleep(3)
+
+    return make_response(final_data)
+
 
 
 #TOOL SPECIFIC
