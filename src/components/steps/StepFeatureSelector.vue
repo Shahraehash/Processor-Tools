@@ -92,18 +92,17 @@ export default {
         {'text': 'Select Percentile', value: 'select_percentile'},
         {'text': 'Random Forrest Feature Importance', value: 'rf'}
       ],
-      percentile: 1.0,
+      percentile: 0.75,
       percentileItems: [
         {'text': '25%', value: 0.25},
         {'text': '50%', value: 0.50},
         {'text': '75%', value: 0.75},
-        {'text': '100%', value: 1.0},
       ],
       tableHeaders: [
         { 'text': 'Feature', value: 'feature'},
         { 'text': 'Raw Score', value: 'score'},
-        { 'text': 'Percentage', value: 'selectedPercentage'},
-        { 'text': 'Total Percentage', value: 'totalPercentage'}
+        { 'text': 'Relative Contribution of Selected Features (%)', value: 'selectedPercentage'},
+        { 'text': 'Total Contribution to All Features (%)', value: 'totalPercentage'}
       ]
 
 
@@ -112,6 +111,16 @@ export default {
   mounted() {
     //automatically jump to bottom of screen
     window.scrollTo(0,document.body.scrollHeight);
+  },
+  watch: {
+    method() {
+      this.confirmStep = false
+      this.$emit('selectPercentileMode', this.method + '_' + this.percentile)
+    },
+    percentile() {
+      this.confirmStep = false
+      this.$emit('selectPercentileMode', this.method + '_' + this.percentile)
+    }
   },
   computed: {
     selectedColumns() {
@@ -125,7 +134,6 @@ export default {
           item.selectedPercentage = Math.round((item.score / selectedTotalScore) * 100) + '%'
           item.totalPercentage = Math.round((item.score / totalTotalScore) * 100) + '%'
         })
-        this.$emit('selectPercentileMode', this.method + '_' + this.percentile)
         return reducedFeatures
       }
       else {
@@ -139,7 +147,7 @@ export default {
     nexStep() {
       //extract columns
       let columns = []
-      this.featureSelectorColumns.forEach(item => {
+      this.selectedColumns.forEach(item => {
         columns.push(item.feature)
       })
       this.fileObject.featureSelectorColumns = columns
