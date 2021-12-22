@@ -2,9 +2,9 @@
   <v-container>
 
     <MenuBar
-      title="Train and Test Builder"
-      icon="mdi-call-split"
-      description="This tool allows you to build both a training and validation data set from a single data file."
+      :title="$store.state.tools[$options.name].title"
+      :icon="$store.state.tools[$options.name].icon"
+      :description="$store.state.tools[$options.name].description"
       @reset="resetStep1"
     />
 

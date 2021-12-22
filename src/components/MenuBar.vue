@@ -5,10 +5,10 @@
     outlined
   >
     <div>
-      <v-icon x-large>{{icon}}</v-icon>
+      <v-icon x-large class="">{{icon}}</v-icon>
       <span class="title">{{title}}</span>
     </div>
-    <div class="ma-3">
+    <div class="ma-3 caption">
       {{description}}
     </div>
     <v-row>

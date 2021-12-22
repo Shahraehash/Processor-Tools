@@ -1,36 +1,39 @@
 <template>
   <v-container>
-    <v-card outlined rounded class="pa-3 text-center display-1">
-      Milo Preprocessing Tools
-    </v-card>
+    <v-row class="mb-10">
+      <v-col cols="2">
+        <v-img
+          src="https://milo-ml.com/wp-content/uploads/2021/02/logo.png"
+        ></v-img>
+      </v-col>
+      <v-col cols="9">
+        <v-card flat class="display-1 pt-3 grey--text text--darken-3">
+          PREPROCESSING TOOLS
+        </v-card>
 
-    <v-row wrap>
-      <v-col cols="6" class="mt-3">
-        <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'ColumnReducer'})">
-          <v-icon x-large>mdi-table-column-width</v-icon>
-          <span class="title">Column Reducer Tool</span>
-        </v-card>
-      </v-col>
-      <v-col cols="6" class="mt-3">
-        <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'TrainTestSplit'})">
-          <v-icon x-large>mdi-call-split</v-icon>
-          <span class="title">Train and Test Builder</span>
-        </v-card>
-      </v-col>
-      <v-col cols="6" class="mt-3">
-        <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'Colinearity'})">
-          <v-icon x-large>mdi-chart-bell-curve-cumulative</v-icon>
-          <span class="title">Multicollinearity Assessment</span>
-        </v-card>
-      </v-col>
-      <v-col cols="6" class="mt-3">
-        <v-card hover outlined rounded class="pa-3 text-center" @click="$router.push({name: 'FeatureSelector'})">
-          <v-icon x-large>mdi-select-all</v-icon>
-          <span class="title">Feature Selector</span>
-        </v-card>
       </v-col>
 
     </v-row>
+
+
+
+
+
+
+
+        <v-card
+          class="my-5 pa-5 text-center"
+          v-for="(data, name) in $store.state.tools" :key="name"
+          hover outlined rounded  @click="$router.push({name: name})">
+          <v-icon x-large>{{data.icon}}</v-icon>
+          <span class="title">{{data.title}}</span>
+          <div class="caption">
+            {{data.description}}
+          </div>
+        </v-card>
+
+
+
   </v-container>
 </template>
 <script>

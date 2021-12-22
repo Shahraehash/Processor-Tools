@@ -1,9 +1,9 @@
 <template>
   <v-container>
     <MenuBar
-      title="Multicollinearity Assessment & Removal Tool"
-      icon="mdi-chart-bell-curve-cumulative"
-      description="This tool allows you to assess for multicollinearity in datasets along with feature removal options, if you choose."
+      :title="$store.state.tools[$options.name].title"
+      :icon="$store.state.tools[$options.name].icon"
+      :description="$store.state.tools[$options.name].description"
       @reset="resetStep1"
     />
     <StepFileUploadMultiple

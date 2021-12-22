@@ -1,9 +1,9 @@
 <template>
   <v-container>
     <MenuBar
-      title="Feature Selector"
-      icon="mdi-select-all"
-      description="This tool allows you to select the subset of data with the most relative value***."
+      :title="$store.state.tools[$options.name].title"
+      :icon="$store.state.tools[$options.name].icon"
+      :description="$store.state.tools[$options.name].description"
       @reset="resetStep1"
     />
     <StepFileUploadMultiple

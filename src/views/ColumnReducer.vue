@@ -1,9 +1,9 @@
 <template>
   <v-container outlined>
     <MenuBar
-      title="Column Reducer Tool"
-      icon="mdi-table-column-width"
-      description="This tool allows to extract specific columns from your training and test data to experiment with further refinement of your model."
+      :title="$store.state.tools[$options.name].title"
+      :icon="$store.state.tools[$options.name].icon"
+      :description="$store.state.tools[$options.name].description"
       @reset="resetStep1Training"
     />
 
@@ -402,7 +402,7 @@ import FileProcessingDialog from '@/components/FileProcessingDialog'
 import MenuBar from '@/components/MenuBar'
 
 export default {
-  name: 'Home',
+  name: 'ColumnReducer',
   components: {
     DataValidation,
     StepHeading,
