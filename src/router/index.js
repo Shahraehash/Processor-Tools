@@ -5,6 +5,7 @@ import ColumnReducer from '../views/ColumnReducer.vue'
 import TrainTestSplit from '../views/TrainTestSplit.vue'
 import Colinearity from '../views/Colinearity.vue'
 import FeatureSelector from '../views/FeatureSelector.vue'
+import Encoder from '../views/Encoder.vue'
 
 Vue.use(VueRouter)
 
@@ -28,6 +29,11 @@ const routes = [
     path: '/traintestsplit',
     name: 'TrainTestSplit',
     component: TrainTestSplit
+  },
+  {
+    path: '/encoder',
+    name: 'Encoder',
+    component: Encoder
   },
   {
     path: '/',

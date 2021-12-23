@@ -8,6 +8,29 @@
     />
 
 
+    <v-card flat outlined class="ma-3 pa-5">
+      <div>
+        <div class="title">
+          How many data files do you have?
+          <span ></span>
+        </div>
+        <div class="caption">
+          You may have a single file or seperate training and testing files.
+        </div>
+
+        <v-btn-toggle v-model="toggle_exclusive">
+          <v-btn>
+            <v-icon>mdi-numeric-1-box-outline</v-icon>
+          </v-btn>
+
+          <v-btn>
+            <v-icon>mdi-numeric-2-box-outline</v-icon>
+          </v-btn>
+        </v-btn-toggle >
+      </div>
+    </v-card>
+
+
 
   </v-container>
 
@@ -24,7 +47,7 @@ import MenuBar from '@/components/MenuBar'
 
 
 export default {
-  name: 'Colinearity',
+  name: 'Encoder',
   components: {
     MenuBar,
   },
@@ -34,6 +57,7 @@ export default {
   },
   data() {
     return {
+      toggle_exclusive: null
 
     }
   },

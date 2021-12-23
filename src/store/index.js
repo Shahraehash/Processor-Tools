@@ -41,6 +41,11 @@ export default new Vuex.Store({
         icon: 'mdi-table-column-width',
         description: 'Extract specific columns from your training and test data to experiment with further refinement of your model.'
       },
+      'Encoder': {
+        title: 'Encoder Tool',
+        icon: 'mdi-file-code-outline',
+        description: 'Covert non-numeric datatypes for use in MILO.'
+      },
 
     }
 
