@@ -24,22 +24,32 @@ export default new Vuex.Store({
       'TrainTestSplit': {
         title: 'Train and Test Builder',
         icon: 'mdi-call-split',
-        description: 'Build both a training and validation data set from a single data file.'
+        description: 'Build both a training and validation data set from a single data file.',
+        isVisible: true
       },
       'Colinearity': {
         title: 'Multicollinearity Assessment & Removal Tool',
         icon: 'mdi-chart-bell-curve-cumulative',
-        description: 'Assess for multicollinearity in datasets along with feature removal options.'
+        description: 'Assess for multicollinearity in datasets along with feature removal options.',
+        isVisible: true
       },
       'FeatureSelector': {
         title: 'Feature Selector',
         icon: 'mdi-select-all',
-        description: 'Select the subset of data with the most relative value.'
+        description: 'Select the subset of data with the most relative value.',
+        isVisible: true
       },
       'ColumnReducer': {
         title: 'Column Reducer Tool',
         icon: 'mdi-table-column-width',
-        description: 'Extract specific columns from your training and test data to experiment with further refinement of your model.'
+        description: 'Extract specific columns from your training and test data to experiment with further refinement of your model.',
+        isVisible: true
+      },
+      'Encoder': {
+        title: 'Encoder Tool',
+        icon: 'mdi-file-code-outline',
+        description: 'Covert non-numeric datatypes for use in MILO.',
+        isVisible: false
       },
 
     }

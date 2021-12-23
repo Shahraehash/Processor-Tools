@@ -1,0 +1,108 @@
+<template>
+  <v-container>
+    <MenuBar
+      :title="$store.state.tools[$options.name].title"
+      :icon="$store.state.tools[$options.name].icon"
+      :description="$store.state.tools[$options.name].description"
+      @reset="resetStep1"
+    />
+
+
+    <v-card flat outlined class="ma-3 pa-5">
+      <div>
+        <div class="title">
+          How many data files do you have?
+          <span ></span>
+        </div>
+        <div class="caption">
+          You may have a single file or seperate training and testing files.
+        </div>
+
+        <v-btn-toggle v-model="toggle_exclusive">
+          <v-btn>
+            <v-icon>mdi-numeric-1-box-outline</v-icon>
+          </v-btn>
+
+          <v-btn>
+            <v-icon>mdi-numeric-2-box-outline</v-icon>
+          </v-btn>
+        </v-btn-toggle >
+      </div>
+    </v-card>
+
+
+
+  </v-container>
+
+</template>
+
+<script>
+//packages
+
+
+//support code
+
+//components
+import MenuBar from '@/components/MenuBar'
+
+
+export default {
+  name: 'Encoder',
+  components: {
+    MenuBar,
+  },
+  props: [],
+  created() {
+
+  },
+  data() {
+    return {
+      toggle_exclusive: null
+
+    }
+  },
+  computed: {
+    stepNumber() {
+      if (this.showStep4) {
+        return 4
+      }
+      else if (this.showStep3) {
+        return 3
+      }
+      else if (this.showStep2) {
+        return 2
+      }
+      else {
+        return 1
+      }
+    },
+    showStep2() {
+      return false
+
+    },
+    showStep3() {
+      return false
+
+    },
+    showStep4() {
+      return false
+    }
+
+
+  },
+  methods: {
+
+    resetStep1() {
+    },
+    resetStep2() {
+    },
+    resetStep3() {
+    },
+    resetStep4() {
+
+    },
+
+
+  }
+}
+</script>
