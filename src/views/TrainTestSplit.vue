@@ -8,11 +8,6 @@
       @reset="resetStep1"
     />
 
-
-
-
-
-
       <!-- STEP 1 -->
       <v-card
 
@@ -34,7 +29,7 @@
               <v-row>
                 <v-col cols="6" >
 
-                  <v-file-input v-model="file" prepend-icon="mdi-file" chips truncate-length="100" outlined label="Training Data File"  @change="fileUpload"></v-file-input>
+                  <v-file-input v-model="file" prepend-icon="mdi-file" chips truncate-length="100" outlined label="Data File"  @change="fileUpload"></v-file-input>
                 </v-col>
                 <v-col cols="6" class="text-center">
                   <v-progress-circular color="blue" size="50" width="10" v-if="fileDataLoading" indeterminate></v-progress-circular>
@@ -113,7 +108,7 @@
                 class="distrobution-box"
                 v-bind:style="{
                   background: '#2196F3',
-                  width: class0percent + '%'
+                  width: class0width + '%'
                   }"
                 >
                 <div
@@ -144,7 +139,7 @@
                 class="distrobution-box"
                 v-bind:style="{
                   background: '#009688',
-                  width: class1percent + '%'
+                  width: class1width + '%'
                   }"
                 >
                 <div
@@ -412,10 +407,12 @@ export default {
       class0percent: 0,
       class0nanSize: 0,
       class0nanPercent: 0,
+      class0width: 0,
       class1size: 0,
       class1percent: 0,
       class1nanSize: 0,
       class1nanPercent: 0,
+      class1width: 0,
 
       placeholderSlot: 100,
 
@@ -502,10 +499,12 @@ export default {
       this.class0percent = 0
       this.class0nanSize = 0
       this.class0nanPercent = 0
+      this.class0width = 0
       this.class1size = 0
       this.class1percent = 0
       this.class1nanSize = 0
       this.class1nanPercent = 0
+      this.class1width = 0
       this.placeholderSlot = 100
 
       this.resetStep3()
@@ -675,13 +674,34 @@ export default {
       })
 
     },
-
     calculateMetadataMetrics() {
+      //Initial Class Sizes
       this.class0size = this.classMetadata.class_counts[0]
       this.class1size = this.classMetadata.class_counts[1]
+
+      //Prevalence of Each Class
       this.class0percent = Math.round(1000 * (this.classMetadata.class_counts[0] / this.classMetadata.total_count)) / 10
       this.class1percent = Math.round(1000 * (this.classMetadata.class_counts[1] / this.classMetadata.total_count)) / 10
+
+      //Set the actual widths -- copying variables was not working properly so duplicated
+      this.class0width = Math.round(1000 * (this.classMetadata.class_counts[0] / this.classMetadata.total_count)) / 10
+      this.class1width = Math.round(1000 * (this.classMetadata.class_counts[1] / this.classMetadata.total_count)) / 10
+
+      // Adjust UI if low prevalence
+      if (this.class0width < 20) {
+        this.class0width = 20
+        this.class1width = 80
+      }
+
+      if (this.class1width < 20) {
+        this.class1width = 20
+        this.class0width = 80
+      }
+
+      //Hide Placeholder
       this.placeholderSlot = 0
+
+      //Show dropped data if necessary
       if (this.classMetadata.nan_class_counts != null) {
         this.class0nanSize = this.classMetadata.nan_class_counts[0]
         this.class0nanPercent = Math.round(1000 * (this.classMetadata.nan_class_counts[0] / this.classMetadata.class_counts[0])) / 10
@@ -690,6 +710,21 @@ export default {
         this.class1nanPercent = Math.round(1000 * (this.classMetadata.nan_class_counts[1] / this.classMetadata.class_counts[1])) / 10
       }
     },
+
+    // calculateMetadataMetrics() {
+    //   this.class0size = this.classMetadata.class_counts[0]
+    //   this.class1size = this.classMetadata.class_counts[1]
+    //   this.class0percent = Math.round(1000 * (this.classMetadata.class_counts[0] / this.classMetadata.total_count)) / 10
+    //   this.class1percent = Math.round(1000 * (this.classMetadata.class_counts[1] / this.classMetadata.total_count)) / 10
+    //   this.placeholderSlot = 0
+    //   if (this.classMetadata.nan_class_counts != null) {
+    //     this.class0nanSize = this.classMetadata.nan_class_counts[0]
+    //     this.class0nanPercent = Math.round(1000 * (this.classMetadata.nan_class_counts[0] / this.classMetadata.class_counts[0])) / 10
+    //
+    //     this.class1nanSize = this.classMetadata.nan_class_counts[1]
+    //     this.class1nanPercent = Math.round(1000 * (this.classMetadata.nan_class_counts[1] / this.classMetadata.class_counts[1])) / 10
+    //   }
+    // },
   }
 
 }
