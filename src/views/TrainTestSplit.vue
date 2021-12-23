@@ -431,6 +431,8 @@ export default {
       },
       fileProcessingDialog: false,
       fileProcessingInProgress: false,
+
+      minSampleSize: 25,
     }
   },
   computed: {
@@ -679,11 +681,11 @@ export default {
       this.class0size = this.classMetadata.class_counts[0]
       this.class1size = this.classMetadata.class_counts[1]
 
-      //Prevalence of Each Class
+      //Prevalence of Each Class - used for display values but not widths
       this.class0percent = Math.round(1000 * (this.classMetadata.class_counts[0] / this.classMetadata.total_count)) / 10
       this.class1percent = Math.round(1000 * (this.classMetadata.class_counts[1] / this.classMetadata.total_count)) / 10
 
-      //Set the actual widths -- copying variables was not working properly so duplicated
+      //Set the actual widths - copying variables was not working properly so duplicated
       this.class0width = Math.round(1000 * (this.classMetadata.class_counts[0] / this.classMetadata.total_count)) / 10
       this.class1width = Math.round(1000 * (this.classMetadata.class_counts[1] / this.classMetadata.total_count)) / 10
 
