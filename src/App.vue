@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-main>
+      <TopBar />
       <router-view/>
       <MessageSnackbar />
       <FileProcessingDialog
@@ -12,12 +13,14 @@
 </template>
 
 <script>
+import TopBar from '@/components/TopBar.vue'
 import MessageSnackbar from '@/components/MessageSnackbar.vue'
 import FileProcessingDialog from '@/components/FileProcessingDialog.vue'
 
 export default {
   name: 'App',
   components: {
+    TopBar,
     MessageSnackbar,
     FileProcessingDialog
   },
