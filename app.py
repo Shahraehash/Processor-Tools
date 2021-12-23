@@ -368,7 +368,7 @@ def calc_feature_selector():
         })
 
     #Random Forrest
-    forest = RandomForestClassifier(random_state=0)
+    forest = RandomForestClassifier(random_state=5)
     rf_best = forest.fit(X_train, y_train)
     output_rf = []
 
