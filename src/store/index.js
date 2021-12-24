@@ -16,9 +16,9 @@ export default new Vuex.Store({
       open: false
     },
     dataSet: [
+      {name: 'Single File', value: 'combined'},
       {name: 'Training', value: 'training'},
       {name: 'Testing', value: 'testing'},
-      {name: 'Combined Train/Test', value: 'combined'},
     ],
     tools: {
       'TrainTestSplit': {

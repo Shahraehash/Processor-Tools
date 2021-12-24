@@ -8,27 +8,12 @@
     />
 
 
-    <v-card flat outlined class="ma-3 pa-5">
-      <div>
-        <div class="title">
-          How many data files do you have?
-          <span ></span>
-        </div>
-        <div class="caption">
-          You may have a single file or seperate training and testing files.
-        </div>
 
-        <v-btn-toggle v-model="toggle_exclusive">
-          <v-btn>
-            <v-icon>mdi-numeric-1-box-outline</v-icon>
-          </v-btn>
-
-          <v-btn>
-            <v-icon>mdi-numeric-2-box-outline</v-icon>
-          </v-btn>
-        </v-btn-toggle >
-      </div>
-    </v-card>
+    <StepFileDrop
+      stepTitle="File Selection"
+      stepNumber="1"
+      @files="batchEvaluateMetadataAndStore"
+    />
 
 
 
@@ -41,15 +26,17 @@
 
 
 //support code
+import FilePipeline from '@/FilePipeline.js'
 
 //components
 import MenuBar from '@/components/MenuBar'
-
+import StepFileDrop from '@/components/v2/StepFileDrop'
 
 export default {
   name: 'Encoder',
   components: {
     MenuBar,
+    StepFileDrop
   },
   props: [],
   created() {
@@ -57,6 +44,7 @@ export default {
   },
   data() {
     return {
+      filePipelines: [],
       toggle_exclusive: null
 
     }
@@ -91,6 +79,26 @@ export default {
 
   },
   methods: {
+    //Step 1
+    batchEvaluateMetadataAndStore(data) {
+      let batch = []
+      data.files.forEach(file => {
+        let fp = FilePipeline.newFilePipeline()
+
+        fp.file = file //associate original file
+        fp.target = data.target //note the target
+
+        //queue up processing
+        batch.push(fp.evaluateMetadataAndStore())
+
+        //store file pipeline
+        this.filePipelines.push(fp)
+      })
+      Promise.all(batch).then(() => {
+        console.log('done')
+      })
+
+    },
 
     resetStep1() {
     },
