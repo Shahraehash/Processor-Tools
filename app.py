@@ -368,7 +368,7 @@ def calc_feature_selector():
         })
 
     #Random Forrest
-    forest = RandomForestClassifier(random_state=5)
+    forest = RandomForestClassifier(random_state=0)
     rf_best = forest.fit(X_train, y_train)
     output_rf = []
 
@@ -611,59 +611,6 @@ def return_testing_reduced_file():
 		return send_file(UPLOAD_FOLDER + "/testing_data_reduced.csv", attachment_filename='testing_data_reduced.csv', as_attachment=True)
 	except Exception as e:
 		return str(e)
-
-#Encoder
-@app.route('/encode/store',methods=["POST"])
-def encode_store():
-
-    file_obj = request.files['file']
-    file_name = request.headers['filename'] #filename stored in special header
-
-    if file_obj is None:
-        # Indicates that no file was sent
-        return "File not uploaded"
-
-    storage_id = str(uuid.uuid4())
-
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
-    file_obj.save(file_path)
-
-    #Script will try to read file and return data. If it fails it will delete
-    #the file.
-    # try:
-    df = pd.read_csv(file_path)
-    print(df.shape)
-
-
-
-    entry = {
-    'user_id': 'ui000001',
-    # 'storage_id': storage_id,
-    # 'file_name':  file_name,
-    }
-
-    db.insert(entry)
-
-    response = make_response(
-        jsonify(entry),
-        200,
-    )
-    response.headers["Content-Type"] = "application/json"
-    time.sleep(1)
-    return response
-
-    # except Exception as e:
-    #
-    #     os.remove(file_path)
-    #     return False
-
-
-
-
-
-
-
-
 
 
 @app.route('/return-files',methods=["GET"])
