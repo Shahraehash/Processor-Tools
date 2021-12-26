@@ -47,7 +47,7 @@
                     Second File Rows Used: {{file1.fileMetadata.rows - file1[outputFilesGroup].missing_count}}
                   </div>
                   <div v-if="file1 != null">
-                    Second File Rows Missing Data: {{file1[outputFilesGroup].missing_countt}}
+                    Second File Rows Missing Data: {{file1[outputFilesGroup].missing_count}}
                   </div>
 
                 </div>
