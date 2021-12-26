@@ -267,7 +267,6 @@ def calc_corr():
     file = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file)
 
-
     correlation_mat = df.corr()
     correlation_mat = correlation_mat.round(2)
 
@@ -349,6 +348,10 @@ def calc_feature_selector():
 
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file_path)
+
+    ##remove missing files before calculating
+    missing = df[df.isna().any(axis=1)]
+    df = df.drop(missing.index)
 
     X = df.drop(columns=[target])
     y = df[target]
