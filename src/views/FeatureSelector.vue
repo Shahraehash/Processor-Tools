@@ -116,7 +116,9 @@ export default {
                 && this.file1 != null
                 && this.file1.fileMetadata != null
                 && this.file0.fileValidation.bool
-                && this.file1.fileValidation.bool
+                //value is possibly read too fast after creation
+                && this.file1.fileValidation != null
+                && this.file1.fileValidation.bool == true
               ) {
         return true
       }
