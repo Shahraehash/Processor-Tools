@@ -295,75 +295,9 @@
               Create Files
               <v-icon class="pl-2">mdi-file</v-icon>
             </v-btn>
-
           </div>
-
-
-
-
-
-
         </div>
       </v-card>
-      <FileProcessingDialog
-        :isOpen="fileProcessingDialog"
-        :loading="fileProcessingInProgress"
-      />
-
-      <!-- <v-dialog
-        v-model="fileProcessingDialog"
-      >
-        <v-card class="text-center pa-10 loaders-transition">
-          <v-progress-circular
-            color="blue"
-            size="160"
-            width="15"
-            indeterminate
-            v-if="fileProcessingInProgress == true"
-          >
-            Processing
-          </v-progress-circular>
-          <div v-if="fileProcessingInProgress == false">
-
-
-            <v-icon
-              style="font-size:160px"
-              class="loaders-transition"
-              color="green"
-            >mdi-check-circle-outline</v-icon>
-            <div class="display-1">
-              <v-icon x-large>mdi-arrow-down</v-icon>
-              Your files are available below.
-              <v-icon x-large>mdi-arrow-down</v-icon>
-            </div>
-            <div class="mt-5">
-              <v-btn class="mx-2" @click="fileProcessingDialog = false">Make Edits</v-btn>
-              <v-btn color="primary" @click="$router.push({name:'Landing'})">Close Tool</v-btn>
-            </div>
-
-          </div>
-
-
-
-        </v-card>
-      </v-dialog> -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   </v-container>
 
 </template>
@@ -375,7 +309,6 @@ import StepHeading from '@/components/StepHeading'
 import ErrorMessage from '@/components/ErrorMessage'
 import ClassGroupBar from '@/components/ClassGroupBar'
 import MenuBar from '@/components/MenuBar'
-import FileProcessingDialog from '@/components/FileProcessingDialog'
 
 export default {
   name: 'TrainTestSplit',
@@ -385,7 +318,7 @@ export default {
     ErrorMessage,
     ClassGroupBar,
     MenuBar,
-    FileProcessingDialog
+
   },
   data() {
     return {
@@ -429,8 +362,7 @@ export default {
         nanFile: false,
         extraFile: false,
       },
-      fileProcessingDialog: false,
-      fileProcessingInProgress: false,
+
 
       minSampleSize: 25,
     }
@@ -634,8 +566,8 @@ export default {
       console.log(data)
 
       //UI elements
-      this.fileProcessingDialog = true
-      this.fileProcessingInProgress = true
+      this.$store.commit('FileProcessingDialogOpenSet', true)
+      this.$store.commit('FileProcessingDialogLoadingSet', true)
 
       return axios.post('train_test_split/process', data, {
         headers: {
@@ -645,7 +577,7 @@ export default {
         console.log(response)
 
         //UI elements
-        this.fileProcessingInProgress = false
+        this.$store.commit('FileProcessingDialogLoadingSet', false)
 
         //File elements
         //Change file name if index included in main output

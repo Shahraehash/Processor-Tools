@@ -27,6 +27,9 @@ export default {
     return {
 
     }
+  },
+  mounted() {
+    this.$store.commit('FileProcessingDialogOpenSet', false)
   }
 }
 </script>
