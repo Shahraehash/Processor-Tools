@@ -18,13 +18,14 @@ export default {
 
           this.uploading = true
 
-          return axios.post('/encode/store', formData, {
+          return axios.post('/encoder/store', formData, {
               headers: {
               'Content-Type': 'multipart/form-data',
               'filename': this.file.name,
             }
           }).then((response) => {
             this.metadata = response.data
+            this.metadata.describe = JSON.parse(this.metadata.describe)
             return true
           })
         }

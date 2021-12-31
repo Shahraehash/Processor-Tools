@@ -14,7 +14,11 @@
       stepNumber="1"
       @files="batchEvaluateMetadataAndStore"
     />
-
+    <StepFileCheck
+      stepTitle="File Check"
+      stepNumber="2"
+      :filePipelines="filePipelines"
+    />
 
 
   </v-container>
@@ -31,12 +35,14 @@ import FilePipeline from '@/FilePipeline.js'
 //components
 import MenuBar from '@/components/MenuBar'
 import StepFileDrop from '@/components/v2/StepFileDrop'
+import StepFileCheck from '@/components/v2/StepFileCheck'
 
 export default {
   name: 'Encoder',
   components: {
     MenuBar,
-    StepFileDrop
+    StepFileDrop,
+    StepFileCheck
   },
   props: [],
   created() {
