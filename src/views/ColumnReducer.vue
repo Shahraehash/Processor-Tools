@@ -647,6 +647,8 @@ export default {
       if (this.fileOutputs.testing_missing != 'null' && this.exportNanRows) {
         FileDownload(this.fileOutputs.training_missing, this.testingOutputFilename + '_missing_data.csv')
       }
+      //Show download UI
+      this.$store.commit('FileProcessingDialogOpenSet', true)
 
     },
 

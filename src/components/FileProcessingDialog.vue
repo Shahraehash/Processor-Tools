@@ -1,5 +1,6 @@
 <template>
   <v-dialog
+    persistent
     v-model="isOpen"
   >
     <v-card class="text-center pa-10 loaders-transition">
@@ -22,18 +23,14 @@
         >mdi-check-circle-outline</v-icon>
         <div class="display-1">
           <v-icon x-large>mdi-arrow-down</v-icon>
-          Your files are available below.
+          Your file(s) are available below.
           <v-icon x-large>mdi-arrow-down</v-icon>
         </div>
         <div class="mt-5">
-          <v-btn class="primary" @click="close()">Edit output</v-btn>
-          <v-btn @click="home">Exit tool</v-btn>
+          <v-btn round flat class="primary" @click="close()">Edit output</v-btn>
+          <v-btn round flat @click="home">Exit tool</v-btn>
         </div>
-
       </div>
-
-
-
     </v-card>
   </v-dialog>
 
@@ -58,6 +55,6 @@ export default {
       this.$router.push({name:'Landing'})
 
     }
-  }  
+  }
 }
 </script>

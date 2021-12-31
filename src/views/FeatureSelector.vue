@@ -220,14 +220,11 @@ export default {
 
       //Data is saved on individual objects. This is just to confirm all operations complete.
       this.step4Loading = true
-      Promise.all(promises).then((response) => {
+      Promise.all(promises).then(() => {
         this.step4Loading = false
-        console.log(response)
-
       })
     },
     saveFiles(exportSettings) {
-      console.log(exportSettings)
       FileDownload(this.file0.featureSelectorOutputFiles.output_file, this.file0.fileOutputName + '.csv')
       if (this.file0.featureSelectorOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
         FileDownload(this.file0.featureSelectorOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
@@ -238,6 +235,8 @@ export default {
           FileDownload(this.file1.featureSelectorOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
         }
       }
+      //Show download UI
+      this.$store.commit('FileProcessingDialogOpenSet', true)
     }
 
   }
