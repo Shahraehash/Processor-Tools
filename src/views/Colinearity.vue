@@ -233,6 +233,7 @@ export default {
           FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
         }
       }
+      //Show download UI
       this.$store.commit('FileProcessingDialogOpenSet', true)
     }
 
