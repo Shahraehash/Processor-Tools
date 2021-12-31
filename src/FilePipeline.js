@@ -6,7 +6,6 @@ export default {
       file: null,
       uploading: false,
       metadata: null,
-      storage_id: null,
 
       //methods
       evaluateMetadataAndStore() {
@@ -26,6 +25,7 @@ export default {
           }).then((response) => {
             this.metadata = response.data
             this.metadata.describe = JSON.parse(this.metadata.describe)
+            this.uploading = false
             return true
           })
         }
