@@ -7,6 +7,7 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
     />
+
     <!-- Data Loading View -->
     <div v-if="fileObject.featureSelectorResults == null">
       <v-progress-circular color="blue" size="50" width="10" indeterminate></v-progress-circular>
@@ -40,12 +41,18 @@
       <div v-if="method == null">
         Pick your method and percentile.
       </div>
+
+      <FeatureSelectorDonutGraphs
+        :input="selectedColumns"
+      />
       <v-data-table
         :headers="tableHeaders"
         :items="selectedColumns"
         :items-per-page="100"
         >
       </v-data-table>
+
+
 
       <!-- Next Step -->
       <div class="text-right">
@@ -73,11 +80,13 @@
 
 //components
 import StepHeading from '@/components/StepHeading'
+import FeatureSelectorDonutGraphs from '@/components/FeatureSelectorDonutGraphs'
 
 export default {
   name: 'StepFeatureSelector',
   components: {
-    StepHeading
+    StepHeading,
+    FeatureSelectorDonutGraphs
   },
   props: [
     'stepNumber',
@@ -123,6 +132,7 @@ export default {
     }
   },
   computed: {
+
     selectedColumns() {
       if (this.fileObject.featureSelectorResults != null && this.method != null && this.percentile != null) {
         let number = this.fileObject.featureSelectorResults.feature_number
@@ -131,8 +141,8 @@ export default {
         let selectedTotalScore = reducedFeatures.reduce((s, f) => s + f.score, 0);
         let totalTotalScore = this.fileObject.featureSelectorResults[this.method].reduce((s, f) => s + f.score, 0);
         reducedFeatures.forEach(item => {
-          item.selectedPercentage = Math.round((item.score / selectedTotalScore) * 100) + '%'
-          item.totalPercentage = Math.round((item.score / totalTotalScore) * 100) + '%'
+          item.selectedPercentage = Math.round((item.score / selectedTotalScore) * 100)
+          item.totalPercentage = Math.round((item.score / totalTotalScore) * 100)
         })
         return reducedFeatures
       }
