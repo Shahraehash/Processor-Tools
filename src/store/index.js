@@ -52,7 +52,8 @@ export default new Vuex.Store({
         isVisible: false
       },
 
-    }
+    },
+    diagnosticsEnabled: true
 
 
   },

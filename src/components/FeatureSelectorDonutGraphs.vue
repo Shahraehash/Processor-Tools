@@ -1,20 +1,43 @@
 <template>
   <div>
+    <div>
+      <v-switch v-model="showGraphs" label="Display graphs"></v-switch>
+    </div>
+    <div vif="showGraphs">
 
-    <v-row>
-      <v-col cols="6">
-        <div class="overline text-center">
-          Relative Contributions of Selected Features
-        </div>
-        <apexchart :key="relativeGraphKey" type="donut" :options="relativeGraphOptions" :series="relativeGraphSeries"></apexchart>
-      </v-col>
-      <v-col cols="6">
-        <div class="overline text-center">
-          Total Contributions to All Features
-        </div>
-        <apexchart :key="totalGraphKey" type="donut" :options="totalGraphOptions" :series="totalGraphSeries"></apexchart>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="6">
+          <div class="overline text-center">
+            Relative Contributions of Selected Features
+          </div>
+          <!-- Diagnostic Item -->
+          <div v-if="$store.state.diagnosticsEnabled">
+            <v-alert color="purple" text>
+              QAsumCheck of All %s : {{QAsumCheck(relativeGraphSeries)}}
+            </v-alert>
+
+          </div>
+          <!-- Diagnostic Item -->
+          <apexchart :key="relativeGraphKey" type="donut" :options="relativeGraphOptions" :series="relativeGraphSeries"></apexchart>
+        </v-col>
+        <v-col cols="6">
+          <div class="overline text-center">
+            Total Contributions to All Features
+          </div>
+          <!-- Diagnostic Item -->
+          <div v-if="$store.state.diagnosticsEnabled">
+            <v-alert color="purple" text>
+              QAsumCheck of All %s : {{QAsumCheck(totalGraphSeries)}}
+            </v-alert>
+
+          </div>
+          <!-- Diagnostic Item -->
+          <apexchart :key="totalGraphKey" type="donut" :options="totalGraphOptions" :series="totalGraphSeries"></apexchart>
+        </v-col>
+      </v-row>
+    </div>
+
+
 
   </div>
 
@@ -28,6 +51,7 @@ export default {
   ],
   data() {
     return {
+      showGraphs: false,
       //Relative Graph
       relativeGraphKey: 0,
       relativeGraphOptions: null, //set by created method
@@ -35,14 +59,16 @@ export default {
       //Total Graph
       totalGraphKey: 0,
       totalGraphOptions: null,
-      totalGraphSeries: []
+      totalGraphSeries: [],
+
+
     }
   },
   watch: {
     input() {
+      // [{ "feature": "worstconcavepoints", "score": 733.3811414895886, "selectedPercentage": 10, "totalPercentage": 10 },...]
       this.makeRelativeGraph()
       this.makeTotalGraph()
-      // { "feature": "worstconcavepoints", "score": 733.3811414895886, "selectedPercentage": 10, "totalPercentage": 10 }
 
     },
 
@@ -72,6 +98,8 @@ export default {
         this.relativeGraphOptions.labels.push('other feature (see table)')
       }
       this.relativeGraphKey += 1
+
+
     },
     makeTotalGraph() {
       this.totalGraphOptions = this.makeGraphOptions()
@@ -135,6 +163,10 @@ export default {
         }
       }
     },
+    //QA
+    QAsumCheck(array) {
+      return array.reduce((previousValue, currentValue) => previousValue + currentValue)
+    }
   }
 
 }

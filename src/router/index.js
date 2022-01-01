@@ -6,6 +6,7 @@ import TrainTestSplit from '../views/TrainTestSplit.vue'
 import Colinearity from '../views/Colinearity.vue'
 import FeatureSelector from '../views/FeatureSelector.vue'
 import Encoder from '../views/Encoder.vue'
+import Diagnostics from '../views/Diagnostics.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,11 @@ const routes = [
     path: '/',
     name: 'Landing',
     component: Landing
+  },
+  {
+    path: '/diagnostics',
+    name: 'Diagnostics',
+    component: Diagnostics
   },
 
 ]
