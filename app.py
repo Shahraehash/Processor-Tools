@@ -137,6 +137,8 @@ def train_test_split_process():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file_path)
 
+
+
     #get missing data
     missing = df[df.isna().any(axis=1)]
     df = df.drop(missing.index)
@@ -147,11 +149,6 @@ def train_test_split_process():
     train_combine = pd.concat([train_0,train_1])
 
     test_filtered = df.drop(train_0.index).drop(train_1.index)
-
-    #Remove extra index column
-    train_combine = train_combine.drop(df.columns[[0]], axis=1)
-    test_filtered = test_filtered.drop(df.columns[[0]], axis=1)
-    missing = missing.drop(df.columns[[0]], axis=1)
 
     final_data = {
         'training': train_combine.to_csv(index=include_index, index_label="source_row"),
