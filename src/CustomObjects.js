@@ -31,6 +31,11 @@ export default {
       targetValid: null,
       featureList: null, //set by validateTarget()
 
+      //sizeRules
+      defaultMaxRows: 20000,
+      defaultMaxFeatures: 2000,
+
+      correlationMaxFeatures: 50,
 
       //output
       fileOutputName: '',
@@ -107,7 +112,6 @@ export default {
 
       //NEW SECTION
       //Correlation Calculations
-      correlationMaxColumns: 50,
       correlation: null,
       correlationThreshold: 0.85,
       correlationFeatureRemovalList: [],
@@ -115,7 +119,7 @@ export default {
 
       allowCorrelationGraph() {
         if (this.fileMetadata != null) {
-          return this.fileMetadata.columns - 1 <= this.correlationMaxColumns
+          return this.fileMetadata.columns - 1 <= this.correlationMaxFeatures
         }
         else {
           throw new Error('Missing file metadata')

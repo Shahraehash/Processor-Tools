@@ -6,8 +6,6 @@
       :description="$store.state.tools[$options.name].description"
       @reset="resetStep1Training"
     />
-
-
     <v-card
       v-bind:style="{'opacity': setTransparencyFromStepProgress(1)}"
       outlined
@@ -37,6 +35,8 @@
                   :fileData="trainingMetadata"
                   dataType="training"
                   @dataValid="dataValidationTrainingData"
+                  :maxRows="20000"
+                  :maxFeatures="2000"
                 />
               </v-col>
             </v-row>
@@ -73,6 +73,8 @@
                   :fileData="testingMetadata"
                   dataType="testing"
                   @dataValid="dataValidationTestingData"
+                  :maxRows="100000"
+                  :maxFeatures="2000"
                 />
               </v-col>
             </v-row>

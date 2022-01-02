@@ -11,6 +11,8 @@
       stepTitle="File Upload"
       :file0="file0"
       :file1="file1"
+      :maxRows="file0.defaultMaxRows"
+      :maxFeatures="file0.defaultMaxFeatures"
       @hasSecondFile="hasSecondFile"
       @noFile0="resetStep1"
       @noFile1="resetSecondFileStep1"

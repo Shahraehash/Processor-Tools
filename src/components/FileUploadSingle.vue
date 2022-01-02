@@ -32,6 +32,8 @@
             class="mt-n3"
             :fileData="fileObject.fileMetadata"
             :dataType="fileObject.dataSet"
+            :maxRows="maxRows"
+            :maxFeatures="maxFeatures"
             @dataValid="fileValidationSet"
           />
         </v-col>
@@ -90,7 +92,9 @@ export default {
     'stepNumber', //StepHeading component
     'stepTitle', //StepHeading component
     'fileObject',
-    'fileName'
+    'fileName',
+    'maxRows',
+    'maxFeatures'
   ],
   data() {
     return {

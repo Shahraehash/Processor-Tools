@@ -13,6 +13,8 @@
         :fileObject="file0"
         fileName="First File"
         @noFile="noFile0"
+        :maxRows="maxRows"
+        :maxFeatures="maxFeatures"
       />
       <Decision
         v-if="file0.fileMetadata != null"
@@ -27,6 +29,8 @@
         :fileObject="file1"
         fileName="Second File"
         @noFile="noFile1"
+        :maxRows="maxRows"
+        :maxFeatures="maxFeatures"
       />
       <FilesCrossValidation
         v-if="file1 != null && file1.fileMetadata != null"
@@ -63,7 +67,9 @@ export default {
     'stepNumber',
     'stepTitle',
     'file0',
-    'file1'
+    'file1',
+    'maxRows',
+    'maxFeatures'
   ],
   data() {
     return {

@@ -38,6 +38,8 @@
                     :fileData="fileData"
                     dataType="combined"
                     @dataValid="fileValidationData"
+                    :maxRows="100000"
+                    :maxFeatures="2000"
                   />
                 </v-col>
               </v-row>
