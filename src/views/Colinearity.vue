@@ -15,6 +15,16 @@
       @noFile0="resetStep1"
       @noFile1="resetSecondFileStep1"
     />
+    <v-alert
+      v-if="file0.fileMetadata && !file0.allowCorrelationGraph()"
+      type="warning"
+      text
+      class="ma-3"
+      >
+      Your file has too many columns ({{file0.fileMetadata.columns}}) to determine correlation in this tool.
+       The max allowed columns is {{file0.correlationMaxColumns}}.
+
+    </v-alert>
     <StepTargetSelection
       v-if="stepNumber >= 2"
       stepNumber="2"
@@ -107,6 +117,8 @@ export default {
       if (this.file0.fileMetadata != null
             && this.secondFile == false
             && this.file0.fileValidation.bool
+            && this.file0.allowCorrelationGraph() //requirement to use tool based on number
+
           ) {
         return true
       }
@@ -115,6 +127,7 @@ export default {
                 && this.file1 != null
                 && this.file1.fileMetadata != null
                 && this.file0.fileValidation.bool
+                && this.file0.allowCorrelationGraph() //requirement to use tool based on number
                 //value is possibly read too fast after creation
                 && this.file1.fileValidation != null
                 && this.file1.fileValidation.bool == true

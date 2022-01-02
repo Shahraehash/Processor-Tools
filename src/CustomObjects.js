@@ -31,6 +31,7 @@ export default {
       targetValid: null,
       featureList: null, //set by validateTarget()
 
+
       //output
       fileOutputName: '',
 
@@ -106,13 +107,20 @@ export default {
 
       //NEW SECTION
       //Correlation Calculations
+      correlationMaxColumns: 50,
       correlation: null,
       correlationThreshold: 0.85,
       correlationFeatureRemovalList: [],
       correlationOutputFiles: null,
 
       allowCorrelationGraph() {
-        return this.featureList.length <= 40
+        if (this.fileMetadata != null) {
+          return this.fileMetadata.columns - 1 <= this.correlationMaxColumns
+        }
+        else {
+          throw new Error('Missing file metadata')
+        }
+
       },
       correlationTimeWarning() {
         return true
