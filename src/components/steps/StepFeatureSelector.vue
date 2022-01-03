@@ -96,7 +96,7 @@ export default {
   data() {
     return {
       confirmStep: false,
-      method: null,
+      method: 'select_percentile',
       methodItems: [
         {'text': 'Select Percentile', value: 'select_percentile'},
         {'text': 'Random Forrest Feature Importance', value: 'rf'}

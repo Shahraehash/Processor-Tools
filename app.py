@@ -9,6 +9,8 @@ import os
 import time
 import json
 
+import simplejson
+
 #Scikit learn
 from sklearn.feature_selection import f_classif
 from sklearn.model_selection import train_test_split
@@ -310,7 +312,9 @@ def calc_corr():
     }
 
     response = make_response(
-        jsonify(final_object),
+        #Added to transform nan items to null when sending JSON
+        simplejson.dumps(final_object, ignore_nan=True),
+        # jsonify(final_object),
         200,
     )
     response.headers["Content-Type"] = "application/json"
@@ -387,11 +391,22 @@ def calc_feature_selector():
         })
 
     time.sleep(2)
-    return make_response({
+
+    final_object = {
         'select_percentile': output_select_percentile,
         'rf': output_rf,
         'feature_number': len(output_rf)
-    })
+    }
+
+    response = make_response(
+        #Added to transform nan items to null when sending JSON
+        simplejson.dumps(final_object, ignore_nan=True),
+        # jsonify(final_object),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response
 
 
 @app.route('/calc/feature_selector/process',methods=["POST"])

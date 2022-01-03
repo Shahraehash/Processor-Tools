@@ -150,7 +150,7 @@ export default {
               headers: {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'
-            }
+              },
           }).then(response => {
             console.log(response.data)
             console.log(typeof(response.data))
@@ -198,7 +198,17 @@ export default {
               headers: {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'
-            }
+              },
+              // transformResponse: (res) => {
+              //   return res
+              //     // try {
+              //     //   return JSON.parse(res)
+              //     // }
+              //     // catch(err) {
+              //     //   console.log(err)
+              //     // }
+              // },
+
           }).then(result => {
             this.featureSelectorResults = result.data
             return true
