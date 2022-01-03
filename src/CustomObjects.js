@@ -209,8 +209,8 @@ export default {
               //     // }
               // },
 
-          }).then(result => {
-            this.featureSelectorResults = result.data
+          }).then(response => {
+            this.featureSelectorResults = response.data
             return true
           }).catch(error => {
             return error

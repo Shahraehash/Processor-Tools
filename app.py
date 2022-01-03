@@ -348,6 +348,11 @@ def calc_corr_process():
 
     return make_response(final_data)
 
+#helper function to calculate percentiles
+def calculate_percentile_columns(data_array, percentile):
+  length = len(data_array)
+  last_column = round(length * percentile/100)
+  return data_array[0:last_column]
 
 #Feature Selector
 @app.route('/calc/feature_selector',methods=["POST"])
@@ -370,25 +375,34 @@ def calc_feature_selector():
 
     #Select Percentile
     feature_scores = f_classif(X_train, y_train)[0]
-    output_select_percentile = []
+    sorted_array_select_percentile = []
 
     for score, f_name in sorted(zip(feature_scores, feature_names), reverse=True):
 
-        output_select_percentile.append({
+        sorted_array_select_percentile.append({
             'feature': f_name,
-            'score': score
+            'score': round(score, 3)
         })
 
     #Random Forrest
     forest = RandomForestClassifier(random_state=0)
     rf_best = forest.fit(X_train, y_train)
-    output_rf = []
+    sorted_array_rf = []
 
     for score, f_name in sorted(zip(rf_best.feature_importances_, feature_names), reverse=True):
-        output_rf.append({
+        sorted_array_rf.append({
             'feature': f_name,
-            'score': score
+            'score': round(score, 3)
         })
+
+    #Calculate percentiles
+    percentile_array = [100, 75, 50, 25]
+    output_select_percentile = {}
+    output_rf = {}
+
+    for percentile in percentile_array:
+        output_select_percentile[percentile] = calculate_percentile_columns(sorted_array_select_percentile, percentile)
+        output_rf[percentile] = calculate_percentile_columns(sorted_array_rf, percentile)
 
     time.sleep(2)
 

@@ -43,6 +43,7 @@
       </div>
 
       <FeatureSelectorDonutGraphs
+        v-if="method != null && percentile != null"
         :input="selectedColumns"
       />
       <div class="text-right">
@@ -113,11 +114,12 @@ export default {
         {'text': 'Select Percentile', value: 'select_percentile'},
         {'text': 'Random Forrest Feature Importance', value: 'rf'}
       ],
-      percentile: 0.75,
+      percentile: null,
       percentileItems: [
-        {'text': '25%', value: 0.25},
-        {'text': '50%', value: 0.50},
-        {'text': '75%', value: 0.75},
+        {'text': '25%', value: 25},
+        {'text': '50%', value: 50},
+        {'text': '75%', value: 75},
+        {'text': '100%', value: 100},
       ],
       tableHeaders: [
         { 'text': 'Feature', value: 'feature'},
@@ -147,11 +149,10 @@ export default {
 
     selectedColumns() {
       if (this.fileObject.featureSelectorResults != null && this.method != null && this.percentile != null) {
-        let number = this.fileObject.featureSelectorResults.feature_number
-        let finalColumnIndex = Math.round(number * this.percentile)
-        let reducedFeatures = this.fileObject.featureSelectorResults[this.method].slice(0,finalColumnIndex)
+        let reducedFeatures = this.fileObject.featureSelectorResults[this.method][this.percentile]
+        console.log(reducedFeatures)
         let selectedTotalScore = reducedFeatures.reduce((s, f) => s + f.score, 0);
-        let totalTotalScore = this.fileObject.featureSelectorResults[this.method].reduce((s, f) => s + f.score, 0);
+        let totalTotalScore = this.fileObject.featureSelectorResults[this.method][100].reduce((s, f) => s + f.score, 0);
         reducedFeatures.forEach(item => {
           item.selectedPercentage = Math.round((item.score / selectedTotalScore) * 10000)/100
           item.totalPercentage = Math.round((item.score / totalTotalScore) * 10000)/100
@@ -171,7 +172,7 @@ export default {
         header: true,
       }
       //tableCSV includes all columns and scores
-      let tableCSV = Papa.unparse(this.fileObject.featureSelectorResults[this.method], config)
+      let tableCSV = Papa.unparse(this.fileObject.featureSelectorResults[this.method][this.percentile], config)
       let name = 'fs_table_export_' + this.method + '_' + this.percentile + '.csv'
 
       FileDownload(tableCSV, name)
