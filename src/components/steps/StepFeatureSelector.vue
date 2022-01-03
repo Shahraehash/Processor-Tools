@@ -45,6 +45,16 @@
       <FeatureSelectorDonutGraphs
         :input="selectedColumns"
       />
+      <div class="text-right">
+        <v-btn
+          button
+          icon
+          @click="exportDataCSV()"
+          >
+          <v-icon>mdi-download</v-icon>
+        </v-btn>
+
+      </div>
       <v-data-table
         :headers="tableHeaders"
         :items="selectedColumns"
@@ -75,6 +85,8 @@
 
 <script>
 //packages
+import Papa from 'papaparse'
+import FileDownload from 'js-file-download'
 
 //support code
 
@@ -141,8 +153,8 @@ export default {
         let selectedTotalScore = reducedFeatures.reduce((s, f) => s + f.score, 0);
         let totalTotalScore = this.fileObject.featureSelectorResults[this.method].reduce((s, f) => s + f.score, 0);
         reducedFeatures.forEach(item => {
-          item.selectedPercentage = Math.round((item.score / selectedTotalScore) * 100)
-          item.totalPercentage = Math.round((item.score / totalTotalScore) * 100)
+          item.selectedPercentage = Math.round((item.score / selectedTotalScore) * 10000)/100
+          item.totalPercentage = Math.round((item.score / totalTotalScore) * 10000)/100
         })
         return reducedFeatures
       }
@@ -153,7 +165,17 @@ export default {
   },
 
   methods: {
+    exportDataCSV() {
+      let config = {
+        delimiter: ",",
+        header: true,
+      }
+      //tableCSV includes all columns and scores
+      let tableCSV = Papa.unparse(this.fileObject.featureSelectorResults[this.method], config)
+      let name = 'fs_table_export_' + this.method + '_' + this.percentile + '.csv'
 
+      FileDownload(tableCSV, name)
+    },
     nexStep() {
       //extract columns
       let columns = []
