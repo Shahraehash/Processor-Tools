@@ -152,6 +152,7 @@ export default {
               'X-inbound': 'validation'
             }
           }).then(response => {
+            console.log(response.data)
             console.log(typeof(response.data))
 
             this.correlation = response.data
