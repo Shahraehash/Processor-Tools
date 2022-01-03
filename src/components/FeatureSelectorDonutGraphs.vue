@@ -77,6 +77,10 @@ export default {
     this.relativeGraphOptions = this.makeGraphOptions()
     this.totalGraphOptions = this.makeGraphOptions()
   },
+  mounte() {
+    this.makeRelativeGraph()
+    this.makeTotalGraph()
+  },
 
   methods: {
     makeRelativeGraph() {
