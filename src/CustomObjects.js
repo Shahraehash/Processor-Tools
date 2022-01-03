@@ -151,8 +151,11 @@ export default {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'
             }
-          }).then(result => {
-            this.correlation = result.data
+          }).then(response => {
+            console.log(typeof(response.data))
+
+            this.correlation = response.data
+
             return true
           }).catch(error => {
             return error

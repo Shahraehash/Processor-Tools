@@ -304,11 +304,13 @@ def calc_corr():
                 list_of_pairs.append(entry)
 
 
+    final_object = {
+        "graph": graph_series,
+        "list": list_of_pairs
+    }
+
     response = make_response(
-        jsonify({
-            "graph": graph_series,
-            "list": list_of_pairs
-        }),
+        jsonify(final_object),
         200,
     )
     response.headers["Content-Type"] = "application/json"
