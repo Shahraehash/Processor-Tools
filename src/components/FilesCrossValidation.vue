@@ -46,7 +46,7 @@
 
 <script>
 //packages
-import _ from 'underscore'
+import underscore from 'underscore'
 
 //support code
 
@@ -72,8 +72,8 @@ export default {
       if (this.file0.fileMetadata != null && this.file1.fileMetadata != null) {
         let numberOfColumnsMatch = this.file0.fileMetadata.columns == this.file1.fileMetadata.columns
 
-        let inTrainNotTest = _.difference(this.file0.fileMetadata.column_names, this.file1.fileMetadata.column_names)
-        let inTestNotTrain = _.difference(this.file0.fileMetadata.column_names, this.file1.fileMetadata.column_names)
+        let inTrainNotTest = underscore.difference(this.file0.fileMetadata.column_names, this.file1.fileMetadata.column_names)
+        let inTestNotTrain = underscore.difference(this.file0.fileMetadata.column_names, this.file1.fileMetadata.column_names)
 
         let columnNamesMatch = inTestNotTrain.length == 0 && inTrainNotTest.length == 0
         return {numberOfColumnsMatch, columnNamesMatch, inTrainNotTest, inTestNotTrain}

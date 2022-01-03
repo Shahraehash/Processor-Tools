@@ -395,7 +395,7 @@
 </template>
 <script>
 import axios from 'axios'
-import _ from 'underscore'
+import underscore from 'underscore'
 import FileDownload from 'js-file-download'
 import DataValidation from '@/components/DataValidation'
 import StepHeading from '@/components/StepHeading'
@@ -470,8 +470,8 @@ export default {
       if (this.trainingMetadata != null && this.testingMetadata != null) {
         let numberOfColumnsMatch = this.trainingMetadata.columns == this.testingMetadata.columns
 
-        let inTrainNotTest = _.difference(this.trainingMetadata.column_names, this.testingMetadata.column_names)
-        let inTestNotTrain = _.difference(this.testingMetadata.column_names, this.trainingMetadata.column_names)
+        let inTrainNotTest = underscore.difference(this.trainingMetadata.column_names, this.testingMetadata.column_names)
+        let inTestNotTrain = underscore.difference(this.testingMetadata.column_names, this.trainingMetadata.column_names)
 
         let columnNamesMatch = inTestNotTrain.length == 0 && inTrainNotTest.length == 0
         return {numberOfColumnsMatch, columnNamesMatch, inTrainNotTest, inTestNotTrain}
@@ -720,7 +720,7 @@ export default {
       }
 
       //Unique values only
-      this.selectedColumns = _.uniq(this.selectedColumns)
+      this.selectedColumns = underscore.uniq(this.selectedColumns)
       console.log(this.selectedColumns)
 
       //Reset step 4 when columns change
