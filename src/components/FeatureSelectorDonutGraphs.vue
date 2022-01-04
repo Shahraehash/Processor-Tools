@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div>
-      <v-switch v-model="showGraphs" label="Display graphs"></v-switch>
-    </div>
-    <div vif="showGraphs">
-
+    <div v-if="input != null">
       <v-row>
         <v-col cols="6">
           <div class="overline text-center">

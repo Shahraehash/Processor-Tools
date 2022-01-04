@@ -43,7 +43,6 @@
       </div>
 
       <FeatureSelectorDonutGraphs
-        v-if="method != null && percentile != null"
         :input="selectedColumns"
       />
       <div class="text-right">
@@ -114,7 +113,7 @@ export default {
         {'text': 'Select Percentile', value: 'select_percentile'},
         {'text': 'Random Forrest Feature Importance', value: 'rf'}
       ],
-      percentile: null,
+      percentile: 25,
       percentileItems: [
         {'text': '25%', value: 25},
         {'text': '50%', value: 50},
