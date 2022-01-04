@@ -53,7 +53,7 @@ export default new Vuex.Store({
       },
 
     },
-    diagnosticsEnabled: true
+    diagnosticsEnabled: false
 
 
   },
