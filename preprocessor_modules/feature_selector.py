@@ -14,10 +14,10 @@ from sklearn.ensemble import RandomForestClassifier
 #helper functions
 import preprocessor_modules.helpers as helpers
 
-featureselector = Blueprint(
-    'featureselector',
+feature_selector = Blueprint(
+    'feature_selector',
     __name__,
-    url_prefix='/featureselector'
+    url_prefix='/feature_selector'
 )
 
 def calculate_percentile_columns(data_array, percentile):
@@ -26,7 +26,7 @@ def calculate_percentile_columns(data_array, percentile):
   return data_array[0:last_column]
 
 #Feature Selector
-@featureselector.route('/generate',methods=["POST"])
+@feature_selector.route('/generate',methods=["POST"])
 def generate():
     storage_id = request.json['storage_id']
     target = request.json['target']
@@ -94,7 +94,7 @@ def generate():
     return response
 
 
-@featureselector.route('/build',methods=["POST"])
+@feature_selector.route('/build',methods=["POST"])
 def build():
     storage_id = request.json['storage_id']
     feature_selector_columns = request.json['feature_selector_columns']

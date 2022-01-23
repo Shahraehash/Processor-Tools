@@ -194,7 +194,7 @@ export default {
             target: this.target,
             storage_id: this.fileMetadata.storage_id
           }
-          return axios.post('/preprocessor_api/featureselector/generate', payload, {
+          return axios.post('/preprocessor_api/feature_selector/generate', payload, {
               headers: {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'
@@ -216,7 +216,7 @@ export default {
           storage_id: this.fileMetadata.storage_id,
           feature_selector_columns: this.featureSelectorColumns
         }
-        return axios.post('/preprocessor_api/featureselector/build', payload, {
+        return axios.post('/preprocessor_api/feature_selector/build', payload, {
             headers: {
             'Content-Type': 'application/json',
           }
