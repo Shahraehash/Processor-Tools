@@ -31,7 +31,7 @@ app = Flask(__name__,
             static_folder = "./dist/static",
             template_folder = "./dist")
 #Modules
-from app_modules.encoder import encoder
+from preprocessor_modules.encoder import encoder
 
 app.register_blueprint(encoder)
 
