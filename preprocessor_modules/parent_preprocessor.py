@@ -1,6 +1,7 @@
 from flask import Blueprint, current_app, request
 
 from preprocessor_modules.shared import shared
+from preprocessor_modules.column_reducer import column_reducer
 from preprocessor_modules.colinearity import colinearity
 from preprocessor_modules.feature_selector import feature_selector
 from preprocessor_modules.train_test_split import train_test_split
@@ -15,6 +16,7 @@ parent_preprocessor = Blueprint(
 )
 
 parent_preprocessor.register_blueprint(shared)
+parent_preprocessor.register_blueprint(column_reducer)
 parent_preprocessor.register_blueprint(colinearity)
 parent_preprocessor.register_blueprint(feature_selector)
 parent_preprocessor.register_blueprint(train_test_split)

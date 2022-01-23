@@ -624,7 +624,7 @@ export default {
       data.target_column = this.target
       data.remove_nan_rows = this.removeNanRows
 
-      return axios.post('/column_reducer/process', data, {
+      return axios.post('/preprocessor_api/column_reducer/build', data, {
         headers: {
         'Content-Type': 'application/json',
         }
@@ -772,7 +772,7 @@ export default {
         this.miloDataLoading = true
 
         formData.append("file", file);
-        axios.post('milo_file_upload', formData, {
+        axios.post('/preprocessor_api/column_reducer/milo_file_upload', formData, {
             headers: {
             'Content-Type': 'multipart/form-data',
             'X-inbound': 'milo_file'

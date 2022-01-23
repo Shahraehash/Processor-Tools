@@ -51,7 +51,7 @@ export default {
           'Content-Type': 'application/json',
           }
       }).then(response => {
-        this.routes = response.data
+        this.routes = response.data.sort()
         return response.data
       }).catch(error => {
         return error
