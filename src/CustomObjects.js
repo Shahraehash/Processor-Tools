@@ -226,8 +226,28 @@ export default {
         })
       },
 
+      //NEW SECTION
+      //Column Reducer
+      columnReducerSelectedColumns: [],
+      columnReducerErrorColumns: [],
+      columnReducerOutputFiles: null,
 
-
+      buildColumnReducerFiles() {
+        this.columnReducerOutputFiles = null
+        let payload = {
+          target: this.target,
+          storage_id: this.fileMetadata.storage_id,
+          selected_columns: this.columnReducerSelectedColumns,
+        }
+        return axios.post('/preprocessor_api/column_reducer/build', payload, {
+          headers: {
+          'Content-Type': 'application/json',
+          }
+        }).then(response => {
+          this.columnReducerOutputFiles = response.data
+          return response.data
+        })
+      },
 
     }
   },

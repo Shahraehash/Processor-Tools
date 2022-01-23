@@ -17,76 +17,29 @@ column_reducer = Blueprint(
 
 @column_reducer.route('/build',methods=["POST"])
 def build():
-    training_storage_id = request.json['training_storage_id']
-    testing_storage_id = request.json['testing_storage_id']
+    storage_id = request.json['storage_id']
     selected_columns = request.json['selected_columns']
-    target_column = request.json['target_column']
-    remove_nan_rows = request.json['remove_nan_rows']
+    target = request.json['target']
 
     #create single column list
     output_columns = selected_columns.copy()
-    output_columns.append(target_column)
+    output_columns.append(target)
+
+    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
+    df = pd.read_csv(file_path)
+
+    #Select on desired columns
+    df = df[output_columns]
+
+    missing = df[df.isna().any(axis=1)]
+    df = df.drop(missing.index)
 
     final_data = {
-        'training': 'null',
-        'testing': 'null',
-        'training_missing': 'null',
-        'testing_missing': 'null',
-        'training_missing_count': 0,
-        'testing_missing_count': 0
+        'output_file': df.to_csv(index=False),
+        'missing_file': missing.to_csv(index=True, index_label="source_row"),
+        'missing_count': int(missing.shape[0]),
+        'column_count': int(df.shape[1])
     }
-
-    if (training_storage_id is not None):
-        training_file = os.path.join(current_app.config['UPLOAD_FOLDER'], training_storage_id)
-        training_data_df = pd.read_csv(training_file)
-
-        #Select on desired columns
-        training_data_df_reduced = training_data_df[output_columns]
-
-        #Save as default output
-        final_data['training'] = training_data_df_reduced.to_csv(index=False)
-
-        #Check for missing rows
-        training_missing = training_data_df_reduced[training_data_df_reduced.isna().any(axis=1)]
-        training_missing_count = training_missing.shape[0]
-        final_data['training_missing_count'] = training_missing_count
-
-        #If front end dictates row removal and there are missing rows
-        if (remove_nan_rows and training_missing_count > 0):
-
-            #Include row index in export
-            final_data['training_missing'] = training_missing.to_csv(index=True)
-
-            #Update output and do not include row index
-            training_data_df_reduced = training_data_df_reduced.drop(training_missing.index)
-            final_data['training'] = training_data_df_reduced.to_csv(index=False)
-
-
-
-    if (testing_storage_id is not None):
-        testing_file = os.path.join(current_app.config['UPLOAD_FOLDER'], testing_storage_id)
-        testing_data_df = pd.read_csv(testing_file)
-
-        #Select on desired columns
-        testing_data_df_reduced = testing_data_df[output_columns]
-
-        #Save as default output
-        final_data['testing'] = testing_data_df_reduced.to_csv(index=False)
-
-        #Check for missing rows
-        testing_missing = testing_data_df_reduced[testing_data_df_reduced.isna().any(axis=1)]
-        testing_missing_count = testing_missing.shape[0]
-        final_data['testing_missing_count'] = testing_missing_count
-
-        #If front end dictates row removal and there are missing rows
-        if (remove_nan_rows and testing_missing_count > 0):
-
-            #Include row index in export
-            final_data['testing_missing'] = testing_missing.to_csv(index=True)
-
-            #Update output and do not include row index
-            testing_data_df_reduced = testing_data_df_reduced.drop(testing_missing.index)
-            final_data['training'] = testing_data_df_reduced.to_csv(index=False)
 
     time.sleep(2)
 
