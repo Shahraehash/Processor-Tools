@@ -31,9 +31,8 @@ app = Flask(__name__,
             static_folder = "./dist/static",
             template_folder = "./dist")
 #Modules
-from preprocessor_modules.encoder import encoder
-
-app.register_blueprint(encoder)
+from preprocessor_modules.parent_preprocessor import parent_preprocessor
+app.register_blueprint(parent_preprocessor)
 
 app.config['SECRET_KEY'] = 'mysecret'
 app.config['firstConnect'] = False
@@ -43,6 +42,7 @@ app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
+
 
 training_data = ''
 testing_data = ''

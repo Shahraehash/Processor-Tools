@@ -16,11 +16,6 @@ encoder = Blueprint(
     url_prefix='/encoder'
 )
 
-@encoder.route("/process")
-def process():
-    print('test')
-    return "test"
-
 @encoder.route('/store',methods=['POST'])
 def encoder_store():
 

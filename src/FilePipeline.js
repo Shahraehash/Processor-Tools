@@ -17,7 +17,7 @@ export default {
 
           this.uploading = true
 
-          return axios.post('/encoder/store', formData, {
+          return axios.post('/preprocessor/encoder/store', formData, {
               headers: {
               'Content-Type': 'multipart/form-data',
               'filename': this.file.name,
