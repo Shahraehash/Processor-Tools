@@ -194,21 +194,11 @@ export default {
             target: this.target,
             storage_id: this.fileMetadata.storage_id
           }
-          return axios.post('/calc/feature_selector', payload, {
+          return axios.post('/preprocessor_api/featureselector/generate', payload, {
               headers: {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'
-              },
-              // transformResponse: (res) => {
-              //   return res
-              //     // try {
-              //     //   return JSON.parse(res)
-              //     // }
-              //     // catch(err) {
-              //     //   console.log(err)
-              //     // }
-              // },
-
+              }
           }).then(response => {
             this.featureSelectorResults = response.data
             return true
@@ -226,7 +216,7 @@ export default {
           storage_id: this.fileMetadata.storage_id,
           feature_selector_columns: this.featureSelectorColumns
         }
-        return axios.post('/calc/feature_selector/process', payload, {
+        return axios.post('/preprocessor_api/featureselector/build', payload, {
             headers: {
             'Content-Type': 'application/json',
           }
