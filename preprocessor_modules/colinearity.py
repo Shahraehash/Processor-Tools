@@ -6,10 +6,6 @@ import time
 import json
 import simplejson
 
-import uuid
-
-from datetime import datetime
-
 #helper functions
 import preprocessor_modules.helpers as helpers
 
