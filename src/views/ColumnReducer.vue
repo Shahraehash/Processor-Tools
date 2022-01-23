@@ -29,7 +29,6 @@
       @resetStep="resetStep2"
       @nextStepState="confirmStep2Set"
     />
-
     <StepColumnReducerSelection
       v-if="stepNumber >= 3"
       stepNumber="3"
@@ -38,7 +37,6 @@
       @changedStepData="resetStep4"
       @nextStep="buildFiles"
     />
-
     <StepFileOutput
       v-if="stepNumber >= 4"
       stepNumber="4"
@@ -49,90 +47,33 @@
       outputFilesGroup='columnReducerOutputFiles'
       @saveFiles="saveFiles"
     />
-
-
-
-
-
-    <v-dialog max-width="700" v-model="miloDialog">
-      <v-card flat class="pa-3 pb-6">
-        <v-card-title>
-          <p>Import Columns from MILO Results "report.csv" File</p>
-          <v-spacer></v-spacer>
-          <v-btn @click="miloDialog = false" icon flat class="mt-n5">
-            <v-icon medium>mdi-close</v-icon>
-          </v-btn>
-
-        </v-card-title>
-        <v-card-text class="mx-0 py-0">
-          <v-file-input prepend-icon="mdi-file" chips truncate-length="200" outlined label="MILO Data File"  @change="miloFileUpload"></v-file-input>
-          <v-progress-linear v-if="miloDataLoading" indeterminate></v-progress-linear>
-          <v-spacer></v-spacer>
-
-          <div>
-            <div class="ml-8 mb-3" >Select columns based on the feature selector method. Note: Random Forest options are not included because each is run specific. Also, any method that does not reduced the number of columns is not included.</div>
-            <v-select v-if="miloMetadata" :items="miloMetadata" v-model="miloColumns" class="ml-8"  outlined  label="Feature Selector Method"></v-select>
-            <div>
-              <v-chip small color="grey lighten-2" v-for="(item, key) in miloColumns" :key="key">{{item}}</v-chip>
-
-            </div>
-          </div>
-
-
-
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn class="mr-2" rounded dark color="primary" @click="setMiloColumns">Select Columns</v-btn>
-
-        </v-card-actions>
-
-
-
-      </v-card>
-
-    </v-dialog>
-
-
-
   </v-container>
-
 </template>
 <script>
 //packages
-import axios from 'axios'
 import FileDownload from 'js-file-download'
 
 //support code
 import CustObjs from '@/CustomObjects.js'
 
 //components
+import MenuBar from '@/components/MenuBar'
 import StepFileUploadMultiple from '@/components/steps/StepFileUploadMultiple'
 import StepTargetSelection from '@/components/steps/StepTargetSelection'
 import StepColumnReducerSelection from '@/components/steps/StepColumnReducerSelection'
 import StepFileOutput from '@/components/steps/StepFileOutput'
 
-
-
-
-import MenuBar from '@/components/MenuBar'
-
 export default {
   name: 'ColumnReducer',
   components: {
+    MenuBar,
     StepFileUploadMultiple,
     StepTargetSelection,
     StepColumnReducerSelection,
     StepFileOutput,
-
-
-
-
-    MenuBar
   },
   data() {
     return {
-
       file0: null,
       file1: null,
       secondFile: null,
@@ -140,17 +81,6 @@ export default {
       confirmStep3: false,
       step4Loading: false,
       fileSuffix: '_col_reduce',
-
-
-
-      miloMetadata: null,
-      miloDataLoading: false,
-
-
-
-
-      miloColumns: [],
-      miloDialog: false,
     }
   },
   created() {
@@ -158,7 +88,6 @@ export default {
     this.file1 = null
   },
   computed: {
-
     stepNumber() {
       if (this.showStep4) {
         return 4
@@ -214,6 +143,7 @@ export default {
     }
   },
   methods: {
+    //File operations
     buildFiles() {
       this.confirmStep3 = true
       let promises = [this.file0.buildColumnReducerFiles()]
@@ -240,19 +170,35 @@ export default {
 
       })
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
+    saveFiles(exportSettings) {
+      console.log(exportSettings)
+      FileDownload(this.file0.columnReducerOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+      if (this.file0.columnReducerOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
+        FileDownload(this.file0.columnReducerOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+      }
+      if (this.secondFile){
+        FileDownload(this.file1.columnReducerOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+        if (this.file1.columnReducerOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
+          FileDownload(this.file1.columnReducerOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+        }
+      }
+      //Show download UI
+      this.$store.commit('FileProcessingDialogOpenSet', true)
+    },
+    //State Progression
+    hasSecondFile(state) {
+      this.secondFile = state
+      if (state) {
+        this.file1 = CustObjs.newFileObject()
+      }
+      else {
+        this.file1 = null
+      }
+    },
+    confirmStep2Set(state) {
+      this.confirmStep2 = state
+    },
+    //State Resetting
     resetStep1() {
       this.file0 = CustObjs.newFileObject()
       this.file1 = null
@@ -286,86 +232,8 @@ export default {
       if (this.file1 != null) {
         this.file0.columnReducerOutputFiles = null
       }
-    },
-
-    hasSecondFile(state) {
-      this.secondFile = state
-      if (state) {
-        this.file1 = CustObjs.newFileObject()
-      }
-      else {
-        this.file1 = null
-      }
-    },
-    confirmStep2Set(state) {
-      this.confirmStep2 = state
-    },
-
-
-
-
-    testEmit() {
-      this.$socket.emit('custom')
-      this.loading = true
-    },
-
-    miloFileUpload(file){
-      if (file != null) {
-        var formData = new FormData();
-        this.miloDataLoading = true
-
-        formData.append("file", file);
-        axios.post('/preprocessor_api/column_reducer/milo_file_upload', formData, {
-            headers: {
-            'Content-Type': 'multipart/form-data',
-            'X-inbound': 'milo_file'
-          }
-        }).then(result => {
-          this.miloMetadata = []
-          let data = JSON.parse(result.data.result).selected_features
-          for (let i in data) {
-            this.miloMetadata.push({
-              text: i,
-              value: JSON.parse(data[i])
-            })
-          }
-          this.miloDataLoading = false
-
-        })
-      }
-      else {
-        this.miloMetadata = null
-        this.miloDataLoading = false
-      }
-    },
-    setMiloColumns() {
-
-      this.selectedColumns = this.miloColumns
-      console.log(this.selectedColumns)
-      this.miloDialog = false
-    },
-
-    saveFiles(exportSettings) {
-      console.log(exportSettings)
-      FileDownload(this.file0.columnReducerOutputFiles.output_file, this.file0.fileOutputName + '.csv')
-      if (this.file0.columnReducerOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-        FileDownload(this.file0.columnReducerOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
-      }
-      if (this.secondFile){
-        FileDownload(this.file1.columnReducerOutputFiles.output_file, this.file1.fileOutputName + '.csv')
-        if (this.file1.columnReducerOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-          FileDownload(this.file1.columnReducerOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
-        }
-      }
-      //Show download UI
-      this.$store.commit('FileProcessingDialogOpenSet', true)
     }
-
-
-
   }
-
-
 }
 </script>
 <style>

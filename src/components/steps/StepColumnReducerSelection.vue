@@ -1,53 +1,59 @@
 <template>
-  <v-card
-    outlined
-    class="ma-3 pa-5"
-    >
-    <StepHeading
-      :stepNumber="stepNumber"
-      :stepTitle="stepTitle"
-    />
-
-
-    <div>
-      <p>Click below to selected columns or paste a comma seperated list of columns to be outputted. <br /> You can also <a @click="miloDialog = true">import from a MILO results "report.csv" file</a>.</p>
-      <v-layout class="ma-5">
-        <v-row wrap>
-          <v-col cols="12">
-            <v-combobox clearable v-model="fileObject.columnReducerSelectedColumns" multiple chips class="ml-8" :items="fileObject.featureList"  outlined label="Selected Columns" @change="splitPasted()"></v-combobox>
-            <div>
-            </div>
-            <div v-if="fileObject.columnReducerSelectedColumns.length > 0" class="body-1">
-              <div>
-                <v-icon color="green" >mdi-check-circle</v-icon> {{fileObject.columnReducerSelectedColumns.length}} columns selected.
-              </div>
-            </div>
-            <div v-if="this.fileObject.columnReducerErrorColumns != null">
-              <div v-if="fileObject.columnReducerErrorColumns.length > 0">
-                <v-alert class="mt-3" text type="error" dismissible dense>
-                  <span>The following column<span v-if="fileObject.columnReducerErrorColumns.length > 1">s</span> are invalid:</span>
-                  <v-chip class="ml-2" small dark color="red lighten-3" v-for="(item,key) in fileObject.columnReducerErrorColumns" :key="key">{{item}}</v-chip>
-                </v-alert>
-              </div>
-            </div>
-            <p>
-            </p>
-          </v-col>
-        </v-row>
-      </v-layout>
-    </div>
-    <div class="text-right" v-if="fileObject.columnReducerSelectedColumns.length > 0">
-      <v-btn
-        v-if="confirmStep == false"
-        color="primary"
-        rounded
-        @click="nexStep()"
+  <div>
+    <v-card
+      outlined
+      class="ma-3 pa-5"
       >
-        Confirm Column Selection
-      </v-btn>
-    </div>
+      <StepHeading
+        :stepNumber="stepNumber"
+        :stepTitle="stepTitle"
+      />
+      <div>
+        <p>Click below to selected columns or paste a comma seperated list of columns to be outputted. <br /> You can also <a @click="$refs.MiloFileUploadDialog.open()">import from a MILO results "report.csv" file</a>.</p>
+        <v-layout class="ma-5">
+          <v-row wrap>
+            <v-col cols="12">
+              <v-combobox clearable v-model="fileObject.columnReducerSelectedColumns" multiple chips class="ml-8" :items="fileObject.featureList"  outlined label="Selected Columns" @change="splitPasted()"></v-combobox>
+              <div>
+              </div>
+              <div v-if="fileObject.columnReducerSelectedColumns.length > 0" class="body-1">
+                <div>
+                  <v-icon color="green" >mdi-check-circle</v-icon> {{fileObject.columnReducerSelectedColumns.length}} columns selected.
+                </div>
+              </div>
+              <div v-if="this.fileObject.columnReducerErrorColumns != null">
+                <div v-if="fileObject.columnReducerErrorColumns.length > 0">
+                  <v-alert class="mt-3" text type="error" dismissible dense>
+                    <span>The following column<span v-if="fileObject.columnReducerErrorColumns.length > 1">s</span> are invalid:</span>
+                    <v-chip class="ml-2" small dark color="red lighten-3" v-for="(item,key) in fileObject.columnReducerErrorColumns" :key="key">{{item}}</v-chip>
+                  </v-alert>
+                </div>
+              </div>
+              <p>
+              </p>
+            </v-col>
+          </v-row>
+        </v-layout>
+      </div>
+      <div class="text-right" v-if="fileObject.columnReducerSelectedColumns.length > 0">
+        <v-btn
+          v-if="confirmStep == false"
+          color="primary"
+          rounded
+          @click="nexStep()"
+        >
+          Confirm Column Selection
+        </v-btn>
+      </div>
 
-  </v-card>
+    </v-card>
+
+    <MiloFileUploadDialog
+      ref="MiloFileUploadDialog"
+      @setMiloColumns="setMiloColumns"
+      />
+  </div>
+
 
 
 </template>
@@ -60,11 +66,13 @@ import underscore from 'underscore'
 
 //components
 import StepHeading from '@/components/StepHeading'
+import MiloFileUploadDialog from '@/components/MiloFileUploadDialog'
 
 export default {
   name: 'StepColumnReducerSelection',
   components: {
-    StepHeading
+    StepHeading,
+    MiloFileUploadDialog
   },
   props: [
     'stepNumber',
@@ -122,7 +130,9 @@ export default {
       this.$emit('changedStepData')
       this.confirmStep = false
     },
-
+    setMiloColumns(value) {
+      this.fileObject.columnReducerSelectedColumns = value
+    },
     nexStep() {
       this.confirmStep = true
       this.$emit('nextStep')
