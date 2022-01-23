@@ -461,7 +461,7 @@ export default {
 
         //file name data stored in X-file header of post request
         formData.append("file", file);
-        axios.post('/data_file_upload', formData, {
+        axios.post('/preprocessor/shared/data_file_upload', formData, {
             headers: {
             'Content-Type': 'multipart/form-data',
             'X-filename': file.name,

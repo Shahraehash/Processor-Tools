@@ -54,7 +54,7 @@ export default {
 
           this.uploading = true
 
-          return axios.post('/data_file_upload', formData, {
+          return axios.post('/preprocessor/shared/data_file_upload', formData, {
               headers: {
               'Content-Type': 'multipart/form-data',
               'X-filename': this.file.name,
