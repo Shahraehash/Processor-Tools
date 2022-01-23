@@ -54,7 +54,7 @@ export default {
 
           this.uploading = true
 
-          return axios.post('/preprocessor/shared/data_file_upload', formData, {
+          return axios.post('/preprocessor_api/shared/data_file_upload', formData, {
               headers: {
               'Content-Type': 'multipart/form-data',
               'X-filename': this.file.name,
@@ -146,7 +146,7 @@ export default {
             target: this.target,
             storage_id: this.fileMetadata.storage_id
           }
-          return axios.post('/calc/cor', payload, {
+          return axios.post('/preprocessor_api/colinearity/generate', payload, {
               headers: {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'
@@ -171,7 +171,7 @@ export default {
           storage_id: this.fileMetadata.storage_id,
           feature_removal_list: this.correlationFeatureRemovalList
         }
-        return axios.post('/calc/cor/process', payload, {
+        return axios.post('/preprocessor_api/colinearity/build', payload, {
             headers: {
             'Content-Type': 'application/json',
           }
