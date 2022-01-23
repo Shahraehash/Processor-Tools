@@ -85,7 +85,7 @@ export default {
             target: column,
             storage_id: this.fileMetadata.storage_id
           }
-          return axios.post('/validate/target_column', payload, {
+          return axios.post('/preprocessor_api/shared/validate_target_column', payload, {
               headers: {
               'Content-Type': 'application/json',
               'X-inbound': 'validation'

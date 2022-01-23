@@ -739,7 +739,7 @@ export default {
           storage_id: this.trainingMetadata.storage_id
         }
 
-        axios.post('/validate/target_column', payload, {
+        axios.post('/preprocessor_api/shared/validate_target_column', payload, {
             headers: {
             'Content-Type': 'application/json',
             'X-inbound': 'validation'

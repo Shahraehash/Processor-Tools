@@ -21,9 +21,6 @@ shared = Blueprint(
     url_prefix='/shared'
 )
 
-#helper functions
-
-
 
 @shared.route('/data_file_upload',methods=["POST"])
 def data_file_upload():
@@ -113,3 +110,29 @@ def data_file_upload():
 
         os.remove(file_path)
         return abort(500)
+
+@shared.route('/validate_target_column',methods=["POST"])
+def validate_target_column():
+    target = request.json['target']
+    storage_id = request.json['storage_id']
+
+    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
+    df = pd.read_csv(file_path)
+
+    #count how many unique values are in the target column
+    unique_values = len(df[target].value_counts())
+
+    validation = True
+
+    if unique_values != 2:
+        validation = False
+
+    response = make_response(
+        jsonify({
+            "validation": validation,
+        }),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response
