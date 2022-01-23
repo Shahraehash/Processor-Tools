@@ -1,9 +1,9 @@
-from flask import Blueprint, current_app, jsonify, request, make_response
+from flask import Blueprint, current_app, request
 
 from preprocessor_modules.shared import shared
 from preprocessor_modules.colinearity import colinearity
 from preprocessor_modules.feature_selector import feature_selector
-from preprocessor_modules.traintestsplit import traintestsplit
+from preprocessor_modules.train_test_split import train_test_split
 from preprocessor_modules.encoder import encoder
 
 import simplejson
@@ -17,7 +17,7 @@ parent_preprocessor = Blueprint(
 parent_preprocessor.register_blueprint(shared)
 parent_preprocessor.register_blueprint(colinearity)
 parent_preprocessor.register_blueprint(feature_selector)
-parent_preprocessor.register_blueprint(traintestsplit)
+parent_preprocessor.register_blueprint(train_test_split)
 parent_preprocessor.register_blueprint(encoder)
 
 #Audit Tool for Routes

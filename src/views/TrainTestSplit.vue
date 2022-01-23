@@ -503,7 +503,7 @@ export default {
           target_column: this.targetColumn,
           storage_id: this.fileData.storage_id
         }
-        return axios.post('train_test_split/metadata', data, {
+        return axios.post('/preprocessor_api/train_test_split/generate', data, {
           headers: {
           'Content-Type': 'application/json',
           }
@@ -571,7 +571,7 @@ export default {
       this.$store.commit('FileProcessingDialogOpenSet', true)
       this.$store.commit('FileProcessingDialogLoadingSet', true)
 
-      return axios.post('train_test_split/process', data, {
+      return axios.post('/preprocessor_api/train_test_split/build', data, {
         headers: {
         'Content-Type': 'application/json',
         }
