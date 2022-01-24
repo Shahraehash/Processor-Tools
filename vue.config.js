@@ -5,7 +5,7 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
-  outputDir: "./dist",
+  outputDir: "../static/preprocessor",
 
   // relative to outputDir
   assetsDir: "static",
