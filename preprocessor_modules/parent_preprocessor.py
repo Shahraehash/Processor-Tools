@@ -1,11 +1,11 @@
-from flask import Blueprint, current_app, request
+from flask import Blueprint, current_app
 
-from preprocessor_modules.shared import shared
-from preprocessor_modules.column_reducer import column_reducer
-from preprocessor_modules.colinearity import colinearity
-from preprocessor_modules.feature_selector import feature_selector
-from preprocessor_modules.train_test_split import train_test_split
-from preprocessor_modules.encoder import encoder
+from .shared import shared
+from .column_reducer import column_reducer
+from .colinearity import colinearity
+from .feature_selector import feature_selector
+from .train_test_split import train_test_split
+from .encoder import encoder
 
 import simplejson
 

@@ -7,7 +7,7 @@ import json
 import simplejson
 
 #helper functions
-import preprocessor_modules.helpers as helpers
+from .helpers import find_nan_counts
 
 train_test_split = Blueprint(
     'train_test_split',
@@ -29,7 +29,7 @@ def generate():
     nan_counts = {0:0, 1:0}
     nan_counts = json.dumps(nan_counts)
 
-    if (helpers.find_nan_counts(df) > 0):
+    if (find_nan_counts(df) > 0):
         nan_counts = df[df.isna().any(axis=1)][target_column].value_counts()
         #ensure all values carried to front end
         if not 1 in nan_counts:

@@ -11,7 +11,7 @@ from datetime import datetime
 from tinydb import TinyDB, Query
 
 #helper functions
-import preprocessor_modules.helpers as helpers
+from .helpers import convert_blanks_to_nan, find_nan_counts
 
 db = TinyDB('db.json')
 
@@ -44,7 +44,7 @@ def data_file_upload():
         df = pd.read_csv(file_path)
 
         #helper function to clean up nan rows
-        df = helpers.convert_blanks_to_nan(df)
+        df = convert_blanks_to_nan(df)
         #update file with cleaned up fields
 
         #trim column names
@@ -88,7 +88,7 @@ def data_file_upload():
         'columns': int(df.shape[1]),
         'column_names': list(df.columns.values),
         'column_names_reversed': list(np.flip(df.columns.values)),
-        'nan_count': int(helpers.find_nan_counts(df)),
+        'nan_count': int(find_nan_counts(df)),
         'dtypes_count': json.loads(df.dtypes.value_counts().to_json()),
         'nan_by_column': json.loads(df.isna().sum().to_json()),
         'invalid_columns': list(invalid_columns),

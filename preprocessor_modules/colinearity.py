@@ -6,9 +6,6 @@ import time
 import json
 import simplejson
 
-#helper functions
-import preprocessor_modules.helpers as helpers
-
 colinearity = Blueprint(
     'colinearity',
     __name__,

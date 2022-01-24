@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g, jsonify, request, redirect, url_for, session, flash, make_response, send_file
+from flask import Flask, render_template
 from flask_cors import CORS
 import os
 
@@ -14,11 +14,9 @@ from preprocessor_modules.parent_preprocessor import parent_preprocessor
 app.register_blueprint(parent_preprocessor)
 
 #Create file storage location if doesn't exist
-if not os.path.exists('files'):
-    os.makedirs('files')
-#Upload configuration
-UPLOAD_FOLDER = 'files'
-app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = 'files'
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 #Routes
 @app.route('/')
@@ -28,7 +26,7 @@ def home():
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
-def index(path):
+def index():
     try:
         #clearFiles()
         return render_template('index.html')

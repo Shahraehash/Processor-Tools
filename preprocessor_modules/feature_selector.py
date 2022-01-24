@@ -11,9 +11,6 @@ from sklearn.feature_selection import f_classif
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 
-#helper functions
-import preprocessor_modules.helpers as helpers
-
 feature_selector = Blueprint(
     'feature_selector',
     __name__,

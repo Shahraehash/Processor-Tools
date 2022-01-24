@@ -6,9 +6,6 @@ import time
 import json
 import simplejson
 
-#helper functions
-import preprocessor_modules.helpers as helpers
-
 column_reducer = Blueprint(
     'column_reducer',
     __name__,
