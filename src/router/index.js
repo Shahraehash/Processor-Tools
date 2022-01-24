@@ -37,16 +37,15 @@ const routes = [
     component: Encoder
   },
   {
-    path: '/',
-    name: 'Landing',
-    component: Landing
-  },
-  {
     path: '/diagnostics',
     name: 'Diagnostics',
     component: Diagnostics
   },
-
+  {
+    path: '*',
+    name: 'Landing',
+    component: Landing
+  }
 ]
 
 const router = new VueRouter({
