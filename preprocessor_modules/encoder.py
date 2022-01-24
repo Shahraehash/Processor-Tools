@@ -70,8 +70,8 @@ def encoder_store():
     'rows': int(df.shape[0]),
     'columns': int(df.shape[1]),
     'column_names': list(df.columns.values),
-    'dtypes_count': json.loads(df.dtypes.value_counts().to_json()),
-    'nan_by_column': json.loads(df.isna().sum().to_json()),
+    'dtypes_count': df.dtypes.value_counts().to_json(),
+    'nan_by_column': df.isna().sum().to_json(),
     'invalid_columns': list(invalid_columns),
     'describe': describe.to_json(orient="records")
     }

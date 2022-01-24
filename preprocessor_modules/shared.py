@@ -89,13 +89,13 @@ def data_file_upload():
         'column_names': list(df.columns.values),
         'column_names_reversed': list(np.flip(df.columns.values)),
         'nan_count': int(find_nan_counts(df)),
-        'dtypes_count': json.loads(df.dtypes.value_counts().to_json()),
-        'nan_by_column': json.loads(df.isna().sum().to_json()),
+        'dtypes_count': df.dtypes.value_counts().to_json(),
+        'nan_by_column': df.isna().sum().to_json(),
         'invalid_columns': list(invalid_columns),
         'describe': describe.to_json(orient="records")
 
         }
-
+        print(entry)
         db.insert(entry)
 
         response = make_response(
@@ -107,7 +107,7 @@ def data_file_upload():
         return response
 
     except Exception as e:
-
+        print(e)
         os.remove(file_path)
         return abort(500)
 
