@@ -4,3 +4,4 @@ __pycache__
 files
 dist
 db.json
+.DS_Store
