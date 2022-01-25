@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 def convert_blanks_to_nan(df):
     return df.replace(r'^\s*$', np.nan, regex=True)

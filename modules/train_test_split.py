@@ -4,7 +4,6 @@ import numpy as np
 import os
 import time
 import json
-import simplejson
 
 #helper functions
 from .helpers import find_nan_counts

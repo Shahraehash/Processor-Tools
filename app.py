@@ -10,7 +10,7 @@ app = Flask(__name__,
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 #Modules
-from preprocessor_modules.parent_preprocessor import parent_preprocessor
+from modules.parent_preprocessor import parent_preprocessor
 app.register_blueprint(parent_preprocessor)
 
 #Create file storage location if doesn't exist

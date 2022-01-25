@@ -1,9 +1,7 @@
-from flask import Blueprint, current_app, jsonify, request, make_response
+from flask import Blueprint, current_app, request, make_response
 import pandas as pd
-import numpy as np
 import os
 import time
-import json
 import simplejson
 
 #Scikit learn

@@ -1,9 +1,7 @@
-from flask import Blueprint, current_app, jsonify, request, make_response
+from flask import Blueprint, current_app, request, make_response
 import pandas as pd
-import numpy as np
 import os
 import time
-import json
 import simplejson
 
 colinearity = Blueprint(
@@ -15,7 +13,6 @@ colinearity = Blueprint(
 @colinearity.route('/generate',methods=["POST"])
 def generate():
     storage_id = request.json['storage_id']
-    target = request.json['target']
     file = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file)
 
