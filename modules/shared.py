@@ -94,7 +94,6 @@ def data_file_upload():
         'describe': describe.to_json(orient="records")
 
         }
-        print(entry)
         db.insert(entry)
 
         response = make_response(
@@ -106,7 +105,6 @@ def data_file_upload():
         return response
 
     except Exception as e:
-        print(e)
         os.remove(file_path)
         return abort(500)
 
