@@ -23,7 +23,7 @@
       stepNumber="2"
       stepTitle="Select Target"
       :fileObject="file0"
-      nextStepFunction="generateCorrelation"
+      nextStepFunction="generateColumnReduction"
       nextStepParam="confirmStep2"
       nextStepButtonText="Go to Column Selection"
       @resetStep="resetStep2"
