@@ -1,13 +1,10 @@
 from flask import Blueprint, current_app, jsonify, request, make_response
 import pandas as pd
-import numpy as np
 import os
-import time
 import json
-import simplejson
 
 #helper functions
-import preprocessor_modules.helpers as helpers
+from .helpers import find_nan_counts
 
 train_test_split = Blueprint(
     'train_test_split',
@@ -29,7 +26,7 @@ def generate():
     nan_counts = {0:0, 1:0}
     nan_counts = json.dumps(nan_counts)
 
-    if (helpers.find_nan_counts(df) > 0):
+    if (find_nan_counts(df) > 0):
         nan_counts = df[df.isna().any(axis=1)][target_column].value_counts()
         #ensure all values carried to front end
         if not 1 in nan_counts:
@@ -101,7 +98,5 @@ def build():
 
         #Extra data export. Index should always be included.
         final_data['extra'] = reduction.to_csv(index=True, index_label="source_row")
-
-    time.sleep(3)
 
     return make_response(final_data)

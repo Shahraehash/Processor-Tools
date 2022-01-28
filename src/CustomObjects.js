@@ -232,6 +232,11 @@ export default {
       columnReducerErrorColumns: [],
       columnReducerOutputFiles: null,
 
+      //place holder function
+      generateColumnReduction() {
+        return false
+      },
+
       buildColumnReducerFiles() {
         this.columnReducerOutputFiles = null
         let payload = {

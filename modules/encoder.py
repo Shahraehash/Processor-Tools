@@ -1,14 +1,8 @@
 from flask import Blueprint, current_app, jsonify, request, make_response
 import pandas as pd
-import numpy as np
 import os
-import time
-import json
-
 import uuid
-
 from datetime import datetime
-
 
 encoder = Blueprint(
     'encoder',
@@ -70,8 +64,8 @@ def encoder_store():
     'rows': int(df.shape[0]),
     'columns': int(df.shape[1]),
     'column_names': list(df.columns.values),
-    'dtypes_count': json.loads(df.dtypes.value_counts().to_json()),
-    'nan_by_column': json.loads(df.isna().sum().to_json()),
+    'dtypes_count': df.dtypes.value_counts().to_json(),
+    'nan_by_column': df.isna().sum().to_json(),
     'invalid_columns': list(invalid_columns),
     'describe': describe.to_json(orient="records")
     }
@@ -81,7 +75,6 @@ def encoder_store():
         200,
     )
     response.headers["Content-Type"] = "application/json"
-    time.sleep(1)
     return response
 
     # except Exception as e:

@@ -1,6 +1,8 @@
-from flask import Flask, render_template, g, jsonify, request, redirect, url_for, session, flash, make_response, send_file
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 import os
+
+from modules.parent_preprocessor import parent_preprocessor
 
 app = Flask(__name__,
             static_folder = "./dist/static",
@@ -9,30 +11,18 @@ app = Flask(__name__,
 #Enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-#Modules
-from preprocessor_modules.parent_preprocessor import parent_preprocessor
-app.register_blueprint(parent_preprocessor)
-
 #Create file storage location if doesn't exist
-if not os.path.exists('files'):
-    os.makedirs('files')
-#Upload configuration
-UPLOAD_FOLDER = 'files'
-app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = 'files'
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 #Routes
 @app.route('/')
-def home():
-    #clearFiles()
-    return render_template("index.html")
+def home(path='index.html'):
+    return send_from_directory('dist', path)
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def index(path):
-    try:
-        #clearFiles()
-        return render_template('index.html')
-    except Exception as e:
-        print(e)
-        print('change')
-        return str(e)
+#Modules
+app.register_blueprint(parent_preprocessor)
+
+if __name__ == '__main__':
+    app.run()

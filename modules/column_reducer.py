@@ -1,13 +1,6 @@
-from flask import Blueprint, current_app, jsonify, request, make_response
+from flask import Blueprint, current_app, request, make_response
 import pandas as pd
-import numpy as np
 import os
-import time
-import json
-import simplejson
-
-#helper functions
-import preprocessor_modules.helpers as helpers
 
 column_reducer = Blueprint(
     'column_reducer',
@@ -40,7 +33,5 @@ def build():
         'missing_count': int(missing.shape[0]),
         'column_count': int(df.shape[1])
     }
-
-    time.sleep(2)
 
     return make_response(final_data)

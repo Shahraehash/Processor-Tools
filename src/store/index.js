@@ -49,7 +49,7 @@ export default new Vuex.Store({
         title: 'Encoder Tool',
         icon: 'mdi-file-code-outline',
         description: 'Covert non-numeric datatypes for use in MILO.',
-        isVisible: true
+        isVisible: false
       },
 
     },

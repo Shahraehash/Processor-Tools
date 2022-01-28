@@ -5,8 +5,10 @@ module.exports = {
   transpileDependencies: [
     'vuetify'
   ],
-  outputDir: "./dist",
+  outputDir: process.env.BASE_URL ? `../static${process.env.BASE_URL}` : "dist",
+  // publicPath: process.env.BASE_URL ? '/preprocessor/', : './'
 
   // relative to outputDir
-  assetsDir: "static"
+  assetsDir: "static",
+  publicPath: process.env.BASE_URL ? process.env.BASE_URL : './'
 }

@@ -1,17 +1,15 @@
-from flask import Blueprint, current_app, jsonify, request, make_response
+from flask import Blueprint, current_app, jsonify, request, make_response, abort
 import pandas as pd
 import numpy as np
 import os
-import time
-import json
 
 import uuid
 
 from datetime import datetime
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
 
 #helper functions
-import preprocessor_modules.helpers as helpers
+from .helpers import convert_blanks_to_nan, find_nan_counts
 
 db = TinyDB('db.json')
 
@@ -44,7 +42,7 @@ def data_file_upload():
         df = pd.read_csv(file_path)
 
         #helper function to clean up nan rows
-        df = helpers.convert_blanks_to_nan(df)
+        df = convert_blanks_to_nan(df)
         #update file with cleaned up fields
 
         #trim column names
@@ -88,14 +86,13 @@ def data_file_upload():
         'columns': int(df.shape[1]),
         'column_names': list(df.columns.values),
         'column_names_reversed': list(np.flip(df.columns.values)),
-        'nan_count': int(helpers.find_nan_counts(df)),
-        'dtypes_count': json.loads(df.dtypes.value_counts().to_json()),
-        'nan_by_column': json.loads(df.isna().sum().to_json()),
+        'nan_count': int(find_nan_counts(df)),
+        'dtypes_count': df.dtypes.value_counts().to_json(),
+        'nan_by_column': df.isna().sum().to_json(),
         'invalid_columns': list(invalid_columns),
         'describe': describe.to_json(orient="records")
 
         }
-
         db.insert(entry)
 
         response = make_response(
@@ -103,11 +100,9 @@ def data_file_upload():
             200,
         )
         response.headers["Content-Type"] = "application/json"
-        time.sleep(1)
         return response
 
     except Exception as e:
-
         os.remove(file_path)
         return abort(500)
 
@@ -151,7 +146,6 @@ def milo_report_file_upload():
         200,
     )
     response.headers["Content-Type"] = "application/json"
-    time.sleep(1)
     return response
 
 @shared.route('/validate_target_column',methods=["POST"])

@@ -1,18 +1,12 @@
-from flask import Blueprint, current_app, jsonify, request, make_response
+from flask import Blueprint, current_app, request, make_response
 import pandas as pd
-import numpy as np
 import os
-import time
-import json
 import simplejson
 
 #Scikit learn
 from sklearn.feature_selection import f_classif
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-
-#helper functions
-import preprocessor_modules.helpers as helpers
 
 feature_selector = Blueprint(
     'feature_selector',
@@ -75,8 +69,6 @@ def generate():
         output_select_percentile[percentile] = calculate_percentile_columns(sorted_array_select_percentile, percentile)
         output_rf[percentile] = calculate_percentile_columns(sorted_array_rf, percentile)
 
-    time.sleep(2)
-
     final_object = {
         'select_percentile': output_select_percentile,
         'rf': output_rf,
@@ -116,7 +108,5 @@ def build():
         'missing_count': int(missing.shape[0]),
         'column_count': int(df.shape[1])
     }
-
-    time.sleep(3)
 
     return make_response(final_data)

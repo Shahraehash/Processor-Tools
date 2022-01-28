@@ -2,10 +2,12 @@
   <div>
 
     <v-toolbar dense>
-      <v-img
-        max-width="130"
-        src="https://milo-ml.com/wp-content/uploads/2021/02/logo.png"
-      ></v-img>
+      <a href='/'>
+        <v-img
+          max-width="130"
+          src="https://milo-ml.com/wp-content/uploads/2021/02/logo.png"
+        ></v-img>
+      </a>
       <v-toolbar-title class="ml-3">PREPROCESSING TOOLS</v-toolbar-title>
       <v-spacer></v-spacer>
 
