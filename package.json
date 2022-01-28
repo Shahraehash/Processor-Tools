@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "start": "npm run build-ui && python app.py",
+    "serve-ui": "vue-cli-service serve",
+    "build-ui": "vue-cli-service build",
+    "milo-build": "vue-cli-service build --mode milo",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

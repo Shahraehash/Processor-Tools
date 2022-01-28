@@ -3,8 +3,7 @@
 import { register } from 'register-service-worker'
 
 if (process.env.NODE_ENV === 'production') {
-  /** Fix the hardcoded path here */
-  register(`${process.env.BASE_URL}/preprocessor/service-worker.js`, {
+  register(`${process.env.BASE_URL}/service-worker.js`, {
     ready () {
       console.log(
         'App is being served from cache by a service worker.\n' +
