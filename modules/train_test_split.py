@@ -1,8 +1,6 @@
 from flask import Blueprint, current_app, jsonify, request, make_response
 import pandas as pd
-import numpy as np
 import os
-import time
 import json
 
 #helper functions
@@ -100,7 +98,5 @@ def build():
 
         #Extra data export. Index should always be included.
         final_data['extra'] = reduction.to_csv(index=True, index_label="source_row")
-
-    time.sleep(3)
 
     return make_response(final_data)

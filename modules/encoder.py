@@ -1,12 +1,8 @@
 from flask import Blueprint, current_app, jsonify, request, make_response
 import pandas as pd
 import os
-import time
-
 import uuid
-
 from datetime import datetime
-
 
 encoder = Blueprint(
     'encoder',
@@ -79,7 +75,6 @@ def encoder_store():
         200,
     )
     response.headers["Content-Type"] = "application/json"
-    time.sleep(1)
     return response
 
     # except Exception as e:

@@ -1,7 +1,6 @@
 from flask import Blueprint, current_app, request, make_response
 import pandas as pd
 import os
-import time
 import simplejson
 
 colinearity = Blueprint(
@@ -85,7 +84,5 @@ def build():
         'missing_count': int(missing.shape[0]),
         'column_count': int(df.shape[1])
     }
-
-    time.sleep(3)
 
     return make_response(final_data)

@@ -2,12 +2,11 @@ from flask import Blueprint, current_app, jsonify, request, make_response, abort
 import pandas as pd
 import numpy as np
 import os
-import time
 
 import uuid
 
 from datetime import datetime
-from tinydb import TinyDB, Query
+from tinydb import TinyDB
 
 #helper functions
 from .helpers import convert_blanks_to_nan, find_nan_counts
@@ -101,7 +100,6 @@ def data_file_upload():
             200,
         )
         response.headers["Content-Type"] = "application/json"
-        time.sleep(1)
         return response
 
     except Exception as e:
@@ -148,7 +146,6 @@ def milo_report_file_upload():
         200,
     )
     response.headers["Content-Type"] = "application/json"
-    time.sleep(1)
     return response
 
 @shared.route('/validate_target_column',methods=["POST"])
