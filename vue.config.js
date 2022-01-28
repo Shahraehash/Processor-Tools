@@ -6,8 +6,9 @@ module.exports = {
     'vuetify'
   ],
   outputDir: process.env.BASE_URL ? `../static${process.env.BASE_URL}` : "dist",
+  // publicPath: process.env.BASE_URL ? '/preprocessor/', : './'
 
   // relative to outputDir
   assetsDir: "static",
-  publicPath: './'
+  publicPath: process.env.BASE_URL ? process.env.BASE_URL : './'
 }
