@@ -1,4 +1,4 @@
-# flask-prototype
+# ML Preprocessor
 
 ## Project setup
 ```
@@ -7,7 +7,7 @@ npm install
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+npm run serve-all
 ```
 
 ### Compiles and minifies for production

@@ -1,12 +1,18 @@
 {
-  "name": "flask-prototype",
+  "name": "ml-preprocessor",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "npm run build-ui && python app.py",
+    "serve-all": "concurrently 'npm run serve-ui' 'npm run serve-api'",
+    "serve-api": "watchmedo auto-restart -d . -R -p \"*.py\" -- python -u app.py",
     "serve-ui": "vue-cli-service serve",
     "build-ui": "vue-cli-service build",
     "milo-build": "vue-cli-service build --mode milo",
+    "update-requirements": "pip freeze > requirements.txt",
+    "docker-build": "docker build ./ -t fennell/ml-pp",
+    "docker-save": "docker save fennell/ml-pp | gzip > ml-preprocessor-$npm_package_version.tar.gz",
+    "docker-run": "docker run -d -p 4998 fennell/ml-pp:latest",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -35,6 +41,7 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "concurrently": "^7.0.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "~1.32.0",
