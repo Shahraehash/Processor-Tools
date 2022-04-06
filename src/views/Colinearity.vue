@@ -64,7 +64,7 @@
 <script>
 //packages
 import FileDownload from 'js-file-download'
-
+import JSZip from 'jszip'
 //support code
 import CustObjs from '@/CustomObjects.js'
 
@@ -235,18 +235,29 @@ export default {
       })
     },
     saveFiles(exportSettings) {
-      console.log(exportSettings)
-      FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+
+      let safari = CustObjs.isSafari()
+      let zip = new JSZip()
+
+
+      safari ? zip.file(this.file0.fileOutputName + '.csv', this.file0.correlationOutputFiles.output_file) : FileDownload(this.file0.correlationOutputFiles.output_file, this.file0.fileOutputName + '.csv')
       if (this.file0.correlationOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-        FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+        safari ? zip.file(this.file0.fileOutputName + '_missing_data.csv', this.file0.correlationOutputFiles.missing_file) : FileDownload(this.file0.correlationOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
       }
       if (this.secondFile){
-        FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+        safari ? zip.file(this.file1.fileOutputName + '.csv', this.file1.correlationOutputFiles.output_file) : FileDownload(this.file1.correlationOutputFiles.output_file, this.file1.fileOutputName + '.csv')
         if (this.file1.correlationOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-          FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+          safari ? zip.file(this.file1.fileOutputName + '_missing_data.csv', this.file1.correlationOutputFiles.missing_file) : FileDownload(this.file1.correlationOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
         }
       }
       //Show download UI
+      if (safari) {
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            // Force down of the Zip file
+            FileDownload(content, "colinearity_combined_files.zip");
+        });
+      }
       this.$store.commit('FileProcessingDialogOpenSet', true)
     }
 

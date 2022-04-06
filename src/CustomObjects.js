@@ -3,6 +3,13 @@ import axios from 'axios'
 
 
 export default {
+  isSafari() {
+    let userAgentString = navigator.userAgent
+    let chromeAgent = userAgentString.indexOf("Chrome") > -1;
+    let safariAgent = userAgentString.indexOf("Safari") > -1;
+    if ((chromeAgent) && (safariAgent)) safariAgent = false;
+    return safariAgent
+  },
   queryFileList() {
     let payload = {
       user_id: 'ui000001' //replace in future
