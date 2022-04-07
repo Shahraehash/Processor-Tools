@@ -310,7 +310,7 @@ import FileDownload from 'js-file-download'
 import JSZip from 'jszip'
 
 //support code
-import CustObjs from '@/CustomObjects.js'
+
 
 //components
 import DataValidation from '@/components/DataValidation'
@@ -585,47 +585,40 @@ export default {
 
         //UI elements
         this.$store.commit('FileProcessingDialogLoadingSet', false)
-        let safari = CustObjs.isSafari()
         let zip = new JSZip();
         //File elements
         //Change file name if index included in main output
         if (this.outputSettings.includeRowIndex) {
-          safari ? zip.file(this.outputFiles.training + '_with_index.csv', response.data.training) : null
-          safari ? zip.file(this.outputFiles.testing + '_with_index.csv', response.data.testing) : null
-          !safari ? FileDownload(response.data.training, this.outputFiles.training + '_with_index.csv') : null
-          !safari ? FileDownload(response.data.testing, this.outputFiles.testing + '_with_index.csv') : null
+          zip.file(this.outputFiles.training + '_with_index.csv', response.data.training)
+          zip.file(this.outputFiles.testing + '_with_index.csv', response.data.testing)
+          //FileDownload(response.data.training, this.outputFiles.training + '_with_index.csv')
+          //FileDownload(response.data.testing, this.outputFiles.testing + '_with_index.csv')
         }
         else {
-          safari ? zip.file(this.outputFiles.training + '.csv', response.data.training) : null
-          safari ? zip.file(this.outputFiles.testing + '.csv', response.data.testing) : null
-          !safari ? FileDownload(response.data.training, this.outputFiles.training + '.csv') : null
-          !safari ? FileDownload(response.data.testing, this.outputFiles.testing + '.csv') : null
+          zip.file(this.outputFiles.training + '.csv', response.data.training)
+          zip.file(this.outputFiles.testing + '.csv', response.data.testing)
+          //FileDownload(response.data.training, this.outputFiles.training + '.csv')
+          //FileDownload(response.data.testing, this.outputFiles.testing + '.csv')
         }
-
-
-
         if (this.outputSettings.extraFile) {
-          safari ? zip.file(this.outputFiles.extra + '.csv', response.data.extra) : null
-          !safari ? FileDownload(response.data.extra, this.outputFiles.extra + '.csv') : null
+          zip.file(this.outputFiles.extra + '.csv', response.data.extra)
+          //FileDownload(response.data.extra, this.outputFiles.extra + '.csv')
         }
         if (this.outputSettings.nanFile) {
           try {
-            safari ? zip.file(this.outputFiles.nan + '.csv', response.data.nan) : null
-            !safari ? FileDownload(response.data.nan, this.outputFiles.nan + '.csv') : null
+            zip.file(this.outputFiles.nan + '.csv', response.data.nan)
+            //FileDownload(response.data.nan, this.outputFiles.nan + '.csv')
           }
           catch(err) {
             console.log('error')
           }
-
         }
-        if (safari) {
-          zip.generateAsync({type:"blob"})
-          .then(function(content) {
-              // Force down of the Zip file
-              FileDownload(content, "train_test_combined_files.zip");
-          });
-        }
-
+        //generate file
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            // Force down of the Zip file
+            FileDownload(content, "train_test_combined_files.zip");
+        });
       })
 
     },

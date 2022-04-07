@@ -172,29 +172,30 @@ export default {
     },
     saveFiles(exportSettings) {
 
-      let safari = CustObjs.isSafari()
       let zip = new JSZip();
-      console.log('isSafari',safari)
 
-      safari ? zip.file(this.file0.fileOutputName + '.csv', this.file0.columnReducerOutputFiles.output_file) : FileDownload(this.file0.columnReducerOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+      zip.file(this.file0.fileOutputName + '.csv', this.file0.columnReducerOutputFiles.output_file)
+      //FileDownload(this.file0.columnReducerOutputFiles.output_file, this.file0.fileOutputName + '.csv')
 
       if (this.file0.columnReducerOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-        safari ? zip.file(this.file0.fileOutputName + '_missing_data.csv', this.file0.columnReducerOutputFiles.missing_file) : FileDownload(this.file0.columnReducerOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+        zip.file(this.file0.fileOutputName + '_missing_data.csv', this.file0.columnReducerOutputFiles.missing_file)
+        //FileDownload(this.file0.columnReducerOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
       }
       if (this.secondFile){
-        safari ? zip.file(this.file1.fileOutputName + '.csv', this.file1.columnReducerOutputFiles.output_file) : FileDownload(this.file1.columnReducerOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+        zip.file(this.file1.fileOutputName + '.csv', this.file1.columnReducerOutputFiles.output_file)
+        //FileDownload(this.file1.columnReducerOutputFiles.output_file, this.file1.fileOutputName + '.csv')
         if (this.file1.columnReducerOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-          safari ? zip.file(this.file1.fileOutputName + '_missing_data.csv', this.file1.columnReducerOutputFiles.missing_file) : FileDownload(this.file1.columnReducerOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+          zip.file(this.file1.fileOutputName + '_missing_data.csv', this.file1.columnReducerOutputFiles.missing_file)
+          //FileDownload(this.file1.columnReducerOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
         }
       }
+      //generate file
+      zip.generateAsync({type:"blob"})
+      .then(function(content) {
+          // Force down of the Zip file
+          FileDownload(content, "column_reducer_combined_files.zip");
+      });
       //Show download UI
-      if (safari) {
-        zip.generateAsync({type:"blob"})
-        .then(function(content) {
-            // Force down of the Zip file
-            FileDownload(content, "column_reducer_combined_files.zip");
-        });
-      }
       this.$store.commit('FileProcessingDialogOpenSet', true)
     },
     //State Progression
