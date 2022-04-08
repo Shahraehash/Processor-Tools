@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 
-export default {
+export default {  
   queryFileList() {
     let payload = {
       user_id: 'ui000001' //replace in future

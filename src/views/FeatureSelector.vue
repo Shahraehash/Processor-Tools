@@ -54,6 +54,7 @@
 <script>
 //packages
 import FileDownload from 'js-file-download'
+import JSZip from 'jszip'
 
 //support code
 import CustObjs from '@/CustomObjects.js'
@@ -227,20 +228,38 @@ export default {
       })
     },
     saveFiles(exportSettings) {
-      FileDownload(this.file0.featureSelectorOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+
+      let zip = new JSZip();
+
+
+
+      zip.file(this.file0.fileOutputName + '.csv', this.file0.featureSelectorOutputFiles.output_file)
+      //FileDownload(this.file0.featureSelectorOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+
       if (this.file0.featureSelectorOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-        FileDownload(this.file0.featureSelectorOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
+
+        zip.file(this.file0.fileOutputName + '_missing_data.csv', this.file0.featureSelectorOutputFiles.missing_file)
+        //FileDownload(this.file0.featureSelectorOutputFiles.missing_file, this.file0.fileOutputName + '_missing_data.csv')
       }
       if (this.secondFile){
-        FileDownload(this.file1.featureSelectorOutputFiles.output_file, this.file1.fileOutputName + '.csv')
+        zip.file(this.file1.fileOutputName + '.csv', this.file1.featureSelectorOutputFiles.output_file)
+        //FileDownload(this.file1.featureSelectorOutputFiles.output_file, this.file1.fileOutputName + '.csv')
         if (this.file1.featureSelectorOutputFiles.missing_count > 0 && exportSettings.exportMissingRows) {
-          FileDownload(this.file1.featureSelectorOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
+          zip.file(this.file1.fileOutputName + '_missing_data.csv', this.file1.featureSelectorOutputFiles.missing_file)
+          //FileDownload(this.file1.featureSelectorOutputFiles.missing_file, this.file1.fileOutputName + '_missing_data.csv')
         }
       }
+      //generate file
+      zip.generateAsync({type:"blob"})
+      .then(function(content) {
+          // Force down of the Zip file
+          FileDownload(content, "feature_selector_combined_files.zip");
+      });
       //Show download UI
       this.$store.commit('FileProcessingDialogOpenSet', true)
     }
 
   }
 }
+
 </script>

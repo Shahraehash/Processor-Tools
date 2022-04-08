@@ -304,8 +304,15 @@
 
 </template>
 <script>
+//packages
 import axios from 'axios'
 import FileDownload from 'js-file-download'
+import JSZip from 'jszip'
+
+//support code
+
+
+//components
 import DataValidation from '@/components/DataValidation'
 import StepHeading from '@/components/StepHeading'
 import ErrorMessage from '@/components/ErrorMessage'
@@ -565,8 +572,6 @@ export default {
         include_index: this.outputSettings.includeRowIndex
 
       }
-      console.log(data)
-
       //UI elements
       this.$store.commit('FileProcessingDialogOpenSet', true)
       this.$store.commit('FileProcessingDialogLoadingSet', true)
@@ -576,37 +581,44 @@ export default {
         'Content-Type': 'application/json',
         }
       }).then(response => {
-        console.log(response)
+
 
         //UI elements
         this.$store.commit('FileProcessingDialogLoadingSet', false)
-
+        let zip = new JSZip();
         //File elements
         //Change file name if index included in main output
         if (this.outputSettings.includeRowIndex) {
-
-          FileDownload(response.data.training, this.outputFiles.training + '_with_index.csv')
-          FileDownload(response.data.testing, this.outputFiles.testing + '_with_index.csv')
+          zip.file(this.outputFiles.training + '_with_index.csv', response.data.training)
+          zip.file(this.outputFiles.testing + '_with_index.csv', response.data.testing)
+          //FileDownload(response.data.training, this.outputFiles.training + '_with_index.csv')
+          //FileDownload(response.data.testing, this.outputFiles.testing + '_with_index.csv')
         }
         else {
-          FileDownload(response.data.training, this.outputFiles.training + '.csv')
-          FileDownload(response.data.testing, this.outputFiles.testing + '.csv')
+          zip.file(this.outputFiles.training + '.csv', response.data.training)
+          zip.file(this.outputFiles.testing + '.csv', response.data.testing)
+          //FileDownload(response.data.training, this.outputFiles.training + '.csv')
+          //FileDownload(response.data.testing, this.outputFiles.testing + '.csv')
         }
-
-
-
         if (this.outputSettings.extraFile) {
-          FileDownload(response.data.extra, this.outputFiles.extra + '.csv')
+          zip.file(this.outputFiles.extra + '.csv', response.data.extra)
+          //FileDownload(response.data.extra, this.outputFiles.extra + '.csv')
         }
         if (this.outputSettings.nanFile) {
           try {
-            FileDownload(response.data.nan, this.outputFiles.nan + '.csv')
+            zip.file(this.outputFiles.nan + '.csv', response.data.nan)
+            //FileDownload(response.data.nan, this.outputFiles.nan + '.csv')
           }
           catch(err) {
             console.log('error')
           }
-
         }
+        //generate file
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            // Force down of the Zip file
+            FileDownload(content, "train_test_combined_files.zip");
+        });
       })
 
     },
