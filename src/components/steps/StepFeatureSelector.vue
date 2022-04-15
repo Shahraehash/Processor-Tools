@@ -111,7 +111,7 @@ export default {
       method: null,
       methodItems: [
         {'text': 'Select Percentile', value: 'select_percentile'},
-        {'text': 'Random Forrest Feature Importance', value: 'rf'}
+        {'text': 'Random Forest Feature Importance', value: 'rf'}
       ],
       percentile: 25,
       percentileItems: [
