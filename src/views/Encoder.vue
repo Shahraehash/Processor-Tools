@@ -7,8 +7,6 @@
       @reset="resetStep1"
     />
 
-
-
     <StepFileDrop
       stepTitle="File Selection"
       stepNumber="1"

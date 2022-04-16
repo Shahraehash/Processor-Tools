@@ -10,6 +10,12 @@ encoder = Blueprint(
     url_prefix='/encoder'
 )
 
+@encoder.route('/dummy_encode_non_numerical_columns',methods=['POST'])
+def dummy_encode_non_numerical_columns():
+
+    return request.json
+
+
 @encoder.route('/store',methods=['POST'])
 def encoder_store():
 
@@ -30,12 +36,11 @@ def encoder_store():
     # try:
     df = pd.read_csv(file_path)
 
-    valid_data_types = ['int64','float64']
-    invalid_columns = []
-
-    for item in df.dtypes.keys():
-        if df.dtypes[item] not in valid_data_types:
-            invalid_columns.append(item)
+    valid_data_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+    
+    valid = df.select_dtypes(include=valid_data_types)
+    invalid = df.drop(columns=valid.columns)
+    invalid_columns = invalid.apply(lambda col: col.unique())
 
     #params
     skew = df.skew()
@@ -55,6 +60,10 @@ def encoder_store():
         'skew': 1
     })
 
+
+
+
+
     entry = {
     'user_id': 'ui000001',
     'storage_id': storage_id,
@@ -66,7 +75,7 @@ def encoder_store():
     'column_names': list(df.columns.values),
     'dtypes_count': df.dtypes.value_counts().to_json(),
     'nan_by_column': df.isna().sum().to_json(),
-    'invalid_columns': list(invalid_columns),
+    'invalid_columns': invalid_columns.to_json(),
     'describe': describe.to_json(orient="records")
     }
 

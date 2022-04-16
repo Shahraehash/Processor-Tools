@@ -24,8 +24,22 @@ export default {
             }
           }).then((response) => {
             this.metadata = response.data
+            this.metadata.invalid_columns = JSON.parse(this.metadata.invalid_columns)
             this.metadata.describe = JSON.parse(this.metadata.describe)
             this.uploading = false
+            return true
+          })
+        }
+      },
+      dummyEncodeNonNumericColumns() {
+        if (this.metadata != null) {
+
+          return axios.post('/preprocessor_api/encoder/dummy_encode_non_numerical_columns', this.metadata, {
+              headers: {
+              'Content-Type': 'application/json',
+            }
+          }).then((response) => {
+            console.log(response)
             return true
           })
         }
