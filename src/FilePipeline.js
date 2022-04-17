@@ -6,7 +6,7 @@ export default {
       file: null,
       uploading: false,
       metadata: null,
-
+      csv: null,
       //methods
       evaluateMetadataAndStore() {
         if (this.file != null) {
@@ -39,7 +39,7 @@ export default {
               'Content-Type': 'application/json',
             }
           }).then((response) => {
-            console.log(response)
+            this.csv = response.data.file
             return true
           })
         }

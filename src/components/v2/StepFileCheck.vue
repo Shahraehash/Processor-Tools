@@ -67,9 +67,9 @@ export default {
   },
   methods: {
     runDummy() {
-      this.filePipelines.forEach(pipeline => {
-        pipeline.dummyEncodeNonNumericColumns()
-      })
+      this.$emit('files')
+
+
     }
 
 

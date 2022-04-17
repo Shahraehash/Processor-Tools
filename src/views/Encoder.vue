@@ -13,9 +13,11 @@
       @files="batchEvaluateMetadataAndStore"
     />
     <StepFileCheck
-      stepTitle="File Check"
+      stepTitle="Adjust Non-Numerical Columns"
       stepNumber="2"
+      v-if="stepNumber >= 2"
       :filePipelines="filePipelines"
+      @files="batchDummyEncodeNonNumericColumns"
     />
 
 
@@ -25,7 +27,8 @@
 
 <script>
 //packages
-
+import FileDownload from 'js-file-download'
+import JSZip from 'jszip'
 
 //support code
 import FilePipeline from '@/FilePipeline.js'
@@ -69,8 +72,19 @@ export default {
       }
     },
     showStep2() {
-      return false
+      if (this.filePipelines.length > 0) {
+        if (this.filePipelines[0].metadata != null) {
+          return true
+        }
+        else {
+          return false
+        }
 
+      }
+      else {
+        return false
+      }
+    
     },
     showStep3() {
       return false
@@ -101,6 +115,37 @@ export default {
       Promise.all(batch).then(() => {
         console.log('done')
       })
+
+    },
+    batchDummyEncodeNonNumericColumns() {
+      let batch = []
+      this.filePipelines.forEach(fp => {
+        batch.push(fp.dummyEncodeNonNumericColumns())
+      })
+      Promise.all(batch).then(() => {
+        let zip = new JSZip();
+
+        this.filePipelines.forEach(fp => {
+          zip.file(fp.metadata.filename + '.csv', fp.csv)
+        })
+
+        zip.generateAsync({type:"blob"})
+        .then(function(content) {
+            // Force down of the Zip file
+            FileDownload(content, "encoder_combined_files.zip");
+        });
+        //Show download UI
+        this.$store.commit('FileProcessingDialogOpenSet', true)                
+
+        
+      })
+
+      
+
+      
+      //FileDownload(this.file0.columnReducerOutputFiles.output_file, this.file0.fileOutputName + '.csv')
+
+      //generate file
 
     },
 
