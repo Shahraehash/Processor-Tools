@@ -49,7 +49,7 @@ def generate():
             'score': round(score, 3)
         })
 
-    #Random Forrest
+    #Random Forest
     forest = RandomForestClassifier(random_state=0)
     rf_best = forest.fit(X_train, y_train)
     sorted_array_rf = []
