@@ -8,7 +8,7 @@ export default {
       metadata: null,
       csv: null,
       //methods
-      evaluateMetadataAndStore() {
+      evaluateMetadataAndStore(target) {
         if (this.file != null) {
           //this method uploads form data
           var formData = new FormData();
@@ -21,6 +21,7 @@ export default {
               headers: {
               'Content-Type': 'multipart/form-data',
               'filename': this.file.name,
+              'target': target
             }
           }).then((response) => {
             this.metadata = response.data

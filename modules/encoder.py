@@ -6,11 +6,55 @@ from datetime import datetime
 import simplejson
 from sklearn.preprocessing import OneHotEncoder
 
+#helper functions
+from .helpers import convert_blanks_to_nan, find_nan_counts
+
 encoder = Blueprint(
     'encoder',
     __name__,
     url_prefix='/encoder'
 )
+
+
+
+def save_file(file_obj, storage_id):
+    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
+    file_obj.save(file_path)
+
+def load_file(storage_id):
+    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
+    df = pd.read_csv(file_path)
+    df_nan = df[df.isna().any(axis=1)]
+    df_remove_nan = df.drop(df_nan.index)
+    return {
+        'df_remove_nan': df_remove_nan,
+        'df_nan': df_nan
+    }
+
+def find_invalid_columns(df):
+    valid_data_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+    
+    valid = df.select_dtypes(include=valid_data_types)
+    
+    invalid = df.drop(columns=valid.columns)
+    
+    invalid_columns = []
+    
+    for column in invalid.columns:
+        uniq = list(invalid[column].unique())
+
+        invalid_columns.append(
+        {
+            'name': column,
+            'values': uniq, #Do this better, right now need to cover if bool
+            'type': str(invalid[column].dtype),
+            'count': len(invalid[column].unique())
+        })
+
+    return invalid_columns
+
+
+
 
 @encoder.route('/dummy_encode_non_numerical_columns',methods=['POST'])
 def dummy_encode_non_numerical_columns():
@@ -72,14 +116,10 @@ def dummy_encode_non_numerical_columns():
             #Adjust original columns
             invalid = pd.concat([temp_df,invalid], axis=1)
             invalid = invalid.drop(col_data['name'], axis=1)
-            
-
-    
 
     final_object = {
         'file': pd.concat([valid, invalid], axis=1).to_csv(index=False),
     }
-
     response = make_response(
         #Added to transform nan items to null when sending JSON
         simplejson.dumps(final_object, ignore_nan=True),
@@ -93,81 +133,47 @@ def dummy_encode_non_numerical_columns():
 
 
 
-
-
-
-
 @encoder.route('/store',methods=['POST'])
 def encoder_store():
 
     file_obj = request.files['file']
     filename = request.headers['filename'] #filename stored in special header
+    target = request.headers['target']
 
     if file_obj is None:
         # Indicates that no file was sent
         return "File not uploaded"
 
     storage_id = str(uuid.uuid4())
+    save_file(file_obj, storage_id)
 
-    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
-    file_obj.save(file_path)
+    df = load_file(storage_id)
+    nan_count = df['df_nan'].shape[0]
+    df = df['df_remove_nan']
 
-    #Script will try to read file and return data. If it fails it will delete
-    #the file.
-    # try:
-    df = pd.read_csv(file_path)
+    #ensure all types in values array do not create error for JSON
+    invalid_columns = find_invalid_columns(df)
+    for item in invalid_columns:
+        item['values'] = str(item['values'])
 
-    valid_data_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
-    
-    valid = df.select_dtypes(include=valid_data_types)
-    invalid = df.drop(columns=valid.columns)
-    invalid_columns = invalid.apply(lambda col: col.unique())
-
-    #params
-    skew = df.skew()
-    skew.name = 'skew'
-
-    describe = df.describe().append(skew).transpose()
-    describe.reset_index(inplace=True)
-    describe = describe.rename(columns={'index':'feature'})
-    describe = describe.round({
-        'mean': 1,
-        'std': 1,
-        'min': 1,
-        '25%': 1,
-        '50%': 1,
-        '75%': 1,
-        'max': 1,
-        'skew': 1
-    })
-
-
-
-
-
-    entry = {
-    'user_id': 'ui000001',
+    metadata = {
+    'user_id': 'temp',
     'storage_id': storage_id,
     'filename':  filename,
-    'content_type': file_obj.content_type,
     'upload_time': datetime.timestamp(datetime.now()),
     'rows': int(df.shape[0]),
     'columns': int(df.shape[1]),
     'column_names': list(df.columns.values),
-    'dtypes_count': df.dtypes.value_counts().to_json(),
-    'nan_by_column': df.isna().sum().to_json(),
-    'invalid_columns': invalid_columns.to_json(),
-    'describe': describe.to_json(orient="records")
+    'nan_count': nan_count,
+    'target': target,
+    'invalid_columns': list(invalid_columns),
     }
 
     response = make_response(
-        jsonify(entry),
+        #Added to transform nan items to null when sending JSON
+        simplejson.dumps(metadata, ignore_nan=True),
         200,
     )
     response.headers["Content-Type"] = "application/json"
-    return response
 
-    # except Exception as e:
-    #
-    #     os.remove(file_path)
-    #     return abort(500)
+    return response

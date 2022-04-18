@@ -107,7 +107,7 @@ export default {
         fp.target = data.target //note the target
 
         //queue up processing
-        batch.push(fp.evaluateMetadataAndStore())
+        batch.push(fp.evaluateMetadataAndStore(fp.target))
 
         //store file pipeline
         this.filePipelines.push(fp)

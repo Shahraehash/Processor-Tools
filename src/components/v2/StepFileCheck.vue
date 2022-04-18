@@ -11,12 +11,15 @@
         <div>
           {{pipeline.metadata.filename}}
         </div>
-        <v-card flat outlined class="ma-3 pa-3" v-for="(values, column) in pipeline.metadata.invalid_columns" :key="column">
+        <div>
+          Rows excluded: {{pipeline.metadata.nan_count}}
+        </div>
+        <v-card flat outlined class="ma-3 pa-3" v-for="col in pipeline.metadata.invalid_columns" :key="col.name">
           <div >
-            <span class="title font-weight-medium">{{column}}</span> <span class="grey--text">{{values.length}} values</span>
+            <span class="title font-weight-medium">{{col.name}}</span> <span class="grey--text">{{col.count}} values</span>
           </div>
           <div >
-            <v-chip v-for="v in values" :key="v">{{v}}</v-chip>
+           {{col.values}}
           </div>
         </v-card>        
       </div>
