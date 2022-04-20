@@ -82,7 +82,7 @@ def dummy_encode_non_numerical_columns():
             'count': len(invalid[column].unique())
         })
 
-    column_map = []
+    column_map = [] #track mapping of columns
     for col_data in invalid_columns:
         
         #Ensure Boolean Values are Preserved
