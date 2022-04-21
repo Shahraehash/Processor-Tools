@@ -37,10 +37,26 @@ def find_invalid_columns(df):
     valid = df.select_dtypes(include=valid_data_types)
     
     invalid = df.drop(columns=valid.columns)
-    
+
+    for column in invalid.columns:
+        col = invalid[column]
+        total_size = col.shape[0]
+        #convert the column to numeric and replace str with NaN
+        numeric = pd.to_numeric(col, errors='coerce')   
+        #see how many NaN values there are
+        nan_bool = numeric.isna()
+        nans = col[nan_bool]
+        nans_size = nans.shape[0]
+        #if there are less than 20% of the total size, we can assume column is numerical
+        nan_percent = nans_size / total_size
+        if nan_percent < 0.20:
+            valid[column] = numeric
+            invalid.drop(column, axis=1, inplace=True)
+             
     invalid_columns = []
     
     for column in invalid.columns:
+
         uniq = list(invalid[column].unique())
 
         invalid_columns.append(
@@ -51,8 +67,7 @@ def find_invalid_columns(df):
             'count': len(invalid[column].unique())
         })
 
-    return invalid_columns
-
+    return valid, invalid, invalid_columns;
 
 
 
@@ -65,22 +80,7 @@ def dummy_encode_non_numerical_columns():
 
     df = pd.read_csv(file_path)
 
-    valid_data_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
-
-    valid = df.select_dtypes(include=valid_data_types)
-    invalid = df.drop(columns=valid.columns)
-
-    invalid_columns = []
-    for column in invalid.columns:
-        uniq = list(invalid[column].unique())
-
-        invalid_columns.append(
-        {
-            'name': column,
-            'values': uniq,
-            'type': str(invalid[column].dtype),
-            'count': len(invalid[column].unique())
-        })
+    valid, invalid, invalid_columns = find_invalid_columns(df)
 
     column_map = [] #track mapping of columns
     for col_data in invalid_columns:
@@ -152,7 +152,7 @@ def encoder_store():
     df = df['df_remove_nan']
 
     #ensure all types in values array do not create error for JSON
-    invalid_columns = find_invalid_columns(df)
+    valid, invalid, invalid_columns = find_invalid_columns(df)
     for item in invalid_columns:
         item['values'] = str(item['values'])
 
