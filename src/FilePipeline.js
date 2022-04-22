@@ -3,35 +3,43 @@ import axios from 'axios'
 export default {
   newFilePipeline() {
     return {
-      file: null,
+      initialFiles: [],
+      target: null,
       uploading: false,
       metadata: null,
       csv: null,
+
+      setInitialFiles(files, target) {
+        //reset default state
+        this.initialFiles =[]
+        this.target = null
+        //set values
+        this.initialFiles = files
+        this.target = target
+      },
       //methods
-      evaluateMetadataAndStore(target) {
-        if (this.file != null) {
+      evaluateMetadataAndStore() {
+        if (this.initialFiles.length > 0) {
           //this method uploads form data
           var formData = new FormData();
-          //file name data stored in X-file header of post request
-          formData.append("file", this.file);
 
-          this.uploading = true
+          this.initialFiles.map((file, index) => {
+            console.log(index)
+            formData.append('files', file);
+          });          
 
           return axios.post('/preprocessor_api/encoder/store', formData, {
               headers: {
               'Content-Type': 'multipart/form-data',
-              'filename': this.file.name,
-              'target': target
             }
           }).then((response) => {
             this.metadata = response.data
-            this.metadata.invalid_columns = JSON.parse(this.metadata.invalid_columns)
-            this.metadata.describe = JSON.parse(this.metadata.describe)
-            this.uploading = false
             return true
           })
         }
       },
+
+
       dummyEncodeNonNumericColumns() {
         if (this.metadata != null) {
 

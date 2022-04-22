@@ -6,25 +6,23 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
     />
-    <div v-for="(pipeline, index) in filePipelines" :key="index">
-      <div v-if="pipeline.metadata">
-        <div>
-          {{pipeline.metadata.filename}}
-        </div>
-        <div>
-          Rows excluded: {{pipeline.metadata.nan_count}}
-        </div>
-        <v-card flat outlined class="ma-3 pa-3" v-for="col in pipeline.metadata.invalid_columns" :key="col.name">
-          <div >
-            <span class="title font-weight-medium">{{col.name}}</span> <span class="grey--text">{{col.count}} values</span>
-          </div>
-          <div >
-           {{col.values}}
-          </div>
-        </v-card>        
-      </div>
+    <div>
+      Pipeline ID: {{filePipeline.metadata.pipelineId}}
     </div>
-    <div class="text-right" >
+    <v-card outlined class="ma-3 pa-3" v-for="(file, key) in filePipeline.metadata.initialFiles" :key="key">
+    <div>{{file.name}}</div>    
+    <div>Columns: {{file.columns}}</div>  
+    <div>Rows: {{file.Rows}}</div>    
+    <div>Column Names: {{file.columnNames}}</div>    
+    <div>Invalid Column Adjustments</div>    
+    <div v-for="(comment, col) in file.invalidColumnsComments" :key="col">
+      {{col}} : {{comment}}
+    </div>    
+    </v-card>  
+
+
+
+    <!-- <div class="text-right" >
       <v-btn
         @click="runDummy()"
         class="primary"
@@ -34,7 +32,7 @@
         >
         Dummy Encode
       </v-btn>
-    </div>    
+    </div>     -->
 
   </v-card>
 </template>
@@ -58,22 +56,18 @@ export default {
     }
   },
   props: [
-    'filePipelines',
+    'filePipeline',
     'stepNumber',
     'stepTitle',
   ],
   watch: {
-    filePipelines() {
-      console.log(this.filePipelines)
+    filePipeline() {
+      console.log(this.filePipeline)
 
     }
   },
   methods: {
-    runDummy() {
-      this.$emit('files')
 
-
-    }
 
 
   }

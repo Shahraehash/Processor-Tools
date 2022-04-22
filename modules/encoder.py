@@ -1,5 +1,6 @@
 from flask import Blueprint, current_app, jsonify, request, make_response
 import pandas as pd
+import numpy as np
 import os
 import uuid
 from datetime import datetime
@@ -24,12 +25,10 @@ def save_file(file_obj, storage_id):
 def load_file(storage_id):
     file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file_path)
-    df_nan = df[df.isna().any(axis=1)]
-    df_remove_nan = df.drop(df_nan.index)
-    return {
-        'df_remove_nan': df_remove_nan,
-        'df_nan': df_nan
-    }
+    #Automatic fixes
+    df = df.replace(r'^\s*$', np.nan, regex=True) #replaces empty strings spacess with NaN
+    return df
+
 
 def find_invalid_columns(df):
     valid_data_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
@@ -68,6 +67,47 @@ def find_invalid_columns(df):
         })
 
     return valid, invalid, invalid_columns;
+
+
+def ex_invalid_columns(df):
+    valid_data_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64', 'bool']
+
+    valid = df.select_dtypes(include=valid_data_types)
+
+    invalid = df.drop(columns=valid.columns)
+    fix = pd.DataFrame()
+
+    #process mixed data types
+    comments = {}
+
+    for column in invalid.columns:
+        col = invalid[column]
+
+        total_count = col.shape[0]
+        nan_count = col.isna().sum()
+
+        col = col.dropna()
+        not_nan_count = col.shape[0]
+
+        numeric = ~pd.to_numeric(col, errors='coerce').isna()
+        numeric_count = numeric.sum()
+
+        if (numeric_count / total_count) > 0.6:
+            invalid[column] = pd.to_numeric(col, errors='coerce')
+            comments[column] = f'More than 0.6 of data is numeric. {nan_count} dropped' 
+        
+        elif (len(col.unique()) == 2):
+            mapping = {}
+            for index, val in enumerate(col.unique()):
+                mapping[val] = index
+            invalid[column] = col.map(mapping).astype('int')
+            comments[column] = f'Two unique values. {str(mapping)}'
+    
+        elif (len(col.unique()) > 2):
+            comments[column] = 'Will be one hot encoded'
+            
+
+    return comments, list(invalid.columns)
 
 
 
@@ -136,44 +176,41 @@ def dummy_encode_non_numerical_columns():
 @encoder.route('/store',methods=['POST'])
 def encoder_store():
 
-    file_obj = request.files['file']
-    filename = request.headers['filename'] #filename stored in special header
-    target = request.headers['target']
-
-    if file_obj is None:
-        # Indicates that no file was sent
-        return "File not uploaded"
-
-    storage_id = str(uuid.uuid4())
-    save_file(file_obj, storage_id)
-
-    df = load_file(storage_id)
-    nan_count = df['df_nan'].shape[0]
-    df = df['df_remove_nan']
-
-    #ensure all types in values array do not create error for JSON
-    valid, invalid, invalid_columns = find_invalid_columns(df)
-    for item in invalid_columns:
-        item['values'] = str(item['values'])
-
-    metadata = {
-    'user_id': 'temp',
-    'storage_id': storage_id,
-    'filename':  filename,
-    'upload_time': datetime.timestamp(datetime.now()),
-    'rows': int(df.shape[0]),
-    'columns': int(df.shape[1]),
-    'column_names': list(df.columns.values),
-    'nan_count': nan_count,
-    'target': target,
-    'invalid_columns': list(invalid_columns),
+    #Object to store pipeline
+    pipeline = {
+        'pipelineId': str(uuid.uuid4()),
+        'upload_time': datetime.timestamp(datetime.now()),
+        'initialFiles': [],
+        #'initialFilesValidation': None #TODO: Add validation
     }
+
+    #Each file is uploaded as part of a multipart form with the same key 'files
+    #Saving process
+    files = request.files.getlist('files')
+    for file in files:
+        storage_id = str(uuid.uuid4())
+        save_file(file, storage_id) #custom helper function
+        pipeline['initialFiles'].append({   
+            'storageId': storage_id,
+            'name': file.filename,
+        })
+    
+    #Read saved files and extract metadata
+    for file in pipeline['initialFiles']:
+        df = load_file(file['storageId'])
+        comments, invalid_columns = ex_invalid_columns(df)
+        file['invalidColumns'] = invalid_columns
+        file['invalidColumnsComments'] = comments
+        file['rows'] = int(df.shape[0])
+        file['columns'] = int(df.shape[1])
+        file['columnNames'] = list(df.columns.values)       
 
     response = make_response(
         #Added to transform nan items to null when sending JSON
-        simplejson.dumps(metadata, ignore_nan=True),
+        simplejson.dumps(pipeline, ignore_nan=True),
         200,
     )
     response.headers["Content-Type"] = "application/json"
 
-    return response
+    return response    
+
