@@ -69,16 +69,15 @@ def find_invalid_columns(df):
     return valid, invalid, invalid_columns;
 
 
-def ex_invalid_columns(df):
+def define_invalid_columns(df):
     valid_data_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64', 'bool']
 
     valid = df.select_dtypes(include=valid_data_types)
 
     invalid = df.drop(columns=valid.columns)
-    fix = pd.DataFrame()
 
     #process mixed data types
-    comments = {}
+    transforms = {}
 
     for column in invalid.columns:
         col = invalid[column]
@@ -94,22 +93,35 @@ def ex_invalid_columns(df):
 
         if (numeric_count / total_count) > 0.6:
             invalid[column] = pd.to_numeric(col, errors='coerce')
-            comments[column] = f'More than 0.6 of data is numeric. {nan_count} dropped' 
+            #proposed_transform
+            transforms[column] = {
+                'type': 'mixed_to_numeric',
+                'nan_row_index': list(col[col.isna() == True].index),
+                'non_numeric_row_index': list(numeric[numeric == False].index)
+            } 
         
         elif (len(col.unique()) == 2):
             mapping = {}
             for index, val in enumerate(col.unique()):
                 mapping[val] = index
-            invalid[column] = col.map(mapping).astype('int')
-            comments[column] = f'Two unique values. {str(mapping)}'
+            #invalid[column] = col.map(mapping).astype('int')
+
+            transforms[column] = {
+                'type': 'category_to_binary',
+                'map': mapping,
+                'nan_row_index': list(col[col.isna() == True].index)
+            }             
     
         elif (len(col.unique()) > 2):
-            comments[column] = 'Will be one hot encoded'
+
+            transforms[column] = {
+                'type': 'one_hot_encode',
+                'unique_values': list(col.unique()),
+                'nan_row_index': list(col[col.isna() == True].index)
+            }
+
             
-
-    return comments, list(invalid.columns)
-
-
+    return transforms, list(invalid.columns)
 
 @encoder.route('/dummy_encode_non_numerical_columns',methods=['POST'])
 def dummy_encode_non_numerical_columns():
@@ -198,9 +210,9 @@ def encoder_store():
     #Read saved files and extract metadata
     for file in pipeline['initialFiles']:
         df = load_file(file['storageId'])
-        comments, invalid_columns = ex_invalid_columns(df)
+        transforms, invalid_columns = define_invalid_columns(df)
         file['invalidColumns'] = invalid_columns
-        file['invalidColumnsComments'] = comments
+        file['invalidColumnsTransforms'] = transforms
         file['rows'] = int(df.shape[0])
         file['columns'] = int(df.shape[1])
         file['columnNames'] = list(df.columns.values)       
