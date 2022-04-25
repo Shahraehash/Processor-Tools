@@ -10,45 +10,43 @@
       Pipeline ID: {{filePipeline.metadata.pipelineId}}
     </div>
     <v-card outlined class="ma-3 pa-3" v-for="(file, key) in filePipeline.metadata.initialFiles" :key="key">
-    <div>{{file.name}}</div>    
-    <div>Columns: {{file.columns}}</div>  
-    <div>Rows: {{file.rows}}</div>    
-    <div>Column Names: {{file.columnNames}}</div>    
-    <div>Invalid Column Adjustments</div>    
-    <v-card outlined class="ma-2 pa-2" v-for="(transform, col) in file.invalidColumnsTransforms" :key="col">
-      {{col}}
-
+    <div class="title">{{file.name}}</div>    
+    <div>Columns: {{file.columns}} x Rows: {{file.rows}}</div>  
+    <div></div>    
+    <div>Column: 
+      <v-chip :color="file.invalidColumns.includes(name) ? 'purple lighten-4' : ''" v-for="(name, key) in file.columnNames" :key="key">
+        {{name}}
+      </v-chip>
+    </div>   
+    <div class="mt-3 overline">Invalid Column Adjustments</div>   
+    <v-card flat class="px-2 py-2" v-for="(transform, col) in file.invalidColumnsTransforms" :key="col">
       <div v-if="transform.type == 'mixed_to_numeric'">
-        {{transform.type}}
+        <div><v-chip color="purple lighten-4" class="">{{col}}</v-chip></div>
+        <div class="ml-3">This column has predominately numerical data. Non-numerical values will be removed.</div>
+        
       </div>
       <div v-if="transform.type == 'category_to_binary'">
-        {{transform.type}}
-
-
-        <v-row>
+        <div><v-chip color="purple lighten-4" class="">{{col}}</v-chip></div>
+        <div class="ml-3">This coulmn has two values which will be replaced by a binary representation.</div>
+        <v-row class="mt-2 mx-1">
           <v-col cols="3" v-for="(val, cat) in transform.map" :key="cat">
             <div >
               <v-select outlined dense :label="cat" @change="flipValues($event, cat, col, key)" v-model="transform.map[cat]" :items=[0,1]></v-select>
             </div>            
           </v-col>
         </v-row>
-        
-    
-
-        
-    
       </div>
-        
       <div v-if="transform.type == 'one_hot_encode'">
-        {{transform.type}}
-
+        <div><v-chip color="purple lighten-4" class="">{{col}}</v-chip></div>
+        <div class="ml-3">This column contains multiple categories. Each category will be given a seperate binary column.</div>
       </div>      
     </v-card>    
     </v-card>  
 
 
-
+   
     <div class="text-right" >
+      <v-switch disabled class="right" label="Include indexs" v-model="includeIndexes"></v-switch>
       <v-btn
         @click="applyTransforms()"
         class="primary"
@@ -58,6 +56,7 @@
         >
         Dummy Encode
       </v-btn>
+      
     </div>    
 
   </v-card>
@@ -78,6 +77,7 @@ export default {
   },
   data() {
     return {
+      includeIndexes: true,
 
     }
   },

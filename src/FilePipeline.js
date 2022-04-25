@@ -1,5 +1,6 @@
 import axios from 'axios'
 import FileDownload from 'js-file-download'
+import JSZip from 'jszip'
 
 export default {
   newFilePipeline() {
@@ -40,18 +41,25 @@ export default {
         }
       },
 
-
       applyTransforms() {
         if (this.metadata != null) {
 
           return axios.post('/preprocessor_api/encoder/apply_transforms', this.metadata, {
               headers: {
               'Content-Type': 'application/json',
+              'target': this.target,
             }
           }).then((response) => {
+            let zip = new JSZip();
+
             for (let file in response.data) {
-              FileDownload(response.data[file], file)
+              zip.file(file, response.data[file])            
             }
+            zip.generateAsync({type:"blob"})
+            .then(function(content) {
+                // Force down of the Zip file
+                FileDownload(content, "encoder.zip");
+            });            
           })
         }
       }

@@ -17,7 +17,6 @@ encoder = Blueprint(
     url_prefix='/encoder'
 )
 
-
 def transform_mixed_to_numeric(series):
     """
     Convert a series of mixed data types to numeric
@@ -45,11 +44,6 @@ def transform_one_hot_encode(series):
 
 def transform_category_to_binary(series, map):
     return series.map(map).astype('int')
-
-
-
-
-
 
 
 
@@ -124,6 +118,7 @@ def apply_transforms():
 
     result = {}
 
+    target = request.headers['target']
     files = request.json['initialFiles']
     for file in files:
         print(file['name'])
@@ -142,6 +137,18 @@ def apply_transforms():
             elif t['type'] == 'one_hot_encode':
                 df = pd.concat([df, transform_one_hot_encode(df[column])], axis=1)
                 df = df.drop(column, axis=1)
+
+        #ensure target is converted to numeric
+        try:
+            df[target] = df[target].astype('int')
+        except:
+            print('cannot convert target to binary')
+
+        #ensure target remains at end of file
+        col_list = list(df.columns)
+        i = col_list.index(target)
+        reorder_list = col_list[:i] + col_list[i + 1:] + [target]
+        df = df[reorder_list]        
 
         
         result[file['name']] = df.to_csv(index=True)
