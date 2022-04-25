@@ -19,10 +19,10 @@
       {{col}}
 
       <div v-if="transform.type == 'mixed_to_numeric'">
-        {{transform.comment}}
+        {{transform.type}}
       </div>
       <div v-if="transform.type == 'category_to_binary'">
-        {{transform.comment}}
+        {{transform.type}}
 
 
         <v-row>
@@ -38,9 +38,9 @@
         
     
       </div>
+        
       <div v-if="transform.type == 'one_hot_encode'">
-        {{transform.comment}}
-
+        {{transform.type}}
 
       </div>      
     </v-card>    
@@ -48,9 +48,9 @@
 
 
 
-    <!-- <div class="text-right" >
+    <div class="text-right" >
       <v-btn
-        @click="runDummy()"
+        @click="applyTransforms()"
         class="primary"
         rounded
         text
@@ -58,7 +58,7 @@
         >
         Dummy Encode
       </v-btn>
-    </div>     -->
+    </div>    
 
   </v-card>
 </template>
@@ -104,6 +104,9 @@ export default {
         }
       }
     },
+    applyTransforms() {
+      this.filePipeline.applyTransforms()
+    }
       
 
 

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import FileDownload from 'js-file-download'
 
 export default {
   newFilePipeline() {
@@ -40,16 +41,17 @@ export default {
       },
 
 
-      dummyEncodeNonNumericColumns() {
+      applyTransforms() {
         if (this.metadata != null) {
 
-          return axios.post('/preprocessor_api/encoder/dummy_encode_non_numerical_columns', this.metadata, {
+          return axios.post('/preprocessor_api/encoder/apply_transforms', this.metadata, {
               headers: {
               'Content-Type': 'application/json',
             }
           }).then((response) => {
-            this.csv = response.data.file
-            return true
+            for (let file in response.data) {
+              FileDownload(response.data[file], file)
+            }
           })
         }
       }
