@@ -16,6 +16,11 @@
       stepNumber="2"
       :filePipeline="FilePipeline"
     />
+    <StepFileRow
+      stepTitle="Handle Missing Values"
+      stepNumber="3"
+      :filePipeline="FilePipeline"
+    />    
 
 
   </v-container>
@@ -34,13 +39,15 @@ import FilePipeline from '@/FilePipeline.js'
 import MenuBar from '@/components/MenuBar'
 import StepFileDrop from '@/components/v2/StepFileDrop'
 import StepFileCheck from '@/components/v2/StepFileCheck'
+import StepFileRow from '@/components/v2/StepFileRow'
 
 export default {
   name: 'Encoder',
   components: {
     MenuBar,
     StepFileDrop,
-    StepFileCheck
+    StepFileCheck,
+    StepFileRow
   },
   props: [],
   created() {

@@ -9,7 +9,9 @@ export default {
       target: null,
       uploading: false,
       metadata: null,
-      csv: null,
+      columnAdjust: null,
+      rowHandling: null,
+      rowOption: 0, //0: remove, 1: impute
 
       setInitialFiles(files, target) {
         //reset default state
@@ -50,10 +52,37 @@ export default {
               'target': this.target,
             }
           }).then((response) => {
+            console.log(response.data)
+            this.columnAdjust = response.data
+            // let zip = new JSZip();
+
+            // for (let file in response.data.files) {
+            //   zip.file(file, response.data.files[file])            
+            // }
+            // zip.generateAsync({type:"blob"})
+            // .then(function(content) {
+            //     // Force down of the Zip file
+            //     FileDownload(content, "encoder.zip");
+            // });            
+          })
+        }
+      },
+      handleRows() {
+        if (this.metadata != null) {
+
+          return axios.post('/preprocessor_api/encoder/manage_rows', this.metadata, {
+              headers: {
+              'Content-Type': 'application/json',
+              'target': this.target,
+              'rowOption': this.rowOption,
+            }
+          }).then((response) => {
+            console.log(response.data)
             let zip = new JSZip();
 
-            for (let file in response.data) {
-              zip.file(file, response.data[file])            
+            for (let file in response.data.files) {
+              console.log(file)
+              zip.file(file, response.data.files[file])            
             }
             zip.generateAsync({type:"blob"})
             .then(function(content) {
@@ -61,7 +90,8 @@ export default {
                 FileDownload(content, "encoder.zip");
             });            
           })
-        }
+        }        
+
       }
 
     }

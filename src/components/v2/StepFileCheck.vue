@@ -42,13 +42,10 @@
       </div>      
     </v-card>    
     </v-card>  
-
-
-   
     <div class="text-right" >
       <v-switch disabled class="right" label="Include indexs" v-model="includeIndexes"></v-switch>
       <v-btn
-        @click="applyTransforms()"
+        @click="filePipeline.applyTransforms()"
         class="primary"
         rounded
         text
@@ -56,7 +53,6 @@
         >
         Dummy Encode
       </v-btn>
-      
     </div>    
 
   </v-card>
@@ -104,13 +100,6 @@ export default {
         }
       }
     },
-    applyTransforms() {
-      this.filePipeline.applyTransforms()
-    }
-      
-
-
-
   }
 }
 </script>
