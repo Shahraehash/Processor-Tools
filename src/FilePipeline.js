@@ -67,7 +67,7 @@ export default {
           })
         }
       },
-      handleRows() {
+      handleRows(includeIndexes) {
         if (this.metadata != null) {
 
           return axios.post('/preprocessor_api/encoder/manage_rows', this.metadata, {
@@ -75,6 +75,7 @@ export default {
               'Content-Type': 'application/json',
               'target': this.target,
               'rowOption': this.rowOption,
+              'includeIndexes': includeIndexes,
             }
           }).then((response) => {
             console.log(response.data)

@@ -6,6 +6,7 @@ import os
 import uuid
 from datetime import datetime
 import simplejson
+from distutils import util
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
@@ -187,6 +188,9 @@ def manage_rows():
 
     target = request.headers['target']
     row_option = request.headers['rowOption']
+    include_indexes = request.headers['includeIndexes']
+    include_indexes = bool(util.strtobool(include_indexes))
+    print('include_index:', include_indexes)
     files = request.json['initialFiles']
     for file in files:
 
@@ -199,9 +203,10 @@ def manage_rows():
 
         if (row_option == '0'):
             missing = df[df.isna().any(axis=1)]
-            output = df.drop(missing.index)            
-            output_files['missing_' + file['name']] = missing.to_csv(index=True)
-            output_files[file['name']] = output.to_csv(index=True)
+            output = df.drop(missing.index)
+            if missing.shape[0] > 0:         
+                output_files['missing_' + file['name']] = missing.to_csv(index=True, index_label="source_row")
+            output_files[file['name']] = output.to_csv(index=include_indexes, index_label="source_row")
         elif (row_option == '1'):
             imp_mean = IterativeImputer(random_state=0)
             X = df.drop(columns=[target])
@@ -209,7 +214,7 @@ def manage_rows():
             imp_mean.fit(X)
             result = pd.DataFrame(imp_mean.transform(X),columns=X.columns)
             result[target] = y
-            output_files[file['name']] = result.to_csv(index=True)
+            output_files[file['name']] = result.to_csv(index=include_indexes, index_label="source_row")
 
     result = {
         'files': output_files,

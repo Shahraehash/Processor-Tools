@@ -15,10 +15,11 @@
     >
       <v-radio label="Remove rows with missing data"></v-radio>
       <v-radio label="Impute rows with missing data"></v-radio>
+      <v-switch class="right" label="Include indexs in export" v-model="includeIndexes"></v-switch>
     </v-radio-group>
     <div class="text-right">
         <v-btn
-        @click="filePipeline.handleRows()"
+        @click="filePipeline.handleRows(includeIndexes)"
         class="primary"
         rounded
         text
@@ -45,12 +46,13 @@ import StepHeading from '@/components/StepHeading'
 
 //Inspired by: https://www.raymondcamden.com/2019/08/08/drag-and-drop-file-upload-in-vuejs
 export default {
-  name: 'StepFileDrop',
+  name: 'StepFileRow',
   components: {
     StepHeading
   },
   data() {
     return {
+      includeIndexes: false
     }
   },
   props: [
