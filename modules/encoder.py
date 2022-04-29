@@ -234,6 +234,9 @@ def manage_rows():
 @encoder.route('/store',methods=['POST'])
 def encoder_store():
 
+    target = request.headers['target']
+    files = request.files.getlist('files')
+
     #Object to store pipeline
     pipeline = {
         'pipelineId': str(uuid.uuid4()),
@@ -244,7 +247,7 @@ def encoder_store():
 
     #Each file is uploaded as part of a multipart form with the same key 'files
     #Saving process
-    files = request.files.getlist('files')
+    
     for file in files:
         storage_id = str(uuid.uuid4())
         save_file(file, storage_id) #custom helper function
@@ -256,12 +259,29 @@ def encoder_store():
     #Read saved files and extract metadata
     for file in pipeline['initialFiles']:
         df = load_file(file['storageId'])
+
+        df.columns.values
+
+        target_validation = {
+            'validTarget': int(False), #for json
+            'targetValues': [],
+            'valuesCount': 0
+        }
+        if target in df.columns.values:
+            target_validation['targetValues'] = list(df[target].astype('str').unique())
+            target_validation['targetValues'].sort()
+            target_validation['valuesCount'] = len(target_validation['targetValues'])
+            target_validation['validTarget'] = int(target_validation['valuesCount'] == 2)
+            
+
         transforms, invalid_columns = define_invalid_columns(df)
         file['invalidColumns'] = invalid_columns
         file['invalidColumnsTransforms'] = transforms
         file['rows'] = int(df.shape[0])
         file['columns'] = int(df.shape[1])
-        file['columnNames'] = list(df.columns.values)       
+        file['columnNames'] = list(df.columns.values)
+        print(target_validation)
+        file['targetValidation'] = target_validation      
 
     response = make_response(
         #Added to transform nan items to null when sending JSON

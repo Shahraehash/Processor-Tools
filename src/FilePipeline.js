@@ -35,6 +35,7 @@ export default {
           return axios.post('/preprocessor_api/encoder/store', formData, {
               headers: {
               'Content-Type': 'multipart/form-data',
+              'target': this.target,              
             }
           }).then((response) => {
             this.metadata = response.data
@@ -42,7 +43,6 @@ export default {
           })
         }
       },
-
       applyTransforms() {
         if (this.metadata != null) {
 

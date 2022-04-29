@@ -12,14 +12,20 @@
       stepNumber="1"
       @files="batchEvaluateMetadataAndStore"
     />
+    <StepTargetCheck
+      v-if="FilePipeline.metadata != null"
+      stepTitle="Verify Target Column"
+      stepNumber="2"
+      :filePipeline="FilePipeline"
+    />    
     <StepFileCheck
       stepTitle="Adjust Non-Numerical Columns"
-      stepNumber="2"
+      stepNumber="3"
       :filePipeline="FilePipeline"
     />
     <StepFileRow
       stepTitle="Handle Missing Values"
-      stepNumber="3"
+      stepNumber="4"
       :filePipeline="FilePipeline"
       @processStep="$store.commit('FileProcessingDialogOpenSet', true)"
     />    
@@ -40,6 +46,7 @@ import FilePipeline from '@/FilePipeline.js'
 //components
 import MenuBar from '@/components/MenuBar'
 import StepFileDrop from '@/components/v2/StepFileDrop'
+import StepTargetCheck from '@/components/v2/StepTargetCheck'
 import StepFileCheck from '@/components/v2/StepFileCheck'
 import StepFileRow from '@/components/v2/StepFileRow'
 
@@ -48,11 +55,13 @@ export default {
   components: {
     MenuBar,
     StepFileDrop,
+    StepTargetCheck,
     StepFileCheck,
     StepFileRow
   },
   props: [],
   created() {
+    this.FilePipeline = FilePipeline.newFilePipeline()
 
   },
   data() {
@@ -72,7 +81,7 @@ export default {
     //Step 1
     batchEvaluateMetadataAndStore(data) {
       
-      this.FilePipeline = FilePipeline.newFilePipeline()
+      
       this.FilePipeline.setInitialFiles(data.files, data.target)
       this.FilePipeline.evaluateMetadataAndStore()
       
