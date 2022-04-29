@@ -6,20 +6,26 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
     />
-    <div v-for="(count, file) in filePipeline.columnAdjust.nan_rows" :key="file">
-
+    <div v-if="totalMissingRows > 0">
+      <div v-for="(count, file) in filePipeline.columnAdjust.nan_rows" :key="file">
+        
         {{file}}: {{count}} missing rows
+      </div>
+      <v-radio-group
+        v-model="filePipeline.rowOption"
+      >
+        <v-radio label="Remove rows with missing data"></v-radio>
+        <v-radio label="Impute rows with missing data"></v-radio>
+        <v-switch class="right" label="Include indexs in export" v-model="includeIndexes"></v-switch>
+      </v-radio-group>
     </div>
-    <v-radio-group
-      v-model="filePipeline.rowOption"
-    >
-      <v-radio label="Remove rows with missing data"></v-radio>
-      <v-radio label="Impute rows with missing data"></v-radio>
-      <v-switch class="right" label="Include indexs in export" v-model="includeIndexes"></v-switch>
-    </v-radio-group>
+    <div v-else>
+      <v-icon color="green" >mdi-check-circle</v-icon> No missing rows.
+    </div>
+    
     <div class="text-right">
         <v-btn
-        @click="filePipeline.handleRows(includeIndexes)"
+        @click="processStep"
         class="primary"
         rounded
         text
@@ -66,7 +72,21 @@ export default {
 
     }
   },
+  computed: {
+    totalMissingRows() {
+      let total = 0
+      let rows = this.filePipeline.columnAdjust.nan_rows
+      for (let row in rows) {
+        total += rows[row]
+      }
+      return total
+    }
+  },
   methods: {
+    processStep() {
+      this.filePipeline.handleRows(this.includeIndexes)
+      this.$emit('processStep')
+    }
 
       
 

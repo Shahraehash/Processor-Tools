@@ -4,6 +4,7 @@
       :title="$store.state.tools[$options.name].title"
       :icon="$store.state.tools[$options.name].icon"
       :description="$store.state.tools[$options.name].description"
+      @reset="reset()"
     />
 
     <StepFileDrop
@@ -20,6 +21,7 @@
       stepTitle="Handle Missing Values"
       stepNumber="3"
       :filePipeline="FilePipeline"
+      @processStep="$store.commit('FileProcessingDialogOpenSet', true)"
     />    
 
 
@@ -77,28 +79,12 @@ export default {
 
 
     },
-    // batchDummyEncodeNonNumericColumns() {
-    //   let batch = []
-    //   this.filePipelines.forEach(fp => {
-    //     batch.push(fp.dummyEncodeNonNumericColumns())
-    //   })
-    //   Promise.all(batch).then(() => {
-    //     let zip = new JSZip();
-
-    //     this.filePipelines.forEach(fp => {
-    //       zip.file(fp.metadata.filename + '.csv', fp.csv)
-    //     })
-
-    //     zip.generateAsync({type:"blob"})
-    //     .then(function(content) {
-    //         // Force down of the Zip file
-    //         FileDownload(content, "encoder_combined_files.zip");
-    //     });
-    //     //Show download UI
-    //     this.$store.commit('FileProcessingDialogOpenSet', true)                
-
-        
-    //   })
+    reset() {
+      return true
+      //this.FilePipeline = FilePipeline.newFilePipeline()
+    },
+    showFinalUI() {
+    }
   }
 }
 </script>

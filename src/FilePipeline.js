@@ -53,17 +53,7 @@ export default {
             }
           }).then((response) => {
             console.log(response.data)
-            this.columnAdjust = response.data
-            // let zip = new JSZip();
-
-            // for (let file in response.data.files) {
-            //   zip.file(file, response.data.files[file])            
-            // }
-            // zip.generateAsync({type:"blob"})
-            // .then(function(content) {
-            //     // Force down of the Zip file
-            //     FileDownload(content, "encoder.zip");
-            // });            
+            this.columnAdjust = response.data        
           })
         }
       },
