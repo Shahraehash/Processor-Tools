@@ -35,7 +35,13 @@
       <div class="my-3">
         Pick your target column.
       </div>
-      <v-select v-model="target" dense outlined :items="fileMetadata[0].fields"></v-select>
+      <v-select 
+        v-model="target" 
+        dense 
+        outlined 
+        :items="fileMetadata[0].fields"
+        @change="targetChanged"
+        ></v-select>
     </div>
     <div class="text-right" v-if="this.target !=null && files.length > 0">
       <v-btn
@@ -113,6 +119,9 @@ export default {
         this.$emit('files', {files: this.files, target: this.target})
         this.complete = true
       }
+    },
+    targetChanged() {
+      this.complete = false
     }
   }
 }

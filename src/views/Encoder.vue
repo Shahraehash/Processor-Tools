@@ -14,7 +14,7 @@
     />
     <StepTargetCheck
       v-if="FilePipeline.metadata != null"
-      stepTitle="Verify Target Column"
+      stepTitle="Target Column Audit"
       stepNumber="2"
       :filePipeline="FilePipeline"
     />    
@@ -89,8 +89,7 @@ export default {
 
     },
     reset() {
-      return true
-      //this.FilePipeline = FilePipeline.newFilePipeline()
+      this.FilePipeline = FilePipeline.newFilePipeline()
     },
     showFinalUI() {
     }
