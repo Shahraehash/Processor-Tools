@@ -9,18 +9,16 @@
     <!-- <div>
       Pipeline ID: {{filePipeline.metadata.pipelineId}}
     </div> -->
-    <v-card outlined class="ma-3 pa-3" v-for="(file, key) in filePipeline.metadata.initialFiles" :key="key">
-    <div class="title">{{file.name}}</div>    
-    <div>Columns: {{file.columns}} x Rows: {{file.rows}}</div>  
+    <v-card flat class="my-2" v-for="(file, key) in filePipeline.metadata.initialFiles" :key="key">
+    <div class="overline primary--text">{{file.name}}</div>    
     <div></div>    
-    <div>Column: 
-      <v-chip :color="file.invalidColumns.includes(name) ? 'purple lighten-4' : ''" v-for="(name, key) in file.columnNames" :key="key">
+    <div>Cols: 
+      <v-chip small :color="file.invalidColumns.includes(name) ? 'purple lighten-4' : ''" v-for="(name, key) in file.columnNames" :key="key">
         {{name}}
       </v-chip>
     </div>
       <div v-if="file.invalidColumns.length == 0" class="mt-3">
         <v-icon color="green" >mdi-check-circle</v-icon> No non-numerical columns.
-
       </div>
       <div v-if="file.invalidColumns.length > 0">
         <div class="pt-3">
@@ -28,17 +26,20 @@
             {{file.invalidColumns.length}} column<span v-if="file.invalidColumns.length > 1">s</span> with non-numerical data that need to be addressed are highlighted in purple 
           </v-alert>
           
-        </div>
-        <div class="mt-3 overline">Invalid Column Adjustments</div>   
+        </div> 
         <v-card flat class="px-2 py-2" v-for="(transform, col) in file.invalidColumnsTransforms" :key="col">
           <div v-if="transform.type == 'mixed_to_numeric'">
-            <div><v-chip color="purple lighten-4" class="">{{col}}</v-chip></div>
-            <div class="ml-3">This column has predominately numerical data. Non-numerical values will be removed.</div>
-            
+            <div>
+              <span class="purple--text">{{col}}</span>
+              <span class="ml-3 grey--text" >This column has predominately numerical data. Non-numerical values will be removed.</span>
+            </div>
           </div>
           <div v-if="transform.type == 'one_hot_encode'">
-            <div><v-chip color="purple lighten-4" class="">{{col}}</v-chip></div>
-            <div class="ml-3">This column contains multiple categories. Each category will be given a seperate binary column.</div>
+            <div>
+              <span class="purple--text">{{col}}</span>
+              <span class="ml-3 grey--text" >This column contains multiple categories. Each category will be given a seperate binary column.</span>
+            </div>
+            <div class="ml-3"></div>
           </div>      
         </v-card>  
       </div>    

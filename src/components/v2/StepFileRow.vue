@@ -7,9 +7,9 @@
       :stepTitle="stepTitle"
     />
     <div v-if="totalMissingRows > 0">
-      <div v-for="(count, file) in filePipeline.columnAdjust.nan_rows" :key="file">
-        
-        {{file}}: {{count}} missing rows
+      <div class="my-5" v-for="(count, file) in filePipeline.columnAdjust.nan_rows" :key="file">
+        <div class="overline primary--text">{{file}}</div>
+        {{count}} row<span v-if="count > 1 || count == 0">s</span> with missing values 
       </div>
       <v-radio-group
         v-model="filePipeline.rowOption"
