@@ -223,6 +223,7 @@ def manage_rows():
             y = df[target]
             imp_mean.fit(X)
             result = pd.DataFrame(imp_mean.transform(X),columns=X.columns)
+            result[df.columns[df.isna().any()]] = result[df.columns[df.isna().any()]].round(decimals=3)
             result[target] = y
             output_files[remove_dotcsv(file['name']) + '_encoded_imputed' + '.csv'] = result.to_csv(index=include_indexes, index_label="source_row")
 
