@@ -19,6 +19,7 @@
       :filePipeline="FilePipeline"
     />    
     <StepFileCheck
+      v-if="FilePipeline.targetMap != null"
       stepTitle="Adjust Non-Numerical Columns"
       stepNumber="3"
       :filePipeline="FilePipeline"

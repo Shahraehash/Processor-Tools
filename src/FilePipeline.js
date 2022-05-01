@@ -7,6 +7,7 @@ export default {
     return {
       initialFiles: [],
       target: null,
+      targetMap: null,
       uploading: false,
       metadata: null,
       columnAdjust: null,
@@ -20,6 +21,9 @@ export default {
         //set values
         this.initialFiles = files
         this.target = target
+      },
+      setTargetMap(targetMap) {
+        this.targetMap = targetMap
       },
       //methods
       evaluateMetadataAndStore() {
@@ -64,6 +68,7 @@ export default {
               headers: {
               'Content-Type': 'application/json',
               'target': this.target,
+              'targetMap': JSON.stringify(this.targetMap),
             }
           }).then((response) => {
             console.log(response.data)
@@ -78,6 +83,7 @@ export default {
               headers: {
               'Content-Type': 'application/json',
               'target': this.target,
+              'targetMap': JSON.stringify(this.targetMap),              
               'rowOption': this.rowOption,
               'includeIndexes': includeIndexes,
             }

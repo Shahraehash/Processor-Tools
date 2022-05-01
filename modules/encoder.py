@@ -1,3 +1,4 @@
+import json
 from json import load
 from flask import Blueprint, current_app, jsonify, request, make_response
 import pandas as pd
@@ -116,7 +117,7 @@ def define_invalid_columns(df):
             
     return transforms, list(invalid.columns)
 
-def apply_column_transforms(dataframe, transforms, target):
+def apply_column_transforms(dataframe, transforms, target, target_map):
     df = pd.DataFrame(dataframe)
     for column in transforms:
         t = transforms[column]
@@ -131,11 +132,11 @@ def apply_column_transforms(dataframe, transforms, target):
             df = pd.concat([df, transform_one_hot_encode(df[column])], axis=1)
             df = df.drop(column, axis=1)
 
-    #ensure target is converted to numeric
+    
     try:
-        df[target] = df[target].astype('int')
+        df[target] = df[target].astype('str').map(target_map).astype('int')
     except:
-        print('cannot convert target to binary')
+        print('ERROR APPLYING TARGET MAP')
 
     #ensure target remains at end of file
     col_list = list(df.columns)
@@ -153,6 +154,8 @@ def apply_transforms():
     nan_rows = {}
 
     target = request.headers['target']
+    target_map = json.loads(request.headers['targetMap'])
+    print(target_map, type(target_map))
     files = request.json['initialFiles']
     for file in files:
         print(file['name'])
@@ -160,7 +163,7 @@ def apply_transforms():
 
         transforms = file['invalidColumnsTransforms']
 
-        df = apply_column_transforms(df, transforms, target)
+        df = apply_column_transforms(df, transforms, target, target_map)
 
 
         nan_rows[file['name']] = df[df.isna().any(axis=1)].shape[0]
@@ -187,6 +190,7 @@ def manage_rows():
     output_files = {}
 
     target = request.headers['target']
+    target_map = json.loads(request.headers['targetMap'])
     row_option = request.headers['rowOption']
     include_indexes = request.headers['includeIndexes']
     include_indexes = bool(util.strtobool(include_indexes))
@@ -196,7 +200,7 @@ def manage_rows():
 
         df = load_file(file['storageId'])
         transforms = file['invalidColumnsTransforms']
-        df = apply_column_transforms(df, transforms, target)
+        df = apply_column_transforms(df, transforms, target, target_map)
 
 
         print(row_option, 'row option')
@@ -230,6 +234,7 @@ def manage_rows():
 
     return response
 
+#Method not actually used because part of initial metadata evaluation
 @encoder.route('/evaluate_columns',methods=['POST'])
 def evaluate_columns():
     files = request.json['initialFiles']
@@ -295,9 +300,9 @@ def encoder_store():
             target_validation['validTarget'] = int(target_validation['valuesCount'] == 2)
             
 
-        # transforms, invalid_columns = define_invalid_columns(df)
-        # file['invalidColumns'] = invalid_columns
-        # file['invalidColumnsTransforms'] = transforms
+        transforms, invalid_columns = define_invalid_columns(df.drop(columns=[target]))
+        file['invalidColumns'] = invalid_columns
+        file['invalidColumnsTransforms'] = transforms
         file['rows'] = int(df.shape[0])
         file['columns'] = int(df.shape[1])
         file['columnNames'] = list(df.columns.values)

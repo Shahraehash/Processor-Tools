@@ -83,7 +83,7 @@
     </div>
     <div class="text-right" >
       <v-btn
-        @click="filePipeline.evaluateColumns()"
+        @click="filePipeline.setTargetMap(allTargetListsMatch.valueMap)"
         class="primary"
         :disabled="filePipeline.columnAdjust != null"
         rounded
@@ -122,10 +122,7 @@ export default {
     'stepTitle',
   ],
   watch: {
-    filePipeline: () => {
-     this.allTargetListsMatch = this.checkAllTargetListsMatch()
 
-    }
   },
   created() {
       this.allTargetListsMatch = this.targetListMatching()

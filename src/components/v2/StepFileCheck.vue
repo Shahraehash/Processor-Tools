@@ -89,17 +89,7 @@ export default {
     }
   },
   methods: {
-    flipValues(val, cat, col, file) {
-      let map = this.filePipeline.metadata.initialFiles[file].invalidColumnsTransforms[col].map
-      for (let i in map) {
-        if (i == cat) {
-          map[i] = val
-        }
-        else {
-          map[i] = Math.abs(val - 1)
-        }
-      }
-    },
+
   }
 }
 </script>
