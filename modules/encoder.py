@@ -230,6 +230,27 @@ def manage_rows():
 
     return response
 
+@encoder.route('/evaluate_columns',methods=['POST'])
+def evaluate_columns():
+    files = request.json['initialFiles']
+
+    output = {}
+
+    for file in files:
+        df = load_file(file['storageId'])
+        transforms, invalid_columns = define_invalid_columns(df)
+        output[file['name']] = {
+            'invalid_columns': invalid_columns,
+            'transforms': transforms
+        }
+    response = make_response(
+        #Added to transform nan items to null when sending JSON
+        simplejson.dumps(output, ignore_nan=True),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response   
 
 @encoder.route('/store',methods=['POST'])
 def encoder_store():
@@ -238,7 +259,7 @@ def encoder_store():
     files = request.files.getlist('files')
 
     #Object to store pipeline
-    pipeline = {
+    metadata = {
         'pipelineId': str(uuid.uuid4()),
         'upload_time': datetime.timestamp(datetime.now()),
         'initialFiles': [],
@@ -251,13 +272,13 @@ def encoder_store():
     for file in files:
         storage_id = str(uuid.uuid4())
         save_file(file, storage_id) #custom helper function
-        pipeline['initialFiles'].append({   
+        metadata['initialFiles'].append({   
             'storageId': storage_id,
             'name': file.filename,
         })
     
     #Read saved files and extract metadata
-    for file in pipeline['initialFiles']:
+    for file in metadata['initialFiles']:
         df = load_file(file['storageId'])
 
         df.columns.values
@@ -274,18 +295,17 @@ def encoder_store():
             target_validation['validTarget'] = int(target_validation['valuesCount'] == 2)
             
 
-        transforms, invalid_columns = define_invalid_columns(df)
-        file['invalidColumns'] = invalid_columns
-        file['invalidColumnsTransforms'] = transforms
+        # transforms, invalid_columns = define_invalid_columns(df)
+        # file['invalidColumns'] = invalid_columns
+        # file['invalidColumnsTransforms'] = transforms
         file['rows'] = int(df.shape[0])
         file['columns'] = int(df.shape[1])
         file['columnNames'] = list(df.columns.values)
-        print(target_validation)
         file['targetValidation'] = target_validation      
 
     response = make_response(
         #Added to transform nan items to null when sending JSON
-        simplejson.dumps(pipeline, ignore_nan=True),
+        simplejson.dumps(metadata, ignore_nan=True),
         200,
     )
     response.headers["Content-Type"] = "application/json"

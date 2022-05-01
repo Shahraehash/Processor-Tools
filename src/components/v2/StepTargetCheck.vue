@@ -81,8 +81,19 @@
         </v-row>        
 
     </div>
-   
-
+    <div class="text-right" >
+      <v-btn
+        @click="filePipeline.evaluateColumns()"
+        class="primary"
+        :disabled="filePipeline.columnAdjust != null"
+        rounded
+        text
+        dark
+        >
+        Next Step
+      </v-btn>
+    </div>   
+    
   </v-card>
 </template>
 <script>
@@ -97,7 +108,8 @@ import StepHeading from '@/components/StepHeading'
 export default {
   name: 'StepTargetCheck',
   components: {
-    StepHeading
+    StepHeading,
+
   },
   data() {
     return {

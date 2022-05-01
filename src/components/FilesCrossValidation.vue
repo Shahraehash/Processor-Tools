@@ -14,7 +14,6 @@
               <div v-if="!dataColumnsMatch.numberOfColumnsMatch">
                 <v-icon color="red" >mdi-alert-circle</v-icon> Number of Columns Differ Between Files
               </div>
-
             </div>
             <div>
               <div v-if="dataColumnsMatch.columnNamesMatch">

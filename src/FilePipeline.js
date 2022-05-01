@@ -43,6 +43,20 @@ export default {
           })
         }
       },
+      evaluateColumns() {
+        if (this.metadata != null) {        
+          return axios.post('/preprocessor_api/encoder/evaluate_columns', this.metadata, {
+              headers: {
+                'Content-Type': 'application/json',
+                'target': this.target,           
+            }
+          }).then((response) => {
+            this.columnAdjust = response.data
+            console.log(response.data)
+            return true
+          })
+        }
+      },      
       applyTransforms() {
         if (this.metadata != null) {
 

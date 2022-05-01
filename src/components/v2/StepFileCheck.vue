@@ -36,17 +36,6 @@
             <div class="ml-3">This column has predominately numerical data. Non-numerical values will be removed.</div>
             
           </div>
-          <div v-if="transform.type == 'category_to_binary'">
-            <div><v-chip color="purple lighten-4" class="">{{col}}</v-chip></div>
-            <div class="ml-3">This coulmn has two values which will be replaced by a binary representation.</div>
-            <v-row class="mt-2 mx-1">
-              <v-col cols="3" v-for="(val, cat) in transform.map" :key="cat">
-                <div >
-                  <v-select outlined dense :label="cat" @change="flipValues($event, cat, col, key)" v-model="transform.map[cat]" :items=[0,1]></v-select>
-                </div>            
-              </v-col>
-            </v-row>
-          </div>
           <div v-if="transform.type == 'one_hot_encode'">
             <div><v-chip color="purple lighten-4" class="">{{col}}</v-chip></div>
             <div class="ml-3">This column contains multiple categories. Each category will be given a seperate binary column.</div>
@@ -56,7 +45,6 @@
   
     </v-card>  
     <div class="text-right" >
-
       <v-btn
         @click="filePipeline.applyTransforms()"
         class="primary"
