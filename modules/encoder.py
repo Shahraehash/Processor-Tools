@@ -21,6 +21,9 @@ encoder = Blueprint(
     url_prefix='/encoder'
 )
 
+def remove_dotcsv(filename):
+    return filename[:-4]
+
 def transform_mixed_to_numeric(series):
     """
     Convert a series of mixed data types to numeric
@@ -209,8 +212,11 @@ def manage_rows():
             missing = df[df.isna().any(axis=1)]
             output = df.drop(missing.index)
             if missing.shape[0] > 0:         
-                output_files['missing_' + file['name']] = missing.to_csv(index=True, index_label="source_row")
-            output_files[file['name']] = output.to_csv(index=include_indexes, index_label="source_row")
+                output_files['Nan_rows_' + remove_dotcsv(file['name']) + '_encoded_NaN_removed' + '.csv'] = missing.to_csv(index=True, index_label="source_row")
+                output_files[remove_dotcsv(file['name']) + '_encoded_NaN_removed' + '.csv'] = output.to_csv(index=include_indexes, index_label="source_row")
+            else:
+                output_files[remove_dotcsv(file['name']) + '_encoded' + '.csv'] = output.to_csv(index=include_indexes, index_label="source_row")
+
         elif (row_option == '1'):
             imp_mean = IterativeImputer(random_state=0)
             X = df.drop(columns=[target])
@@ -218,7 +224,7 @@ def manage_rows():
             imp_mean.fit(X)
             result = pd.DataFrame(imp_mean.transform(X),columns=X.columns)
             result[target] = y
-            output_files[file['name']] = result.to_csv(index=include_indexes, index_label="source_row")
+            output_files[remove_dotcsv(file['name']) + '_encoded_imputed' + '.csv'] = result.to_csv(index=include_indexes, index_label="source_row")
 
     result = {
         'files': output_files,
