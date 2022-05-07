@@ -31,8 +31,8 @@
       v-model="prevalenceOption"
       @change="calculateGroupCounts"
     >
-      <v-radio label="Use All Remaining Data After Training Data Removed"></v-radio>
-      <v-radio label="Maintain Original Prevalence in Validation File (some data may be excluded)"></v-radio>
+      <v-radio label="Use All Remaining Data After Training Data Removed" value="0"></v-radio>
+      <v-radio label="Maintain Original Prevalence in Validation File (some data may be excluded)" value="1"></v-radio>
     </v-radio-group>
     <div style="width:100%">
       <div>
@@ -162,7 +162,7 @@ export default {
       //   total_count: 509
       // },
 
-      prevalenceOption: 0,
+      prevalenceOption: "0",
 
 
       minSampleSize: 25,
@@ -233,12 +233,12 @@ export default {
 
       //Testing
       //Use all remaining data
-      if (this.prevalenceOption == 0) {
+      if (this.prevalenceOption == "0") {
         this.counts.test0 = this.counts.class0 - this.trainingClassSize
         this.counts.test1 = this.counts.class1 - this.trainingClassSize
         this.counts.extra = 0
       }
-      else if (this.prevalenceOption == 1) {
+      else if (this.prevalenceOption == "1") {
         if (this.prevalence.class0 < 0.5) {
 
           this.counts.test0 = this.counts.class0 - this.trainingClassSize
@@ -292,7 +292,7 @@ export default {
     },
     reportData() {
       let calculation = {
-        prevalenceOption: this.prevalenceOption,
+        prevalenceOption: parseInt(this.prevalenceOption, 10),
         trainingClassSize: this.trainingClassSize,
         extraCount: this.counts.extra
       }
