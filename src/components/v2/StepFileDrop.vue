@@ -7,11 +7,12 @@
       :stepTitle="stepTitle"
     />
     <div v-if="files.length == 0" class="text-center">
-      <div >To get started, drag and drop your CSV file(s) into this box. This tool will help prepare your data for use with MILO.</div>
+      <div >Drag and drop your CSV file(s) into this box or click the file icon below to select from systemc dialog.</div>
       <div>
-        <v-icon size="150" color="grey lighten-2">
+        <v-icon size="125" @click="$refs.fileClick.click()" color="grey lighten-1">
           mdi-file-upload-outline
         </v-icon>
+        <input type="file" ref="fileClick" multiple="multiple" style="display: none"/>
       </div>
     </div>
     <v-card flat outlined class="pa-3 my-2" v-for="(file, index) in files" :key="index">
@@ -78,6 +79,7 @@ export default {
       fileMetadata: [],
       target: null,
       complete: false,
+      input: null,
     }
   },
   props: [
@@ -100,7 +102,16 @@ export default {
       })
     }
   },
+  mounted() {
+    this.input = this.$el.querySelector('input[type=file]');
+    this.input.addEventListener('change', () => this.clickAddFile())
+  },
   methods: {
+    clickAddFile() {
+      for (let file of this.input.files) {
+        this.files.push(file)
+      }
+    },
     addFile(e) {
       let droppedFiles = e.dataTransfer.files;
       if(!droppedFiles) return;
