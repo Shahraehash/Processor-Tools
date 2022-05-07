@@ -72,7 +72,12 @@ export default {
             }
           }).then((response) => {
             console.log(response.data)
-            this.columnAdjust = response.data        
+            this.columnAdjust = response.data
+            //column array is deep enough needs secondary parse 
+            for (let i in this.columnAdjust.nan_columns) {
+              this.columnAdjust.nan_columns[i] = JSON.parse(this.columnAdjust.nan_columns[i])
+            }
+   
           })
         }
       },

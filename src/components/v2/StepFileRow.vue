@@ -10,6 +10,10 @@
       <div class="my-5" v-for="(count, file) in filePipeline.columnAdjust.nan_rows" :key="file">
         <div class="overline primary--text">{{file}}</div>
         {{count}} row<span v-if="count > 1 || count == 0">s</span> with missing values 
+        <div>{{Object.keys(filePipeline.columnAdjust.nan_columns[file]).length}} columns with missing values</div>
+        <div class="pl-5" v-for="(val, col) in filePipeline.columnAdjust.nan_columns[file]" :key="val">
+        {{col}}: {{val}}
+        </div>
       </div>
       <v-radio-group
         v-model="filePipeline.rowOption"

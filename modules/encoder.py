@@ -155,6 +155,7 @@ def apply_transforms():
 
     output_files = {}
     nan_rows = {}
+    nan_columns = {}
 
     target = request.headers['target']
     target_map = json.loads(request.headers['targetMap'])
@@ -168,13 +169,20 @@ def apply_transforms():
 
         df = apply_column_transforms(df, transforms, target, target_map)
 
-
+        #isolate nan rows and columns
+        nan_count = df.isnull().sum()
+        nan_count = nan_count[nan_count > 0]
+        nan_count = nan_count.sort_values(ascending=False)
+        
+        #build output arrays
+        nan_columns[file['name']] = nan_count.to_json()
         nan_rows[file['name']] = df[df.isna().any(axis=1)].shape[0]
         output_files[file['name']] = df.to_csv(index=True)
 
     result = {
         'files': output_files,
-        'nan_rows': nan_rows
+        'nan_rows': nan_rows,
+        'nan_columns': nan_columns
     }
 
     response = make_response(
