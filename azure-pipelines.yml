@@ -4,94 +4,70 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-resources:
-  repositories:
-  - repository: PreprocessorRepo
-    type: git
-    name: Processor Tools
-
-parameters:
-- name: forceDockerBuild
-  displayName: Force Docker Build
-  type: boolean
-  default: false
-
 variables:
+  acr_address: 'miloteam'
   containerRegistry: 'Docker Hub'
   repository: 'preprocessor'
+  cacheRepository: 'preprocessor-cache'
   ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
     tag: 'latest'
   ${{ else }}:
     tag: 'beta'
 
-jobs:
-- job: Docker
-  condition: and(succeeded(), or(eq(${{ parameters.forceDockerBuild }}, true), eq(variables['Build.SourceBranch'], 'refs/heads/master')))
-  uses:
-    repositories:
-      - PreprocessorRepo
-  steps:
-  - checkout: self
-    submodules: true
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16'
+  displayName: Set Node Version to 16
+  
+- task: gitversion/setup@0
+  inputs:
+    versionSpec: '5.x'
+  displayName: 'Install GitVersion'
 
-  - task: DownloadSecureFile@1
-    inputs:
-      secureFile: 'serviceAccountKey.json'
+- task: gitversion/execute@0
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)'
+  displayName: 'Run GitVersion'
 
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '16'
-    displayName: Set Node Version to 16
-    
-  - task: gitversion/setup@0
-    inputs:
-      versionSpec: '5.x'
-    displayName: 'Install GitVersion'
+- script: |
+    sed -i.bak "s|\"version\": \"[0-9\.]*\"|\"version\": \"$GITVERSION_MAJORMINORPATCH\"|" package.json
+  displayName: 'Update package version'
 
-  - task: gitversion/execute@0
-    inputs:
-      targetPath: '$(System.DefaultWorkingDirectory)'
-    displayName: 'Run GitVersion'
+- task: Docker@2
+  inputs:
+    containerRegistry: '$(containerRegistry)'
+    command: 'login'
+  displayName: Login to Container Registry
 
-  - script: |
-      sed -i.bak "s|\"version\": \"[0-9\.]*\"|\"version\": \"$GITVERSION_MAJORMINORPATCH\"|" package.json
-    displayName: 'Update package version'
+- task: Cache@2
+  inputs:
+    key: 'npm | "$(Agent.OS)" | package-lock.json'
+    path: $(System.DefaultWorkingDirectory)/preprocessor/node_modules
+    cacheHitVar: PP_CACHE_RESTORED
+  displayName: Cache Preprocessor Dependencies
 
-  - task: Docker@2
-    inputs:
-      containerRegistry: '$(containerRegistry)'
-      command: 'login'
-    displayName: Login to Container Registry
+- script: |
+    npm install
+  condition: and(succeeded(), ne(variables.PP_CACHE_RESTORED, 'true'))
+  displayName: Install dependencies
 
-  - task: Cache@2
-    inputs:
-      key: 'npm | "$(Agent.OS)" | package-lock.json'
-      path: $(System.DefaultWorkingDirectory)/preprocessor/node_modules
-      cacheHitVar: PP_CACHE_RESTORED
-    displayName: Cache Preprocessor Dependencies
+- script: |
+    npm build-ui
+  displayName: Build Vue UI
 
-  - script: |
-      npm --prefix install
-    condition: and(succeeded(), ne(variables.UI_CACHE_RESTORED, 'true'))
-    displayName: Install dependencies
+- script: |
+    docker run --privileged --rm tonistiigi/binfmt --install arm64
+    docker run --privileged --rm tonistiigi/binfmt
+    docker buildx create --use
+  displayName: Add Support for ARM64 Docker Build
 
-  - script: |
-      npm --prefix build-ui
-    condition: and(succeeded(), ne(variables.UI_CACHE_RESTORED, 'true'))
-    displayName: Build Vue UI
-
-  - script: |
-      docker run --privileged --rm tonistiigi/binfmt --install arm64
-      docker run --privileged --rm tonistiigi/binfmt
-      docker buildx create --use
-    displayName: Add Support for ARM64 Docker Build
-
-  - script: |
-      docker buildx build --platform linux/amd64,linux/arm64 \
-        --cache-from=type=registry,ref=$(acr_address)/$(cacheRepository) \
-        --cache-to=type=registry,ref=$(acr_address)/$(cacheRepository),mode=max \
-        -t $(acr_address)/$(repository):$(GitVersion.SemVer) \
-        -t $(acr_address)/$(repository):$(tag) \
-        --push \
-        .
-    displayName: Build Docker Image
+- script: |
+    docker buildx build --platform linux/amd64,linux/arm64 \
+      --cache-from=type=registry,ref=$(acr_address)/$(cacheRepository) \
+      --cache-to=type=registry,ref=$(acr_address)/$(cacheRepository),mode=max \
+      -t $(acr_address)/$(repository):$(GitVersion.SemVer) \
+      -t $(acr_address)/$(repository):$(tag) \
+      --push \
+      .
+  displayName: Build Docker Image
