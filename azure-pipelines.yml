@@ -43,13 +43,13 @@ steps:
 - task: Cache@2
   inputs:
     key: 'npm | "$(Agent.OS)" | package-lock.json'
-    path: $(System.DefaultWorkingDirectory)/preprocessor/node_modules
-    cacheHitVar: PP_CACHE_RESTORED
+    path: $(System.DefaultWorkingDirectory)/node_modules
+    cacheHitVar: CACHE_RESTORED
   displayName: Cache Preprocessor Dependencies
 
 - script: |
     npm install
-  condition: and(succeeded(), ne(variables.PP_CACHE_RESTORED, 'true'))
+  condition: and(succeeded(), ne(variables.CACHE_RESTORED, 'true'))
   displayName: Install dependencies
 
 - script: |
