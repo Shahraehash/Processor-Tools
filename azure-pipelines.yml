@@ -53,7 +53,7 @@ steps:
   displayName: Install dependencies
 
 - script: |
-    npm build-ui
+    npm run build-ui
   displayName: Build Vue UI
 
 - script: |
