@@ -1,0 +1,73 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  acr_address: 'miloteam'
+  containerRegistry: 'Docker Hub'
+  repository: 'preprocessor'
+  cacheRepository: 'preprocessor-cache'
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    tag: 'latest'
+  ${{ else }}:
+    tag: 'beta'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '16'
+  displayName: Set Node Version to 16
+  
+- task: gitversion/setup@0
+  inputs:
+    versionSpec: '5.x'
+  displayName: 'Install GitVersion'
+
+- task: gitversion/execute@0
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)'
+  displayName: 'Run GitVersion'
+
+- script: |
+    sed -i.bak "s|\"version\": \"[0-9\.]*\"|\"version\": \"$GITVERSION_MAJORMINORPATCH\"|" package.json
+  displayName: 'Update package version'
+
+- task: Docker@2
+  inputs:
+    containerRegistry: '$(containerRegistry)'
+    command: 'login'
+  displayName: Login to Container Registry
+
+- task: Cache@2
+  inputs:
+    key: 'npm | "$(Agent.OS)" | package-lock.json'
+    path: $(System.DefaultWorkingDirectory)/node_modules
+    cacheHitVar: CACHE_RESTORED
+  displayName: Cache Preprocessor Dependencies
+
+- script: |
+    npm install
+  condition: and(succeeded(), ne(variables.CACHE_RESTORED, 'true'))
+  displayName: Install dependencies
+
+- script: |
+    npm run build-ui
+  displayName: Build Vue UI
+
+- script: |
+    docker run --privileged --rm tonistiigi/binfmt --install arm64
+    docker run --privileged --rm tonistiigi/binfmt
+    docker buildx create --use
+  displayName: Add Support for ARM64 Docker Build
+
+- script: |
+    docker buildx build --platform linux/amd64,linux/arm64 \
+      --cache-from=type=registry,ref=$(acr_address)/$(cacheRepository) \
+      --cache-to=type=registry,ref=$(acr_address)/$(cacheRepository),mode=max \
+      -t $(acr_address)/$(repository):$(GitVersion.SemVer) \
+      -t $(acr_address)/$(repository):$(tag) \
+      --push \
+      .
+  displayName: Build Docker Image
