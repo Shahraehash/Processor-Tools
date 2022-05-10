@@ -67,6 +67,8 @@ def build():
 
     file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file_path)
+    #change index to match excel
+    df.index = df.index + 2
 
 
 
@@ -94,7 +96,7 @@ def build():
         reduction = test_filtered[test_filtered[target_column] == majority_class].sample(extra)
         test_reduced = test_filtered.copy()
         test_reduced = test_reduced.drop(reduction.index)
-        final_data['testing'] = test_reduced.to_csv(index=include_index)
+        final_data['testing'] = test_reduced.to_csv(index=include_index, index_label="source_row")
 
         #Extra data export. Index should always be included.
         final_data['extra'] = reduction.to_csv(index=True, index_label="source_row")

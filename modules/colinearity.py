@@ -71,6 +71,8 @@ def build():
 
     file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file_path)
+    #change index to match excel
+    df.index = df.index + 2
 
     df = df.drop(columns=feature_removal_list)
 
