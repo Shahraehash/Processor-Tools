@@ -129,6 +129,9 @@ export default {
   created() {
       this.allTargetListsMatch = this.targetListMatching()
   },
+  mounted() {
+    window.scrollTo(0,document.body.scrollHeight);
+  },  
   computed: {
       
   },

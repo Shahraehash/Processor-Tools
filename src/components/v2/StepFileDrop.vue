@@ -41,20 +41,27 @@
         dense 
         outlined 
         :items="fileMetadata[0].fields"
-        @change="targetChanged"
+        @change="targetChange"
         ></v-select>
     </div>
     <div class="text-right" v-if="this.target !=null && files.length > 0">
       <v-btn
         class="primary"
-        :disabled="complete"
-        @click="emitFileArray"
         rounded
         text
         dark
+        :disabled="disableNext"
+        @click="evaluateMetadata"
         >
         Evaluate Files
       </v-btn>
+    </div>
+    <div v-if="backendData">
+      <div v-for="(item, key) in backendData.initialFiles" :key="key">
+      <div class="primary--text overline">{{item.name}}</div>
+      <div class="ml-3">{{item.nanPercent}}% of rows are missing data ({{item.nanRows}} of {{item.rows}} rows)</div>
+      
+      </div>
     </div>
 
   </v-card>
@@ -77,19 +84,24 @@ export default {
     return {
       files: [],
       fileMetadata: [],
-      target: null,
-      complete: false,
       input: null,
+      target: null,
+      backendData: null,
     }
   },
   props: [
     'stepNumber',
     'stepTitle',
+    'disableNext',
+    'backendMetadataProp'
+
   ],
   watch: {
+    backendMetadataProp() {
+      this.backendData = this.backendMetadataProp
+    },
     files() {
       this.fileMetadata = []
-      this.complete = false
       this.files.forEach(file => {
         Papa.parse(file, {header: true, complete: t => {
           let meta = t.meta
@@ -100,6 +112,7 @@ export default {
           this.fileMetadata.push(meta)
         }})
       })
+      this.filesChange() 
     }
   },
   mounted() {
@@ -107,6 +120,13 @@ export default {
     this.input.addEventListener('change', () => this.clickAddFile())
   },
   methods: {
+    reset() {
+      this.files = []
+      this.fileMetadata = []
+      this.target = null
+      this.input = null
+      this.backendData = null
+    },
     clickAddFile() {
       for (let file of this.input.files) {
         this.files.push(file)
@@ -125,14 +145,15 @@ export default {
         return f != file;
       });
     },
-    emitFileArray() {
-      if (this.files.length > 0) {
-        this.$emit('files', {files: this.files, target: this.target})
-        this.complete = true
-      }
+    filesChange() {
+      this.$emit('filesChange', this.files)
+      this.target = null
     },
-    targetChanged() {
-      this.complete = false
+    targetChange() {
+      this.$emit('targetChange', this.target)
+    },
+    evaluateMetadata() {
+      this.$emit('evaluateMetadata')
     }
   }
 }

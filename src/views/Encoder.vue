@@ -4,13 +4,18 @@
       :title="$store.state.tools[$options.name].title"
       :icon="$store.state.tools[$options.name].icon"
       :description="$store.state.tools[$options.name].description"
-      @reset="reset()"
+      @reset="$refs.step1.reset()"
     />
 
     <StepFileDrop
+      ref="step1"
       stepTitle="File Selection"
       stepNumber="1"
-      @files="batchEvaluateMetadataAndStore"
+      @filesChange="filesChange"
+      @targetChange="FilePipeline.setTarget($event)"
+      :disableNext="FilePipeline.metadata != null"
+      @evaluateMetadata="evaluateMetadata"
+      :backendMetadataProp="FilePipeline.metadata"
     />
     <StepTargetCheck
       v-if="FilePipeline.metadata != null"
@@ -80,19 +85,13 @@ export default {
   },
   methods: {
     //Step 1
-    batchEvaluateMetadataAndStore(data) {
-      
-      
-      this.FilePipeline.setInitialFiles(data.files, data.target)
-      this.FilePipeline.evaluateMetadataAndStore()
-      
-
-
-    },
-    reset() {
+    filesChange(files) {
       this.FilePipeline = FilePipeline.newFilePipeline()
+      this.FilePipeline.setInitialFiles(files)
     },
-    showFinalUI() {
+    evaluateMetadata() {
+      console.log(this.FilePipeline)
+      this.FilePipeline.evaluateMetadataAndStore()
     }
   }
 }

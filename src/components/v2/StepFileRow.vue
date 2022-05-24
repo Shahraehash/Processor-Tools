@@ -72,12 +72,9 @@ export default {
     'stepNumber',
     'stepTitle',
   ],
-  watch: {
-    filePipeline() {
-      console.log(this.filePipeline)
-
-    }
-  },
+  mounted() {
+    window.scrollTo(0,document.body.scrollHeight);
+  },  
   computed: {
     totalMissingRows() {
       let total = 0

@@ -87,6 +87,9 @@ export default {
 
     }
   },
+  mounted() {
+    window.scrollTo(0,document.body.scrollHeight);
+  },  
   methods: {
 
   }

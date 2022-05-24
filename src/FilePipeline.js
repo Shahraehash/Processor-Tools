@@ -14,14 +14,17 @@ export default {
       rowHandling: null,
       rowOption: 0, //0: remove, 1: impute
 
-      setInitialFiles(files, target) {
+      setInitialFiles(files) {
         //reset default state
         this.initialFiles =[]
         this.target = null
         //set values
         this.initialFiles = files
+      }, 
+      setTarget(target) {
         this.target = target
-      },
+        this.metadata = null
+      },   
       setTargetMap(targetMap) {
         this.targetMap = targetMap
       },
