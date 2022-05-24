@@ -15,12 +15,14 @@
         {{col}}: {{val}}
         </div>
       </div>
+      <div class="overline purple--text">Missing Row Options</div>
       <v-radio-group
+        class="mt-0"
         v-model="filePipeline.rowOption"
       >
         <v-radio label="Remove rows with missing data"></v-radio>
         <v-radio label="Impute rows with missing data"></v-radio>
-        <v-switch class="right" label="Include indexs in export" v-model="includeIndexes"></v-switch>
+        <v-switch class="mt-2 right" label="Include indexs in export" v-model="includeIndexes"></v-switch>
       </v-radio-group>
     </div>
     <div v-else>

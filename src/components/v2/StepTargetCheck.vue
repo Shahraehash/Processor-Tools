@@ -13,8 +13,8 @@
         flat
         >
         <div class="overline primary--text">{{file.name}}</div>   
-        <div>
-            Target Values ({{file.targetValidation.valuesCount}}): 
+        <div class="ml-3">
+            {{file.targetValidation.valuesCount}} target value(s): 
             <v-chip 
                 v-for="(val, i) in file.targetValidation.targetValues"
                 :key="i"
@@ -22,17 +22,18 @@
                 >
                 {{val}}
             </v-chip>
+          <span class="ml-5 mt-2">
+              <span v-if="file.targetValidation.validTarget == 0">
+                  <v-icon color="red" >mdi-alert-circle</v-icon>
+                  <span v-if="file.targetValidation.valuesCount > 2">Target column has more than two values.</span>
+                  <span v-if="file.targetValidation.valuesCount < 2">Target column has only one value.</span>
+              </span>
+              <span v-else>
+                  <v-icon color="green" >mdi-check-circle</v-icon> Target column is valid
+              </span>
+          </span>              
         </div>
-        <div>
-            <div v-if="file.targetValidation.validTarget == 0">
-                <v-icon color="red" >mdi-alert-circle</v-icon>
-                <span v-if="file.targetValidation.valuesCount > 2">Target column has more than two values.</span>
-                <span v-if="file.targetValidation.valuesCount < 2">Target column has only one value.</span>
-            </div>
-            <div v-else>
-                <v-icon color="green" >mdi-check-circle</v-icon> Target column is valid
-            </div>
-        </div>  
+
               
     </v-card>
 
@@ -85,7 +86,7 @@
       <v-btn
         @click="filePipeline.setTargetMap(allTargetListsMatch.valueMap)"
         class="primary"
-        :disabled="filePipeline.columnAdjust != null"
+        :disabled="disableNext"
         rounded
         text
         dark
@@ -120,6 +121,7 @@ export default {
     'filePipeline',
     'stepNumber',
     'stepTitle',
+    'disableNext',
   ],
   watch: {
 
