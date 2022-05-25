@@ -22,12 +22,14 @@
       stepTitle="Target Column Audit"
       stepNumber="2"
       :filePipeline="FilePipeline"
+      :disableNext="FilePipeline.targetMap != null"
     />    
     <StepFileCheck
       v-if="FilePipeline.targetMap != null"
       stepTitle="Adjust Non-Numerical Columns"
       stepNumber="3"
       :filePipeline="FilePipeline"
+      :disableNext="FilePipeline.columnAdjust != null"
     />
     <StepFileRow
       stepTitle="Handle Missing Values"

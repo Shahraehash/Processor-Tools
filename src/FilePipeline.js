@@ -58,7 +58,7 @@ export default {
                 'target': this.target,           
             }
           }).then((response) => {
-            this.columnAdjust = response.data
+            //this.columnAdjust = response.data
             console.log(response.data)
             return true
           })
@@ -80,7 +80,6 @@ export default {
             for (let i in this.columnAdjust.nan_columns) {
               this.columnAdjust.nan_columns[i] = JSON.parse(this.columnAdjust.nan_columns[i])
             }
-   
           })
         }
       },

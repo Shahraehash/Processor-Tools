@@ -9,13 +9,18 @@
     <div v-if="totalMissingRows > 0">
       <div class="my-5" v-for="(count, file) in filePipeline.columnAdjust.nan_rows" :key="file">
         <div class="overline primary--text">{{file}}</div>
-        {{count}} row<span v-if="count > 1 || count == 0">s</span> with missing values 
-        <div>{{Object.keys(filePipeline.columnAdjust.nan_columns[file]).length}} columns with missing values</div>
-        <div class="pl-5" v-for="(val, col) in filePipeline.columnAdjust.nan_columns[file]" :key="val">
-        {{col}}: {{val}}
+        <div class="ml-3">
+          {{count}} row<span v-if="count > 1 || count == 0">s</span> with missing values 
+          <div>{{Object.keys(filePipeline.columnAdjust.nan_columns[file]).length}} columns with missing values</div>
+          <div class="pl-5" v-for="(val, col) in filePipeline.columnAdjust.nan_columns[file]" :key="val">
+          {{col}}: {{val}}
+          </div>
         </div>
       </div>
       <div class="overline purple--text">Missing Row Options</div>
+      <v-alert dense color="purple" text v-if="manyMissingRows">
+        One or more files has >= {{maxMissingPercent}}% rows with missing values. We do not recommend using imputation.
+      </v-alert>
       <v-radio-group
         class="mt-0"
         v-model="filePipeline.rowOption"
@@ -64,7 +69,8 @@ export default {
   },
   data() {
     return {
-      includeIndexes: false
+      includeIndexes: false,
+      maxMissingPercent: 30
     }
   },
   props: [
@@ -76,6 +82,13 @@ export default {
     window.scrollTo(0,document.body.scrollHeight);
   },  
   computed: {
+    manyMissingRows() {
+      let moreThanMaxMissing = false
+      this.filePipeline.metadata.initialFiles.forEach(file => {
+        file.nanPercent > this.maxMissingPercent ? moreThanMaxMissing = true : null
+      })
+      return moreThanMaxMissing
+    },
     totalMissingRows() {
       let total = 0
       let rows = this.filePipeline.columnAdjust.nan_rows

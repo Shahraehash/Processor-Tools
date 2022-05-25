@@ -23,8 +23,15 @@
         </v-col>
 
         <v-col cols="5">
-          Columns: {{fileMetadata[index].columns}}
-          | Rows: {{fileMetadata[index].rows}}
+         <div v-if="backendData">
+            <div><v-icon class="mr-1">mdi-arrow-expand-vertical</v-icon>{{backendData.initialFiles[index].columns}} columns</div>
+            <div><v-icon class="mr-1">mdi-arrow-expand-horizontal</v-icon>{{backendData.initialFiles[index].rows}} rows</div>
+            <div>
+              <v-icon color="green" v-if="backendData.initialFiles[index].nanRows == 0">mdi-check-circle</v-icon>
+              <v-icon color="orange" v-else>mdi-alert-circle</v-icon>
+              {{backendData.initialFiles[index].nanPercent}}% of rows missing data ({{backendData.initialFiles[index].nanRows}} rows)
+            </div>
+          </div>
         </v-col>
         <v-col cols="1" class="text-right">
           <v-btn icon @click="removeFile(file)" title="mdi-close">X</v-btn>
@@ -56,13 +63,7 @@
         Evaluate Files
       </v-btn>
     </div>
-    <div v-if="backendData">
-      <div v-for="(item, key) in backendData.initialFiles" :key="key">
-      <div class="primary--text overline">{{item.name}}</div>
-      <div class="ml-3">{{item.nanPercent}}% of rows are missing data ({{item.nanRows}} of {{item.rows}} rows)</div>
-      
-      </div>
-    </div>
+
 
   </v-card>
 </template>

@@ -80,9 +80,8 @@
             </div>            
             </v-col>
         </v-row>        
-
     </div>
-    <div class="text-right" >
+    <div class="text-right" v-if="allTargetListsMatch.allValid">
       <v-btn
         @click="filePipeline.setTargetMap(allTargetListsMatch.valueMap)"
         class="primary"
@@ -161,6 +160,11 @@ export default {
         }
     },
     flipValues(val, cat) {
+      //state reset //IMPROVE//
+      this.filePipeline.columnAdjust = null
+      this.filePipeline.rowHandling = null
+      this.filePipeline.targetMap = null
+      //state reset
       let map = this.allTargetListsMatch.valueMap
       for (let i in map) {
         if (i == cat) {
