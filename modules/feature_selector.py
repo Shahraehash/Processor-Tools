@@ -49,7 +49,7 @@ def generate():
             'score': round(score, 3)
         })
 
-    #Random Forrest
+    #Random Forest
     forest = RandomForestClassifier(random_state=0)
     rf_best = forest.fit(X_train, y_train)
     sorted_array_rf = []
@@ -95,6 +95,8 @@ def build():
 
     file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
     df = pd.read_csv(file_path)
+    #change index to match excel
+    df.index = df.index + 2    
 
     df = df[feature_selector_columns]
 
