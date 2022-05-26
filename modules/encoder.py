@@ -214,6 +214,8 @@ def manage_rows():
     for file in files:
 
         df = load_file(file['storageId'])
+        #change index to match excel
+        df.index = df.index + 2   
         transforms = file['invalidColumnsTransforms']
         df = apply_column_transforms(df, transforms, target, target_map)
 

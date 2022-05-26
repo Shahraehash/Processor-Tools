@@ -46,9 +46,9 @@ export default new Vuex.Store({
         isVisible: true
       },
       'Encoder': {
-        title: 'Encoder Tool',
+        title: 'Imputation & Encoder Tool',
         icon: 'mdi-file-code-outline',
-        description: 'Covert non-numeric datatypes for use in MILO.',
+        description: 'Handle missing data and covert non-numeric datatypes.',
         isVisible: true
       },
 
