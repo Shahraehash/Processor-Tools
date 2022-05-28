@@ -26,15 +26,22 @@
          <div v-if="backendData">
             <div><v-icon class="mr-1">mdi-arrow-expand-vertical</v-icon>{{backendData.initialFiles[index].columns}} columns</div>
             <div><v-icon class="mr-1">mdi-arrow-expand-horizontal</v-icon>{{backendData.initialFiles[index].rows}} rows</div>
+          
+            <div>
+              <v-icon color="green" v-if="backendData.initialFiles[index].nanCells
+               == 0">mdi-check-circle</v-icon>
+              <v-icon color="orange" v-else>mdi-alert-circle</v-icon>
+              {{backendData.initialFiles[index].nanPercent}}% of cells missing data ({{backendData.initialFiles[index].nanCells}} cells)
+            </div>
             <div>
               <v-icon color="green" v-if="backendData.initialFiles[index].nanRows == 0">mdi-check-circle</v-icon>
               <v-icon color="orange" v-else>mdi-alert-circle</v-icon>
-              {{backendData.initialFiles[index].nanPercent}}% of rows missing data ({{backendData.initialFiles[index].nanRows}} rows)
-            </div>
+              {{backendData.initialFiles[index].nanRows}} row<span v-if="backendData.initialFiles[index].nanRows > 1">s</span> missing data 
+            </div>              
           </div>
         </v-col>
         <v-col cols="1" class="text-right">
-          <v-btn icon @click="removeFile(file)" title="mdi-close">X</v-btn>
+          <v-btn icon @click="removeFile(file)" title="mdi-close"><v-icon color="primary">mdi-close</v-icon></v-btn>
         </v-col>
       </v-row>
     </v-card>
@@ -43,13 +50,18 @@
       <div class="my-3">
         Pick your target column.
       </div>
-      <v-select 
-        v-model="target" 
-        dense 
-        outlined 
-        :items="fileMetadata[0].fields"
-        @change="targetChange"
-        ></v-select>
+      <v-row>
+        <v-col cols="6">
+          <v-select 
+            v-model="target" 
+            dense 
+            outlined 
+            :items="fileMetadata[0].fields"
+            @change="targetChange"
+            ></v-select>          
+        </v-col>
+      </v-row>
+
     </div>
     <div class="text-right" v-if="this.target !=null && files.length > 0">
       <v-btn

@@ -326,7 +326,9 @@ def encoder_store():
         file['invalidColumnsTransforms'] = transforms
         file['rows'] = int(df.shape[0])
         file['nanRows'] = int(df[df.isna().any(axis=1)].shape[0])
-        file['nanPercent'] = int((df[df.isna().any(axis=1)].shape[0] / df.shape[0]) * 100)
+        file['nanCells'] = int(df.isna().sum().sum())
+        file['valueCells'] = int(df.count().sum())
+        file['nanPercent'] = int(round(file['nanCells'] / (file['valueCells'] + file['nanCells']), 2) * 100)
         file['columns'] = int(df.shape[1])
         file['columnNames'] = list(df.columns.values)
         file['targetValidation'] = target_validation      

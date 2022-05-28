@@ -6,23 +6,26 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
     /> 
-    <v-card 
-        v-for="(file, index) in filePipeline.metadata.initialFiles" 
-        :key="index"
-        class="my-2"
-        flat
-        >
-        <div class="overline primary--text">{{file.name}}</div>   
-        <div class="ml-3">
-            {{file.targetValidation.valuesCount}} target value(s): 
+    <v-card flat outlined class="pa-3 my-2" v-for="(file, index) in filePipeline.metadata.initialFiles" :key="index">
+      <v-row dense >
+        <v-col cols="6">
+          <v-icon>mdi-target</v-icon>
+          {{ file.name }}
+        </v-col>
+        <v-col cols="6">
+          <div>
+            {{file.targetValidation.valuesCount}} target value<span v-if="file.targetValidation.valuesCount > 1">s</span>
+          </div>
+          <div class="my-2">
             <v-chip 
                 v-for="(val, i) in file.targetValidation.targetValues"
                 :key="i"
                 small
                 >
                 {{val}}
-            </v-chip>
-          <span class="ml-5 mt-2">
+            </v-chip>            
+          </div>
+          <div>
               <span v-if="file.targetValidation.validTarget == 0">
                   <v-icon color="red" >mdi-alert-circle</v-icon>
                   <span v-if="file.targetValidation.valuesCount > 2">Target column has more than two values.</span>
@@ -31,11 +34,13 @@
               <span v-else>
                   <v-icon color="green" >mdi-check-circle</v-icon> Target column is valid
               </span>
-          </span>              
-        </div>
+           
+          </div>
 
-              
+        </v-col>
+      </v-row>
     </v-card>
+
 
     <div v-if="allTargetListsMatch.fileCount > 1">
         <div class="overline purple--text">Cross-file Validation</div>
