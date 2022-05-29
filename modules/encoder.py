@@ -210,16 +210,17 @@ def manage_rows():
     files = request.json['initialFiles']
     for file in files:
 
-        df = load_file(file['storageId'])
-        #change index to match excel
-        df.index = df.index + 2   
+        df = load_file(file['storageId']) 
         transforms = file['invalidColumnsTransforms']
         df = apply_column_transforms(df, transforms, target, target_map)
-
+ 
 
         print(row_option, 'row option')
 
         if (row_option == '0'):
+            #change index to match excel
+            df.index = df.index + 2 
+            #change            
             missing = df[df.isna().any(axis=1)]
             output = df.drop(missing.index)
             if missing.shape[0] > 0:         
@@ -236,6 +237,9 @@ def manage_rows():
             result = pd.DataFrame(imp_mean.transform(X),columns=X.columns)
             result[df.columns[df.isna().any()]] = result[df.columns[df.isna().any()]].round(decimals=3)
             result[target] = y
+            #change index to match excel
+            result.index = result.index + 2 
+            #change            
             output_files[remove_dotcsv(file['name']) + '_encoded_imputed' + '.csv'] = result.to_csv(index=include_indexes, index_label="source_row")
 
     result = {
