@@ -148,46 +148,43 @@ def apply_column_transforms(dataframe, transforms, target, target_map):
     df = df[reorder_list]
     return df 
 
+def file_nan_metrics(df):
+    output = {}
+    nan_column_count = df.isnull().sum()
+    nan_column_count = nan_column_count[nan_column_count > 0] #only if has NaN
+    nan_column_count = nan_column_count.sort_values(ascending=False)
+
+    output['nanByColumn'] = nan_column_count.to_json()
+    output['rows'] = int(df.shape[0])
+    output['nanRows'] = int(df[df.isna().any(axis=1)].shape[0])
+    output['nanCells'] = int(df.isna().sum().sum())
+    output['valueCells'] = int(df.count().sum())
+    output['nanPercent'] = int(round(output['nanCells'] / (output['valueCells'] + output['nanCells']), 2) * 100)
+    output['columns'] = int(df.shape[1])
+    output['columnNames'] = list(df.columns.values)
+    return output
 
 @encoder.route('/apply_transforms',methods=['POST'])
 def apply_transforms():
     
-
-    output_files = {}
-    nan_rows = {}
-    nan_columns = {}
-    total_rows = {}
+    result = {}
 
     target = request.headers['target']
     target_map = json.loads(request.headers['targetMap'])
     print(target_map, type(target_map))
     files = request.json['initialFiles']
     for file in files:
-        print(file['name'])
+        result[file['name']] = {} #create file object for original and transform
+       
         df = load_file(file['storageId'])
+
+        result[file['name']]['original'] = file_nan_metrics(df) #original file
 
         transforms = file['invalidColumnsTransforms']
 
         df = apply_column_transforms(df, transforms, target, target_map)
 
-        #isolate nan rows and columns
-        nan_count = df.isnull().sum()
-        nan_count = nan_count[nan_count > 0]
-        nan_count = nan_count.sort_values(ascending=False)
-        
-        #build output arrays
-        
-        nan_columns[file['name']] = nan_count.to_json()
-        nan_rows[file['name']] = df[df.isna().any(axis=1)].shape[0]
-        total_rows[file['name']] = df.shape[0]
-        output_files[file['name']] = df.to_csv(index=True)
-
-    result = {
-        'files': output_files,
-        'nan_rows': nan_rows,
-        'nan_columns': nan_columns,
-        'total_rows': total_rows
-    }
+        result[file['name']]['transform'] = file_nan_metrics(df)
 
     response = make_response(
         #Added to transform nan items to null when sending JSON
@@ -322,6 +319,8 @@ def encoder_store():
             
 
         transforms, invalid_columns = define_invalid_columns(df.drop(columns=[target]))
+
+        #TODO simplify code in final step
         file['invalidColumns'] = invalid_columns
         file['invalidColumnsTransforms'] = transforms
         file['rows'] = int(df.shape[0])
