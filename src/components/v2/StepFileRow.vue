@@ -44,7 +44,7 @@
           <div v-for="(val,col) in JSON.parse(data.original.nanByColumn)" :key="col">{{col}}: {{val}}</div>
         </v-col> -->
         <v-col cols="3">
-          <div>Summary of Change</div>
+          <div class="overline">Missing Value Changes</div>
           <div v-if="rowOption == 0">
             <div>
               {{ data.transform.rows}} total rows
@@ -68,7 +68,12 @@
 
         </v-col>
         <v-col cols="3">
-          <div>Columns with Missing</div>
+          <div class="overline">Other Changes</div>
+          <div>
+            Cols: {{ data.original.columns}} -> {{ data.transform.columns}}
+            {{_.difference(data.original.columnNames, data.transform.columnNames)}}
+        
+          </div>
           <div v-for="(val,col) in JSON.parse(data.original.nanByColumn)" :key="col">{{col}}: {{val}}</div>
 
         </v-col>     
@@ -98,7 +103,7 @@
 </template>
 <script>
 //packages
-
+import _ from 'underscore'
 //support code
 
 //components
@@ -124,6 +129,7 @@ export default {
   ],
   mounted() {
     window.scrollTo(0,document.body.scrollHeight);
+    _
   },  
   computed: {
     manyMissingRows() {

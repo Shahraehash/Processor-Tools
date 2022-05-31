@@ -159,6 +159,7 @@ def file_nan_metrics(df):
     output['nanRows'] = int(df[df.isna().any(axis=1)].shape[0])
     output['nanCells'] = int(df.isna().sum().sum())
     output['valueCells'] = int(df.count().sum())
+    
     output['nanPercent'] = int(round(output['nanCells'] / (output['valueCells'] + output['nanCells']), 2) * 100)
     output['columns'] = int(df.shape[1])
     output['columnNames'] = list(df.columns.values)
