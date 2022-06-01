@@ -14,7 +14,7 @@
       @nextStep="true"
     />
 
-    <StepFileDrop
+    <StepFileDropUpload
       ref="step1"
       stepTitle="File Selection"
       stepNumber="1"
@@ -61,7 +61,7 @@ import FilePipeline from '@/FilePipeline.js'
 
 //components
 import MenuBar from '@/components/MenuBar'
-import StepFileDrop from '@/components/v2/StepFileDrop'
+import StepFileDropUpload from '@/components/v2/StepFileDropUpload'
 import StepColumnRemoval from '@/components/v2/StepColumnRemoval'
 import StepTargetCheck from '@/components/v2/StepTargetCheck'
 import StepFileCheck from '@/components/v2/StepFileCheck'
@@ -71,7 +71,7 @@ export default {
   name: 'Encoder',
   components: {
     MenuBar,
-    StepFileDrop,
+    StepFileDropUpload,
     StepColumnRemoval,
     StepTargetCheck,
     StepFileCheck,
