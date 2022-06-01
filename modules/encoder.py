@@ -52,8 +52,6 @@ def transform_one_hot_encode(series):
 def transform_category_to_binary(series, map):
     return series.map(map).astype('int')
 
-
-
 def save_file(file_obj, storage_id):
     file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
     file_obj.save(file_path)
@@ -96,20 +94,6 @@ def define_invalid_columns(df):
                 'nan_row_index': list(col[col.isna() == True].index),
                 'non_numeric_row_index': list(numeric[numeric == False].index)
             } 
-        
-        # elif (len(col.unique()) == 2):
-        #     mapping = {}
-        #     for index, val in enumerate(col.unique()):
-        #         mapping[val] = index
-        #     #invalid[column] = col.map(mapping).astype('int')
-
-        #     transforms[column] = {
-        #         'type': 'category_to_binary',
-        #         'map': mapping,
-        #         'nan_row_index': list(col[col.isna() == True].index)
-        #     }             
-    
-        # elif (len(col.unique()) > 2):
         else:
             transforms[column] = {
                 'type': 'one_hot_encode',
@@ -159,7 +143,6 @@ def file_nan_metrics(df):
     output['nanRows'] = int(df[df.isna().any(axis=1)].shape[0])
     output['nanCells'] = int(df.isna().sum().sum())
     output['valueCells'] = int(df.count().sum())
-    
     output['nanPercent'] = int(round(output['nanCells'] / (output['valueCells'] + output['nanCells']), 2) * 100)
     output['columns'] = int(df.shape[1])
     output['columnNames'] = list(df.columns.values)
@@ -173,7 +156,7 @@ def apply_transforms():
     target = request.headers['target']
     target_map = json.loads(request.headers['targetMap'])
     print(target_map, type(target_map))
-    files = request.json['initialFiles']
+    files = request.json['files']
     for file in files:
         result[file['name']] = {} #create file object for original and transform
        
@@ -208,7 +191,7 @@ def manage_rows():
     include_indexes = request.headers['includeIndexes']
     include_indexes = bool(util.strtobool(include_indexes))
     print('include_index:', include_indexes)
-    files = request.json['initialFiles']
+    files = request.json['files']
     for file in files:
 
         df = load_file(file['storageId']) 
@@ -260,7 +243,7 @@ def manage_rows():
 #Method not actually used because part of initial metadata evaluation
 @encoder.route('/evaluate_columns',methods=['POST'])
 def evaluate_columns():
-    files = request.json['initialFiles']
+    files = request.json['files']
 
     output = {}
 
@@ -280,6 +263,71 @@ def evaluate_columns():
 
     return response   
 
+
+def store_files(files):
+    '''
+    Function used to store initial files to disk and generate storage Ids.
+    '''
+    storage_array = []
+
+    for file in files:
+
+        file_properties = {}
+
+        #Name
+        file_properties['name'] = file.filename
+        
+        #Storage Id
+        storage_id = str(uuid.uuid4())
+        file_properties['storageId'] = storage_id
+
+        #Save file to disk
+        save_file(file, storage_id) #custom helper function
+        
+        #Track
+        storage_array.append(file_properties)
+
+    return storage_array
+
+
+def validate_target(df, target):
+    '''
+    Function used to validate target column. Removes NaN values.
+    '''
+    target_validation = {
+        'validTarget': int(False), #for json
+        'targetValues': [],
+        'valuesCount': 0,
+        'nanCount': 0
+    }
+    if target in df.columns.values:
+        target_validation['nanCount'] = int(df[target].isna().sum())
+        target_no_nan = df[target].dropna()
+        target_validation['targetValues'] = list(target_no_nan.astype('str').unique())
+        target_validation['targetValues'].sort()
+        target_validation['valuesCount'] = int(len(target_validation['targetValues']))
+        target_validation['validTarget'] = int(target_validation['valuesCount'] == 2)
+    
+    return target_validation
+        
+
+def file_params(df):
+    params = {}
+    params['rows'] = int(df.shape[0])
+    params['nanRows'] = int(df[df.isna().any(axis=1)].shape[0])
+    params['nanCells'] = int(df.isna().sum().sum())
+    params['valueCells'] = int(df.count().sum())
+    params['nanPercent'] = int(round(params['nanCells'] / (params['valueCells'] + params['nanCells']), 2) * 100)
+    nanByColumn = df.isna().sum()
+    params['nanByColumn'] = nanByColumn[nanByColumn != 0].to_dict()
+    nanByColumnPercent = round(df.isna().sum() / df.shape[0] * 100, 1)
+    params['nanByColumnPercent'] = nanByColumnPercent[nanByColumnPercent !=0].to_dict()
+    params['columns'] = int(df.shape[1])
+    params['columnNames'] = list(df.columns.values)
+    params['describe'] = df.describe().to_dict()
+
+    return params
+
 @encoder.route('/store',methods=['POST'])
 def encoder_store():
 
@@ -287,59 +335,44 @@ def encoder_store():
     files = request.files.getlist('files')
 
     #Object to store pipeline
-    metadata = {
+    pipeline = {
         'pipelineId': str(uuid.uuid4()),
         'upload_time': datetime.timestamp(datetime.now()),
-        'initialFiles': [],
-        #'initialFilesValidation': None #TODO: Add validation
+        'files': [],
     }
-
     #Each file is uploaded as part of a multipart form with the same key 'files
     #Saving process
-    
-    for file in files:
-        storage_id = str(uuid.uuid4())
-        save_file(file, storage_id) #custom helper function
-        metadata['initialFiles'].append({   
-            'storageId': storage_id,
-            'name': file.filename,
-        })
+
+    pipeline['files'] = store_files(files) #return Array of storageID, name, valid
     
     #Read saved files and extract metadata
-    for file in metadata['initialFiles']:
-        df = load_file(file['storageId'])
+    for file in pipeline['files']:
+        try: 
 
-        df.columns.values
+            #File loading and validation
+            df = load_file(file['storageId'])
+            file['validFile'] = True
 
-        target_validation = {
-            'validTarget': int(False), #for json
-            'targetValues': [],
-            'valuesCount': 0
-        }
-        if target in df.columns.values:
-            target_validation['targetValues'] = list(df[target].astype('str').unique())
-            target_validation['targetValues'].sort()
-            target_validation['valuesCount'] = len(target_validation['targetValues'])
-            target_validation['validTarget'] = int(target_validation['valuesCount'] == 2)
-            
+            #Target validation
+            file['targetValidation'] = validate_target(df, target)
 
-        transforms, invalid_columns = define_invalid_columns(df.drop(columns=[target]))
+            #Transforms
+            transforms, invalid_columns = define_invalid_columns(df.drop(columns=[target]))
+            file['invalidColumns'] = invalid_columns
+            file['invalidColumnsTransforms'] = transforms
 
-        #TODO simplify code in final step
-        file['invalidColumns'] = invalid_columns
-        file['invalidColumnsTransforms'] = transforms
-        file['rows'] = int(df.shape[0])
-        file['nanRows'] = int(df[df.isna().any(axis=1)].shape[0])
-        file['nanCells'] = int(df.isna().sum().sum())
-        file['valueCells'] = int(df.count().sum())
-        file['nanPercent'] = int(round(file['nanCells'] / (file['valueCells'] + file['nanCells']), 2) * 100)
-        file['columns'] = int(df.shape[1])
-        file['columnNames'] = list(df.columns.values)
-        file['targetValidation'] = target_validation      
+            #File Metrics
+            file['params'] = file_params(df)
+
+        except Exception as e:
+            print(e)
+            file['validFile'] = False
+
+
 
     response = make_response(
         #Added to transform nan items to null when sending JSON
-        simplejson.dumps(metadata, ignore_nan=True),
+        simplejson.dumps(pipeline, ignore_nan=True),
         200,
     )
     response.headers["Content-Type"] = "application/json"
