@@ -6,7 +6,8 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
     />
-    <apexchart width="500" type="bar" :options="options" :series="series"></apexchart>
+    {{}}
+    <apexchart :key="redraw" width="500" type="bar" :options="options" :series="series"></apexchart>
     <div class="text-right" >
       <v-btn
         @click="$emit(nextStep)"
@@ -48,7 +49,8 @@ export default {
       series: [{
         name: 'series-1',
         data: [30, 40, 45, 50, 49, 60, 70, 91]
-      }]        
+      }],
+      redraw: 0,  
 
     }
   },
@@ -60,12 +62,15 @@ export default {
   ],
   watch: {
     filePipeline() {
-      console.log(this.filePipeline)
 
     }
   },
   mounted() {
     window.scrollTo(0,document.body.scrollHeight);
+          let f = this.filePipeline.metadata.files[0].params.nanByColumnPercent
+      this.options.xaxis.categories = Object.keys(f)
+      this.series[0].data = Object.values(f)
+      this.redraw += 1
   },  
   methods: {
 

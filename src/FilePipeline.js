@@ -49,6 +49,7 @@ export default {
               'target': this.target,              
             }
           }).then((response) => {
+            console.log(response.data)
             this.metadata = response.data
             return true
           })

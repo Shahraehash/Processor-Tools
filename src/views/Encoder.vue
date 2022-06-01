@@ -6,14 +6,6 @@
       :description="$store.state.tools[$options.name].description"
       @reset="$refs.step1.reset()"
     />
-    TEST
-    <StepColumnRemoval 
-      stepTitle="Optional Column Removal"
-      stepNumber="2"
-      :disableNext="false"
-      @nextStep="true"
-    />
-
     <StepFileDropUpload
       ref="step1"
       stepTitle="File Selection"
@@ -24,6 +16,14 @@
       @evaluateMetadata="evaluateMetadata"
       :backendMetadataProp="FilePipeline.metadata"
     />
+    <StepColumnRemoval
+      v-if="FilePipeline.metadata != null"
+      stepTitle="Optional Column Removal"
+      :filePipeline="FilePipeline"
+      stepNumber="2"
+      :disableNext="false"
+      @nextStep="true"
+    />    
 
     <StepTargetCheck
       v-if="FilePipeline.metadata != null"
