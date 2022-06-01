@@ -6,6 +6,13 @@
       :description="$store.state.tools[$options.name].description"
       @reset="$refs.step1.reset()"
     />
+    TEST
+    <StepColumnRemoval 
+      stepTitle="Optional Column Removal"
+      stepNumber="2"
+      :disableNext="false"
+      @nextStep="true"
+    />
 
     <StepFileDrop
       ref="step1"
@@ -17,6 +24,7 @@
       @evaluateMetadata="evaluateMetadata"
       :backendMetadataProp="FilePipeline.metadata"
     />
+
     <StepTargetCheck
       v-if="FilePipeline.metadata != null"
       stepTitle="Target Column Audit"
@@ -54,6 +62,7 @@ import FilePipeline from '@/FilePipeline.js'
 //components
 import MenuBar from '@/components/MenuBar'
 import StepFileDrop from '@/components/v2/StepFileDrop'
+import StepColumnRemoval from '@/components/v2/StepColumnRemoval'
 import StepTargetCheck from '@/components/v2/StepTargetCheck'
 import StepFileCheck from '@/components/v2/StepFileCheck'
 import StepFileRow from '@/components/v2/StepFileRow'
@@ -63,10 +72,11 @@ export default {
   components: {
     MenuBar,
     StepFileDrop,
+    StepColumnRemoval,
     StepTargetCheck,
     StepFileCheck,
-    StepFileRow
-  },
+    StepFileRow,
+},
   props: [],
   created() {
     this.FilePipeline = FilePipeline.newFilePipeline()
