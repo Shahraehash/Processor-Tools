@@ -6,8 +6,25 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
     />
-    {{}}
-    <apexchart :key="redraw" width="500" type="bar" :options="options" :series="series"></apexchart>
+
+      <v-row>
+        <v-col cols="6">
+          <ApexPlotMissingData :files="filePipeline.files"/>
+        </v-col>
+        <v-col cols="6" >
+          <v-data-table
+            :headers="headers"
+          ></v-data-table>
+        </v-col>      
+      </v-row>      
+
+
+
+
+
+
+
+    
     <div class="text-right" >
       <v-btn
         @click="$emit(nextStep)"
@@ -30,27 +47,32 @@
 
 //components
 import StepHeading from '@/components/StepHeading'
+import ApexPlotMissingData from '@/components/ApexPlotMissingData'
 
 export default {
   name: 'StepColumnRemoval',
   components: {
-    StepHeading
+    StepHeading,
+    ApexPlotMissingData
   },
   data() {
     return {
-      options: {
-        chart: {
-          id: 'vuechart-example'
-        },
-        xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
-        }
-      },
-      series: [{
-        name: 'series-1',
-        data: [30, 40, 45, 50, 49, 60, 70, 91]
-      }],
-      redraw: 0,  
+      headers: [
+          {
+            text: 'Column',
+            align: 'start',
+            sortable: false,
+            value: 'column',
+          },   
+          {
+            text: 'Missing Value Count',
+            align: 'start',
+            sortable: false,
+            value: 'count',
+          },                  
+      ],
+      tableData: null
+
 
     }
   },
@@ -61,19 +83,23 @@ export default {
     'disableNext'
   ],
   watch: {
-    filePipeline() {
 
-    }
   },
   mounted() {
     window.scrollTo(0,document.body.scrollHeight);
-          let f = this.filePipeline.metadata.files[0].params.nanByColumnPercent
-      this.options.xaxis.categories = Object.keys(f)
-      this.series[0].data = Object.values(f)
-      this.redraw += 1
+ 
   },  
   methods: {
-
+    generateMissingDataTable(data) {
+      let tableData = []
+      for (let key in data) {
+        tableData.push({
+          column: key,
+          count: data[key]
+        })
+      }
+      return tableData
+    },
   }
 }
 </script>

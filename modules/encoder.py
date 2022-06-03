@@ -332,21 +332,21 @@ def file_params(df):
 def encoder_store():
 
     target = request.headers['target']
-    files = request.files.getlist('files')
+    uploaded_files = request.files.getlist('files')
 
     #Object to store pipeline
-    pipeline = {
+    metadata = {
         'pipelineId': str(uuid.uuid4()),
         'upload_time': datetime.timestamp(datetime.now()),
-        'files': [],
     }
+
     #Each file is uploaded as part of a multipart form with the same key 'files
     #Saving process
 
-    pipeline['files'] = store_files(files) #return Array of storageID, name, valid
+    files = store_files(uploaded_files) #return Array of storageID, name, valid
     
     #Read saved files and extract metadata
-    for file in pipeline['files']:
+    for file in files:
         try: 
 
             #File loading and validation
@@ -368,7 +368,10 @@ def encoder_store():
             print(e)
             file['validFile'] = False
 
-
+    pipeline = {
+        'metadata': metadata,
+        'files': files
+    }
 
     response = make_response(
         #Added to transform nan items to null when sending JSON

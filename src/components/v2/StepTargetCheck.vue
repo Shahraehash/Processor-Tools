@@ -6,7 +6,7 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
     /> 
-    <v-card flat outlined class="pa-3 my-2" v-for="(file, index) in filePipeline.metadata.initialFiles" :key="index">
+    <v-card flat outlined class="pa-3 my-2" v-for="(file, index) in filePipeline.files" :key="index">
       <v-row dense >
         <v-col cols="6">
           <v-icon>mdi-target</v-icon>
@@ -141,7 +141,7 @@ export default {
   },
   methods: {
     targetListMatching() {
-    let files = this.filePipeline.metadata.initialFiles
+    let files = this.filePipeline.files
 
     let values = []
     let validSum = 0

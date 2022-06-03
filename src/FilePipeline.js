@@ -5,11 +5,12 @@ import JSZip from 'jszip'
 export default {
   newFilePipeline() {
     return {
-      initialFiles: [],
+      initialFiles: [], //change to uploadFiles
+      files: null,
+      metadata: null,      
       target: null,
       targetMap: null,
       uploading: false,
-      metadata: null,
       columnAdjust: null,
       rowHandling: null,
       rowOption: 0, //0: remove, 1: impute
@@ -50,7 +51,8 @@ export default {
             }
           }).then((response) => {
             console.log(response.data)
-            this.metadata = response.data
+            this.files = response.data.files
+            this.metadata = response.data.metadata
             return true
           })
         }

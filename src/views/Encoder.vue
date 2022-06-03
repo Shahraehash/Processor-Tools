@@ -14,32 +14,32 @@
       @targetChange="FilePipeline.setTarget($event)"
       :disableNext="FilePipeline.metadata != null"
       @evaluateMetadata="evaluateMetadata"
-      :backendMetadataProp="FilePipeline.metadata"
+      :backendFileDataProp="FilePipeline.files"
     />
-    <StepColumnRemoval
-      v-if="FilePipeline.metadata != null"
-      stepTitle="Optional Column Removal"
-      :filePipeline="FilePipeline"
-      stepNumber="2"
-      :disableNext="false"
-      @nextStep="true"
-    />    
-
     <StepTargetCheck
-      v-if="FilePipeline.metadata != null"
+      v-if="FilePipeline.files != null"
       stepTitle="Target Column Audit"
       stepNumber="2"
       :filePipeline="FilePipeline"
       :disableNext="FilePipeline.targetMap != null"
-    />    
-    <StepFileCheck
+    />
+    <StepColumnRemoval
       v-if="FilePipeline.targetMap != null"
+      stepTitle="Missing Data Audit"
+      :filePipeline="FilePipeline"
+      stepNumber="3"
+      :disableNext="false"
+      @nextStep="true"
+    />        
+    <StepFileCheck
+      v-if="false"
       stepTitle="Adjust Non-Numerical Columns"
       stepNumber="3"
       :filePipeline="FilePipeline"
       :disableNext="FilePipeline.columnAdjust != null"
     />
     <StepFileRow
+      v-if="false"
       stepTitle="Handle Missing Values"
       stepNumber="4"
       :filePipeline="FilePipeline"
@@ -102,7 +102,6 @@ export default {
       this.FilePipeline.setInitialFiles(files)
     },
     evaluateMetadata() {
-      console.log(this.FilePipeline)
       this.FilePipeline.evaluateMetadataAndStore()
     }
   }
