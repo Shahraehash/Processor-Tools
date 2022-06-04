@@ -3,6 +3,7 @@
 </template>
 <script>
 //packages
+import _ from 'underscore'
 
 //support code
 
@@ -36,8 +37,9 @@ export default {
   },
   mounted() {
     this.files.forEach(file => {
+      console.log(file.name)
       let item = {
-        label: file.name,
+        name: file.name, //not working
         data: this.covertObjectToXY(file.params.nanByColumn)
       }
       this.series.push(item)
@@ -53,6 +55,7 @@ export default {
             y: obj[key]
           })
         }
+        xy = _.sortBy(xy, 'y').reverse()
         return xy
       },
 

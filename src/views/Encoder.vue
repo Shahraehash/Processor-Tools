@@ -29,7 +29,7 @@
       :filePipeline="FilePipeline"
       stepNumber="3"
       :disableNext="false"
-      @nextStep="true"
+      @nextStep="FilePipeline.setColumnsToRemove($event)"
     />        
     <StepFileCheck
       v-if="false"

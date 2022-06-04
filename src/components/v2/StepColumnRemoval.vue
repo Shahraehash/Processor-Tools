@@ -7,16 +7,35 @@
       :stepTitle="stepTitle"
     />
 
-      <v-row>
-        <v-col cols="6">
-          <ApexPlotMissingData :files="filePipeline.files"/>
-        </v-col>
-        <v-col cols="6" >
-          <v-data-table
-            :headers="headers"
-          ></v-data-table>
-        </v-col>      
-      </v-row>      
+    <v-row>
+      <v-col cols="6">
+        <ApexPlotMissingData :files="filePipeline.files"/>
+      </v-col>
+      <v-col cols="6" >
+        <TableMissingDataByColumn :files="filePipeline.files"/>
+
+      </v-col>      
+    </v-row>
+
+    <div class="overline purple--text">Column Removal</div>
+    <div>Any columns with signficant missing data can be optionally removed.</div>
+    <v-row>
+      <v-col cols="6">
+          <v-combobox
+            label="Columns to Remove"
+            dense
+            outlined
+            v-model="columnsToRemove"
+            multiple
+            :items="Object.keys(filePipeline.files[0].params.nanByColumn)"
+          >
+          </v-combobox>
+      </v-col>
+    </v-row>
+
+    
+
+      
 
 
 
@@ -27,7 +46,7 @@
     
     <div class="text-right" >
       <v-btn
-        @click="$emit(nextStep)"
+        @click="$emit('nextStep', columnsToRemove)"
         class="primary"
         :disabled="disableNext"
         rounded
@@ -48,32 +67,18 @@
 //components
 import StepHeading from '@/components/StepHeading'
 import ApexPlotMissingData from '@/components/ApexPlotMissingData'
+import TableMissingDataByColumn from '@/components/TableMissingDataByColumn'
 
 export default {
   name: 'StepColumnRemoval',
   components: {
     StepHeading,
-    ApexPlotMissingData
+    ApexPlotMissingData,
+    TableMissingDataByColumn
   },
   data() {
     return {
-      headers: [
-          {
-            text: 'Column',
-            align: 'start',
-            sortable: false,
-            value: 'column',
-          },   
-          {
-            text: 'Missing Value Count',
-            align: 'start',
-            sortable: false,
-            value: 'count',
-          },                  
-      ],
-      tableData: null
-
-
+      columnsToRemove: [],
     }
   },
   props: [
@@ -90,16 +95,7 @@ export default {
  
   },  
   methods: {
-    generateMissingDataTable(data) {
-      let tableData = []
-      for (let key in data) {
-        tableData.push({
-          column: key,
-          count: data[key]
-        })
-      }
-      return tableData
-    },
+
   }
 }
 </script>

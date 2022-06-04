@@ -10,6 +10,7 @@ export default {
       metadata: null,      
       target: null,
       targetMap: null,
+      columnsToRemove: null,
       uploading: false,
       columnAdjust: null,
       rowHandling: null,
@@ -28,6 +29,9 @@ export default {
       },   
       setTargetMap(targetMap) {
         this.targetMap = targetMap
+      },
+      setColumnsToRemove(columnsToRemove) {
+        this.columnsToRemove = columnsToRemove
       },
       setRowOption(option) {
         console.log('setRowOption', option)
