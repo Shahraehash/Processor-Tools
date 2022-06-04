@@ -36,46 +36,52 @@
 
 <v-card flat outlined class="pa-3 my-2" v-for="(data, file) in filePipeline.columnAdjust" :key="file">
       <v-row dense >
-        <v-col cols="6">
+        <v-col cols="54">
           <v-icon>mdi-update</v-icon>
           {{ file }}
+  
         </v-col>
-        <!-- <v-col cols="3">
-          <div v-for="(val,col) in JSON.parse(data.original.nanByColumn)" :key="col">{{col}}: {{val}}</div>
-        </v-col> -->
-        <v-col cols="3">
-          <div class="overline">Missing Value Changes</div>
-          <div v-if="rowOption == 0">
-            <div>
-              {{ data.transform.rows}} total rows
-            </div>          
-            <div>
-              {{ data.transform.nanRows}} missing rows
-            </div>
-            <div>
-              {{data.transform.rows - data.transform.nanRows}} remaining rows 
-            </div>  
-          </div>
-          <div v-if="rowOption == 1">
-            <div>
-              {{ data.transform.valueCells}} cells with values
-            </div>
-            <div>
-              {{ data.transform.nanCells}} cells imputed
-            </div>          
-          </div>
-        
-
-        </v-col>
-        <v-col cols="3">
-          <div class="overline">Other Changes</div>
+        <v-col cols="7">
           <div>
-            Cols: {{ data.original.columns}} -> {{ data.transform.columns}}
-        
+            <strong>Columns</strong>
+            
           </div>
-          <div v-for="(val,col) in JSON.parse(data.original.nanByColumn)" :key="col">{{col}}: {{val}}</div>
+          <div class="title ml-2">
+            {{ data.original.columns}} <v-icon>mdi-arrow-right</v-icon> {{data.transform.columns}}
+          </div>
+          <div>
+            <v-icon>mdi-plus</v-icon> Add:
+            <v-chip small color="green lighten-3" dark v-for="(item, key) in showDiff(data.transform.columnNames, data.original.columnNames)" :key="key" >{{ item }}</v-chip>
+          </div>
+          <div>
+            <v-icon>mdi-minus</v-icon> Remove:
+            <v-chip small color="red lighten-3" dark v-for="(item, key) in showDiff(data.original.columnNames, data.transform.columnNames)" :key="key" >{{ item }}</v-chip>
+          </div>
+          <div class="mt-3">
+            <strong>Rows</strong>
+          </div>
+          <div class="title ml-2">
+          </div>          
+            <div v-if="rowOption == 0">
+              <div class="title ml-2">
+                {{ data.original.rows}} <v-icon>mdi-arrow-right</v-icon> {{data.transform.rows - data.transform.nanRows}}
+              </div>              
+              <div>
+                <v-icon>mdi-minus</v-icon> Remove:{{data.transform.nanRows}} rows with missing data
+              </div>
+            </div>
+            <div v-if="rowOption == 1">
+              <div class="title ml-2">
+                {{ data.original.rows}} <v-icon>mdi-arrow-right</v-icon> {{data.transform.rows}}
+              </div>              
+              <div>
+                <v-icon>mdi-plus</v-icon> Add: {{data.transform.nanCells}} imputed values
+              </div>
+            </div>                
+         
+          
 
-        </v-col>     
+        </v-col>             
       </v-row>
     </v-card>
 
@@ -155,6 +161,9 @@ export default {
     processStep() {
       this.filePipeline.handleRows(this.includeIndexes)
       this.$emit('processStep')
+    },
+    showDiff(array1, array2) {
+      return _.difference(array1,array2)
     }
 
       
