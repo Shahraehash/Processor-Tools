@@ -27,7 +27,7 @@
             outlined
             v-model="columnsToRemove"
             multiple
-            :items="Object.keys(filePipeline.files[0].params.nanByColumn)"
+            :items="columnsPossibleToRemove"
             @change="$emit('changeColumnRemoval')"
           >
           </v-combobox>
@@ -62,7 +62,7 @@
 </template>
 <script>
 //packages
-
+import _ from 'underscore'
 //support code
 
 //components
@@ -94,7 +94,22 @@ export default {
   mounted() {
     window.scrollTo(0,document.body.scrollHeight);
  
-  },  
+  },
+  computed: {
+    columnsPossibleToRemove() {
+      if (this.filePipeline) {
+        let columns = []
+        this.filePipeline.files.forEach(file => {
+          columns = columns.concat(Object.keys(file.params.nanByColumn))
+        })
+        return _.uniq(columns)
+      }
+      else {
+        return []
+      }      
+
+    }
+  },
   methods: {
 
   }
