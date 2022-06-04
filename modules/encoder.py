@@ -104,8 +104,15 @@ def define_invalid_columns(df):
             
     return transforms, list(invalid.columns)
 
-def apply_column_transforms(dataframe, transforms, target, target_map):
+def apply_column_transforms(dataframe, columns_to_remove, transforms, target, target_map):
     df = pd.DataFrame(dataframe)
+
+    #Remove columns
+    df = df.drop(columns=columns_to_remove)
+    for column in columns_to_remove:
+        if column in transforms:
+            transforms.pop(column, None)
+
     for column in transforms:
         t = transforms[column]
 
@@ -119,7 +126,6 @@ def apply_column_transforms(dataframe, transforms, target, target_map):
             df = pd.concat([df, transform_one_hot_encode(df[column])], axis=1)
             df = df.drop(column, axis=1)
 
-    
     try:
         df[target] = df[target].astype('str').map(target_map).astype('int')
     except:
@@ -155,8 +161,10 @@ def apply_transforms():
 
     target = request.headers['target']
     target_map = json.loads(request.headers['targetMap'])
-    print(target_map, type(target_map))
-    files = request.json['files']
+    columns_to_remove = json.loads(request.headers['columnsToRemove'])
+    
+    print(request.json)
+    files = request.json
     for file in files:
         result[file['name']] = {} #create file object for original and transform
        
@@ -166,7 +174,7 @@ def apply_transforms():
 
         transforms = file['invalidColumnsTransforms']
 
-        df = apply_column_transforms(df, transforms, target, target_map)
+        df = apply_column_transforms(df, columns_to_remove, transforms, target, target_map)
 
         result[file['name']]['transform'] = file_nan_metrics(df)
 
@@ -196,7 +204,7 @@ def manage_rows():
 
         df = load_file(file['storageId']) 
         transforms = file['invalidColumnsTransforms']
-        df = apply_column_transforms(df, transforms, target, target_map)
+        df = apply_column_transforms(df, columns_to_remove, transforms, target, target_map)
  
 
         print(row_option, 'row option')

@@ -30,16 +30,18 @@
       stepNumber="3"
       :disableNext="false"
       @nextStep="FilePipeline.setColumnsToRemove($event)"
+      @changeColumnRemoval="FilePipeline.setColumnsToRemove(null)"
     />        
     <StepFileCheck
-      v-if="false"
+      v-if="FilePipeline.columnsToRemove != null"
       stepTitle="Adjust Non-Numerical Columns"
-      stepNumber="3"
+      stepNumber="4"
       :filePipeline="FilePipeline"
+      @nextStep="FilePipeline.applyTransforms()"
       :disableNext="FilePipeline.columnAdjust != null"
     />
     <StepFileRow
-      v-if="false"
+      v-if="FilePipeline.columnAdjust != null"
       stepTitle="Handle Missing Values"
       stepNumber="4"
       :filePipeline="FilePipeline"

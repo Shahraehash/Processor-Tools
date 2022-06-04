@@ -76,13 +76,14 @@ export default {
         }
       },      
       applyTransforms() {
-        if (this.metadata != null) {
+        if (this.files != null) {
 
-          return axios.post('/preprocessor_api/encoder/apply_transforms', this.metadata, {
+          return axios.post('/preprocessor_api/encoder/apply_transforms', this.files, {
               headers: {
               'Content-Type': 'application/json',
               'target': this.target,
               'targetMap': JSON.stringify(this.targetMap),
+              'columnsToRemove': JSON.stringify(this.columnsToRemove),
             }
           }).then((response) => {
             console.log(response.data)

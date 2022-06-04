@@ -28,6 +28,7 @@
             v-model="columnsToRemove"
             multiple
             :items="Object.keys(filePipeline.files[0].params.nanByColumn)"
+            @change="$emit('changeColumnRemoval')"
           >
           </v-combobox>
       </v-col>
