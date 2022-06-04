@@ -96,14 +96,15 @@ export default {
         }
       },
       handleRows(includeIndexes) {
-        if (this.metadata != null) {
+        if (this.files != null) {
 
-          return axios.post('/preprocessor_api/encoder/manage_rows', this.metadata, {
+          return axios.post('/preprocessor_api/encoder/manage_rows', this.files, {
               headers: {
               'Content-Type': 'application/json',
               'target': this.target,
               'targetMap': JSON.stringify(this.targetMap),              
               'rowOption': this.rowOption,
+              'columnsToRemove': JSON.stringify(this.columnsToRemove),
               'includeIndexes': includeIndexes,
             }
           }).then((response) => {
@@ -111,7 +112,6 @@ export default {
             let zip = new JSZip();
 
             for (let file in response.data.files) {
-              console.log(file)
               zip.file(file, response.data.files[file])            
             }
             zip.generateAsync({type:"blob"})

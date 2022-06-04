@@ -1,7 +1,7 @@
 <template>
 
 
-  <v-card outlined flat class="ma-3 pa-5" @drop.prevent="addFile" @dragover.prevent v-if="filePipeline && filePipeline.columnAdjust != null">
+  <v-card outlined flat class="ma-3 pa-5" >
     <StepHeading
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
@@ -71,7 +71,6 @@
           <div class="overline">Other Changes</div>
           <div>
             Cols: {{ data.original.columns}} -> {{ data.transform.columns}}
-            {{_.difference(data.original.columnNames, data.transform.columnNames)}}
         
           </div>
           <div v-for="(val,col) in JSON.parse(data.original.nanByColumn)" :key="col">{{col}}: {{val}}</div>
@@ -104,6 +103,7 @@
 <script>
 //packages
 import _ from 'underscore'
+
 //support code
 
 //components
@@ -134,7 +134,7 @@ export default {
   computed: {
     manyMissingRows() {
       let moreThanMaxMissing = false
-      this.filePipeline.metadata.initialFiles.forEach(file => {
+      this.filePipeline.files.forEach(file => {
         file.nanPercent > this.maxMissingPercent ? moreThanMaxMissing = true : null
       })
       return moreThanMaxMissing

@@ -198,11 +198,12 @@ def manage_rows():
     row_option = request.headers['rowOption']
     include_indexes = request.headers['includeIndexes']
     include_indexes = bool(util.strtobool(include_indexes))
-    print('include_index:', include_indexes)
-    files = request.json['files']
+    columns_to_remove = json.loads(request.headers['columnsToRemove'])
+
+    files = request.json
     for file in files:
 
-        df = load_file(file['storageId']) 
+        df = load_file(file['storageId'])
         transforms = file['invalidColumnsTransforms']
         df = apply_column_transforms(df, columns_to_remove, transforms, target, target_map)
  
