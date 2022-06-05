@@ -22,28 +22,26 @@
           {{ file.name }}
         </v-col>
 
-        <!-- <v-col cols="5">
+        <v-col cols="5">
          <div v-if="backendFileData">
-         {{backendFileData}}
-            <div><v-icon class="mr-1">mdi-arrow-expand-vertical</v-icon>{{backendData.initialFiles[index].columns}} columns</div>
-            <div><v-icon class="mr-1">mdi-arrow-expand-horizontal</v-icon>{{backendData.initialFiles[index].rows}} rows</div>
+            <div><v-icon class="mr-1">mdi-arrow-expand-horizontal</v-icon>{{backendFileData[index].params.columns}} columns</div>
+            <div><v-icon class="mr-1">mdi-arrow-expand-vertical</v-icon>{{backendFileData[index].params.rows}} rows</div>
           
             <div>
-              <v-icon color="green" v-if="backendData[index].params.nanCells
-               == 0">mdi-check-circle</v-icon>
+              <v-icon color="green" v-if="backendFileData[index].params.nanCells == 0">mdi-check-circle</v-icon>
               <v-icon color="orange" v-else>mdi-alert-circle</v-icon>
-              {{backendFileData.initialFiles[index].nanPercent}}% of cells missing data ({{backendData.initialFiles[index].nanCells}} cells)
+              {{backendFileData[index].params.nanPercent}}% of cells missing data ({{backendFileData[index].params.nanCells}} cells)
             </div>
             <div>
-              <v-icon color="green" v-if="backendData.initialFiles[index].nanRows == 0">mdi-check-circle</v-icon>
+              <v-icon color="green" v-if="backendFileData[index].params.nanRows == 0">mdi-check-circle</v-icon>
               <v-icon color="orange" v-else>mdi-alert-circle</v-icon>
-              {{backendFileData.initialFiles[index].nanRows}} row<span v-if="backendData.initialFiles[index].nanRows > 1">s</span> missing data 
+              {{backendFileData[index].params.nanRows}} row<span v-if="backendFileData[index].params.nanRows > 1">s</span> missing data 
             </div>              
           </div>
         </v-col>
         <v-col cols="1" class="text-right">
           <v-btn icon @click="removeFile(file)" title="mdi-close"><v-icon color="primary">mdi-close</v-icon></v-btn>
-        </v-col> -->
+        </v-col>
       </v-row>
     </v-card>
 
@@ -111,7 +109,8 @@ export default {
 
   ],
   watch: {
-    backendMetadataProp() {
+    backendFileDataProp() {
+      console.log('backendMetadataProp changed')
       this.backendFileData = this.backendFileDataProp
     },
     files() {
