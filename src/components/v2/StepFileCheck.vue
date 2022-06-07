@@ -30,13 +30,13 @@
                 <div v-if="!filePipeline.columnsToRemove.includes(col)">
                   <div v-if="transform.type == 'mixed_to_numeric'">
                     <div>
-                      <v-chip>{{col}}</v-chip>
+                      <v-chip color="purple" dark>{{col}}</v-chip>
                       <span class="ml-3 " >Predominately numerical data. Non-numerical values will be removed.</span>
                     </div>
                   </div>
                   <div v-if="transform.type == 'one_hot_encode'">
                     <div>
-                      <v-chip>{{col}}</v-chip>
+                      <v-chip color="purple" dark>{{col}}</v-chip>
                       <span class="ml-3 " >Each category will be given a sepertae binary column.</span>
                     </div>
                     <div class="ml-3"></div>

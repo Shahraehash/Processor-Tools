@@ -16,7 +16,7 @@
       <div>
         <div class="overline purple--text">Missing Value Options</div>
         <v-alert dense color="purple" text v-if="manyMissingRows">
-          One or more files has >= {{maxMissingPercent}}% cells with missing values. We do not recommend using imputation.
+          More than {{maxMissingPercent}}% cells have missing values. We do not recommend using imputation.
         </v-alert>
         <v-radio-group
           @change="setRowOption($event)"

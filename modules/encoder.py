@@ -217,7 +217,7 @@ def manage_rows():
             missing = df[df.isna().any(axis=1)]
             output = df.drop(missing.index)
             if missing.shape[0] > 0:         
-                output_files['Nan_rows_' + remove_dotcsv(file['name']) + '_encoded_NaN_removed' + '.csv'] = missing.to_csv(index=True, index_label="source_row")
+                output_files['Nan_rows_' + remove_dotcsv(file['name']) + '.csv'] = missing.to_csv(index=True, index_label="source_row")
                 output_files[remove_dotcsv(file['name']) + '_encoded_NaN_removed' + '.csv'] = output.to_csv(index=include_indexes, index_label="source_row")
             else:
                 output_files[remove_dotcsv(file['name']) + '_encoded' + '.csv'] = output.to_csv(index=include_indexes, index_label="source_row")
