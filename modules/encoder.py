@@ -226,13 +226,24 @@ def manage_rows():
             imp_mean = IterativeImputer(random_state=0)
             X = df.drop(columns=[target])
             y = df[target]
+
+            #check if negative values exist in each column before imputation
+            col_has_negative = ((X < 0).any()).to_dict()
+
             imp_mean.fit(X)
             result = pd.DataFrame(imp_mean.transform(X),columns=X.columns)
             result[df.columns[df.isna().any()]] = result[df.columns[df.isna().any()]].round(decimals=3)
+
+            #if column does not have negative values, change all imputed negative values to 0
+            for col in col_has_negative:
+                if(not col_has_negative[col]):
+                    column = result[col]
+                    column[column < 0 ] = 0
+
             result[target] = y
             #change index to match excel
             result.index = result.index + 2 
-            #change            
+            #change           
             output_files[remove_dotcsv(file['name']) + '_encoded_imputed' + '.csv'] = result.to_csv(index=include_indexes, index_label="source_row")
 
     result = {
