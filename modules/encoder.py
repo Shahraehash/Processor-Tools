@@ -176,6 +176,7 @@ def apply_transforms():
 
         df = apply_column_transforms(df, columns_to_remove, transforms, target, target_map)
 
+
         result[file['name']]['transform'] = file_nan_metrics(df)
 
     response = make_response(
@@ -204,9 +205,16 @@ def manage_rows():
     for file in files:
 
         df = load_file(file['storageId'])
+        #get original columns to find new columns
+        original_columns = set(df.columns.values)
+
         transforms = file['invalidColumnsTransforms']
         df = apply_column_transforms(df, columns_to_remove, transforms, target, target_map)
- 
+        
+        #find all new added columns for rounding for imputing below
+        adjusted_columns = set(df.columns.values)
+        columns_added = adjusted_columns - original_columns
+
 
         print(row_option, 'row option')
 
@@ -239,6 +247,10 @@ def manage_rows():
                 if(not col_has_negative[col]):
                     column = result[col]
                     column[column < 0 ] = 0
+            
+            # #round one hot encoded columns
+            for col in columns_added:
+                result[col] = result[col].round()
 
             result[target] = y
             #change index to match excel
