@@ -98,9 +98,9 @@ def define_invalid_columns(df):
             transforms[column] = {
                 'type': 'one_hot_encode',
                 'unique_values': list(col.unique()),
-                'nan_row_index': list(col[col.isna() == True].index)
+                'nan_row_index': list(col[col.isna() == True].index),
+                'keep_column': True if len(list(col.unique())) <=30 else False #rule to decide if column should be dropped by default
             }
-
             
     return transforms, list(invalid.columns)
 
@@ -123,7 +123,9 @@ def apply_column_transforms(dataframe, columns_to_remove, transforms, target, ta
             df[column] = transform_category_to_binary(df[column], t['map'])
         
         elif t['type'] == 'one_hot_encode':
-            df = pd.concat([df, transform_one_hot_encode(df[column])], axis=1)
+            #if meets rules or user elects to keep
+            if t['keep_column']:
+                df = pd.concat([df, transform_one_hot_encode(df[column])], axis=1)
             df = df.drop(column, axis=1)
 
     try:

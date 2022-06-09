@@ -38,6 +38,17 @@
                     <div>
                       <v-chip color="purple" dark>{{col}}</v-chip>
                       <span class="ml-3 " >Each category will be given a sepertae binary column.</span>
+                      <div v-if="transform.unique_values.length >= 30">
+                        <v-alert class="my-4" text color="purple">This column has {{transform.unique_values.length}} unique values. We recommend removing the column due potentially detrimental expansion of dataset.</v-alert>
+                        <v-select
+                          label="Action"
+                          outlined 
+                          dense  
+                          :items="generateDropdownOptions(transform)"
+                          item-value="value"
+                          item-text="text" 
+                          v-model="transform.keep_column"></v-select>
+                      </div>
                     </div>
                     <div class="ml-3"></div>
                   </div>                     
@@ -105,7 +116,20 @@ export default {
       return listOfInvalidColumns.filter(item => {
         return !columsnToRemove.includes(item)
       })
-    }
+    },
+    generateDropdownOptions(transform) {
+      return [
+        {
+          text: 'Covert to ' + transform.unique_values.length + ' columns',
+          value: true
+        },
+        {
+          text: 'Remove Column',
+          value: false
+        }
+      ]
+    },
+    
 
   }
 }
