@@ -7,7 +7,7 @@
       :stepTitle="stepTitle"
     />
     <!-- No missing data -->
-    <div v-if="columnsPossibleToRemove.length >= 0">
+    <div v-if="columnsPossibleToRemove.length == 0">
       <v-icon color="green" >mdi-check-circle</v-icon> No missing values.
     </div>
     <!-- Missing Rows -->    
