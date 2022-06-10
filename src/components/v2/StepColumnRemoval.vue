@@ -6,45 +6,40 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
     />
+    <!-- No missing data -->
+    <div v-if="columnsPossibleToRemove.length >= 0">
+      <v-icon color="green" >mdi-check-circle</v-icon> No missing values.
+    </div>
+    <!-- Missing Rows -->    
+    <div v-else>
+      <v-row>
+        <v-col cols="6">
+          <ApexPlotMissingData :files="filePipeline.files"/>
+        </v-col>
+        <v-col cols="6" >
+          <TableMissingDataByColumn :files="filePipeline.files"/>
 
-    <v-row>
-      <v-col cols="6">
-        <ApexPlotMissingData :files="filePipeline.files"/>
-      </v-col>
-      <v-col cols="6" >
-        <TableMissingDataByColumn :files="filePipeline.files"/>
+        </v-col>      
+      </v-row>
 
-      </v-col>      
-    </v-row>
+      <div class="overline purple--text">Column Removal</div>
+      <div>Any columns with signficant missing data can be optionally removed.</div>
+      <v-row>
+        <v-col cols="6">
+            <v-combobox
+              label="Columns to Remove"
+              dense
+              outlined
+              v-model="columnsToRemove"
+              multiple
+              :items="columnsPossibleToRemove"
+              @change="$emit('changeColumnRemoval')"
+            >
+            </v-combobox>
+        </v-col>
+      </v-row>      
+    </div>
 
-    <div class="overline purple--text">Column Removal</div>
-    <div>Any columns with signficant missing data can be optionally removed.</div>
-    <v-row>
-      <v-col cols="6">
-          <v-combobox
-            label="Columns to Remove"
-            dense
-            outlined
-            v-model="columnsToRemove"
-            multiple
-            :items="columnsPossibleToRemove"
-            @change="$emit('changeColumnRemoval')"
-          >
-          </v-combobox>
-      </v-col>
-    </v-row>
-
-    
-
-      
-
-
-
-
-
-
-
-    
     <div class="text-right" >
       <v-btn
         @click="$emit('nextStep', columnsToRemove)"

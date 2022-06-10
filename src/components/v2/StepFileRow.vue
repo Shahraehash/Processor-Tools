@@ -141,7 +141,7 @@ export default {
     manyMissingRows() {
       let moreThanMaxMissing = false
       this.filePipeline.files.forEach(file => {
-        file.nanPercent > this.maxMissingPercent ? moreThanMaxMissing = true : null
+        file.params.nanPercent > this.maxMissingPercent ? moreThanMaxMissing = true : null
       })
       return moreThanMaxMissing
     },
