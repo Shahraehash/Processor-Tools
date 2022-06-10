@@ -99,7 +99,7 @@ def define_invalid_columns(df):
                 'type': 'one_hot_encode',
                 'unique_values': list(col.unique()),
                 'nan_row_index': list(col[col.isna() == True].index),
-                'keep_column': True if len(list(col.unique())) <=30 else False #rule to decide if column should be dropped by default
+                'keep_column': True if len(list(col.unique())) <=20 else False #rule to decide if column should be dropped by default
             }
             
     return transforms, list(invalid.columns)

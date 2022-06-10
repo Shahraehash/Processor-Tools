@@ -38,7 +38,7 @@
                     <div>
                       <v-chip color="purple" dark>{{col}}</v-chip>
                       <span class="ml-3 " >Each category will be given a seperate binary column.</span>
-                      <div v-if="transform.unique_values.length >= 30">
+                      <div v-if="transform.unique_values.length >= 20">
                         <v-alert class="my-4" text color="purple">This column has {{transform.unique_values.length}} unique values. We recommend removing the column due potentially detrimental expansion of dataset.</v-alert>
                         <v-select
                           label="Action"
