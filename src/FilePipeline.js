@@ -24,7 +24,6 @@ export default {
       }, 
       setTarget(target) {
         this.target = target
-        this.metadata = null
       },   
       setTargetMap(targetMap) {
         this.targetMap = targetMap

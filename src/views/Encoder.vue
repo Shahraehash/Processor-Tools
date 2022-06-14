@@ -11,7 +11,7 @@
       stepTitle="File Selection"
       stepNumber="1"
       @filesChange="filesChange"
-      @targetChange="FilePipeline.setTarget($event)"
+      @targetChange="targetChange"
       :disableNext="FilePipeline.metadata != null"
       @nextStep="FilePipeline.evaluateMetadataAndStore()"
       :backendFileDataProp="FilePipeline.files"
@@ -107,6 +107,12 @@ export default {
     filesChange(files) {
       this.FilePipeline = FilePipeline.newFilePipeline()
       this.FilePipeline.setInitialFiles(files)
+      this.targetChange(null)
+    },
+    targetChange(target) {
+      this.FilePipeline.setTarget(target)
+      this.FilePipeline.metadata = null
+      this.FilePipeline.files = null
     },
     changeStep2() {
       this.FilePipeline.targetMap = null
