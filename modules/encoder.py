@@ -1,5 +1,4 @@
 import json
-from json import load
 from flask import Blueprint, current_app, jsonify, request, make_response
 import pandas as pd
 import numpy as np
@@ -165,7 +164,6 @@ def apply_transforms():
     target_map = json.loads(request.headers['targetMap'])
     columns_to_remove = json.loads(request.headers['columnsToRemove'])
     
-    print(request.json)
     files = request.json
     for file in files:
         result[file['name']] = {} #create file object for original and transform
@@ -216,9 +214,6 @@ def manage_rows():
         #find all new added columns for rounding for imputing below
         adjusted_columns = set(df.columns.values)
         columns_added = adjusted_columns - original_columns
-
-
-        print(row_option, 'row option')
 
         if (row_option == '0'):
             #change index to match excel

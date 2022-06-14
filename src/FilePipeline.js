@@ -33,7 +33,6 @@ export default {
         this.columnsToRemove = columnsToRemove
       },
       setRowOption(option) {
-        console.log('setRowOption', option)
         this.rowOption = option
       },
       //methods
@@ -42,8 +41,7 @@ export default {
           //this method uploads form data
           var formData = new FormData();
 
-          this.initialFiles.map((file, index) => {
-            console.log(index)
+          this.initialFiles.map((file) => {
             formData.append('files', file);
           });          
 
@@ -53,7 +51,6 @@ export default {
               'target': this.target,              
             }
           }).then((response) => {
-            console.log(response.data)
             this.files = response.data.files
             this.metadata = response.data.metadata
             return true
@@ -67,9 +64,7 @@ export default {
                 'Content-Type': 'application/json',
                 'target': this.target,           
             }
-          }).then((response) => {
-            //this.columnAdjust = response.data
-            console.log(response.data)
+          }).then(() => {
             return true
           })
         }
@@ -85,7 +80,6 @@ export default {
               'columnsToRemove': JSON.stringify(this.columnsToRemove),
             }
           }).then((response) => {
-            console.log(response.data)
             this.columnAdjust = response.data
             //column array is deep enough needs secondary parse 
             // for (let i in this.columnAdjust.nan_columns) {
@@ -107,7 +101,6 @@ export default {
               'includeIndexes': includeIndexes,
             }
           }).then((response) => {
-            console.log(response.data)
             let zip = new JSZip();
 
             for (let file in response.data.files) {
