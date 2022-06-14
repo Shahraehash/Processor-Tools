@@ -81,10 +81,6 @@ export default {
             }
           }).then((response) => {
             this.columnAdjust = response.data
-            //column array is deep enough needs secondary parse 
-            // for (let i in this.columnAdjust.nan_columns) {
-            //   this.columnAdjust.nan_columns[i] = JSON.parse(this.columnAdjust.nan_columns[i])
-            // }
           })
         }
       },
