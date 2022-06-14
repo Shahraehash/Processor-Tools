@@ -69,7 +69,7 @@
         text
         dark
         :disabled="disableNext"
-        @click="evaluateMetadata"
+        @click="$emit('nextStep')"
         >
         Evaluate Files
       </v-btn>

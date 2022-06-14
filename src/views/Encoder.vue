@@ -13,7 +13,7 @@
       @filesChange="filesChange"
       @targetChange="FilePipeline.setTarget($event)"
       :disableNext="FilePipeline.metadata != null"
-      @evaluateMetadata="evaluateMetadata"
+      @nextStep="FilePipeline.evaluateMetadataAndStore()"
       :backendFileDataProp="FilePipeline.files"
     />
     <StepTargetCheck
@@ -107,9 +107,6 @@ export default {
     filesChange(files) {
       this.FilePipeline = FilePipeline.newFilePipeline()
       this.FilePipeline.setInitialFiles(files)
-    },
-    evaluateMetadata() {
-      this.FilePipeline.evaluateMetadataAndStore()
     },
     changeStep2() {
       this.FilePipeline.targetMap = null
