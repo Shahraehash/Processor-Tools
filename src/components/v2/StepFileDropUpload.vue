@@ -30,7 +30,7 @@
             <div>
               <v-icon color="green" v-if="backendFileData[index].params.nanCells == 0">mdi-check-circle</v-icon>
               <v-icon color="orange" v-else>mdi-alert-circle</v-icon>
-              {{backendFileData[index].params.nanPercent}}% of cells missing data ({{backendFileData[index].params.nanCells}} cells)
+              {{stylePercent(backendFileData[index].params.nanPercent)}}% of cells missing data ({{backendFileData[index].params.nanCells}} cells)
             </div>
             <div>
               <v-icon color="green" v-if="backendFileData[index].params.nanRows == 0">mdi-check-circle</v-icon>
@@ -167,6 +167,18 @@ export default {
     },
     evaluateMetadata() {
       this.$emit('evaluateMetadata')
+    },
+    stylePercent(value) {
+      if (value >= 1) {
+        return Math.round(value)
+      }
+      else if (value < 1 && value > 0) {
+        return "<1"
+      }
+      else {
+        return 0
+      }
+
     }
   }
 }
