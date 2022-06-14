@@ -88,7 +88,7 @@
     </div>
     <div class="text-right" v-if="allTargetListsMatch.allValid">
       <v-btn
-        @click="filePipeline.setTargetMap(allTargetListsMatch.valueMap)"
+        @click="$emit('nextStep', allTargetListsMatch.valueMap)"
         class="primary"
         :disabled="disableNext"
         rounded
@@ -165,10 +165,6 @@ export default {
         }
     },
     flipValues(val, cat) {
-      //state reset //IMPROVE//
-      this.filePipeline.columnAdjust = null
-      this.filePipeline.rowHandling = null
-      this.filePipeline.targetMap = null
       //state reset
       let map = this.allTargetListsMatch.valueMap
       for (let i in map) {
@@ -179,6 +175,7 @@ export default {
           map[i] = Math.abs(val - 1)
         }
       }
+      this.$emit('changeStep')
     },           
   }
 }

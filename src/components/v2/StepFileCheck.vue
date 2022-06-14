@@ -47,7 +47,10 @@
                           :items="generateDropdownOptions(transform)"
                           item-value="value"
                           item-text="text" 
-                          v-model="transform.keep_column"></v-select>
+                          v-model="transform.keep_column"
+                          @change="$emit('changeStep')"
+                          ></v-select>
+                          
                       </div>
                     </div>
                     <div class="ml-3"></div>
@@ -128,9 +131,7 @@ export default {
           value: false
         }
       ]
-    },
-    
-
+    }
   }
 }
 </script>

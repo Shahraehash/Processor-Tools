@@ -33,7 +33,7 @@
               v-model="columnsToRemove"
               multiple
               :items="columnsPossibleToRemove"
-              @change="$emit('changeColumnRemoval')"
+              @change="$emit('changeStep')"
             >
             </v-combobox>
         </v-col>

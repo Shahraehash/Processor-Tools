@@ -19,7 +19,6 @@ export default {
       setInitialFiles(files) {
         //reset default state
         this.initialFiles =[]
-        this.target = null
         //set values
         this.initialFiles = files
       }, 

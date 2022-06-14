@@ -20,25 +20,30 @@
       v-if="FilePipeline.files != null"
       stepTitle="Target Column Audit"
       stepNumber="2"
+      @changeStep="changeStep2"
       :filePipeline="FilePipeline"
       :disableNext="FilePipeline.targetMap != null"
+      @nextStep="FilePipeline.setTargetMap($event)"
     />
     <StepColumnRemoval
       v-if="FilePipeline.targetMap != null"
       stepTitle="Missing Data Audit"
       :filePipeline="FilePipeline"
       stepNumber="3"
+      @changeStep="changeStep3"
       :disableNext="false"
       @nextStep="FilePipeline.setColumnsToRemove($event)"
-      @changeColumnRemoval="FilePipeline.setColumnsToRemove(null)"
+      
     />        
     <StepFileCheck
       v-if="FilePipeline.columnsToRemove != null"
       stepTitle="Adjust Non-Numerical Columns"
       stepNumber="4"
+      @changeStep="changeStep4"
       :filePipeline="FilePipeline"
       @nextStep="FilePipeline.applyTransforms()"
       :disableNext="FilePipeline.columnAdjust != null"
+     
     />
     <StepFileRow
       v-if="FilePipeline.columnAdjust != null"
@@ -105,7 +110,19 @@ export default {
     },
     evaluateMetadata() {
       this.FilePipeline.evaluateMetadataAndStore()
-    }
+    },
+    changeStep2() {
+      this.FilePipeline.targetMap = null
+      this.changeStep3()
+    },
+    changeStep3() {
+      this.FilePipeline.setColumnsToRemove(null)
+      this.changeStep4()
+    },
+    changeStep4() {
+      this.FilePipeline.columnAdjust = null
+
+    },
   }
 }
 </script>
