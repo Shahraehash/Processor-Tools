@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import store from '../store'
+
 import VueRouter from 'vue-router'
 import Landing from '../views/Landing.vue'
 import ColumnReducer from '../views/ColumnReducer.vue'
@@ -9,6 +11,7 @@ import Encoder from '../views/Encoder.vue'
 import Diagnostics from '../views/Diagnostics.vue'
 
 Vue.use(VueRouter)
+console.log(store.state.tools)
 
 const routes = [
   {

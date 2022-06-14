@@ -10,7 +10,9 @@
         @click="$router.push({name: name})"
         >
         <v-icon x-large>{{data.icon}}</v-icon>
+        
         <span class="title">{{data.title}}</span>
+        <v-chip dark small color="blue" class="ml-3 mb-2" v-if="data.pro">MILO Pro</v-chip>
         <div class="caption">
           {{data.description}}
         </div>
