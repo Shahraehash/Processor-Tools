@@ -23,8 +23,8 @@
           class="mt-0"
           v-model="rowOption"
           >
-          <v-radio label="Remove rows with missing data" value="0"></v-radio>
-          <v-radio label="Impute cells with missing data" value="1"></v-radio>
+          <v-radio label="Remove rows with missing data" :value="0"></v-radio>
+          <v-radio label="Impute cells with missing data" :value="1"></v-radio>
         </v-radio-group>
         
       </div>
