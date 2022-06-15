@@ -12,9 +12,12 @@
         <v-icon size="125" @click="$refs.fileClick.click()" color="grey lighten-1">
           mdi-file-upload-outline
         </v-icon>
-        <input type="file" ref="fileClick" multiple="multiple" style="display: none"/>
+        
       </div>
     </div>
+    <!-- Hidden file upload -->
+    <input type="file" ref="fileClick" multiple="multiple" @change="clickAddFile($event)" style="display: none"/>
+
     <v-card flat outlined class="pa-3 my-2" v-for="(file, index) in files" :key="index">
       <v-row dense v-if="fileMetadata[index]">
         <v-col cols="6">
@@ -44,6 +47,14 @@
         </v-col>
       </v-row>
     </v-card>
+
+    <div class="text-right mr-3" v-if="files.length > 0">
+      <v-btn icon
+        @click="$refs.fileClick.click()"
+        >
+        <v-icon>mdi-plus-circle-outline</v-icon>
+        </v-btn>
+    </div>
 
     <div class="mt-10" v-if="fileMetadata[0]">
       <div class="my-3">
@@ -129,25 +140,11 @@ export default {
     }
   },
   mounted() {
-    this.setupTrigger()
 
   },
   methods: {
 
 
-    setupTrigger() {
-          document.querySelector('input[type=file]').addEventListener('change', 
-            (e) => {
-              console.log("event log", e.target.files)
-              this.files = []
-              for (let file of e.target.files) {
-
-                this.files.push(file)
-                console.log(this.files)
-              }
-          })      
-
-    },
 
     reset() {
       this.files = []
@@ -156,11 +153,13 @@ export default {
       this.input = null
       this.backendData = null
     },
-    clickAddFile() {
-      for (let file of this.input.files) {
+    clickAddFile(e) {
+      for (let file of e.target.files) {
         this.files.push(file)
-      }
-    },  
+      }      
+      this.$refs.fileClick.value = ''
+    },
+
     addFile(e) {
       let droppedFiles = e.dataTransfer.files;
       if(!droppedFiles) return;
