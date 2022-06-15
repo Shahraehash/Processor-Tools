@@ -7,7 +7,7 @@
       :stepTitle="stepTitle"
     />
     <!-- No missing data -->
-    <div v-if="totalMissingRows == 0">
+    <div v-if="totalMissingCells == 0">
       <v-icon color="green" >mdi-check-circle</v-icon> No missing values.
     </div>
     <!-- Missing Rows -->
@@ -42,40 +42,37 @@
   
         </v-col>
         <v-col cols="7">
-          <div>
-            <strong>Columns</strong>
-            
-          </div>
-          <div class="title ml-2">
+          <div class="overline">Columns</div>
+          <div class="title" ml-1>
             {{ data.original.columns}} <v-icon>mdi-arrow-right</v-icon> {{data.transform.columns}}
           </div>
           <div>
-            <v-icon>mdi-plus</v-icon> Add:
-            <v-chip small color="green lighten-3" dark v-for="(item, key) in showDiff(data.transform.columnNames, data.original.columnNames)" :key="key" >{{ item }}</v-chip>
+            <v-icon color="green" v-if="showDiff(data.transform.columnNames, data.original.columnNames).length > 0">mdi-plus-circle </v-icon>
+            <v-chip small outlined v-for="(item, key) in showDiff(data.transform.columnNames, data.original.columnNames)" :key="key" >{{ item }}</v-chip>
           </div>
-          <div>
-            <v-icon>mdi-minus</v-icon> Remove:
-            <v-chip small color="red lighten-3" dark v-for="(item, key) in showDiff(data.original.columnNames, data.transform.columnNames)" :key="key" >{{ item }}</v-chip>
+          <div class="mt-5">
+            <v-icon color="red" v-if="showDiff(data.original.columnNames, data.transform.columnNames).length > 0">mdi-minus-circle</v-icon>
+            <v-chip small outlined v-for="(item, key) in showDiff(data.original.columnNames, data.transform.columnNames)" :key="key" >{{ item }}</v-chip>
           </div>
-          <div class="mt-3">
-            <strong>Rows</strong>
+          <div class="mt-3 overline">
+            Rows
           </div>
-          <div class="title ml-2">
+          <div class="title ml-1">
           </div>          
             <div v-if="rowOption == 0">
-              <div class="title ml-2">
+              <div class="title ml-1">
                 {{ data.original.rows}} <v-icon>mdi-arrow-right</v-icon> {{data.transform.rows - data.transform.nanRows}}
               </div>              
-              <div>
-                <v-icon>mdi-minus</v-icon> Remove:{{data.transform.nanRows}} rows with missing data
+              <div v-if="data.transform.nanRows > 0">
+                <v-icon color="red">mdi-minus-circle</v-icon><span class="ml-2">{{data.transform.nanRows}} rows with missing data removed</span>
               </div>
             </div>
             <div v-if="rowOption == 1">
-              <div class="title ml-2">
+              <div class="title ml-1">
                 {{ data.original.rows}} <v-icon>mdi-arrow-right</v-icon> {{data.transform.rows}}
               </div>              
-              <div>
-                <v-icon>mdi-plus</v-icon> Add: {{data.transform.nanCells}} imputed values
+              <div v-if="data.transform.nanCells >0">
+                <v-icon color="green">mdi-plus-circle</v-icon><span class="ml-2">{{data.transform.nanCells}} imputed values added</span>
               </div>
             </div>                
          
@@ -145,11 +142,11 @@ export default {
       })
       return moreThanMaxMissing
     },
-    totalMissingRows() {
+    totalMissingCells() {
       let total = 0
       let files = this.filePipeline.columnAdjust
       for (let file in files) {
-        total += files[file].original.rows
+        total += files[file].transform.nanCells
       }
       return total
     }

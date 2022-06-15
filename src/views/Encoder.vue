@@ -47,7 +47,7 @@
     />
     <StepFileRow
       v-if="FilePipeline.columnAdjust != null"
-      stepTitle="Handle Missing Values"
+      stepTitle="Handle Missing Values and Output"
       stepNumber="4"
       :filePipeline="FilePipeline"
       @processStep="$store.commit('FileProcessingDialogOpenSet', true)"
