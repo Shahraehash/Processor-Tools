@@ -129,10 +129,26 @@ export default {
     }
   },
   mounted() {
-    this.input = this.$el.querySelector('input[type=file]');
-    this.input.addEventListener('change', () => this.clickAddFile())
+    this.setupTrigger()
+
   },
   methods: {
+
+
+    setupTrigger() {
+          document.querySelector('input[type=file]').addEventListener('change', 
+            (e) => {
+              console.log("event log", e.target.files)
+              this.files = []
+              for (let file of e.target.files) {
+
+                this.files.push(file)
+                console.log(this.files)
+              }
+          })      
+
+    },
+
     reset() {
       this.files = []
       this.fileMetadata = []
@@ -144,7 +160,7 @@ export default {
       for (let file of this.input.files) {
         this.files.push(file)
       }
-    },
+    },  
     addFile(e) {
       let droppedFiles = e.dataTransfer.files;
       if(!droppedFiles) return;
