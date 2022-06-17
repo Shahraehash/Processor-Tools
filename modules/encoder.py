@@ -45,6 +45,7 @@ def transform_one_hot_encode(series):
     enc.fit(vector)
     trans = enc.transform(vector).toarray()
     output = pd.DataFrame(trans, columns=enc.categories_, index=index).add_prefix(series.name + '_').astype('int')
+    output.columns = output.columns.get_level_values(0) #convert multiindex to single index
     
     return output
 
