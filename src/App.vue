@@ -13,6 +13,9 @@
 </template>
 
 <script>
+import axios from 'axios'
+
+
 import TopBar from '@/components/TopBar.vue'
 import MessageSnackbar from '@/components/MessageSnackbar.vue'
 import FileProcessingDialog from '@/components/FileProcessingDialog.vue'
@@ -28,5 +31,21 @@ export default {
   data: () => ({
     //
   }),
+  mounted() {
+    axios.get('/preprocessor_api/license').then(response => {
+      try {
+        if (
+          response.headers['milo-education'] == 'false' &&
+          response.headers['milo-trial'] == 'false'
+        ) {
+          this.$store.commit('setProLicense', true)
+        }
+      } catch(err) {
+        this.$store.commit('setProLicense', false)
+      }
+      
+    })
+
+  }
 };
 </script>
