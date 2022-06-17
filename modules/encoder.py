@@ -216,6 +216,8 @@ def manage_rows():
         adjusted_columns = set(df.columns.values)
         columns_added = adjusted_columns - original_columns
 
+        file_name = remove_dotcsv(file['name'])
+
         if (row_option == '0'):
             #change index to match excel
             df.index = df.index + 2 
@@ -223,10 +225,10 @@ def manage_rows():
             missing = df[df.isna().any(axis=1)]
             output = df.drop(missing.index)
             if missing.shape[0] > 0:         
-                output_files['Nan_rows_' + remove_dotcsv(file['name']) + '.csv'] = missing.to_csv(index=True, index_label="source_row")
-                output_files[remove_dotcsv(file['name']) + '_encoded_NaN_removed' + '.csv'] = output.to_csv(index=include_indexes, index_label="source_row")
+                output_files['Nan_rows_' + file_name + '.csv'] = missing.to_csv(index=True, index_label="source_row")
+                output_files[file_name + '_encoded_NaN_removed' + '.csv'] = output.to_csv(index=include_indexes, index_label="source_row")
             else:
-                output_files[remove_dotcsv(file['name']) + '_encoded' + '.csv'] = output.to_csv(index=include_indexes, index_label="source_row")
+                output_files[file_name + '_encoded' + '.csv'] = output.to_csv(index=include_indexes, index_label="source_row")
 
         elif (row_option == '1'):
             imp_mean = IterativeImputer(random_state=0)
@@ -254,7 +256,7 @@ def manage_rows():
             #change index to match excel
             result.index = result.index + 2 
             #change           
-            output_files[remove_dotcsv(file['name']) + '_encoded_imputed' + '.csv'] = result.to_csv(index=include_indexes, index_label="source_row")
+            output_files[file_name + '_encoded_imputed' + '.csv'] = result.to_csv(index=include_indexes, index_label="source_row")
 
     result = {
         'files': output_files,
