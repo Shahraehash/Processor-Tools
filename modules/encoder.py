@@ -21,7 +21,7 @@ encoder = Blueprint(
 )
 
 def remove_dotcsv(filename):
-    return filename[:-4]
+    return filename.rsplit('.', maxsplit=1)[0]
 
 def transform_mixed_to_numeric(series):
     """
