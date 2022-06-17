@@ -36,8 +36,4 @@ def license():
         'access authorization determined by headers added by parent app',
         200
     )
-    #test function needs removed before merge!!!!
-    response.headers['access-control-expose-headers'] = 'MILO-Trial, MILO-Education'
-    response.headers['MILO-Trial'] = str(False).lower()
-    response.headers['MILO-Education'] = str(False).lower()
     return response
