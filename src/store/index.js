@@ -6,6 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     //UI Component
+    proLicense: false,
     snackbarMessage: {
       show: false,
       color: 'blue',
@@ -25,37 +26,40 @@ export default new Vuex.Store({
         title: 'Train and Test Builder',
         icon: 'mdi-call-split',
         description: 'Build both a training and validation data set from a single data file.',
-        isVisible: true
+        isVisible: true,
+        proLicense: false
       },
       'Colinearity': {
         title: 'Multicollinearity Assessment & Removal Tool',
         icon: 'mdi-chart-bell-curve-cumulative',
         description: 'Assess for multicollinearity in datasets along with feature removal options.',
-        isVisible: true
+        isVisible: true,
+        proLicense: false
       },
       'FeatureSelector': {
         title: 'Feature Selector',
         icon: 'mdi-select-all',
         description: 'Select the subset of data with the most relative value.',
-        isVisible: true
+        isVisible: true,
+        proLicense: false
       },
       'ColumnReducer': {
         title: 'Column Reducer Tool',
         icon: 'mdi-table-column-width',
         description: 'Extract specific columns from your training and test data to experiment with further refinement of your model.',
-        isVisible: true
+        isVisible: true,
+        proLicense: false
       },
       'Encoder': {
-        title: 'Encoder Tool',
+        title: 'Imputation & Encoder Tool',
         icon: 'mdi-file-code-outline',
-        description: 'Covert non-numeric datatypes for use in MILO.',
-        isVisible: false
+        description: 'Handle missing data and covert non-numeric datatypes.',
+        isVisible: true,
+        proLicense: true
       },
 
     },
     diagnosticsEnabled: false
-
-
   },
   mutations: {
     //MessageSnackbar
@@ -71,6 +75,9 @@ export default new Vuex.Store({
     FileProcessingDialogLoadingSet(state, val) {
       state.fileProcessingDialog.loading = val
     },
+    setProLicense(state, val) {
+      state.proLicense = val
+    }
   },
   actions: {
   },

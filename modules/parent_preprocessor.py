@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, make_response
 
 from .shared import shared
 from .column_reducer import column_reducer
@@ -28,3 +28,12 @@ def preprocessor_route_map():
     routes = [str(p) for p in current_app.url_map.iter_rules()]
     result = list(filter(lambda x: parent_preprocessor.url_prefix in x, routes))
     return simplejson.dumps(result)
+
+
+@parent_preprocessor.route('/license',methods=['GET'])
+def license():
+    response = make_response(
+        'access authorization determined by headers added by parent app',
+        200
+    )
+    return response

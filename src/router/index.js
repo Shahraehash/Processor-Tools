@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import $store from '../store'
+
 import VueRouter from 'vue-router'
 import Landing from '../views/Landing.vue'
 import ColumnReducer from '../views/ColumnReducer.vue'
@@ -7,6 +9,9 @@ import Colinearity from '../views/Colinearity.vue'
 import FeatureSelector from '../views/FeatureSelector.vue'
 import Encoder from '../views/Encoder.vue'
 import Diagnostics from '../views/Diagnostics.vue'
+
+
+
 
 Vue.use(VueRouter)
 
@@ -53,5 +58,22 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  //if the route has licensing
+  if(Object.keys($store.state.tools).includes(to.name)) {
+    //and requires pro
+    if ($store.state.tools[to.name].proLicense) {
+      $store.state.proLicense ? next() : next({name: 'Landing'})
+    }
+    else {
+      next()
+    }
+  }
+  else {
+    next()
+  }
+})
+
 
 export default router

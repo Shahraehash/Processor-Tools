@@ -4,21 +4,54 @@
       :title="$store.state.tools[$options.name].title"
       :icon="$store.state.tools[$options.name].icon"
       :description="$store.state.tools[$options.name].description"
-      @reset="resetStep1"
+      @reset="$refs.step1.reset()"
     />
-
-
-
-    <StepFileDrop
+    <StepFileDropUpload
+      ref="step1"
       stepTitle="File Selection"
       stepNumber="1"
-      @files="batchEvaluateMetadataAndStore"
+      @filesChange="filesChange"
+      @targetChange="targetChange"
+      :disableNext="FilePipeline.metadata != null"
+      @nextStep="FilePipeline.evaluateMetadataAndStore()"
+      :backendFileDataProp="FilePipeline.files"
     />
-    <StepFileCheck
-      stepTitle="File Check"
+    <StepTargetCheck
+      v-if="FilePipeline.files != null"
+      stepTitle="Target Column Audit"
       stepNumber="2"
-      :filePipelines="filePipelines"
+      @changeStep="changeStep2"
+      :filePipeline="FilePipeline"
+      :disableNext="FilePipeline.targetMap != null"
+      @nextStep="FilePipeline.setTargetMap($event)"
     />
+    <StepColumnRemoval
+      v-if="FilePipeline.targetMap != null"
+      stepTitle="Missing Data Audit"
+      :filePipeline="FilePipeline"
+      stepNumber="3"
+      @changeStep="changeStep3"
+      :disableNext="false"
+      @nextStep="FilePipeline.setColumnsToRemove($event)"
+      
+    />        
+    <StepFileCheck
+      v-if="FilePipeline.columnsToRemove != null"
+      stepTitle="Adjust Non-Numerical Columns"
+      stepNumber="4"
+      @changeStep="changeStep4"
+      :filePipeline="FilePipeline"
+      @nextStep="FilePipeline.applyTransforms()"
+      :disableNext="FilePipeline.columnAdjust != null"
+     
+    />
+    <StepFileRow
+      v-if="FilePipeline.columnAdjust != null"
+      stepTitle="Handle Missing Values and Output"
+      stepNumber="4"
+      :filePipeline="FilePipeline"
+      @processStep="$store.commit('FileProcessingDialogOpenSet', true)"
+    />    
 
 
   </v-container>
@@ -27,96 +60,72 @@
 
 <script>
 //packages
-
+// import FileDownload from 'js-file-download'
+// import JSZip from 'jszip'
 
 //support code
 import FilePipeline from '@/FilePipeline.js'
 
 //components
 import MenuBar from '@/components/MenuBar'
-import StepFileDrop from '@/components/v2/StepFileDrop'
+import StepFileDropUpload from '@/components/v2/StepFileDropUpload'
+import StepColumnRemoval from '@/components/v2/StepColumnRemoval'
+import StepTargetCheck from '@/components/v2/StepTargetCheck'
 import StepFileCheck from '@/components/v2/StepFileCheck'
+import StepFileRow from '@/components/v2/StepFileRow'
 
 export default {
   name: 'Encoder',
   components: {
     MenuBar,
-    StepFileDrop,
-    StepFileCheck
-  },
+    StepFileDropUpload,
+    StepColumnRemoval,
+    StepTargetCheck,
+    StepFileCheck,
+    StepFileRow,
+},
   props: [],
   created() {
+    this.FilePipeline = FilePipeline.newFilePipeline()
 
   },
   data() {
     return {
-      filePipelines: [],
+      FilePipeline: null,
       toggle_exclusive: null
 
     }
   },
   computed: {
-    stepNumber() {
-      if (this.showStep4) {
-        return 4
-      }
-      else if (this.showStep3) {
-        return 3
-      }
-      else if (this.showStep2) {
-        return 2
-      }
-      else {
-        return 1
-      }
-    },
-    showStep2() {
-      return false
 
-    },
-    showStep3() {
-      return false
 
-    },
-    showStep4() {
-      return false
-    }
 
 
   },
   methods: {
     //Step 1
-    batchEvaluateMetadataAndStore(data) {
-      let batch = []
-      data.files.forEach(file => {
-        let fp = FilePipeline.newFilePipeline()
-
-        fp.file = file //associate original file
-        fp.target = data.target //note the target
-
-        //queue up processing
-        batch.push(fp.evaluateMetadataAndStore())
-
-        //store file pipeline
-        this.filePipelines.push(fp)
-      })
-      Promise.all(batch).then(() => {
-        console.log('done')
-      })
+    filesChange(files) {
+      this.FilePipeline = FilePipeline.newFilePipeline()
+      this.FilePipeline.setInitialFiles(files)
+      this.targetChange(null)
+    },
+    targetChange(target) {
+      this.FilePipeline.setTarget(target)
+      this.FilePipeline.metadata = null
+      this.FilePipeline.files = null
+    },
+    changeStep2() {
+      this.FilePipeline.targetMap = null
+      this.changeStep3()
+    },
+    changeStep3() {
+      this.FilePipeline.setColumnsToRemove(null)
+      this.changeStep4()
+    },
+    changeStep4() {
+      this.FilePipeline.columnAdjust = null
 
     },
-
-    resetStep1() {
-    },
-    resetStep2() {
-    },
-    resetStep3() {
-    },
-    resetStep4() {
-
-    },
-
-
   }
 }
 </script>

@@ -10,9 +10,9 @@
     "build-ui": "vue-cli-service build",
     "milo-build": "vue-cli-service build --mode milo",
     "update-requirements": "pip freeze > requirements.txt",
-    "docker-build": "docker build ./ -t fennell/ml-pp",
-    "docker-save": "docker save fennell/ml-pp | gzip > ml-preprocessor-$npm_package_version.tar.gz",
-    "docker-run": "docker run -d -p 4998 fennell/ml-pp:latest",
+    "docker-build": "docker build ./ -t preprocessor",
+    "docker-save": "docker save preprocessor | gzip > ml-preprocessor-$npm_package_version.tar.gz",
+    "docker-run": "docker run -d -p 4998 preprocessor:latest",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -27,12 +27,12 @@
     "papaparse": "^5.3.1",
     "register-service-worker": "^1.7.1",
     "socket.io-client": "^2.4.0",
-    "underscore": "^1.13.1",
+    "underscore": "^1.13.4",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.6.2",
     "vue-router": "^3.2.0",
     "vue-socket.io": "^3.0.10",
-    "vuetify": "^2.5.8",
+    "vuetify": "^2.6.6",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
