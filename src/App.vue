@@ -31,29 +31,19 @@ export default {
     //
   }),
   mounted() {
-    //production license access as submodule
-    if (process.env.NODE_ENV == 'production' && process.env.BASE_URL != '') {
-      axios.get('/preprocessor_api/license').then(response => {
-        try {
-          if (
-            response.headers['milo-education'] == 'false' &&
-            response.headers['milo-trial'] == 'false'
-          ) {
-            this.$store.commit('setProLicense', true)
-          }
-          //defaults to false
-        } catch(err) {
-          this.$store.commit('setProLicense', false)
+    axios.get('/preprocessor_api/license').then(response => {
+      try {
+        if (
+          response.headers['milo-education'] == 'false' &&
+          response.headers['milo-trial'] == 'false'
+        ) {
+          this.$store.commit('setProLicense', true)
         }
-      })
-    }
-    //development auto authorization without api blocking
-    else {
-      this.$store.commit('setProLicense', true)
-    }
-
-
-
+        //defaults to false
+      } catch(err) {
+        this.$store.commit('setProLicense', false)
+      }
+    })
   }
 };
 </script>
