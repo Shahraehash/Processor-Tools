@@ -105,7 +105,8 @@ export default {
             .then(function(content) {
                 // Force down of the Zip file
                 FileDownload(content, "encoder.zip");
-            });            
+            });
+            return response         
           })
         }        
 
