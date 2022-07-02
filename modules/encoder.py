@@ -69,6 +69,18 @@ def define_invalid_columns(df):
 
     valid = df.select_dtypes(include=valid_data_types)
 
+    numeric_one_hot_encoder_columns = []
+
+    for col in valid.columns:
+
+        unique = valid[col].unique()
+        unique = unique[~np.isnan(unique)] #remove nan
+        unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float
+
+        if len(unique) == unique_int_len and (unique_int_len > 2 and unique_int_len < 6): #set 
+            numeric_one_hot_encoder_columns.append(col)
+
+
     invalid = df.drop(columns=valid.columns)
 
     #process mixed data types
@@ -101,7 +113,18 @@ def define_invalid_columns(df):
                 'nan_row_index': list(col[col.isna() == True].index),
                 'keep_column': True if len(list(col.unique())) <=20 else False #rule to decide if column should be dropped by default
             }
-            
+
+    #add to handle numerical columns that are categorical mappings
+    
+    for column in numeric_one_hot_encoder_columns:
+        col = valid[column]
+        transforms[column] = {
+            'type': 'one_hot_encode',
+            'unique_values': list(col.unique()),
+            'nan_row_index': list(col[col.isna() == True].index),
+            'keep_column': True if len(list(col.unique())) <=20 else False #rule to decide if column should be dropped by default
+        }     
+        
     return transforms, list(invalid.columns)
 
 def apply_column_transforms(dataframe, columns_to_remove, transforms, target, target_map):
