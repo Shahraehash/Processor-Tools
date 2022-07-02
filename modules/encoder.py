@@ -261,6 +261,19 @@ def manage_rows():
             #check if negative values exist in each column before imputation
             col_has_negative = ((X < 0).any()).to_dict()
 
+
+            #flag binary columns for rounding
+            col_is_binary = []
+            for col in X.columns:
+                feature = X[col]
+                
+                if feature.isna().sum() > 0: #ensure has nan values
+                    values = feature.dropna().unique()
+                    values.sort()
+                    if list(values) == [0,1]:
+                        col_is_binary.append(col)            
+
+
             imp_mean.fit(X)
             result = pd.DataFrame(imp_mean.transform(X),columns=X.columns)
             result[df.columns[df.isna().any()]] = result[df.columns[df.isna().any()]].round(decimals=3)
@@ -273,6 +286,10 @@ def manage_rows():
             
             # #round one hot encoded columns
             for col in columns_added:
+                result[col] = result[col].round()
+
+            # round binary columns
+            for col in col_is_binary:
                 result[col] = result[col].round()
 
             result[target] = y
