@@ -127,13 +127,17 @@ export default {
 
     },
     async buildFiles(includeIndexes) {
-      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      
 
       console.log('includeIndexes',includeIndexes)
       this.$store.commit('FileProcessingDialogLoadingSet', true)
       this.$store.commit('FileProcessingDialogOpenSet', true)
       await this.FilePipeline.handleRows(includeIndexes) 
+
+      //add 1 second automatic delay to UI
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       await delay(1000);
+
       this.$store.commit('FileProcessingDialogLoadingSet', false)
            
     }
