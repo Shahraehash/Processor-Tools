@@ -69,18 +69,6 @@ def define_invalid_columns(df):
 
     valid = df.select_dtypes(include=valid_data_types)
 
-    numeric_one_hot_encoder_columns = []
-
-    for col in valid.columns:
-
-        unique = valid[col].unique()
-        unique = unique[~np.isnan(unique)] #remove nan
-        unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float
-
-        if len(unique) == unique_int_len and (unique_int_len > 2 and unique_int_len < 6): #set 
-            numeric_one_hot_encoder_columns.append(col)
-
-
     invalid = df.drop(columns=valid.columns)
 
     #process mixed data types
@@ -113,18 +101,7 @@ def define_invalid_columns(df):
                 'nan_row_index': list(col[col.isna() == True].index),
                 'keep_column': True if len(list(col.unique())) <=20 else False #rule to decide if column should be dropped by default
             }
-
-    #add to handle numerical columns that are categorical mappings
-    
-    for column in numeric_one_hot_encoder_columns:
-        col = valid[column]
-        transforms[column] = {
-            'type': 'one_hot_encode',
-            'unique_values': list(col.unique()),
-            'nan_row_index': list(col[col.isna() == True].index),
-            'keep_column': True if len(list(col.unique())) <=20 else False #rule to decide if column should be dropped by default
-        }     
-        
+ 
     return transforms, list(invalid.columns)
 
 def apply_column_transforms(dataframe, columns_to_remove, transforms, target, target_map):
@@ -262,16 +239,23 @@ def manage_rows():
             col_has_negative = ((X < 0).any()).to_dict()
 
 
-            #flag binary columns for rounding
+            #flag columns for rounding
             col_is_binary = []
+            col_is_numeric_cat = {}
+
             for col in X.columns:
                 feature = X[col]
                 
                 if feature.isna().sum() > 0: #ensure has nan values
-                    values = feature.dropna().unique()
-                    values.sort()
-                    if list(values) == [0,1]:
-                        col_is_binary.append(col)            
+                    unique = feature.dropna().unique()
+                    unique.sort()
+                    unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float                    
+
+                    if list(unique) == [0,1]:
+                        col_is_binary.append(col)
+                    
+                    elif len(unique) == unique_int_len and (unique_int_len > 2 and unique_int_len < 6): #set 
+                        col_is_numeric_cat[col] = unique
 
 
             imp_mean.fit(X)
@@ -291,6 +275,22 @@ def manage_rows():
             # round binary columns
             for col in col_is_binary:
                 result[col] = result[col].round()
+
+            # ensure numerical categorial data is maintained with imputation
+            for col in col_is_numeric_cat.keys():
+                result[col] = result[col].round()
+                possible_values = col_is_numeric_cat[col]
+                
+                #find values not matching original values in data set
+                extra_value_bool = ~result[col].isin(possible_values)
+                extra_values = result[col][extra_value_bool].unique()
+                
+                #find the closest original value and adjust it
+                for val in extra_values:
+                    arr = np.asarray(possible_values)
+                    i = (np.abs(arr - val)).argmin()
+                    closest = arr[i]
+                    result[col] = result[col].replace(val, closest)
 
             result[target] = y
             #change index to match excel
