@@ -251,10 +251,7 @@ def manage_rows():
                     unique.sort()
                     unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float                    
 
-                    if list(unique) == [0,1]:
-                        col_is_binary.append(col)
-                    
-                    elif len(unique) == unique_int_len and (unique_int_len > 2 and unique_int_len < 6): #set 
+                    if len(unique) == unique_int_len and (unique_int_len < 6): #set 
                         col_is_numeric_cat[col] = unique
 
 
@@ -272,13 +269,9 @@ def manage_rows():
             for col in columns_added:
                 result[col] = result[col].round()
 
-            # round binary columns
-            for col in col_is_binary:
-                result[col] = result[col].round()
-
             # ensure numerical categorial data is maintained with imputation
             for col in col_is_numeric_cat.keys():
-                result[col] = result[col].round()
+                result[col] = result[col].round().astype(int)
                 possible_values = col_is_numeric_cat[col]
                 
                 #find values not matching original values in data set
