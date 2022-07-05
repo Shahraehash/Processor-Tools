@@ -35,7 +35,7 @@
           >mdi-check-circle-outline</v-icon>
           <div class="display-1">
             <v-icon x-large>mdi-arrow-down</v-icon>
-            Your file(s are available below.
+            Your files are available below.
             <v-icon x-large>mdi-arrow-down</v-icon>
           </div>
           <div class="mt-5">
