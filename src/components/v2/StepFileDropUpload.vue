@@ -40,8 +40,8 @@
               <v-icon color="orange" v-else>mdi-alert-circle</v-icon>
               {{backendFileData[index].params.nanRows}} row<span v-if="backendFileData[index].params.nanRows > 1">s</span> missing data 
             </div>
-            <div id="indent-text">
-              <v-icon color="red" v-if="backendFileData[index].params.columns >= imputeWarning.cols || backendFileData[index].params.rows > imputeWarning.rows">mdi-alert-circle</v-icon>
+            <div id="indent-text" v-if="backendFileData[index].params.columns >= imputeWarning.cols || backendFileData[index].params.rows > imputeWarning.rows">
+              <v-icon color="red" >mdi-alert-circle</v-icon>
               Based on the size of you dataset, imputing the missing values may take a signficant period of time.
             </div>                    
           </div>
