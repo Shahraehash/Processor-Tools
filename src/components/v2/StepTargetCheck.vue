@@ -134,7 +134,8 @@ export default {
       this.allTargetListsMatch = this.targetListMatching()
   },
   mounted() {
-    window.scrollTo(0,document.body.scrollHeight);
+    window.scrollTo(0,window.pageYOffset + 200)
+    //window.scrollTo(0,document.body.scrollHeight);
   },  
   computed: {
       

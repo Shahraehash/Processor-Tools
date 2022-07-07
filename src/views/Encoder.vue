@@ -50,7 +50,7 @@
       stepTitle="Handle Missing Values and Output"
       stepNumber="4"
       :filePipeline="FilePipeline"
-      @processStep="$store.commit('FileProcessingDialogOpenSet', true)"
+      @processStep="buildFiles($event)"
     />    
 
 
@@ -126,6 +126,21 @@ export default {
       this.FilePipeline.columnAdjust = null
 
     },
+    async buildFiles(includeIndexes) {
+      
+
+      console.log('includeIndexes',includeIndexes)
+      this.$store.commit('FileProcessingDialogLoadingSet', true)
+      this.$store.commit('FileProcessingDialogOpenSet', true)
+      await this.FilePipeline.handleRows(includeIndexes) 
+
+      //add 1 second automatic delay to UI
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      await delay(1000);
+
+      this.$store.commit('FileProcessingDialogLoadingSet', false)
+           
+    }
   }
 }
 </script>

@@ -101,7 +101,7 @@ def define_invalid_columns(df):
                 'nan_row_index': list(col[col.isna() == True].index),
                 'keep_column': True if len(list(col.unique())) <=20 else False #rule to decide if column should be dropped by default
             }
-            
+ 
     return transforms, list(invalid.columns)
 
 def apply_column_transforms(dataframe, columns_to_remove, transforms, target, target_map):
@@ -238,6 +238,23 @@ def manage_rows():
             #check if negative values exist in each column before imputation
             col_has_negative = ((X < 0).any()).to_dict()
 
+
+            #flag columns for rounding
+            col_is_binary = []
+            col_is_numeric_cat = {}
+
+            for col in X.columns:
+                feature = X[col]
+                
+                if feature.isna().sum() > 0: #ensure has nan values
+                    unique = feature.dropna().unique()
+                    unique.sort()
+                    unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float                    
+
+                    if len(unique) == unique_int_len and (unique_int_len < 6): #set 
+                        col_is_numeric_cat[col] = unique
+
+
             imp_mean.fit(X)
             result = pd.DataFrame(imp_mean.transform(X),columns=X.columns)
             result[df.columns[df.isna().any()]] = result[df.columns[df.isna().any()]].round(decimals=3)
@@ -251,6 +268,22 @@ def manage_rows():
             # #round one hot encoded columns
             for col in columns_added:
                 result[col] = result[col].round()
+
+            # ensure numerical categorial data is maintained with imputation
+            for col in col_is_numeric_cat.keys():
+                result[col] = result[col].round().astype(int)
+                possible_values = col_is_numeric_cat[col]
+                
+                #find values not matching original values in data set
+                extra_value_bool = ~result[col].isin(possible_values)
+                extra_values = result[col][extra_value_bool].unique()
+                
+                #find the closest original value and adjust it
+                for val in extra_values:
+                    arr = np.asarray(possible_values)
+                    i = (np.abs(arr - val)).argmin()
+                    closest = arr[i]
+                    result[col] = result[col].replace(val, closest)
 
             result[target] = y
             #change index to match excel

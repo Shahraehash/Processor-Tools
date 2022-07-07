@@ -156,8 +156,8 @@ export default {
       this.filePipeline.setRowOption(option)
     },
     processStep() {
-      this.filePipeline.handleRows(this.includeIndexes)
-      this.$emit('processStep')
+      //this.filePipeline.handleRows(this.includeIndexes)
+      this.$emit('processStep', this.includeIndexes)
     },
     showDiff(array1, array2) {
       return _.difference(array1,array2)
