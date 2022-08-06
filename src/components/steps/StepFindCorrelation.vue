@@ -173,24 +173,39 @@ export default {
         // colors: ["#008FFB"],
         plotOptions: {
           heatmap: {
+            enableShades: false,
+            reverseNegativeShade: true,
             colorScale: {
-              ranges: [{
+              ranges: [
+                {
                   from: -1,
-                  to: this.fileObject.correlationThreshold - 0.10,
-                  color: '#00A100',
-                  name: 'Lower correlations',
+                  to: -this.fileObject.correlationThreshold,
+                  color: '#311B92',
+                  name: '-Corr at or above ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
                 },
+                {
+                  from: -this.fileObject.correlationThreshold,
+                  to: -this.fileObject.correlationThreshold + 0.10,
+                  color: '#7E57C2',
+                  name: '-Corr between ' + (-this.fileObject.correlationThreshold * 100 + 10).toString() + '% and ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
+                },
+                {
+                  from: -this.fileObject.correlationThreshold + .10,
+                  to: this.fileObject.correlationThreshold - 0.10,
+                  color: '#F5F5F5',
+                  name: 'Lower correlations',
+                },         
                 {
                   from: this.fileObject.correlationThreshold - 0.10,
                   to: this.fileObject.correlationThreshold,
-                  color: '#128FD9',
-                  name: 'Correlations within 10% of specified threshold',
+                  color: '#2196F3',
+                  name: '+Corr between ' + (this.fileObject.correlationThreshold * 100 - 10).toString() + '% and ' + (this.fileObject.correlationThreshold * 100).toString() + '%',
                 },
                 {
                   from: this.fileObject.correlationThreshold,
                   to: 1,
-                  color: '#FFB200',
-                  name: 'Correlation at or above threshold of ' + (this.fileObject.correlationThreshold * 100).toString() + '%' ,
+                  color: '#0D47A1',
+                  name: '+Corr at or above ' + (this.fileObject.correlationThreshold * 100).toString() + '%' ,
                 }
               ]
             }
