@@ -91,6 +91,74 @@
         </div>
         <!-- Graph -->
         <div v-if="fileObject.allowCorrelationGraph()">
+          <v-row wrap>
+            <v-col cols="2"><v-text-field
+              outlined
+              dense
+              label="-Corr at of above"
+              v-model="negativeThreshold"
+              @change="reDraw()"
+              >
+            </v-text-field></v-col>
+            <v-col cols="2"><v-text-field
+              outlined
+              dense
+              label="-Corr between"
+              v-model="negativeClose"
+              @change="reDraw()"
+              >
+            </v-text-field></v-col>
+            <v-col cols="2"><v-text-field
+              outlined
+              dense
+              label="- Low Corr"
+              v-model="negativeLow"
+              @change="reDraw()"
+              >
+            </v-text-field></v-col>        
+            <v-col cols="2"><v-text-field
+              outlined
+              dense
+              label="+ Low Corr"
+              v-model="positiveLow"
+              @change="reDraw()"
+              >
+            </v-text-field></v-col>     
+            <v-col cols="2"><v-text-field
+              outlined
+              dense
+              label="+Corr between"
+              v-model="positiveClose"
+              @change="reDraw()"
+              >
+            </v-text-field></v-col>    
+            <v-col cols="2"><v-text-field
+              outlined
+              dense
+              label="+Corr at of above"
+              v-model="positiveThreshold"
+              @change="reDraw()"
+              >
+            </v-text-field></v-col>     
+            
+            <v-col cols="2"><v-switch
+              outlined
+              dense
+              label="Enable Shades"
+              v-model="enableShades"
+              @change="reDraw()"
+              >
+            </v-switch></v-col>               
+            
+            <v-col cols="2"><v-text-field
+              outlined
+              dense
+              label="Shade Intensity"
+              v-model="shadeIntensity"
+              @change="reDraw()"
+              >
+            </v-text-field></v-col>                                                       
+          </v-row>
           <div>
             <v-switch label="Show Graph" v-model="showGraph"></v-switch>
             <apexchart :key="graphKey" v-if="fileObject.correlation && showGraph" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart>
@@ -148,18 +216,31 @@ export default {
       confirmStep: false,
       showGraph: true,
       graphKey: 0,
-      options: null
+      options: null,
+      enableShades: true,
+      shadeIntensity: 0.5,
+      negativeThreshold: '#F44336',
+      negativeClose: '#FF9800',
+      negativeLow: '#FFC107',
+      positiveThreshold: '#673AB7',
+      positiveClose: '#2196F3', // 
+      positiveLow: '#009688',    
+
+
 
     }
   },
   created() {
-    this.options = this.makeGraphOptions()
+    this.options = this.makeGraphOptions(this.enableShades, this.shadeIntensity, this.negativeThreshold, this.negativeClose, this.negativeLow, this.positiveThreshold, this.positiveClose, this.positiveLow)
   },
   mounted() {
     window.scrollTo(0,document.body.scrollHeight);
   },
   methods: {
-    makeGraphOptions() {
+    reDraw() {
+      this.options = this.makeGraphOptions(this.enableShades, this.shadeIntensity, this.negativeThreshold, this.negativeClose, this.negativeLow, this.positiveThreshold, this.positiveClose, this.positiveLow)
+    },
+    makeGraphOptions(enableShades, shadeIntensity, negativeThreshold, negativeClose, negativeLow, positiveThreshold, positiveClose, positiveLow) {
       return {
         chart: {
           animations: {
@@ -173,41 +254,55 @@ export default {
         // colors: ["#008FFB"],
         plotOptions: {
           heatmap: {
-            enableShades: false,
+            radius: 2,
+            enableShades: enableShades,
             reverseNegativeShade: true,
+            shadeIntensity: shadeIntensity,
+            useFillColorAsStroke: false,
             colorScale: {
               ranges: [
                 {
                   from: -1,
                   to: -this.fileObject.correlationThreshold,
-                  color: '#311B92',
+                  color: negativeThreshold,
                   name: '-Corr at or above ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
                 },
                 {
                   from: -this.fileObject.correlationThreshold,
                   to: -this.fileObject.correlationThreshold + 0.10,
-                  color: '#7E57C2',
+                  color: negativeClose,
                   name: '-Corr between ' + (-this.fileObject.correlationThreshold * 100 + 10).toString() + '% and ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
                 },
                 {
                   from: -this.fileObject.correlationThreshold + .10,
+                  to: 0,
+                  inverse: false,
+                  color: negativeLow,
+                  name: 'Low - correlations',
+                },                  
+                {
+                  from: 0,
                   to: this.fileObject.correlationThreshold - 0.10,
-                  color: '#F5F5F5',
-                  name: 'Lower correlations',
-                },         
+                  color: positiveLow,
+                  name: 'Low + correlation',
+                },    
+                       
                 {
                   from: this.fileObject.correlationThreshold - 0.10,
                   to: this.fileObject.correlationThreshold,
-                  color: '#2196F3',
+                  color: positiveClose,
                   name: '+Corr between ' + (this.fileObject.correlationThreshold * 100 - 10).toString() + '% and ' + (this.fileObject.correlationThreshold * 100).toString() + '%',
                 },
                 {
                   from: this.fileObject.correlationThreshold,
                   to: 1,
-                  color: '#0D47A1',
+                  color: positiveThreshold,
                   name: '+Corr at or above ' + (this.fileObject.correlationThreshold * 100).toString() + '%' ,
                 }
-              ]
+              ],
+              inverse: true,
+              min: -10,
+              max: 1
             }
           }
         }
@@ -215,7 +310,7 @@ export default {
       }
     },
     updatedThreshold() {
-      this.options = this.makeGraphOptions()
+      this.options = this.makeGraphOptions(this.enableShades, this.shadeIntensity, this.negativeThreshold, this.negativeClose, this.negativeLow, this.positiveThreshold, this.positiveClose, this.positiveLow)
       this.graphKey += 1
     },
     determineCorrelationColors(item, correlationList) {
