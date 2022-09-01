@@ -16,7 +16,7 @@
       </div>
     </div>
     <!-- Hidden file upload -->
-    <input type="file" ref="fileClick" multiple="multiple" @change="clickAddFile($event)" style="display: none"/>
+    <input type="file" ref="fileClick" multiple="multiple" @change="clickAddFile($event)" style="display: none" accept='.csv'/>
 
     <v-card flat outlined class="pa-3 my-2" v-for="(file, index) in files" :key="index">
       <v-row dense v-if="fileMetadata[index]">
@@ -169,12 +169,28 @@ export default {
     },
 
     addFile(e) {
+      let errorFiles = []
       let droppedFiles = e.dataTransfer.files;
       if(!droppedFiles) return;
       // this tip, convert FileList to array, credit: https://www.smashingmagazine.com/2018/01/drag-drop-file-uploader-vanilla-js/
       ([...droppedFiles]).forEach(f => {
-        this.files.push(f);
+        if (f.type == 'text/csv') {
+          this.files.push(f)
+        }        
+        else {
+          errorFiles.push(f.name)
+        }             
+          
       });
+
+      if (errorFiles.length > 0) {
+        let message = 'Some of your files were rejected due to an unsupported file format: '
+        message += errorFiles.join(', ')
+        this.$store.commit('snackbarMessageSet', {color: 'red', message})
+
+      }
+
+      
     },
     removeFile(file){
       this.files = this.files.filter(f => {
