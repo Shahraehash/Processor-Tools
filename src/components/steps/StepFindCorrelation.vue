@@ -241,6 +241,12 @@ export default {
       this.options = this.makeGraphOptions(this.enableShades, this.shadeIntensity, this.negativeThreshold, this.negativeClose, this.negativeLow, this.positiveThreshold, this.positiveClose, this.positiveLow)
     },
     makeGraphOptions(enableShades, shadeIntensity, negativeThreshold, negativeClose, negativeLow, positiveThreshold, positiveClose, positiveLow) {
+
+      negativeClose
+      positiveClose
+      positiveLow
+
+
       return {
         chart: {
           animations: {
@@ -267,32 +273,47 @@ export default {
                   color: negativeThreshold,
                   name: '-Corr at or above ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
                 },
+                // {
+                //   from: -this.fileObject.correlationThreshold,
+                //   to: -this.fileObject.correlationThreshold + 0.10,
+                //   color: negativeClose,
+                //   name: '-Corr between ' + (-this.fileObject.correlationThreshold * 100 + 10).toString() + '% and ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
+                // },
+                // {
+                //   from: -this.fileObject.correlationThreshold + .10,
+                //   to: 0,
+                //   inverse: false,
+                //   color: negativeLow,
+                //   name: 'Low - correlations',
+                // },   
                 {
                   from: -this.fileObject.correlationThreshold,
-                  to: -this.fileObject.correlationThreshold + 0.10,
-                  color: negativeClose,
-                  name: '-Corr between ' + (-this.fileObject.correlationThreshold * 100 + 10).toString() + '% and ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
-                },
-                {
-                  from: -this.fileObject.correlationThreshold + .10,
                   to: 0,
                   inverse: false,
                   color: negativeLow,
                   name: 'Low - correlations',
-                },                  
+                },   
+                            
                 {
                   from: 0,
-                  to: this.fileObject.correlationThreshold - 0.10,
+                  to: this.fileObject.correlationThreshold,
                   color: positiveLow,
                   name: 'Low + correlation',
-                },    
+                },                  
+                            
+                // {
+                //   from: 0,
+                //   to: this.fileObject.correlationThreshold - 0.10,
+                //   color: positiveLow,
+                //   name: 'Low + correlation',
+                // },    
                        
-                {
-                  from: this.fileObject.correlationThreshold - 0.10,
-                  to: this.fileObject.correlationThreshold,
-                  color: positiveClose,
-                  name: '+Corr between ' + (this.fileObject.correlationThreshold * 100 - 10).toString() + '% and ' + (this.fileObject.correlationThreshold * 100).toString() + '%',
-                },
+                // {
+                //   from: this.fileObject.correlationThreshold - 0.10,
+                //   to: this.fileObject.correlationThreshold,
+                //   color: positiveClose,
+                //   name: '+Corr between ' + (this.fileObject.correlationThreshold * 100 - 10).toString() + '% and ' + (this.fileObject.correlationThreshold * 100).toString() + '%',
+                // },
                 {
                   from: this.fileObject.correlationThreshold,
                   to: 1,

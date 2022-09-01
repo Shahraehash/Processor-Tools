@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import underscore from 'underscore'
 
 
 export default {  
@@ -133,7 +133,9 @@ export default {
 
       correlationFilteredList() {
         if (this.correlation) {
-          return this.correlation.list.filter(item => {return item.value > this.correlationThreshold})
+          let items = this.correlation.list.filter(item => {return Math.abs(item.value) > this.correlationThreshold})
+          console.log(items)
+          return underscore.sortBy(items, item => {return Math.abs(item.value)}).reverse()
         }
         else return []
       },
