@@ -31,6 +31,18 @@ def generate():
             })
         graph_series.append(obj)
 
+    #d3
+    d3 = []
+    for ind in correlation_mat.index:
+
+        for y,val in correlation_mat[ind].iteritems():
+            obj = {}
+            obj['x'] = ind
+            obj['y'] = y
+            obj['val'] = val
+
+            d3.append(obj)    
+
     #List Data
     corr_pairs = correlation_mat.unstack()
     sorted_pairs = corr_pairs.sort_values(kind="quicksort", ascending=False)
@@ -51,7 +63,8 @@ def generate():
 
     final_object = {
         "graph": graph_series,
-        "list": list_of_pairs
+        "list": list_of_pairs,
+        "d3": d3
     }
 
     response = make_response(
