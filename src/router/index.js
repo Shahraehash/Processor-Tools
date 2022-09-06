@@ -9,13 +9,17 @@ import Colinearity from '../views/Colinearity.vue'
 import FeatureSelector from '../views/FeatureSelector.vue'
 import Encoder from '../views/Encoder.vue'
 import Diagnostics from '../views/Diagnostics.vue'
-
-
+import Test from '../views/Test.vue'
 
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/test',
+    name: 'Test',
+    component: Test
+  },
   {
     path: '/columnreducer',
     name: 'ColumnReducer',

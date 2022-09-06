@@ -91,77 +91,11 @@
         </div>
         <!-- Graph -->
         <div v-if="fileObject.allowCorrelationGraph()">
-          <v-row wrap>
-            <v-col cols="2"><v-text-field
-              outlined
-              dense
-              label="-Corr at of above"
-              v-model="negativeThreshold"
-              @change="reDraw()"
-              >
-            </v-text-field></v-col>
-            <v-col cols="2"><v-text-field
-              outlined
-              dense
-              label="-Corr between"
-              v-model="negativeClose"
-              @change="reDraw()"
-              >
-            </v-text-field></v-col>
-            <v-col cols="2"><v-text-field
-              outlined
-              dense
-              label="- Low Corr"
-              v-model="negativeLow"
-              @change="reDraw()"
-              >
-            </v-text-field></v-col>        
-            <v-col cols="2"><v-text-field
-              outlined
-              dense
-              label="+ Low Corr"
-              v-model="positiveLow"
-              @change="reDraw()"
-              >
-            </v-text-field></v-col>     
-            <v-col cols="2"><v-text-field
-              outlined
-              dense
-              label="+Corr between"
-              v-model="positiveClose"
-              @change="reDraw()"
-              >
-            </v-text-field></v-col>    
-            <v-col cols="2"><v-text-field
-              outlined
-              dense
-              label="+Corr at of above"
-              v-model="positiveThreshold"
-              @change="reDraw()"
-              >
-            </v-text-field></v-col>     
-            
-            <v-col cols="2"><v-switch
-              outlined
-              dense
-              label="Enable Shades"
-              v-model="enableShades"
-              @change="reDraw()"
-              >
-            </v-switch></v-col>               
-            
-            <v-col cols="2"><v-text-field
-              outlined
-              dense
-              label="Shade Intensity"
-              v-model="shadeIntensity"
-              @change="reDraw()"
-              >
-            </v-text-field></v-col>                                                       
-          </v-row>
+          
           <div>
             <v-switch label="Show Graph" v-model="showGraph"></v-switch>
-            <apexchart :key="graphKey" v-if="fileObject.correlation && showGraph" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart>
+            <!-- <apexchart :key="graphKey" v-if="fileObject.correlation && showGraph" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart> -->
+            <d3HeatMap v-if="fileObject.correlation && showGraph" :heatMapXYVal="fileObject.correlation.d3" :threshold="fileObject.correlationThreshold"/>
           </div>
         </div>
 
@@ -200,11 +134,13 @@
 
 //components
 import StepHeading from '@/components/StepHeading'
+import d3HeatMap from '@/components/d3HeatMap.vue'
 
 export default {
   name: 'StepFindCorrelation',
   components: {
-    StepHeading
+    StepHeading,
+    d3HeatMap
   },
   props: [
     'stepNumber',

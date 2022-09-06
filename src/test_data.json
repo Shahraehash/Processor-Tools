@@ -1,0 +1,4807 @@
+[
+    {
+      "x": "meanradius",
+      "y": "meanradius",
+      "val": 1
+    },
+    {
+      "x": "meanradius",
+      "y": "meantexture",
+      "val": 0.32
+    },
+    {
+      "x": "meanradius",
+      "y": "meanperimeter",
+      "val": 1
+    },
+    {
+      "x": "meanradius",
+      "y": "meanarea",
+      "val": 0.99
+    },
+    {
+      "x": "meanradius",
+      "y": "meansmoothness",
+      "val": 0.17
+    },
+    {
+      "x": "meanradius",
+      "y": "meancompactness",
+      "val": 0.51
+    },
+    {
+      "x": "meanradius",
+      "y": "meanconcavity",
+      "val": 0.68
+    },
+    {
+      "x": "meanradius",
+      "y": "meanconcavepoints",
+      "val": 0.82
+    },
+    {
+      "x": "meanradius",
+      "y": "meansymmetry",
+      "val": 0.15
+    },
+    {
+      "x": "meanradius",
+      "y": "meanfractaldimension",
+      "val": -0.31
+    },
+    {
+      "x": "meanradius",
+      "y": "radiuserror",
+      "val": 0.68
+    },
+    {
+      "x": "meanradius",
+      "y": "textureerror",
+      "val": -0.1
+    },
+    {
+      "x": "meanradius",
+      "y": "perimetererror",
+      "val": 0.67
+    },
+    {
+      "x": "meanradius",
+      "y": "areaerror",
+      "val": 0.74
+    },
+    {
+      "x": "meanradius",
+      "y": "smoothnesserror",
+      "val": -0.22
+    },
+    {
+      "x": "meanradius",
+      "y": "compactnesserror",
+      "val": 0.21
+    },
+    {
+      "x": "meanradius",
+      "y": "concavityerror",
+      "val": 0.19
+    },
+    {
+      "x": "meanradius",
+      "y": "concavepointserror",
+      "val": 0.38
+    },
+    {
+      "x": "meanradius",
+      "y": "symmetryerror",
+      "val": -0.1
+    },
+    {
+      "x": "meanradius",
+      "y": "fractaldimensionerror",
+      "val": -0.04
+    },
+    {
+      "x": "meanradius",
+      "y": "worstradius",
+      "val": 0.97
+    },
+    {
+      "x": "meanradius",
+      "y": "worsttexture",
+      "val": 0.3
+    },
+    {
+      "x": "meanradius",
+      "y": "worstperimeter",
+      "val": 0.97
+    },
+    {
+      "x": "meanradius",
+      "y": "worstarea",
+      "val": 0.94
+    },
+    {
+      "x": "meanradius",
+      "y": "worstsmoothness",
+      "val": 0.12
+    },
+    {
+      "x": "meanradius",
+      "y": "worstcompactness",
+      "val": 0.41
+    },
+    {
+      "x": "meanradius",
+      "y": "worstconcavity",
+      "val": 0.53
+    },
+    {
+      "x": "meanradius",
+      "y": "worstconcavepoints",
+      "val": 0.74
+    },
+    {
+      "x": "meanradius",
+      "y": "worstsymmetry",
+      "val": 0.16
+    },
+    {
+      "x": "meanradius",
+      "y": "worstfractaldimension",
+      "val": 0.01
+    },
+    {
+      "x": "meanradius",
+      "y": "target",
+      "val": -0.73
+    },
+    {
+      "x": "meantexture",
+      "y": "meanradius",
+      "val": 0.32
+    },
+    {
+      "x": "meantexture",
+      "y": "meantexture",
+      "val": 1
+    },
+    {
+      "x": "meantexture",
+      "y": "meanperimeter",
+      "val": 0.33
+    },
+    {
+      "x": "meantexture",
+      "y": "meanarea",
+      "val": 0.32
+    },
+    {
+      "x": "meantexture",
+      "y": "meansmoothness",
+      "val": -0.02
+    },
+    {
+      "x": "meantexture",
+      "y": "meancompactness",
+      "val": 0.24
+    },
+    {
+      "x": "meantexture",
+      "y": "meanconcavity",
+      "val": 0.3
+    },
+    {
+      "x": "meantexture",
+      "y": "meanconcavepoints",
+      "val": 0.29
+    },
+    {
+      "x": "meantexture",
+      "y": "meansymmetry",
+      "val": 0.07
+    },
+    {
+      "x": "meantexture",
+      "y": "meanfractaldimension",
+      "val": -0.08
+    },
+    {
+      "x": "meantexture",
+      "y": "radiuserror",
+      "val": 0.28
+    },
+    {
+      "x": "meantexture",
+      "y": "textureerror",
+      "val": 0.39
+    },
+    {
+      "x": "meantexture",
+      "y": "perimetererror",
+      "val": 0.28
+    },
+    {
+      "x": "meantexture",
+      "y": "areaerror",
+      "val": 0.26
+    },
+    {
+      "x": "meantexture",
+      "y": "smoothnesserror",
+      "val": 0.01
+    },
+    {
+      "x": "meantexture",
+      "y": "compactnesserror",
+      "val": 0.19
+    },
+    {
+      "x": "meantexture",
+      "y": "concavityerror",
+      "val": 0.14
+    },
+    {
+      "x": "meantexture",
+      "y": "concavepointserror",
+      "val": 0.16
+    },
+    {
+      "x": "meantexture",
+      "y": "symmetryerror",
+      "val": 0.01
+    },
+    {
+      "x": "meantexture",
+      "y": "fractaldimensionerror",
+      "val": 0.05
+    },
+    {
+      "x": "meantexture",
+      "y": "worstradius",
+      "val": 0.35
+    },
+    {
+      "x": "meantexture",
+      "y": "worsttexture",
+      "val": 0.91
+    },
+    {
+      "x": "meantexture",
+      "y": "worstperimeter",
+      "val": 0.36
+    },
+    {
+      "x": "meantexture",
+      "y": "worstarea",
+      "val": 0.34
+    },
+    {
+      "x": "meantexture",
+      "y": "worstsmoothness",
+      "val": 0.08
+    },
+    {
+      "x": "meantexture",
+      "y": "worstcompactness",
+      "val": 0.28
+    },
+    {
+      "x": "meantexture",
+      "y": "worstconcavity",
+      "val": 0.3
+    },
+    {
+      "x": "meantexture",
+      "y": "worstconcavepoints",
+      "val": 0.3
+    },
+    {
+      "x": "meantexture",
+      "y": "worstsymmetry",
+      "val": 0.11
+    },
+    {
+      "x": "meantexture",
+      "y": "worstfractaldimension",
+      "val": 0.12
+    },
+    {
+      "x": "meantexture",
+      "y": "target",
+      "val": -0.42
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meanradius",
+      "val": 1
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meantexture",
+      "val": 0.33
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meanperimeter",
+      "val": 1
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meanarea",
+      "val": 0.99
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meansmoothness",
+      "val": 0.21
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meancompactness",
+      "val": 0.56
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meanconcavity",
+      "val": 0.72
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meanconcavepoints",
+      "val": 0.85
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meansymmetry",
+      "val": 0.18
+    },
+    {
+      "x": "meanperimeter",
+      "y": "meanfractaldimension",
+      "val": -0.26
+    },
+    {
+      "x": "meanperimeter",
+      "y": "radiuserror",
+      "val": 0.69
+    },
+    {
+      "x": "meanperimeter",
+      "y": "textureerror",
+      "val": -0.09
+    },
+    {
+      "x": "meanperimeter",
+      "y": "perimetererror",
+      "val": 0.69
+    },
+    {
+      "x": "meanperimeter",
+      "y": "areaerror",
+      "val": 0.74
+    },
+    {
+      "x": "meanperimeter",
+      "y": "smoothnesserror",
+      "val": -0.2
+    },
+    {
+      "x": "meanperimeter",
+      "y": "compactnesserror",
+      "val": 0.25
+    },
+    {
+      "x": "meanperimeter",
+      "y": "concavityerror",
+      "val": 0.23
+    },
+    {
+      "x": "meanperimeter",
+      "y": "concavepointserror",
+      "val": 0.41
+    },
+    {
+      "x": "meanperimeter",
+      "y": "symmetryerror",
+      "val": -0.08
+    },
+    {
+      "x": "meanperimeter",
+      "y": "fractaldimensionerror",
+      "val": -0.01
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstradius",
+      "val": 0.97
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worsttexture",
+      "val": 0.3
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstperimeter",
+      "val": 0.97
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstarea",
+      "val": 0.94
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstsmoothness",
+      "val": 0.15
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstcompactness",
+      "val": 0.46
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstconcavity",
+      "val": 0.56
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstconcavepoints",
+      "val": 0.77
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstsymmetry",
+      "val": 0.19
+    },
+    {
+      "x": "meanperimeter",
+      "y": "worstfractaldimension",
+      "val": 0.05
+    },
+    {
+      "x": "meanperimeter",
+      "y": "target",
+      "val": -0.74
+    },
+    {
+      "x": "meanarea",
+      "y": "meanradius",
+      "val": 0.99
+    },
+    {
+      "x": "meanarea",
+      "y": "meantexture",
+      "val": 0.32
+    },
+    {
+      "x": "meanarea",
+      "y": "meanperimeter",
+      "val": 0.99
+    },
+    {
+      "x": "meanarea",
+      "y": "meanarea",
+      "val": 1
+    },
+    {
+      "x": "meanarea",
+      "y": "meansmoothness",
+      "val": 0.18
+    },
+    {
+      "x": "meanarea",
+      "y": "meancompactness",
+      "val": 0.5
+    },
+    {
+      "x": "meanarea",
+      "y": "meanconcavity",
+      "val": 0.69
+    },
+    {
+      "x": "meanarea",
+      "y": "meanconcavepoints",
+      "val": 0.82
+    },
+    {
+      "x": "meanarea",
+      "y": "meansymmetry",
+      "val": 0.15
+    },
+    {
+      "x": "meanarea",
+      "y": "meanfractaldimension",
+      "val": -0.28
+    },
+    {
+      "x": "meanarea",
+      "y": "radiuserror",
+      "val": 0.73
+    },
+    {
+      "x": "meanarea",
+      "y": "textureerror",
+      "val": -0.07
+    },
+    {
+      "x": "meanarea",
+      "y": "perimetererror",
+      "val": 0.73
+    },
+    {
+      "x": "meanarea",
+      "y": "areaerror",
+      "val": 0.8
+    },
+    {
+      "x": "meanarea",
+      "y": "smoothnesserror",
+      "val": -0.17
+    },
+    {
+      "x": "meanarea",
+      "y": "compactnesserror",
+      "val": 0.21
+    },
+    {
+      "x": "meanarea",
+      "y": "concavityerror",
+      "val": 0.21
+    },
+    {
+      "x": "meanarea",
+      "y": "concavepointserror",
+      "val": 0.37
+    },
+    {
+      "x": "meanarea",
+      "y": "symmetryerror",
+      "val": -0.07
+    },
+    {
+      "x": "meanarea",
+      "y": "fractaldimensionerror",
+      "val": -0.02
+    },
+    {
+      "x": "meanarea",
+      "y": "worstradius",
+      "val": 0.96
+    },
+    {
+      "x": "meanarea",
+      "y": "worsttexture",
+      "val": 0.29
+    },
+    {
+      "x": "meanarea",
+      "y": "worstperimeter",
+      "val": 0.96
+    },
+    {
+      "x": "meanarea",
+      "y": "worstarea",
+      "val": 0.96
+    },
+    {
+      "x": "meanarea",
+      "y": "worstsmoothness",
+      "val": 0.12
+    },
+    {
+      "x": "meanarea",
+      "y": "worstcompactness",
+      "val": 0.39
+    },
+    {
+      "x": "meanarea",
+      "y": "worstconcavity",
+      "val": 0.51
+    },
+    {
+      "x": "meanarea",
+      "y": "worstconcavepoints",
+      "val": 0.72
+    },
+    {
+      "x": "meanarea",
+      "y": "worstsymmetry",
+      "val": 0.14
+    },
+    {
+      "x": "meanarea",
+      "y": "worstfractaldimension",
+      "val": 0
+    },
+    {
+      "x": "meanarea",
+      "y": "target",
+      "val": -0.71
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meanradius",
+      "val": 0.17
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meantexture",
+      "val": -0.02
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meanperimeter",
+      "val": 0.21
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meanarea",
+      "val": 0.18
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meansmoothness",
+      "val": 1
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meancompactness",
+      "val": 0.66
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meanconcavity",
+      "val": 0.52
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meanconcavepoints",
+      "val": 0.55
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meansymmetry",
+      "val": 0.56
+    },
+    {
+      "x": "meansmoothness",
+      "y": "meanfractaldimension",
+      "val": 0.58
+    },
+    {
+      "x": "meansmoothness",
+      "y": "radiuserror",
+      "val": 0.3
+    },
+    {
+      "x": "meansmoothness",
+      "y": "textureerror",
+      "val": 0.07
+    },
+    {
+      "x": "meansmoothness",
+      "y": "perimetererror",
+      "val": 0.3
+    },
+    {
+      "x": "meansmoothness",
+      "y": "areaerror",
+      "val": 0.25
+    },
+    {
+      "x": "meansmoothness",
+      "y": "smoothnesserror",
+      "val": 0.33
+    },
+    {
+      "x": "meansmoothness",
+      "y": "compactnesserror",
+      "val": 0.32
+    },
+    {
+      "x": "meansmoothness",
+      "y": "concavityerror",
+      "val": 0.25
+    },
+    {
+      "x": "meansmoothness",
+      "y": "concavepointserror",
+      "val": 0.38
+    },
+    {
+      "x": "meansmoothness",
+      "y": "symmetryerror",
+      "val": 0.2
+    },
+    {
+      "x": "meansmoothness",
+      "y": "fractaldimensionerror",
+      "val": 0.28
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstradius",
+      "val": 0.21
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worsttexture",
+      "val": 0.04
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstperimeter",
+      "val": 0.24
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstarea",
+      "val": 0.21
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstsmoothness",
+      "val": 0.81
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstcompactness",
+      "val": 0.47
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstconcavity",
+      "val": 0.43
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstconcavepoints",
+      "val": 0.5
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstsymmetry",
+      "val": 0.39
+    },
+    {
+      "x": "meansmoothness",
+      "y": "worstfractaldimension",
+      "val": 0.5
+    },
+    {
+      "x": "meansmoothness",
+      "y": "target",
+      "val": -0.36
+    },
+    {
+      "x": "meancompactness",
+      "y": "meanradius",
+      "val": 0.51
+    },
+    {
+      "x": "meancompactness",
+      "y": "meantexture",
+      "val": 0.24
+    },
+    {
+      "x": "meancompactness",
+      "y": "meanperimeter",
+      "val": 0.56
+    },
+    {
+      "x": "meancompactness",
+      "y": "meanarea",
+      "val": 0.5
+    },
+    {
+      "x": "meancompactness",
+      "y": "meansmoothness",
+      "val": 0.66
+    },
+    {
+      "x": "meancompactness",
+      "y": "meancompactness",
+      "val": 1
+    },
+    {
+      "x": "meancompactness",
+      "y": "meanconcavity",
+      "val": 0.88
+    },
+    {
+      "x": "meancompactness",
+      "y": "meanconcavepoints",
+      "val": 0.83
+    },
+    {
+      "x": "meancompactness",
+      "y": "meansymmetry",
+      "val": 0.6
+    },
+    {
+      "x": "meancompactness",
+      "y": "meanfractaldimension",
+      "val": 0.57
+    },
+    {
+      "x": "meancompactness",
+      "y": "radiuserror",
+      "val": 0.5
+    },
+    {
+      "x": "meancompactness",
+      "y": "textureerror",
+      "val": 0.05
+    },
+    {
+      "x": "meancompactness",
+      "y": "perimetererror",
+      "val": 0.55
+    },
+    {
+      "x": "meancompactness",
+      "y": "areaerror",
+      "val": 0.46
+    },
+    {
+      "x": "meancompactness",
+      "y": "smoothnesserror",
+      "val": 0.14
+    },
+    {
+      "x": "meancompactness",
+      "y": "compactnesserror",
+      "val": 0.74
+    },
+    {
+      "x": "meancompactness",
+      "y": "concavityerror",
+      "val": 0.57
+    },
+    {
+      "x": "meancompactness",
+      "y": "concavepointserror",
+      "val": 0.64
+    },
+    {
+      "x": "meancompactness",
+      "y": "symmetryerror",
+      "val": 0.23
+    },
+    {
+      "x": "meancompactness",
+      "y": "fractaldimensionerror",
+      "val": 0.51
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstradius",
+      "val": 0.54
+    },
+    {
+      "x": "meancompactness",
+      "y": "worsttexture",
+      "val": 0.25
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstperimeter",
+      "val": 0.59
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstarea",
+      "val": 0.51
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstsmoothness",
+      "val": 0.57
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstcompactness",
+      "val": 0.87
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstconcavity",
+      "val": 0.82
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstconcavepoints",
+      "val": 0.82
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstsymmetry",
+      "val": 0.51
+    },
+    {
+      "x": "meancompactness",
+      "y": "worstfractaldimension",
+      "val": 0.69
+    },
+    {
+      "x": "meancompactness",
+      "y": "target",
+      "val": -0.6
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meanradius",
+      "val": 0.68
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meantexture",
+      "val": 0.3
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meanperimeter",
+      "val": 0.72
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meanarea",
+      "val": 0.69
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meansmoothness",
+      "val": 0.52
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meancompactness",
+      "val": 0.88
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meanconcavity",
+      "val": 1
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meanconcavepoints",
+      "val": 0.92
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meansymmetry",
+      "val": 0.5
+    },
+    {
+      "x": "meanconcavity",
+      "y": "meanfractaldimension",
+      "val": 0.34
+    },
+    {
+      "x": "meanconcavity",
+      "y": "radiuserror",
+      "val": 0.63
+    },
+    {
+      "x": "meanconcavity",
+      "y": "textureerror",
+      "val": 0.08
+    },
+    {
+      "x": "meanconcavity",
+      "y": "perimetererror",
+      "val": 0.66
+    },
+    {
+      "x": "meanconcavity",
+      "y": "areaerror",
+      "val": 0.62
+    },
+    {
+      "x": "meanconcavity",
+      "y": "smoothnesserror",
+      "val": 0.1
+    },
+    {
+      "x": "meanconcavity",
+      "y": "compactnesserror",
+      "val": 0.67
+    },
+    {
+      "x": "meanconcavity",
+      "y": "concavityerror",
+      "val": 0.69
+    },
+    {
+      "x": "meanconcavity",
+      "y": "concavepointserror",
+      "val": 0.68
+    },
+    {
+      "x": "meanconcavity",
+      "y": "symmetryerror",
+      "val": 0.18
+    },
+    {
+      "x": "meanconcavity",
+      "y": "fractaldimensionerror",
+      "val": 0.45
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstradius",
+      "val": 0.69
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worsttexture",
+      "val": 0.3
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstperimeter",
+      "val": 0.73
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstarea",
+      "val": 0.68
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstsmoothness",
+      "val": 0.45
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstcompactness",
+      "val": 0.75
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstconcavity",
+      "val": 0.88
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstconcavepoints",
+      "val": 0.86
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstsymmetry",
+      "val": 0.41
+    },
+    {
+      "x": "meanconcavity",
+      "y": "worstfractaldimension",
+      "val": 0.51
+    },
+    {
+      "x": "meanconcavity",
+      "y": "target",
+      "val": -0.7
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meanradius",
+      "val": 0.82
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meantexture",
+      "val": 0.29
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meanperimeter",
+      "val": 0.85
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meanarea",
+      "val": 0.82
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meansmoothness",
+      "val": 0.55
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meancompactness",
+      "val": 0.83
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meanconcavity",
+      "val": 0.92
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meanconcavepoints",
+      "val": 1
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meansymmetry",
+      "val": 0.46
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "meanfractaldimension",
+      "val": 0.17
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "radiuserror",
+      "val": 0.7
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "textureerror",
+      "val": 0.02
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "perimetererror",
+      "val": 0.71
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "areaerror",
+      "val": 0.69
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "smoothnesserror",
+      "val": 0.03
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "compactnesserror",
+      "val": 0.49
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "concavityerror",
+      "val": 0.44
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "concavepointserror",
+      "val": 0.62
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "symmetryerror",
+      "val": 0.1
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "fractaldimensionerror",
+      "val": 0.26
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstradius",
+      "val": 0.83
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worsttexture",
+      "val": 0.29
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstperimeter",
+      "val": 0.86
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstarea",
+      "val": 0.81
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstsmoothness",
+      "val": 0.45
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstcompactness",
+      "val": 0.67
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstconcavity",
+      "val": 0.75
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstconcavepoints",
+      "val": 0.91
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstsymmetry",
+      "val": 0.38
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "worstfractaldimension",
+      "val": 0.37
+    },
+    {
+      "x": "meanconcavepoints",
+      "y": "target",
+      "val": -0.78
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meanradius",
+      "val": 0.15
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meantexture",
+      "val": 0.07
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meanperimeter",
+      "val": 0.18
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meanarea",
+      "val": 0.15
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meansmoothness",
+      "val": 0.56
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meancompactness",
+      "val": 0.6
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meanconcavity",
+      "val": 0.5
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meanconcavepoints",
+      "val": 0.46
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meansymmetry",
+      "val": 1
+    },
+    {
+      "x": "meansymmetry",
+      "y": "meanfractaldimension",
+      "val": 0.48
+    },
+    {
+      "x": "meansymmetry",
+      "y": "radiuserror",
+      "val": 0.3
+    },
+    {
+      "x": "meansymmetry",
+      "y": "textureerror",
+      "val": 0.13
+    },
+    {
+      "x": "meansymmetry",
+      "y": "perimetererror",
+      "val": 0.31
+    },
+    {
+      "x": "meansymmetry",
+      "y": "areaerror",
+      "val": 0.22
+    },
+    {
+      "x": "meansymmetry",
+      "y": "smoothnesserror",
+      "val": 0.19
+    },
+    {
+      "x": "meansymmetry",
+      "y": "compactnesserror",
+      "val": 0.42
+    },
+    {
+      "x": "meansymmetry",
+      "y": "concavityerror",
+      "val": 0.34
+    },
+    {
+      "x": "meansymmetry",
+      "y": "concavepointserror",
+      "val": 0.39
+    },
+    {
+      "x": "meansymmetry",
+      "y": "symmetryerror",
+      "val": 0.45
+    },
+    {
+      "x": "meansymmetry",
+      "y": "fractaldimensionerror",
+      "val": 0.33
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstradius",
+      "val": 0.19
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worsttexture",
+      "val": 0.09
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstperimeter",
+      "val": 0.22
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstarea",
+      "val": 0.18
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstsmoothness",
+      "val": 0.43
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstcompactness",
+      "val": 0.47
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstconcavity",
+      "val": 0.43
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstconcavepoints",
+      "val": 0.43
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstsymmetry",
+      "val": 0.7
+    },
+    {
+      "x": "meansymmetry",
+      "y": "worstfractaldimension",
+      "val": 0.44
+    },
+    {
+      "x": "meansymmetry",
+      "y": "target",
+      "val": -0.33
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meanradius",
+      "val": -0.31
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meantexture",
+      "val": -0.08
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meanperimeter",
+      "val": -0.26
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meanarea",
+      "val": -0.28
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meansmoothness",
+      "val": 0.58
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meancompactness",
+      "val": 0.57
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meanconcavity",
+      "val": 0.34
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meanconcavepoints",
+      "val": 0.17
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meansymmetry",
+      "val": 0.48
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "meanfractaldimension",
+      "val": 1
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "radiuserror",
+      "val": 0
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "textureerror",
+      "val": 0.16
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "perimetererror",
+      "val": 0.04
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "areaerror",
+      "val": -0.09
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "smoothnesserror",
+      "val": 0.4
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "compactnesserror",
+      "val": 0.56
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "concavityerror",
+      "val": 0.45
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "concavepointserror",
+      "val": 0.34
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "symmetryerror",
+      "val": 0.35
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "fractaldimensionerror",
+      "val": 0.69
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstradius",
+      "val": -0.25
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worsttexture",
+      "val": -0.05
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstperimeter",
+      "val": -0.21
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstarea",
+      "val": -0.23
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstsmoothness",
+      "val": 0.5
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstcompactness",
+      "val": 0.46
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstconcavity",
+      "val": 0.35
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstconcavepoints",
+      "val": 0.18
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstsymmetry",
+      "val": 0.33
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "worstfractaldimension",
+      "val": 0.77
+    },
+    {
+      "x": "meanfractaldimension",
+      "y": "target",
+      "val": 0.01
+    },
+    {
+      "x": "radiuserror",
+      "y": "meanradius",
+      "val": 0.68
+    },
+    {
+      "x": "radiuserror",
+      "y": "meantexture",
+      "val": 0.28
+    },
+    {
+      "x": "radiuserror",
+      "y": "meanperimeter",
+      "val": 0.69
+    },
+    {
+      "x": "radiuserror",
+      "y": "meanarea",
+      "val": 0.73
+    },
+    {
+      "x": "radiuserror",
+      "y": "meansmoothness",
+      "val": 0.3
+    },
+    {
+      "x": "radiuserror",
+      "y": "meancompactness",
+      "val": 0.5
+    },
+    {
+      "x": "radiuserror",
+      "y": "meanconcavity",
+      "val": 0.63
+    },
+    {
+      "x": "radiuserror",
+      "y": "meanconcavepoints",
+      "val": 0.7
+    },
+    {
+      "x": "radiuserror",
+      "y": "meansymmetry",
+      "val": 0.3
+    },
+    {
+      "x": "radiuserror",
+      "y": "meanfractaldimension",
+      "val": 0
+    },
+    {
+      "x": "radiuserror",
+      "y": "radiuserror",
+      "val": 1
+    },
+    {
+      "x": "radiuserror",
+      "y": "textureerror",
+      "val": 0.21
+    },
+    {
+      "x": "radiuserror",
+      "y": "perimetererror",
+      "val": 0.97
+    },
+    {
+      "x": "radiuserror",
+      "y": "areaerror",
+      "val": 0.95
+    },
+    {
+      "x": "radiuserror",
+      "y": "smoothnesserror",
+      "val": 0.16
+    },
+    {
+      "x": "radiuserror",
+      "y": "compactnesserror",
+      "val": 0.36
+    },
+    {
+      "x": "radiuserror",
+      "y": "concavityerror",
+      "val": 0.33
+    },
+    {
+      "x": "radiuserror",
+      "y": "concavepointserror",
+      "val": 0.51
+    },
+    {
+      "x": "radiuserror",
+      "y": "symmetryerror",
+      "val": 0.24
+    },
+    {
+      "x": "radiuserror",
+      "y": "fractaldimensionerror",
+      "val": 0.23
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstradius",
+      "val": 0.72
+    },
+    {
+      "x": "radiuserror",
+      "y": "worsttexture",
+      "val": 0.19
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstperimeter",
+      "val": 0.72
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstarea",
+      "val": 0.75
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstsmoothness",
+      "val": 0.14
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstcompactness",
+      "val": 0.29
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstconcavity",
+      "val": 0.38
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstconcavepoints",
+      "val": 0.53
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstsymmetry",
+      "val": 0.09
+    },
+    {
+      "x": "radiuserror",
+      "y": "worstfractaldimension",
+      "val": 0.05
+    },
+    {
+      "x": "radiuserror",
+      "y": "target",
+      "val": -0.57
+    },
+    {
+      "x": "textureerror",
+      "y": "meanradius",
+      "val": -0.1
+    },
+    {
+      "x": "textureerror",
+      "y": "meantexture",
+      "val": 0.39
+    },
+    {
+      "x": "textureerror",
+      "y": "meanperimeter",
+      "val": -0.09
+    },
+    {
+      "x": "textureerror",
+      "y": "meanarea",
+      "val": -0.07
+    },
+    {
+      "x": "textureerror",
+      "y": "meansmoothness",
+      "val": 0.07
+    },
+    {
+      "x": "textureerror",
+      "y": "meancompactness",
+      "val": 0.05
+    },
+    {
+      "x": "textureerror",
+      "y": "meanconcavity",
+      "val": 0.08
+    },
+    {
+      "x": "textureerror",
+      "y": "meanconcavepoints",
+      "val": 0.02
+    },
+    {
+      "x": "textureerror",
+      "y": "meansymmetry",
+      "val": 0.13
+    },
+    {
+      "x": "textureerror",
+      "y": "meanfractaldimension",
+      "val": 0.16
+    },
+    {
+      "x": "textureerror",
+      "y": "radiuserror",
+      "val": 0.21
+    },
+    {
+      "x": "textureerror",
+      "y": "textureerror",
+      "val": 1
+    },
+    {
+      "x": "textureerror",
+      "y": "perimetererror",
+      "val": 0.22
+    },
+    {
+      "x": "textureerror",
+      "y": "areaerror",
+      "val": 0.11
+    },
+    {
+      "x": "textureerror",
+      "y": "smoothnesserror",
+      "val": 0.4
+    },
+    {
+      "x": "textureerror",
+      "y": "compactnesserror",
+      "val": 0.23
+    },
+    {
+      "x": "textureerror",
+      "y": "concavityerror",
+      "val": 0.19
+    },
+    {
+      "x": "textureerror",
+      "y": "concavepointserror",
+      "val": 0.23
+    },
+    {
+      "x": "textureerror",
+      "y": "symmetryerror",
+      "val": 0.41
+    },
+    {
+      "x": "textureerror",
+      "y": "fractaldimensionerror",
+      "val": 0.28
+    },
+    {
+      "x": "textureerror",
+      "y": "worstradius",
+      "val": -0.11
+    },
+    {
+      "x": "textureerror",
+      "y": "worsttexture",
+      "val": 0.41
+    },
+    {
+      "x": "textureerror",
+      "y": "worstperimeter",
+      "val": -0.1
+    },
+    {
+      "x": "textureerror",
+      "y": "worstarea",
+      "val": -0.08
+    },
+    {
+      "x": "textureerror",
+      "y": "worstsmoothness",
+      "val": -0.07
+    },
+    {
+      "x": "textureerror",
+      "y": "worstcompactness",
+      "val": -0.09
+    },
+    {
+      "x": "textureerror",
+      "y": "worstconcavity",
+      "val": -0.07
+    },
+    {
+      "x": "textureerror",
+      "y": "worstconcavepoints",
+      "val": -0.12
+    },
+    {
+      "x": "textureerror",
+      "y": "worstsymmetry",
+      "val": -0.13
+    },
+    {
+      "x": "textureerror",
+      "y": "worstfractaldimension",
+      "val": -0.05
+    },
+    {
+      "x": "textureerror",
+      "y": "target",
+      "val": 0.01
+    },
+    {
+      "x": "perimetererror",
+      "y": "meanradius",
+      "val": 0.67
+    },
+    {
+      "x": "perimetererror",
+      "y": "meantexture",
+      "val": 0.28
+    },
+    {
+      "x": "perimetererror",
+      "y": "meanperimeter",
+      "val": 0.69
+    },
+    {
+      "x": "perimetererror",
+      "y": "meanarea",
+      "val": 0.73
+    },
+    {
+      "x": "perimetererror",
+      "y": "meansmoothness",
+      "val": 0.3
+    },
+    {
+      "x": "perimetererror",
+      "y": "meancompactness",
+      "val": 0.55
+    },
+    {
+      "x": "perimetererror",
+      "y": "meanconcavity",
+      "val": 0.66
+    },
+    {
+      "x": "perimetererror",
+      "y": "meanconcavepoints",
+      "val": 0.71
+    },
+    {
+      "x": "perimetererror",
+      "y": "meansymmetry",
+      "val": 0.31
+    },
+    {
+      "x": "perimetererror",
+      "y": "meanfractaldimension",
+      "val": 0.04
+    },
+    {
+      "x": "perimetererror",
+      "y": "radiuserror",
+      "val": 0.97
+    },
+    {
+      "x": "perimetererror",
+      "y": "textureerror",
+      "val": 0.22
+    },
+    {
+      "x": "perimetererror",
+      "y": "perimetererror",
+      "val": 1
+    },
+    {
+      "x": "perimetererror",
+      "y": "areaerror",
+      "val": 0.94
+    },
+    {
+      "x": "perimetererror",
+      "y": "smoothnesserror",
+      "val": 0.15
+    },
+    {
+      "x": "perimetererror",
+      "y": "compactnesserror",
+      "val": 0.42
+    },
+    {
+      "x": "perimetererror",
+      "y": "concavityerror",
+      "val": 0.36
+    },
+    {
+      "x": "perimetererror",
+      "y": "concavepointserror",
+      "val": 0.56
+    },
+    {
+      "x": "perimetererror",
+      "y": "symmetryerror",
+      "val": 0.27
+    },
+    {
+      "x": "perimetererror",
+      "y": "fractaldimensionerror",
+      "val": 0.24
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstradius",
+      "val": 0.7
+    },
+    {
+      "x": "perimetererror",
+      "y": "worsttexture",
+      "val": 0.2
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstperimeter",
+      "val": 0.72
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstarea",
+      "val": 0.73
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstsmoothness",
+      "val": 0.13
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstcompactness",
+      "val": 0.34
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstconcavity",
+      "val": 0.42
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstconcavepoints",
+      "val": 0.55
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstsymmetry",
+      "val": 0.11
+    },
+    {
+      "x": "perimetererror",
+      "y": "worstfractaldimension",
+      "val": 0.09
+    },
+    {
+      "x": "perimetererror",
+      "y": "target",
+      "val": -0.56
+    },
+    {
+      "x": "areaerror",
+      "y": "meanradius",
+      "val": 0.74
+    },
+    {
+      "x": "areaerror",
+      "y": "meantexture",
+      "val": 0.26
+    },
+    {
+      "x": "areaerror",
+      "y": "meanperimeter",
+      "val": 0.74
+    },
+    {
+      "x": "areaerror",
+      "y": "meanarea",
+      "val": 0.8
+    },
+    {
+      "x": "areaerror",
+      "y": "meansmoothness",
+      "val": 0.25
+    },
+    {
+      "x": "areaerror",
+      "y": "meancompactness",
+      "val": 0.46
+    },
+    {
+      "x": "areaerror",
+      "y": "meanconcavity",
+      "val": 0.62
+    },
+    {
+      "x": "areaerror",
+      "y": "meanconcavepoints",
+      "val": 0.69
+    },
+    {
+      "x": "areaerror",
+      "y": "meansymmetry",
+      "val": 0.22
+    },
+    {
+      "x": "areaerror",
+      "y": "meanfractaldimension",
+      "val": -0.09
+    },
+    {
+      "x": "areaerror",
+      "y": "radiuserror",
+      "val": 0.95
+    },
+    {
+      "x": "areaerror",
+      "y": "textureerror",
+      "val": 0.11
+    },
+    {
+      "x": "areaerror",
+      "y": "perimetererror",
+      "val": 0.94
+    },
+    {
+      "x": "areaerror",
+      "y": "areaerror",
+      "val": 1
+    },
+    {
+      "x": "areaerror",
+      "y": "smoothnesserror",
+      "val": 0.08
+    },
+    {
+      "x": "areaerror",
+      "y": "compactnesserror",
+      "val": 0.28
+    },
+    {
+      "x": "areaerror",
+      "y": "concavityerror",
+      "val": 0.27
+    },
+    {
+      "x": "areaerror",
+      "y": "concavepointserror",
+      "val": 0.42
+    },
+    {
+      "x": "areaerror",
+      "y": "symmetryerror",
+      "val": 0.13
+    },
+    {
+      "x": "areaerror",
+      "y": "fractaldimensionerror",
+      "val": 0.13
+    },
+    {
+      "x": "areaerror",
+      "y": "worstradius",
+      "val": 0.76
+    },
+    {
+      "x": "areaerror",
+      "y": "worsttexture",
+      "val": 0.2
+    },
+    {
+      "x": "areaerror",
+      "y": "worstperimeter",
+      "val": 0.76
+    },
+    {
+      "x": "areaerror",
+      "y": "worstarea",
+      "val": 0.81
+    },
+    {
+      "x": "areaerror",
+      "y": "worstsmoothness",
+      "val": 0.13
+    },
+    {
+      "x": "areaerror",
+      "y": "worstcompactness",
+      "val": 0.28
+    },
+    {
+      "x": "areaerror",
+      "y": "worstconcavity",
+      "val": 0.39
+    },
+    {
+      "x": "areaerror",
+      "y": "worstconcavepoints",
+      "val": 0.54
+    },
+    {
+      "x": "areaerror",
+      "y": "worstsymmetry",
+      "val": 0.07
+    },
+    {
+      "x": "areaerror",
+      "y": "worstfractaldimension",
+      "val": 0.02
+    },
+    {
+      "x": "areaerror",
+      "y": "target",
+      "val": -0.55
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meanradius",
+      "val": -0.22
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meantexture",
+      "val": 0.01
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meanperimeter",
+      "val": -0.2
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meanarea",
+      "val": -0.17
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meansmoothness",
+      "val": 0.33
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meancompactness",
+      "val": 0.14
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meanconcavity",
+      "val": 0.1
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meanconcavepoints",
+      "val": 0.03
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meansymmetry",
+      "val": 0.19
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "meanfractaldimension",
+      "val": 0.4
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "radiuserror",
+      "val": 0.16
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "textureerror",
+      "val": 0.4
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "perimetererror",
+      "val": 0.15
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "areaerror",
+      "val": 0.08
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "smoothnesserror",
+      "val": 1
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "compactnesserror",
+      "val": 0.34
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "concavityerror",
+      "val": 0.27
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "concavepointserror",
+      "val": 0.33
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "symmetryerror",
+      "val": 0.41
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "fractaldimensionerror",
+      "val": 0.43
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstradius",
+      "val": -0.23
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worsttexture",
+      "val": -0.07
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstperimeter",
+      "val": -0.22
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstarea",
+      "val": -0.18
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstsmoothness",
+      "val": 0.31
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstcompactness",
+      "val": -0.06
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstconcavity",
+      "val": -0.06
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstconcavepoints",
+      "val": -0.1
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstsymmetry",
+      "val": -0.11
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "worstfractaldimension",
+      "val": 0.1
+    },
+    {
+      "x": "smoothnesserror",
+      "y": "target",
+      "val": 0.07
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meanradius",
+      "val": 0.21
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meantexture",
+      "val": 0.19
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meanperimeter",
+      "val": 0.25
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meanarea",
+      "val": 0.21
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meansmoothness",
+      "val": 0.32
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meancompactness",
+      "val": 0.74
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meanconcavity",
+      "val": 0.67
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meanconcavepoints",
+      "val": 0.49
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meansymmetry",
+      "val": 0.42
+    },
+    {
+      "x": "compactnesserror",
+      "y": "meanfractaldimension",
+      "val": 0.56
+    },
+    {
+      "x": "compactnesserror",
+      "y": "radiuserror",
+      "val": 0.36
+    },
+    {
+      "x": "compactnesserror",
+      "y": "textureerror",
+      "val": 0.23
+    },
+    {
+      "x": "compactnesserror",
+      "y": "perimetererror",
+      "val": 0.42
+    },
+    {
+      "x": "compactnesserror",
+      "y": "areaerror",
+      "val": 0.28
+    },
+    {
+      "x": "compactnesserror",
+      "y": "smoothnesserror",
+      "val": 0.34
+    },
+    {
+      "x": "compactnesserror",
+      "y": "compactnesserror",
+      "val": 1
+    },
+    {
+      "x": "compactnesserror",
+      "y": "concavityerror",
+      "val": 0.8
+    },
+    {
+      "x": "compactnesserror",
+      "y": "concavepointserror",
+      "val": 0.74
+    },
+    {
+      "x": "compactnesserror",
+      "y": "symmetryerror",
+      "val": 0.39
+    },
+    {
+      "x": "compactnesserror",
+      "y": "fractaldimensionerror",
+      "val": 0.8
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstradius",
+      "val": 0.2
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worsttexture",
+      "val": 0.14
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstperimeter",
+      "val": 0.26
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstarea",
+      "val": 0.2
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstsmoothness",
+      "val": 0.23
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstcompactness",
+      "val": 0.68
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstconcavity",
+      "val": 0.64
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstconcavepoints",
+      "val": 0.48
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstsymmetry",
+      "val": 0.28
+    },
+    {
+      "x": "compactnesserror",
+      "y": "worstfractaldimension",
+      "val": 0.59
+    },
+    {
+      "x": "compactnesserror",
+      "y": "target",
+      "val": -0.29
+    },
+    {
+      "x": "concavityerror",
+      "y": "meanradius",
+      "val": 0.19
+    },
+    {
+      "x": "concavityerror",
+      "y": "meantexture",
+      "val": 0.14
+    },
+    {
+      "x": "concavityerror",
+      "y": "meanperimeter",
+      "val": 0.23
+    },
+    {
+      "x": "concavityerror",
+      "y": "meanarea",
+      "val": 0.21
+    },
+    {
+      "x": "concavityerror",
+      "y": "meansmoothness",
+      "val": 0.25
+    },
+    {
+      "x": "concavityerror",
+      "y": "meancompactness",
+      "val": 0.57
+    },
+    {
+      "x": "concavityerror",
+      "y": "meanconcavity",
+      "val": 0.69
+    },
+    {
+      "x": "concavityerror",
+      "y": "meanconcavepoints",
+      "val": 0.44
+    },
+    {
+      "x": "concavityerror",
+      "y": "meansymmetry",
+      "val": 0.34
+    },
+    {
+      "x": "concavityerror",
+      "y": "meanfractaldimension",
+      "val": 0.45
+    },
+    {
+      "x": "concavityerror",
+      "y": "radiuserror",
+      "val": 0.33
+    },
+    {
+      "x": "concavityerror",
+      "y": "textureerror",
+      "val": 0.19
+    },
+    {
+      "x": "concavityerror",
+      "y": "perimetererror",
+      "val": 0.36
+    },
+    {
+      "x": "concavityerror",
+      "y": "areaerror",
+      "val": 0.27
+    },
+    {
+      "x": "concavityerror",
+      "y": "smoothnesserror",
+      "val": 0.27
+    },
+    {
+      "x": "concavityerror",
+      "y": "compactnesserror",
+      "val": 0.8
+    },
+    {
+      "x": "concavityerror",
+      "y": "concavityerror",
+      "val": 1
+    },
+    {
+      "x": "concavityerror",
+      "y": "concavepointserror",
+      "val": 0.77
+    },
+    {
+      "x": "concavityerror",
+      "y": "symmetryerror",
+      "val": 0.31
+    },
+    {
+      "x": "concavityerror",
+      "y": "fractaldimensionerror",
+      "val": 0.73
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstradius",
+      "val": 0.19
+    },
+    {
+      "x": "concavityerror",
+      "y": "worsttexture",
+      "val": 0.1
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstperimeter",
+      "val": 0.23
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstarea",
+      "val": 0.19
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstsmoothness",
+      "val": 0.17
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstcompactness",
+      "val": 0.48
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstconcavity",
+      "val": 0.66
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstconcavepoints",
+      "val": 0.44
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstsymmetry",
+      "val": 0.2
+    },
+    {
+      "x": "concavityerror",
+      "y": "worstfractaldimension",
+      "val": 0.44
+    },
+    {
+      "x": "concavityerror",
+      "y": "target",
+      "val": -0.25
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meanradius",
+      "val": 0.38
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meantexture",
+      "val": 0.16
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meanperimeter",
+      "val": 0.41
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meanarea",
+      "val": 0.37
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meansmoothness",
+      "val": 0.38
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meancompactness",
+      "val": 0.64
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meanconcavity",
+      "val": 0.68
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meanconcavepoints",
+      "val": 0.62
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meansymmetry",
+      "val": 0.39
+    },
+    {
+      "x": "concavepointserror",
+      "y": "meanfractaldimension",
+      "val": 0.34
+    },
+    {
+      "x": "concavepointserror",
+      "y": "radiuserror",
+      "val": 0.51
+    },
+    {
+      "x": "concavepointserror",
+      "y": "textureerror",
+      "val": 0.23
+    },
+    {
+      "x": "concavepointserror",
+      "y": "perimetererror",
+      "val": 0.56
+    },
+    {
+      "x": "concavepointserror",
+      "y": "areaerror",
+      "val": 0.42
+    },
+    {
+      "x": "concavepointserror",
+      "y": "smoothnesserror",
+      "val": 0.33
+    },
+    {
+      "x": "concavepointserror",
+      "y": "compactnesserror",
+      "val": 0.74
+    },
+    {
+      "x": "concavepointserror",
+      "y": "concavityerror",
+      "val": 0.77
+    },
+    {
+      "x": "concavepointserror",
+      "y": "concavepointserror",
+      "val": 1
+    },
+    {
+      "x": "concavepointserror",
+      "y": "symmetryerror",
+      "val": 0.31
+    },
+    {
+      "x": "concavepointserror",
+      "y": "fractaldimensionerror",
+      "val": 0.61
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstradius",
+      "val": 0.36
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worsttexture",
+      "val": 0.09
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstperimeter",
+      "val": 0.39
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstarea",
+      "val": 0.34
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstsmoothness",
+      "val": 0.22
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstcompactness",
+      "val": 0.45
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstconcavity",
+      "val": 0.55
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstconcavepoints",
+      "val": 0.6
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstsymmetry",
+      "val": 0.14
+    },
+    {
+      "x": "concavepointserror",
+      "y": "worstfractaldimension",
+      "val": 0.31
+    },
+    {
+      "x": "concavepointserror",
+      "y": "target",
+      "val": -0.41
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meanradius",
+      "val": -0.1
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meantexture",
+      "val": 0.01
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meanperimeter",
+      "val": -0.08
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meanarea",
+      "val": -0.07
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meansmoothness",
+      "val": 0.2
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meancompactness",
+      "val": 0.23
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meanconcavity",
+      "val": 0.18
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meanconcavepoints",
+      "val": 0.1
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meansymmetry",
+      "val": 0.45
+    },
+    {
+      "x": "symmetryerror",
+      "y": "meanfractaldimension",
+      "val": 0.35
+    },
+    {
+      "x": "symmetryerror",
+      "y": "radiuserror",
+      "val": 0.24
+    },
+    {
+      "x": "symmetryerror",
+      "y": "textureerror",
+      "val": 0.41
+    },
+    {
+      "x": "symmetryerror",
+      "y": "perimetererror",
+      "val": 0.27
+    },
+    {
+      "x": "symmetryerror",
+      "y": "areaerror",
+      "val": 0.13
+    },
+    {
+      "x": "symmetryerror",
+      "y": "smoothnesserror",
+      "val": 0.41
+    },
+    {
+      "x": "symmetryerror",
+      "y": "compactnesserror",
+      "val": 0.39
+    },
+    {
+      "x": "symmetryerror",
+      "y": "concavityerror",
+      "val": 0.31
+    },
+    {
+      "x": "symmetryerror",
+      "y": "concavepointserror",
+      "val": 0.31
+    },
+    {
+      "x": "symmetryerror",
+      "y": "symmetryerror",
+      "val": 1
+    },
+    {
+      "x": "symmetryerror",
+      "y": "fractaldimensionerror",
+      "val": 0.37
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstradius",
+      "val": -0.13
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worsttexture",
+      "val": -0.08
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstperimeter",
+      "val": -0.1
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstarea",
+      "val": -0.11
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstsmoothness",
+      "val": -0.01
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstcompactness",
+      "val": 0.06
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstconcavity",
+      "val": 0.04
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstconcavepoints",
+      "val": -0.03
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstsymmetry",
+      "val": 0.39
+    },
+    {
+      "x": "symmetryerror",
+      "y": "worstfractaldimension",
+      "val": 0.08
+    },
+    {
+      "x": "symmetryerror",
+      "y": "target",
+      "val": 0.01
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meanradius",
+      "val": -0.04
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meantexture",
+      "val": 0.05
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meanperimeter",
+      "val": -0.01
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meanarea",
+      "val": -0.02
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meansmoothness",
+      "val": 0.28
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meancompactness",
+      "val": 0.51
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meanconcavity",
+      "val": 0.45
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meanconcavepoints",
+      "val": 0.26
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meansymmetry",
+      "val": 0.33
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "meanfractaldimension",
+      "val": 0.69
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "radiuserror",
+      "val": 0.23
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "textureerror",
+      "val": 0.28
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "perimetererror",
+      "val": 0.24
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "areaerror",
+      "val": 0.13
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "smoothnesserror",
+      "val": 0.43
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "compactnesserror",
+      "val": 0.8
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "concavityerror",
+      "val": 0.73
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "concavepointserror",
+      "val": 0.61
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "symmetryerror",
+      "val": 0.37
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "fractaldimensionerror",
+      "val": 1
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstradius",
+      "val": -0.04
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worsttexture",
+      "val": 0
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstperimeter",
+      "val": 0
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstarea",
+      "val": -0.02
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstsmoothness",
+      "val": 0.17
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstcompactness",
+      "val": 0.39
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstconcavity",
+      "val": 0.38
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstconcavepoints",
+      "val": 0.22
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstsymmetry",
+      "val": 0.11
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "worstfractaldimension",
+      "val": 0.59
+    },
+    {
+      "x": "fractaldimensionerror",
+      "y": "target",
+      "val": -0.08
+    },
+    {
+      "x": "worstradius",
+      "y": "meanradius",
+      "val": 0.97
+    },
+    {
+      "x": "worstradius",
+      "y": "meantexture",
+      "val": 0.35
+    },
+    {
+      "x": "worstradius",
+      "y": "meanperimeter",
+      "val": 0.97
+    },
+    {
+      "x": "worstradius",
+      "y": "meanarea",
+      "val": 0.96
+    },
+    {
+      "x": "worstradius",
+      "y": "meansmoothness",
+      "val": 0.21
+    },
+    {
+      "x": "worstradius",
+      "y": "meancompactness",
+      "val": 0.54
+    },
+    {
+      "x": "worstradius",
+      "y": "meanconcavity",
+      "val": 0.69
+    },
+    {
+      "x": "worstradius",
+      "y": "meanconcavepoints",
+      "val": 0.83
+    },
+    {
+      "x": "worstradius",
+      "y": "meansymmetry",
+      "val": 0.19
+    },
+    {
+      "x": "worstradius",
+      "y": "meanfractaldimension",
+      "val": -0.25
+    },
+    {
+      "x": "worstradius",
+      "y": "radiuserror",
+      "val": 0.72
+    },
+    {
+      "x": "worstradius",
+      "y": "textureerror",
+      "val": -0.11
+    },
+    {
+      "x": "worstradius",
+      "y": "perimetererror",
+      "val": 0.7
+    },
+    {
+      "x": "worstradius",
+      "y": "areaerror",
+      "val": 0.76
+    },
+    {
+      "x": "worstradius",
+      "y": "smoothnesserror",
+      "val": -0.23
+    },
+    {
+      "x": "worstradius",
+      "y": "compactnesserror",
+      "val": 0.2
+    },
+    {
+      "x": "worstradius",
+      "y": "concavityerror",
+      "val": 0.19
+    },
+    {
+      "x": "worstradius",
+      "y": "concavepointserror",
+      "val": 0.36
+    },
+    {
+      "x": "worstradius",
+      "y": "symmetryerror",
+      "val": -0.13
+    },
+    {
+      "x": "worstradius",
+      "y": "fractaldimensionerror",
+      "val": -0.04
+    },
+    {
+      "x": "worstradius",
+      "y": "worstradius",
+      "val": 1
+    },
+    {
+      "x": "worstradius",
+      "y": "worsttexture",
+      "val": 0.36
+    },
+    {
+      "x": "worstradius",
+      "y": "worstperimeter",
+      "val": 0.99
+    },
+    {
+      "x": "worstradius",
+      "y": "worstarea",
+      "val": 0.98
+    },
+    {
+      "x": "worstradius",
+      "y": "worstsmoothness",
+      "val": 0.22
+    },
+    {
+      "x": "worstradius",
+      "y": "worstcompactness",
+      "val": 0.48
+    },
+    {
+      "x": "worstradius",
+      "y": "worstconcavity",
+      "val": 0.57
+    },
+    {
+      "x": "worstradius",
+      "y": "worstconcavepoints",
+      "val": 0.79
+    },
+    {
+      "x": "worstradius",
+      "y": "worstsymmetry",
+      "val": 0.24
+    },
+    {
+      "x": "worstradius",
+      "y": "worstfractaldimension",
+      "val": 0.09
+    },
+    {
+      "x": "worstradius",
+      "y": "target",
+      "val": -0.78
+    },
+    {
+      "x": "worsttexture",
+      "y": "meanradius",
+      "val": 0.3
+    },
+    {
+      "x": "worsttexture",
+      "y": "meantexture",
+      "val": 0.91
+    },
+    {
+      "x": "worsttexture",
+      "y": "meanperimeter",
+      "val": 0.3
+    },
+    {
+      "x": "worsttexture",
+      "y": "meanarea",
+      "val": 0.29
+    },
+    {
+      "x": "worsttexture",
+      "y": "meansmoothness",
+      "val": 0.04
+    },
+    {
+      "x": "worsttexture",
+      "y": "meancompactness",
+      "val": 0.25
+    },
+    {
+      "x": "worsttexture",
+      "y": "meanconcavity",
+      "val": 0.3
+    },
+    {
+      "x": "worsttexture",
+      "y": "meanconcavepoints",
+      "val": 0.29
+    },
+    {
+      "x": "worsttexture",
+      "y": "meansymmetry",
+      "val": 0.09
+    },
+    {
+      "x": "worsttexture",
+      "y": "meanfractaldimension",
+      "val": -0.05
+    },
+    {
+      "x": "worsttexture",
+      "y": "radiuserror",
+      "val": 0.19
+    },
+    {
+      "x": "worsttexture",
+      "y": "textureerror",
+      "val": 0.41
+    },
+    {
+      "x": "worsttexture",
+      "y": "perimetererror",
+      "val": 0.2
+    },
+    {
+      "x": "worsttexture",
+      "y": "areaerror",
+      "val": 0.2
+    },
+    {
+      "x": "worsttexture",
+      "y": "smoothnesserror",
+      "val": -0.07
+    },
+    {
+      "x": "worsttexture",
+      "y": "compactnesserror",
+      "val": 0.14
+    },
+    {
+      "x": "worsttexture",
+      "y": "concavityerror",
+      "val": 0.1
+    },
+    {
+      "x": "worsttexture",
+      "y": "concavepointserror",
+      "val": 0.09
+    },
+    {
+      "x": "worsttexture",
+      "y": "symmetryerror",
+      "val": -0.08
+    },
+    {
+      "x": "worsttexture",
+      "y": "fractaldimensionerror",
+      "val": 0
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstradius",
+      "val": 0.36
+    },
+    {
+      "x": "worsttexture",
+      "y": "worsttexture",
+      "val": 1
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstperimeter",
+      "val": 0.37
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstarea",
+      "val": 0.35
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstsmoothness",
+      "val": 0.23
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstcompactness",
+      "val": 0.36
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstconcavity",
+      "val": 0.37
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstconcavepoints",
+      "val": 0.36
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstsymmetry",
+      "val": 0.23
+    },
+    {
+      "x": "worsttexture",
+      "y": "worstfractaldimension",
+      "val": 0.22
+    },
+    {
+      "x": "worsttexture",
+      "y": "target",
+      "val": -0.46
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meanradius",
+      "val": 0.97
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meantexture",
+      "val": 0.36
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meanperimeter",
+      "val": 0.97
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meanarea",
+      "val": 0.96
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meansmoothness",
+      "val": 0.24
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meancompactness",
+      "val": 0.59
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meanconcavity",
+      "val": 0.73
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meanconcavepoints",
+      "val": 0.86
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meansymmetry",
+      "val": 0.22
+    },
+    {
+      "x": "worstperimeter",
+      "y": "meanfractaldimension",
+      "val": -0.21
+    },
+    {
+      "x": "worstperimeter",
+      "y": "radiuserror",
+      "val": 0.72
+    },
+    {
+      "x": "worstperimeter",
+      "y": "textureerror",
+      "val": -0.1
+    },
+    {
+      "x": "worstperimeter",
+      "y": "perimetererror",
+      "val": 0.72
+    },
+    {
+      "x": "worstperimeter",
+      "y": "areaerror",
+      "val": 0.76
+    },
+    {
+      "x": "worstperimeter",
+      "y": "smoothnesserror",
+      "val": -0.22
+    },
+    {
+      "x": "worstperimeter",
+      "y": "compactnesserror",
+      "val": 0.26
+    },
+    {
+      "x": "worstperimeter",
+      "y": "concavityerror",
+      "val": 0.23
+    },
+    {
+      "x": "worstperimeter",
+      "y": "concavepointserror",
+      "val": 0.39
+    },
+    {
+      "x": "worstperimeter",
+      "y": "symmetryerror",
+      "val": -0.1
+    },
+    {
+      "x": "worstperimeter",
+      "y": "fractaldimensionerror",
+      "val": 0
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstradius",
+      "val": 0.99
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worsttexture",
+      "val": 0.37
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstperimeter",
+      "val": 1
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstarea",
+      "val": 0.98
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstsmoothness",
+      "val": 0.24
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstcompactness",
+      "val": 0.53
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstconcavity",
+      "val": 0.62
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstconcavepoints",
+      "val": 0.82
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstsymmetry",
+      "val": 0.27
+    },
+    {
+      "x": "worstperimeter",
+      "y": "worstfractaldimension",
+      "val": 0.14
+    },
+    {
+      "x": "worstperimeter",
+      "y": "target",
+      "val": -0.78
+    },
+    {
+      "x": "worstarea",
+      "y": "meanradius",
+      "val": 0.94
+    },
+    {
+      "x": "worstarea",
+      "y": "meantexture",
+      "val": 0.34
+    },
+    {
+      "x": "worstarea",
+      "y": "meanperimeter",
+      "val": 0.94
+    },
+    {
+      "x": "worstarea",
+      "y": "meanarea",
+      "val": 0.96
+    },
+    {
+      "x": "worstarea",
+      "y": "meansmoothness",
+      "val": 0.21
+    },
+    {
+      "x": "worstarea",
+      "y": "meancompactness",
+      "val": 0.51
+    },
+    {
+      "x": "worstarea",
+      "y": "meanconcavity",
+      "val": 0.68
+    },
+    {
+      "x": "worstarea",
+      "y": "meanconcavepoints",
+      "val": 0.81
+    },
+    {
+      "x": "worstarea",
+      "y": "meansymmetry",
+      "val": 0.18
+    },
+    {
+      "x": "worstarea",
+      "y": "meanfractaldimension",
+      "val": -0.23
+    },
+    {
+      "x": "worstarea",
+      "y": "radiuserror",
+      "val": 0.75
+    },
+    {
+      "x": "worstarea",
+      "y": "textureerror",
+      "val": -0.08
+    },
+    {
+      "x": "worstarea",
+      "y": "perimetererror",
+      "val": 0.73
+    },
+    {
+      "x": "worstarea",
+      "y": "areaerror",
+      "val": 0.81
+    },
+    {
+      "x": "worstarea",
+      "y": "smoothnesserror",
+      "val": -0.18
+    },
+    {
+      "x": "worstarea",
+      "y": "compactnesserror",
+      "val": 0.2
+    },
+    {
+      "x": "worstarea",
+      "y": "concavityerror",
+      "val": 0.19
+    },
+    {
+      "x": "worstarea",
+      "y": "concavepointserror",
+      "val": 0.34
+    },
+    {
+      "x": "worstarea",
+      "y": "symmetryerror",
+      "val": -0.11
+    },
+    {
+      "x": "worstarea",
+      "y": "fractaldimensionerror",
+      "val": -0.02
+    },
+    {
+      "x": "worstarea",
+      "y": "worstradius",
+      "val": 0.98
+    },
+    {
+      "x": "worstarea",
+      "y": "worsttexture",
+      "val": 0.35
+    },
+    {
+      "x": "worstarea",
+      "y": "worstperimeter",
+      "val": 0.98
+    },
+    {
+      "x": "worstarea",
+      "y": "worstarea",
+      "val": 1
+    },
+    {
+      "x": "worstarea",
+      "y": "worstsmoothness",
+      "val": 0.21
+    },
+    {
+      "x": "worstarea",
+      "y": "worstcompactness",
+      "val": 0.44
+    },
+    {
+      "x": "worstarea",
+      "y": "worstconcavity",
+      "val": 0.54
+    },
+    {
+      "x": "worstarea",
+      "y": "worstconcavepoints",
+      "val": 0.75
+    },
+    {
+      "x": "worstarea",
+      "y": "worstsymmetry",
+      "val": 0.21
+    },
+    {
+      "x": "worstarea",
+      "y": "worstfractaldimension",
+      "val": 0.08
+    },
+    {
+      "x": "worstarea",
+      "y": "target",
+      "val": -0.73
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meanradius",
+      "val": 0.12
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meantexture",
+      "val": 0.08
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meanperimeter",
+      "val": 0.15
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meanarea",
+      "val": 0.12
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meansmoothness",
+      "val": 0.81
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meancompactness",
+      "val": 0.57
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meanconcavity",
+      "val": 0.45
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meanconcavepoints",
+      "val": 0.45
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meansymmetry",
+      "val": 0.43
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "meanfractaldimension",
+      "val": 0.5
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "radiuserror",
+      "val": 0.14
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "textureerror",
+      "val": -0.07
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "perimetererror",
+      "val": 0.13
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "areaerror",
+      "val": 0.13
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "smoothnesserror",
+      "val": 0.31
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "compactnesserror",
+      "val": 0.23
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "concavityerror",
+      "val": 0.17
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "concavepointserror",
+      "val": 0.22
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "symmetryerror",
+      "val": -0.01
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "fractaldimensionerror",
+      "val": 0.17
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstradius",
+      "val": 0.22
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worsttexture",
+      "val": 0.23
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstperimeter",
+      "val": 0.24
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstarea",
+      "val": 0.21
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstsmoothness",
+      "val": 1
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstcompactness",
+      "val": 0.57
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstconcavity",
+      "val": 0.52
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstconcavepoints",
+      "val": 0.55
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstsymmetry",
+      "val": 0.49
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "worstfractaldimension",
+      "val": 0.62
+    },
+    {
+      "x": "worstsmoothness",
+      "y": "target",
+      "val": -0.42
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meanradius",
+      "val": 0.41
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meantexture",
+      "val": 0.28
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meanperimeter",
+      "val": 0.46
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meanarea",
+      "val": 0.39
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meansmoothness",
+      "val": 0.47
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meancompactness",
+      "val": 0.87
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meanconcavity",
+      "val": 0.75
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meanconcavepoints",
+      "val": 0.67
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meansymmetry",
+      "val": 0.47
+    },
+    {
+      "x": "worstcompactness",
+      "y": "meanfractaldimension",
+      "val": 0.46
+    },
+    {
+      "x": "worstcompactness",
+      "y": "radiuserror",
+      "val": 0.29
+    },
+    {
+      "x": "worstcompactness",
+      "y": "textureerror",
+      "val": -0.09
+    },
+    {
+      "x": "worstcompactness",
+      "y": "perimetererror",
+      "val": 0.34
+    },
+    {
+      "x": "worstcompactness",
+      "y": "areaerror",
+      "val": 0.28
+    },
+    {
+      "x": "worstcompactness",
+      "y": "smoothnesserror",
+      "val": -0.06
+    },
+    {
+      "x": "worstcompactness",
+      "y": "compactnesserror",
+      "val": 0.68
+    },
+    {
+      "x": "worstcompactness",
+      "y": "concavityerror",
+      "val": 0.48
+    },
+    {
+      "x": "worstcompactness",
+      "y": "concavepointserror",
+      "val": 0.45
+    },
+    {
+      "x": "worstcompactness",
+      "y": "symmetryerror",
+      "val": 0.06
+    },
+    {
+      "x": "worstcompactness",
+      "y": "fractaldimensionerror",
+      "val": 0.39
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstradius",
+      "val": 0.48
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worsttexture",
+      "val": 0.36
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstperimeter",
+      "val": 0.53
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstarea",
+      "val": 0.44
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstsmoothness",
+      "val": 0.57
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstcompactness",
+      "val": 1
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstconcavity",
+      "val": 0.89
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstconcavepoints",
+      "val": 0.8
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstsymmetry",
+      "val": 0.61
+    },
+    {
+      "x": "worstcompactness",
+      "y": "worstfractaldimension",
+      "val": 0.81
+    },
+    {
+      "x": "worstcompactness",
+      "y": "target",
+      "val": -0.59
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meanradius",
+      "val": 0.53
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meantexture",
+      "val": 0.3
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meanperimeter",
+      "val": 0.56
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meanarea",
+      "val": 0.51
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meansmoothness",
+      "val": 0.43
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meancompactness",
+      "val": 0.82
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meanconcavity",
+      "val": 0.88
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meanconcavepoints",
+      "val": 0.75
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meansymmetry",
+      "val": 0.43
+    },
+    {
+      "x": "worstconcavity",
+      "y": "meanfractaldimension",
+      "val": 0.35
+    },
+    {
+      "x": "worstconcavity",
+      "y": "radiuserror",
+      "val": 0.38
+    },
+    {
+      "x": "worstconcavity",
+      "y": "textureerror",
+      "val": -0.07
+    },
+    {
+      "x": "worstconcavity",
+      "y": "perimetererror",
+      "val": 0.42
+    },
+    {
+      "x": "worstconcavity",
+      "y": "areaerror",
+      "val": 0.39
+    },
+    {
+      "x": "worstconcavity",
+      "y": "smoothnesserror",
+      "val": -0.06
+    },
+    {
+      "x": "worstconcavity",
+      "y": "compactnesserror",
+      "val": 0.64
+    },
+    {
+      "x": "worstconcavity",
+      "y": "concavityerror",
+      "val": 0.66
+    },
+    {
+      "x": "worstconcavity",
+      "y": "concavepointserror",
+      "val": 0.55
+    },
+    {
+      "x": "worstconcavity",
+      "y": "symmetryerror",
+      "val": 0.04
+    },
+    {
+      "x": "worstconcavity",
+      "y": "fractaldimensionerror",
+      "val": 0.38
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstradius",
+      "val": 0.57
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worsttexture",
+      "val": 0.37
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstperimeter",
+      "val": 0.62
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstarea",
+      "val": 0.54
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstsmoothness",
+      "val": 0.52
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstcompactness",
+      "val": 0.89
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstconcavity",
+      "val": 1
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstconcavepoints",
+      "val": 0.86
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstsymmetry",
+      "val": 0.53
+    },
+    {
+      "x": "worstconcavity",
+      "y": "worstfractaldimension",
+      "val": 0.69
+    },
+    {
+      "x": "worstconcavity",
+      "y": "target",
+      "val": -0.66
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meanradius",
+      "val": 0.74
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meantexture",
+      "val": 0.3
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meanperimeter",
+      "val": 0.77
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meanarea",
+      "val": 0.72
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meansmoothness",
+      "val": 0.5
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meancompactness",
+      "val": 0.82
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meanconcavity",
+      "val": 0.86
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meanconcavepoints",
+      "val": 0.91
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meansymmetry",
+      "val": 0.43
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "meanfractaldimension",
+      "val": 0.18
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "radiuserror",
+      "val": 0.53
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "textureerror",
+      "val": -0.12
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "perimetererror",
+      "val": 0.55
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "areaerror",
+      "val": 0.54
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "smoothnesserror",
+      "val": -0.1
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "compactnesserror",
+      "val": 0.48
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "concavityerror",
+      "val": 0.44
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "concavepointserror",
+      "val": 0.6
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "symmetryerror",
+      "val": -0.03
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "fractaldimensionerror",
+      "val": 0.22
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstradius",
+      "val": 0.79
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worsttexture",
+      "val": 0.36
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstperimeter",
+      "val": 0.82
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstarea",
+      "val": 0.75
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstsmoothness",
+      "val": 0.55
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstcompactness",
+      "val": 0.8
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstconcavity",
+      "val": 0.86
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstconcavepoints",
+      "val": 1
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstsymmetry",
+      "val": 0.5
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "worstfractaldimension",
+      "val": 0.51
+    },
+    {
+      "x": "worstconcavepoints",
+      "y": "target",
+      "val": -0.79
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meanradius",
+      "val": 0.16
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meantexture",
+      "val": 0.11
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meanperimeter",
+      "val": 0.19
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meanarea",
+      "val": 0.14
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meansmoothness",
+      "val": 0.39
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meancompactness",
+      "val": 0.51
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meanconcavity",
+      "val": 0.41
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meanconcavepoints",
+      "val": 0.38
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meansymmetry",
+      "val": 0.7
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "meanfractaldimension",
+      "val": 0.33
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "radiuserror",
+      "val": 0.09
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "textureerror",
+      "val": -0.13
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "perimetererror",
+      "val": 0.11
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "areaerror",
+      "val": 0.07
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "smoothnesserror",
+      "val": -0.11
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "compactnesserror",
+      "val": 0.28
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "concavityerror",
+      "val": 0.2
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "concavepointserror",
+      "val": 0.14
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "symmetryerror",
+      "val": 0.39
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "fractaldimensionerror",
+      "val": 0.11
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstradius",
+      "val": 0.24
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worsttexture",
+      "val": 0.23
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstperimeter",
+      "val": 0.27
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstarea",
+      "val": 0.21
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstsmoothness",
+      "val": 0.49
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstcompactness",
+      "val": 0.61
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstconcavity",
+      "val": 0.53
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstconcavepoints",
+      "val": 0.5
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstsymmetry",
+      "val": 1
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "worstfractaldimension",
+      "val": 0.54
+    },
+    {
+      "x": "worstsymmetry",
+      "y": "target",
+      "val": -0.42
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meanradius",
+      "val": 0.01
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meantexture",
+      "val": 0.12
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meanperimeter",
+      "val": 0.05
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meanarea",
+      "val": 0
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meansmoothness",
+      "val": 0.5
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meancompactness",
+      "val": 0.69
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meanconcavity",
+      "val": 0.51
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meanconcavepoints",
+      "val": 0.37
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meansymmetry",
+      "val": 0.44
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "meanfractaldimension",
+      "val": 0.77
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "radiuserror",
+      "val": 0.05
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "textureerror",
+      "val": -0.05
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "perimetererror",
+      "val": 0.09
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "areaerror",
+      "val": 0.02
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "smoothnesserror",
+      "val": 0.1
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "compactnesserror",
+      "val": 0.59
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "concavityerror",
+      "val": 0.44
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "concavepointserror",
+      "val": 0.31
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "symmetryerror",
+      "val": 0.08
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "fractaldimensionerror",
+      "val": 0.59
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstradius",
+      "val": 0.09
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worsttexture",
+      "val": 0.22
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstperimeter",
+      "val": 0.14
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstarea",
+      "val": 0.08
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstsmoothness",
+      "val": 0.62
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstcompactness",
+      "val": 0.81
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstconcavity",
+      "val": 0.69
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstconcavepoints",
+      "val": 0.51
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstsymmetry",
+      "val": 0.54
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "worstfractaldimension",
+      "val": 1
+    },
+    {
+      "x": "worstfractaldimension",
+      "y": "target",
+      "val": -0.32
+    },
+    {
+      "x": "target",
+      "y": "meanradius",
+      "val": -0.73
+    },
+    {
+      "x": "target",
+      "y": "meantexture",
+      "val": -0.42
+    },
+    {
+      "x": "target",
+      "y": "meanperimeter",
+      "val": -0.74
+    },
+    {
+      "x": "target",
+      "y": "meanarea",
+      "val": -0.71
+    },
+    {
+      "x": "target",
+      "y": "meansmoothness",
+      "val": -0.36
+    },
+    {
+      "x": "target",
+      "y": "meancompactness",
+      "val": -0.6
+    },
+    {
+      "x": "target",
+      "y": "meanconcavity",
+      "val": -0.7
+    },
+    {
+      "x": "target",
+      "y": "meanconcavepoints",
+      "val": -0.78
+    },
+    {
+      "x": "target",
+      "y": "meansymmetry",
+      "val": -0.33
+    },
+    {
+      "x": "target",
+      "y": "meanfractaldimension",
+      "val": 0.01
+    },
+    {
+      "x": "target",
+      "y": "radiuserror",
+      "val": -0.57
+    },
+    {
+      "x": "target",
+      "y": "textureerror",
+      "val": 0.01
+    },
+    {
+      "x": "target",
+      "y": "perimetererror",
+      "val": -0.56
+    },
+    {
+      "x": "target",
+      "y": "areaerror",
+      "val": -0.55
+    },
+    {
+      "x": "target",
+      "y": "smoothnesserror",
+      "val": 0.07
+    },
+    {
+      "x": "target",
+      "y": "compactnesserror",
+      "val": -0.29
+    },
+    {
+      "x": "target",
+      "y": "concavityerror",
+      "val": -0.25
+    },
+    {
+      "x": "target",
+      "y": "concavepointserror",
+      "val": -0.41
+    },
+    {
+      "x": "target",
+      "y": "symmetryerror",
+      "val": 0.01
+    },
+    {
+      "x": "target",
+      "y": "fractaldimensionerror",
+      "val": -0.08
+    },
+    {
+      "x": "target",
+      "y": "worstradius",
+      "val": -0.78
+    },
+    {
+      "x": "target",
+      "y": "worsttexture",
+      "val": -0.46
+    },
+    {
+      "x": "target",
+      "y": "worstperimeter",
+      "val": -0.78
+    },
+    {
+      "x": "target",
+      "y": "worstarea",
+      "val": -0.73
+    },
+    {
+      "x": "target",
+      "y": "worstsmoothness",
+      "val": -0.42
+    },
+    {
+      "x": "target",
+      "y": "worstcompactness",
+      "val": -0.59
+    },
+    {
+      "x": "target",
+      "y": "worstconcavity",
+      "val": -0.66
+    },
+    {
+      "x": "target",
+      "y": "worstconcavepoints",
+      "val": -0.79
+    },
+    {
+      "x": "target",
+      "y": "worstsymmetry",
+      "val": -0.42
+    },
+    {
+      "x": "target",
+      "y": "worstfractaldimension",
+      "val": -0.32
+    },
+    {
+      "x": "target",
+      "y": "target",
+      "val": 1
+    }
+  ]

@@ -1,0 +1,181 @@
+<template>
+    <div >
+        <div id="my_dataviz"></div>
+    </div>
+    
+</template>
+<script>
+import * as d3 from 'd3'
+export default {
+    name: 'd3HeatMap',
+    props: [
+        'heatMapXYVal',
+        'threshold',
+    ],
+    data() {
+        return {
+
+        }
+    },
+    watch: {
+        threshold:  function(n,o) {
+            console.log(n,o)
+            if (this.heatMapXYVal != null) {
+                this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
+                
+            }
+        },
+        heatMapXYVal:  function(n,o) {
+            console.log(n,o)
+            if (this.heatMapXYVal != null) {
+                this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
+                
+            }
+        }
+    },
+    mounted() {
+        console.log(this.heatMapXYVal)
+
+
+        if (this.heatMapXYVal != null) {
+                this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
+                
+            
+        }
+    },
+    methods: {
+        
+        formatAPIdata(rawData){
+            let data = []
+            rawData.forEach(item => {
+                let obj = {}
+                obj['group'] = item.x
+                obj['variable'] = item.y
+                obj['value'] = item.val
+                data.push(obj)
+            })
+            return data
+        },
+        drawHeatMap(data, threshold) {
+            /* eslint-disable */
+            // set the dimensions and margins of the graph
+            const margin = {top: 50, right: 50, bottom: 200, left: 200},
+                width = 900 - margin.left - margin.right,
+                height = 900 - margin.top - margin.bottom;
+                
+                // append the svg object to the body of the page
+                const svg = d3.select("#my_dataviz")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left}, ${margin.top})`);
+                
+
+
+
+
+                
+                // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
+                const myGroups = Array.from(new Set(data.map(d => d.group)))
+                const myVars = Array.from(new Set(data.map(d => d.variable)))
+                
+                // Build X scales and axis:
+                const x = d3.scaleBand()
+                    .range([ 0, width ])
+                    .domain(myGroups)
+                    .padding(0.05);
+                svg.append("g")
+                    .style("font-size", 15)
+                    .attr("transform", `translate(10, ${height})`)
+
+                    .call(d3.axisBottom(x).tickSize(0))
+                    .selectAll("text")
+                    .style("text-anchor", "start")
+                    .attr("transform", "rotate(65)")
+                
+                // Build Y scales and axis:
+                const y = d3.scaleBand()
+                    .range([ height, 0 ])
+                    .domain(myVars)
+                    .padding(0.05);
+                svg.append("g")
+                    .style("font-size", 15)
+                    .call(d3.axisLeft(y).tickSize(0))
+                    .select(".domain").remove()
+                
+                // Build color scale
+
+                    const colorScale = d3.scaleLinear().domain([-1,-threshold, 0, threshold, 1])
+                    .range(["#4A148C", "#AB47BC", "white", "#42A5F5",  "#0D47A1"])
+                    const colorMouse = val => val >= 0 ? "#0D47A1" : "#4A148C"
+
+
+
+                // create a tooltip
+                const tooltip = d3.select("#my_dataviz")
+                    .append("div")
+                    .style("opacity", 0)
+                    .style("position", "absolute")
+                    .attr("class", "tooltip")
+                    .style("background-color", "white")
+                    .style("border", "solid 1px grey")
+                    .style("border-radius", "10px")
+                    .style("padding", "5px")
+                    .classed("pa-3", true)
+                
+                // Three function that change the tooltip when user hover / move / leave a cell
+                const mouseover = function(event,d) {
+                    tooltip
+                    .style("opacity", 1)
+                    d3.select(this)
+                    .style("stroke", d => colorMouse(d.value))
+                    .style("opacity", 1)
+                }
+                const mousemove = function(event,d) {
+                    tooltip
+                    .html(`<div>x: ${d.group}</div><div>y: ${d.variable}</div><div>correlation: ${d.value}</div>`)
+                    .style("left", (event.layerX) + "px")
+                    .style("top", (event.layerY) + "px")
+
+                }
+                const mouseleave = function(event,d) {
+                    tooltip
+                    .style("opacity", 0)
+                    d3.select(this)
+                    .style("stroke", "none")
+                    .style("opacity", 1.0)
+                }
+                
+                // add the squares
+                svg.selectAll()
+                    .data(data, function(d) {return d.group+':'+d.variable;})
+                    .join("rect")
+                    
+                    .attr("x", function(d) { return x(d.group) })
+                    .attr("y", function(d) { return y(d.variable) })
+                    .attr("rx", 0)
+                    .attr("ry", 0)
+                    .attr("width", x.bandwidth() )
+                    .attr("height", y.bandwidth() )
+            //          .attr("fill", "white")
+                    // .transition().duration(500)
+                    .style("fill", function(d) { return colorScale(d.value)} )
+                    .style("stroke-width", 2)
+                    .style("stroke", "white")
+                    .style("opacity", 0.9)
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave)
+
+
+
+
+
+
+        }
+    }
+}
+
+
+</script>
