@@ -5,6 +5,20 @@
     
 </template>
 <script>
+//references
+/*
+Initial Code
+https://d3-graph-gallery.com/graph/heatmap_style.html
+
+Legend
+https://www.visualcinnamon.com/2016/05/smooth-color-legend-d3-svg-gradient/
+
+Resize d3
+https://chartio.com/resources/tutorials/how-to-resize-an-svg-when-the-window-is-resized-in-d3-js/
+
+*/
+
+
 import * as d3 from 'd3'
 export default {
     name: 'd3HeatMap',
@@ -19,14 +33,15 @@ export default {
     },
     watch: {
         threshold:  function(n,o) {
-            console.log(n,o)
-            if (this.heatMapXYVal != null) {
-                this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
+            console.log('heatmapThreshold', n,o)
+            //this.recolorHeatMap(n)
+            // if (this.heatMapXYVal != null) {
+            //     this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
                 
-            }
+            // }
         },
         heatMapXYVal:  function(n,o) {
-            console.log(n,o)
+            console.log('heatMapnewOld', n,o)
             if (this.heatMapXYVal != null) {
                 this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
                 
@@ -34,8 +49,6 @@ export default {
         }
     },
     mounted() {
-        console.log(this.heatMapXYVal)
-
 
         if (this.heatMapXYVal != null) {
                 this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
@@ -55,6 +68,14 @@ export default {
                 data.push(obj)
             })
             return data
+        },
+        recolorHeatMap(threshold) {
+            const colorScale = d3.scaleLinear().domain([-1,-threshold, 0, threshold, 1])
+                    .range(["#4A148C", "#AB47BC", "white", "#42A5F5",  "#0D47A1"])                               
+            const svg = d3.select("#my_dataviz").select("svg")
+            svg.selectAll('rect')
+                .transition().duration(500)
+                .style("fill", function(d) { return colorScale(d.value)} )
         },
         drawHeatMap(data, threshold) {
             /* eslint-disable */
@@ -146,7 +167,8 @@ export default {
                     .style("stroke", "none")
                     .style("opacity", 1.0)
                 }
-                
+
+
                 // add the squares
                 svg.selectAll()
                     .data(data, function(d) {return d.group+':'+d.variable;})
