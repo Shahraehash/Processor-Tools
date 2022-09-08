@@ -67,8 +67,6 @@ export default {
                 .append("g")
                 .attr("transform", `translate(${margin.left}, ${margin.top})`);
                 
-
-
                 //DRAW KEY
                 var defs = svg.append("defs");      
                 var linearGradient = defs.append("linearGradient")
@@ -76,9 +74,6 @@ export default {
                     
                 //convert correlation scale to color scale percentage 
                  const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
-
-
- 
 
                 linearGradient.selectAll("stop")
                 .data([
@@ -100,6 +95,8 @@ export default {
                 legend.append("text").text(-1).attr("x", 120).attr("y", -25)
                 legend.append("text").text(0).attr("x", 320).attr("y", -25)
                 legend.append("text").text(1).attr("x", 520).attr("y", -25)
+
+
                                                          
 
 
