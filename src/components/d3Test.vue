@@ -21,63 +21,38 @@ https://chartio.com/resources/tutorials/how-to-resize-an-svg-when-the-window-is-
 
 import * as d3 from 'd3'
 export default {
-    name: 'd3HeatMap',
-    props: [
-        'heatMapXYVal',
-        'threshold',
-    ],
+    name: 'd3Test',
+
     data() {
         return {
 
         }
     },
     watch: {
-        threshold:  function(n,o) {
-            console.log('heatmapThreshold', n,o)
-            //this.recolorHeatMap(n)
-            // if (this.heatMapXYVal != null) {
-            //     this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
-                
-            // }
-        },
-        heatMapXYVal:  function(n,o) {
-            console.log('heatMapnewOld', n,o)
-            if (this.heatMapXYVal != null) {
-                this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
-                
-            }
-        }
+
     },
     mounted() {
+        d3.json('https://clynx.s3.amazonaws.com/milo/test_data.json').then(rawData => {
+                    console.log(rawData)
+                    let data = []
+                    rawData.forEach(item => {
+                        let obj = {}
+                        obj['group'] = item.x
+                        obj['variable'] = item.y
+                        obj['value'] = item.val
+                        data.push(obj)
+                    })
+                    this.drawHeatMap(data)
+                })        
 
-        if (this.heatMapXYVal != null) {
-                this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
-                
-            
-        }
+
     },
     methods: {
         
-        formatAPIdata(rawData){
-            let data = []
-            rawData.forEach(item => {
-                let obj = {}
-                obj['group'] = item.x
-                obj['variable'] = item.y
-                obj['value'] = item.val
-                data.push(obj)
-            })
-            return data
-        },
-        recolorHeatMap(threshold) {
-            const colorScale = d3.scaleLinear().domain([-1,-threshold, 0, threshold, 1])
-                    .range(["#4A148C", "#AB47BC", "white", "#42A5F5",  "#0D47A1"])                               
-            const graph = d3.select("#graph")
-            graph.selectAll('rect')
-                .transition().duration(500)
-                .style("fill", function(d) { return colorScale(d.value)} )
-        },
-        drawHeatMap(data, threshold) {
+
+
+        drawHeatMap(data) {
+            data
             /* eslint-disable */
             // set the dimensions and margins of the graph
             const margin = {top: 100, right: 50, bottom: 200, left: 200},
@@ -93,6 +68,7 @@ export default {
                 .attr("transform", `translate(${margin.left}, ${margin.top})`);
                 
 
+
                 //DRAW KEY
                 var defs = svg.append("defs");      
                 var linearGradient = defs.append("linearGradient")
@@ -100,6 +76,9 @@ export default {
                     
                 //convert correlation scale to color scale percentage 
                  const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
+
+
+ 
 
                 linearGradient.selectAll("stop")
                 .data([
@@ -121,6 +100,8 @@ export default {
                 legend.append("text").text(-1).attr("x", 120).attr("y", -25)
                 legend.append("text").text(0).attr("x", 320).attr("y", -25)
                 legend.append("text").text(1).attr("x", 520).attr("y", -25)
+                                                         
+
 
 
                 
@@ -154,9 +135,9 @@ export default {
                 
                 // Build color scale
 
-                    const colorScale = d3.scaleLinear().domain([-1,-threshold, 0, threshold, 1])
+                    const colorScale = d3.scaleLinear().domain([-1,-0.85, 0, 0.85, 1])
                     .range(["#4A148C", "#AB47BC", "white", "#42A5F5",  "#0D47A1"])
-                    const colorMouse = val => val >= 0 ? "#0D47A1" : "#4A148C"
+
 
 
 
@@ -177,7 +158,7 @@ export default {
                     tooltip
                     .style("opacity", 1)
                     d3.select(this)
-                    .style("stroke", d => colorMouse(d.value))
+                    .style("stroke", "black")
                     .style("opacity", 1)
                 }
                 const mousemove = function(event,d) {
