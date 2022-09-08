@@ -1,6 +1,6 @@
 <template>
     <div >
-        <div id="my_dataviz"></div>
+        <div id="my_dataviz" class="svg-container"></div>
     </div>
     
 </template>
@@ -87,8 +87,10 @@ export default {
                 // append the svg object to the body of the page
                 const svg = d3.select("#my_dataviz")
                 .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
+                .attr("preserveAspectRatio", "xMinYMin meet")
+                .attr("viewBox", "0 0 900 900")
+                .classed("svg-content", true)   
+
                 .append("g")
                 .attr("transform", `translate(${margin.left}, ${margin.top})`);
                 
@@ -117,6 +119,9 @@ export default {
                     .attr("x", 125).attr("y", -60)
                     .attr("width", 400)
                     .attr("height", 20)
+                    .attr("rx", 10)
+                    .attr("ry", 10)
+                    .style("stroke", "grey")                    
                     .style("fill", "url(#linear-gradient)");
                 legend.append("text").text(-1).attr("x", 120).attr("y", -25)
                 legend.append("text").text(0).attr("x", 320).attr("y", -25)
@@ -227,3 +232,19 @@ export default {
 
 
 </script>
+<style scoped>
+    .svg-container {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        padding-bottom: 100%;
+        vertical-align: top;
+        overflow: hidden;
+    }
+    .svg-content {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }    
+</style>
