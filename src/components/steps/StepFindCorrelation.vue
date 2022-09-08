@@ -30,7 +30,7 @@
             v-model="fileObject.correlationThreshold"
             type="number" max="1" min="-1"
             step="0.01"
-            @change="updatedThreshold"
+            @change="$refs.heatmap.recolorHeatMap(fileObject.correlationThreshold)"
           ></v-text-field>
         </v-col>
 
@@ -95,7 +95,7 @@
           <div>
             <v-switch label="Show Graph" v-model="showGraph"></v-switch>
             <!-- <apexchart :key="graphKey" v-if="fileObject.correlation && showGraph" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart> -->
-            <d3HeatMap v-if="fileObject.correlation && showGraph" :heatMapXYVal="fileObject.correlation.d3" :threshold="fileObject.correlationThreshold"/>
+            <d3HeatMap ref="heatmap" v-if="fileObject.correlation && showGraph" :heatMapXYVal="fileObject.correlation.d3" :threshold="fileObject.correlationThreshold"/>
           </div>
         </div>
 
@@ -266,10 +266,7 @@ export default {
 
       }
     },
-    updatedThreshold() {
-      this.options = this.makeGraphOptions(this.enableShades, this.shadeIntensity, this.negativeThreshold, this.negativeClose, this.negativeLow, this.positiveThreshold, this.positiveClose, this.positiveLow)
-      this.graphKey += 1
-    },
+
     determineCorrelationColors(item, correlationList) {
       let colors = [
         'deep-purple lighten-4',
