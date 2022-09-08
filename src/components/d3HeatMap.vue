@@ -18,6 +18,47 @@ https://chartio.com/resources/tutorials/how-to-resize-an-svg-when-the-window-is-
 
 */
 
+//General Functions
+
+
+const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
+
+const colorsArray = (threshold) => {
+    return [
+        {value: -1, color: "#4A148C"},
+//        {value: -threshold, color: "#4A148C"},
+        {value: -threshold +.1, color: "#AB47BC"},
+        {value: 0, color: "white"},
+        {value: threshold -.1, color: "#42A5F5"},
+//        {value: threshold, color: "#0D47A1"},
+        {value: 1, color: "#0D47A1"}
+    ]
+}
+
+
+const buildGradientData = (threshold) => {
+   let gradientData = []
+   colorsArray(threshold).forEach(item => {
+        gradientData.push(
+            {offset: rangeToPercent(item.value), color: item.color}
+        )
+   })
+   return gradientData
+}
+const buildColorScale = (threshold) => {
+    let domain = []
+    let range = []
+    colorsArray(threshold).forEach(item => {
+        domain.push(item.value)
+        range.push(item.color)
+    })
+    return d3.scaleLinear()
+        .domain(domain)
+        .range(range)
+}
+
+
+
 
 import * as d3 from 'd3'
 export default {
@@ -32,16 +73,9 @@ export default {
         }
     },
     watch: {
-        threshold:  function(n,o) {
-            console.log('heatmapThreshold', n,o)
-            //this.recolorHeatMap(n)
-            // if (this.heatMapXYVal != null) {
-            //     this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
-                
-            // }
-        },
         heatMapXYVal:  function(n,o) {
-            console.log('heatMapnewOld', n,o)
+            n
+            o
             if (this.heatMapXYVal != null) {
                 this.drawHeatMap(this.formatAPIdata(this.heatMapXYVal), this.threshold)
                 
@@ -69,9 +103,24 @@ export default {
             })
             return data
         },
+        recolorLegend(threshold) {
+            const linearGradient = d3.select("#linear-gradient")
+            console.log(buildGradientData(threshold))
+            linearGradient.selectAll("stop").data(buildGradientData(threshold))
+            console.log('linearGradient',linearGradient)
+
+            linearGradient.selectAll("stop")
+                .transition().duration(1000)
+                .attr("offset", function(d) { return d.offset; })
+                .attr("stop-color", function(d) { return d.color; });
+
+            const scale = d3.select('#legend rect')
+            scale.style("fill", "url(#linear-gradient)");
+
+        },
         recolorHeatMap(threshold) {
-            const colorScale = d3.scaleLinear().domain([-1,-threshold, 0, threshold, 1])
-                    .range(["#4A148C", "#AB47BC", "white", "#42A5F5",  "#0D47A1"])                               
+            this.recolorLegend(threshold)
+            const colorScale = buildColorScale(threshold)                        
             const graph = d3.select("#graph")
             graph.selectAll('rect')
                 .transition().duration(500)
@@ -101,20 +150,14 @@ export default {
                     .attr("id", "linear-gradient");   
                     
                 //convert correlation scale to color scale percentage 
-                 const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
+
 
                 linearGradient.selectAll("stop")
-                .data([
-                    {offset: rangeToPercent(-1), color: "#4A148C"},
-                    {offset: rangeToPercent(-0.85), color: "#AB47BC"},
-                    {offset: rangeToPercent(0), color: "white"},
-                    {offset: rangeToPercent(0.85), color: "#42A5F5"},
-                    {offset: rangeToPercent(1), color: "#0D47A1"},
-                ])
+                .data(buildGradientData(threshold))
                 .enter().append("stop")
                 .attr("offset", function(d) { return d.offset; })
                 .attr("stop-color", function(d) { return d.color; });         
-                const legend = svg.append("g")
+                const legend = svg.append("g").attr('id', 'legend')
                 legend.append("rect")
                     .attr("x", 125).attr("y", -60)
                     .attr("width", 400)
@@ -157,11 +200,8 @@ export default {
                     .call(d3.axisLeft(y).tickSize(0))
                     .select(".domain").remove()
                 
-                // Build color scale
-
-                    const colorScale = d3.scaleLinear().domain([-1,-threshold, 0, threshold, 1])
-                    .range(["#4A148C", "#AB47BC", "white", "#42A5F5",  "#0D47A1"])
-                    const colorMouse = val => val >= 0 ? "#0D47A1" : "#4A148C"
+                // Build color scale=
+                const colorScale = buildColorScale(threshold)
 
 
 
@@ -182,7 +222,7 @@ export default {
                     tooltip
                     .style("opacity", 1)
                     d3.select(this)
-                    .style("stroke", d => colorMouse(d.value))
+                    .style("stroke", 'black')
                     .style("opacity", 1)
                 }
                 const mousemove = function(event,d) {
