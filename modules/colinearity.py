@@ -18,20 +18,7 @@ def generate():
     correlation_mat = df.corr()
     correlation_mat = correlation_mat.round(2)
 
-    #Graph
-    graph_series = []
-    for ind in correlation_mat.index:
-        obj = {}
-        obj['name'] = ind
-        obj['data'] = []
-        for x,y in correlation_mat[ind].iteritems():
-            obj['data'].append({
-                'x':x,
-                'y':y
-            })
-        graph_series.append(obj)
-
-    #d3
+    #d3 heat map data structure
     d3 = []
     for ind in correlation_mat.index:
 
@@ -62,9 +49,8 @@ def generate():
 
 
     final_object = {
-        "graph": graph_series,
         "list": list_of_pairs,
-        "d3": d3
+        "d3": d3 #data structure for d3 heatmap
     }
 
     response = make_response(
