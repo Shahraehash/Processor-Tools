@@ -8,6 +8,7 @@ import TrainTestSplit from '../views/TrainTestSplit.vue'
 import Colinearity from '../views/Colinearity.vue'
 import FeatureSelector from '../views/FeatureSelector.vue'
 import Encoder from '../views/Encoder.vue'
+import Integrated from '../views/Integrated.vue'
 import Diagnostics from '../views/Diagnostics.vue'
 
 Vue.use(VueRouter)
@@ -38,6 +39,11 @@ const routes = [
     name: 'Encoder',
     component: Encoder
   },
+  {
+    path: '/integrated',
+    name: 'Integrated',
+    component: Integrated
+  },  
   {
     path: '/diagnostics',
     name: 'Diagnostics',
