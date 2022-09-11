@@ -1,5 +1,8 @@
 <template>
     <div >
+        <div class="text-right mt-n12">
+            <v-btn icon @click="downloadPng()"><v-icon>mdi-monitor-arrow-down-variant</v-icon></v-btn>
+        </div>
         <div id="my_dataviz" class="svg-container"></div>
     </div>
     
@@ -19,7 +22,8 @@ https://chartio.com/resources/tutorials/how-to-resize-an-svg-when-the-window-is-
 */
 
 //General Functions
-
+import * as d3 from 'd3'
+import d3ToPng from 'd3-svg-to-png'
 
 const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
 
@@ -57,10 +61,6 @@ const buildColorScale = (threshold) => {
         .range(range)
 }
 
-
-
-
-import * as d3 from 'd3'
 export default {
     name: 'd3HeatMap',
     props: [
@@ -138,7 +138,9 @@ export default {
                 .append("svg")
                 .attr("preserveAspectRatio", "xMinYMin meet")
                 .attr("viewBox", "0 0 900 900")
+                .style("background-color", "white")
                 .classed("svg-content", true)   
+
 
                 .append("g")
                 .attr("transform", `translate(${margin.left}, ${margin.top})`);
@@ -260,12 +262,11 @@ export default {
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
-
-
-
-
-
-
+        },
+        downloadPng() {
+            const svg = document.querySelector('svg')
+            //library to export svg to png
+            d3ToPng('svg', 'heatmap', {download: true})
         }
     }
 }
