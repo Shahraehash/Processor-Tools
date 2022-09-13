@@ -251,7 +251,7 @@ def manage_rows():
                     unique.sort()
                     unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float                    
 
-                    if len(unique) == unique_int_len and (unique_int_len < 6): #set 
+                    if len(unique) == unique_int_len and (unique_int_len <= 20): #set 
                         col_is_numeric_cat[col] = unique
 
 

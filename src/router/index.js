@@ -10,9 +10,6 @@ import FeatureSelector from '../views/FeatureSelector.vue'
 import Encoder from '../views/Encoder.vue'
 import Diagnostics from '../views/Diagnostics.vue'
 
-
-
-
 Vue.use(VueRouter)
 
 const routes = [

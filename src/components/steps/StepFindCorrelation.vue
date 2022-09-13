@@ -30,7 +30,7 @@
             v-model="fileObject.correlationThreshold"
             type="number" max="1" min="-1"
             step="0.01"
-            @change="updatedThreshold"
+            @change="$refs.heatmap.recolorHeatMap(fileObject.correlationThreshold)"
           ></v-text-field>
         </v-col>
 
@@ -91,9 +91,11 @@
         </div>
         <!-- Graph -->
         <div v-if="fileObject.allowCorrelationGraph()">
+          
           <div>
             <v-switch label="Show Graph" v-model="showGraph"></v-switch>
-            <apexchart :key="graphKey" v-if="fileObject.correlation && showGraph" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart>
+            <!-- <apexchart :key="graphKey" v-if="fileObject.correlation && showGraph" type="heatmap" :options="options" :series="fileObject.correlation.graph"></apexchart> -->
+            <d3HeatMap ref="heatmap" v-if="fileObject.correlation && showGraph" :heatMapXYVal="fileObject.correlation.d3" :threshold="fileObject.correlationThreshold"/>
           </div>
         </div>
 
@@ -132,11 +134,13 @@
 
 //components
 import StepHeading from '@/components/StepHeading'
+import d3HeatMap from '@/components/d3HeatMap.vue'
 
 export default {
   name: 'StepFindCorrelation',
   components: {
-    StepHeading
+    StepHeading,
+    d3HeatMap
   },
   props: [
     'stepNumber',
@@ -148,18 +152,37 @@ export default {
       confirmStep: false,
       showGraph: true,
       graphKey: 0,
-      options: null
+      options: null,
+      enableShades: true,
+      shadeIntensity: 0.5,
+      negativeThreshold: '#F44336',
+      negativeClose: '#FF9800',
+      negativeLow: '#FFC107',
+      positiveThreshold: '#673AB7',
+      positiveClose: '#2196F3', // 
+      positiveLow: '#009688',    
+
+
 
     }
   },
   created() {
-    this.options = this.makeGraphOptions()
+    this.options = this.makeGraphOptions(this.enableShades, this.shadeIntensity, this.negativeThreshold, this.negativeClose, this.negativeLow, this.positiveThreshold, this.positiveClose, this.positiveLow)
   },
   mounted() {
     window.scrollTo(0,document.body.scrollHeight);
   },
   methods: {
-    makeGraphOptions() {
+    reDraw() {
+      this.options = this.makeGraphOptions(this.enableShades, this.shadeIntensity, this.negativeThreshold, this.negativeClose, this.negativeLow, this.positiveThreshold, this.positiveClose, this.positiveLow)
+    },
+    makeGraphOptions(enableShades, shadeIntensity, negativeThreshold, negativeClose, negativeLow, positiveThreshold, positiveClose, positiveLow) {
+
+      negativeClose
+      positiveClose
+      positiveLow
+
+
       return {
         chart: {
           animations: {
@@ -173,36 +196,77 @@ export default {
         // colors: ["#008FFB"],
         plotOptions: {
           heatmap: {
+            radius: 2,
+            enableShades: enableShades,
+            reverseNegativeShade: true,
+            shadeIntensity: shadeIntensity,
+            useFillColorAsStroke: false,
             colorScale: {
-              ranges: [{
-                  from: -1,
-                  to: this.fileObject.correlationThreshold - 0.10,
-                  color: '#00A100',
-                  name: 'Lower correlations',
-                },
+              ranges: [
                 {
-                  from: this.fileObject.correlationThreshold - 0.10,
-                  to: this.fileObject.correlationThreshold,
-                  color: '#128FD9',
-                  name: 'Correlations within 10% of specified threshold',
+                  from: -1,
+                  to: -this.fileObject.correlationThreshold,
+                  color: negativeThreshold,
+                  name: '-Corr at or above ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
                 },
+                // {
+                //   from: -this.fileObject.correlationThreshold,
+                //   to: -this.fileObject.correlationThreshold + 0.10,
+                //   color: negativeClose,
+                //   name: '-Corr between ' + (-this.fileObject.correlationThreshold * 100 + 10).toString() + '% and ' + (-this.fileObject.correlationThreshold * 100).toString() + '%',
+                // },
+                // {
+                //   from: -this.fileObject.correlationThreshold + .10,
+                //   to: 0,
+                //   inverse: false,
+                //   color: negativeLow,
+                //   name: 'Low - correlations',
+                // },   
+                {
+                  from: -this.fileObject.correlationThreshold,
+                  to: 0,
+                  inverse: false,
+                  color: negativeLow,
+                  name: 'Low - correlations',
+                },   
+                            
+                {
+                  from: 0,
+                  to: this.fileObject.correlationThreshold,
+                  color: positiveLow,
+                  name: 'Low + correlation',
+                },                  
+                            
+                // {
+                //   from: 0,
+                //   to: this.fileObject.correlationThreshold - 0.10,
+                //   color: positiveLow,
+                //   name: 'Low + correlation',
+                // },    
+                       
+                // {
+                //   from: this.fileObject.correlationThreshold - 0.10,
+                //   to: this.fileObject.correlationThreshold,
+                //   color: positiveClose,
+                //   name: '+Corr between ' + (this.fileObject.correlationThreshold * 100 - 10).toString() + '% and ' + (this.fileObject.correlationThreshold * 100).toString() + '%',
+                // },
                 {
                   from: this.fileObject.correlationThreshold,
                   to: 1,
-                  color: '#FFB200',
-                  name: 'Correlation at or above threshold of ' + (this.fileObject.correlationThreshold * 100).toString() + '%' ,
+                  color: positiveThreshold,
+                  name: '+Corr at or above ' + (this.fileObject.correlationThreshold * 100).toString() + '%' ,
                 }
-              ]
+              ],
+              inverse: true,
+              min: -10,
+              max: 1
             }
           }
         }
 
       }
     },
-    updatedThreshold() {
-      this.options = this.makeGraphOptions()
-      this.graphKey += 1
-    },
+
     determineCorrelationColors(item, correlationList) {
       let colors = [
         'deep-purple lighten-4',
