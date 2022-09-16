@@ -24,6 +24,7 @@
             :disabled="fileObject.dataSet == null"
             :label="fileName"
             @change="fileChanged"
+            accept=".csv"
           ></v-file-input>
         </v-col>
         <v-col cols="6" class="text-center">

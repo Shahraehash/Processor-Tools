@@ -29,7 +29,7 @@
               <v-row>
                 <v-col cols="6" >
 
-                  <v-file-input v-model="file" prepend-icon="mdi-file" chips truncate-length="100" outlined label="Data File"  @change="fileUpload"></v-file-input>
+                  <v-file-input v-model="file" prepend-icon="mdi-file" chips truncate-length="100" outlined label="Data File"  @change="fileUpload" accept=".csv"></v-file-input>
                 </v-col>
                 <v-col cols="6" class="text-center">
                   <v-progress-circular color="blue" size="50" width="10" v-if="fileDataLoading" indeterminate></v-progress-circular>

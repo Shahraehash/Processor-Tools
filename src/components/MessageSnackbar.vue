@@ -2,7 +2,7 @@
   <div class="text-center">
       <v-snackbar top
         :color="$store.state.snackbarMessage.color"
-        :timeout="2000"
+        :timeout="3000"
         v-model="$store.state.snackbarMessage.show"
         >
         {{$store.state.snackbarMessage.message}}
