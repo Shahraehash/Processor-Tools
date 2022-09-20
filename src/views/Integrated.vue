@@ -6,6 +6,9 @@
         :description="$store.state.tools[$options.name].description"
         @reset="resetStep1"
       />
+
+      <pmFileSeed />
+
     </v-container>
   
   </template>
@@ -18,14 +21,16 @@
   
   //components
 import MenuBar from "@/components/MenuBar.vue";
+import pmFileSeed from '@/PreMilo/pmComponents/pmFileSeed.vue'
 
-import MI from '@/ModuleIntegrated'
+import PreMilo from '@/PreMilo'
 
   
   export default {
     name: 'Integrated',
     components: {
-        MenuBar
+        MenuBar,
+        pmFileSeed
   
     },
     data() {
@@ -38,7 +43,7 @@ import MI from '@/ModuleIntegrated'
   
     },
     mounted() {
-        console.log(MI)
+        console.log(PreMilo)
     },
     methods: {
   

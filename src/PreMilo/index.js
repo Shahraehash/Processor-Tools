@@ -1,9 +1,39 @@
 //https://www.loginradius.com/blog/engineering/write-a-javascript-library-using-webpack-and-babel/
 
-let name = 'PreMilo';
-let steps = [] // storage array of object steps
 
-let apiBaseURL = '/premilo/';
+import axios from 'axios'
+
+let name = 'PreMilo';
+
+
+const storeFile = async (file) => {
+    var formData = new FormData();
+    formData.append('files', file);
+
+    const response = await axios.post('/preprocessor_api/integrated/store', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    return response.data //returns key value pair with file name and storage key
+}
+
+
+
+
+let FileObject = async (file) => {
+    return {
+        file,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        processing: false,
+        evaluate: (analysis) => {analysis},
+        process: (analysis) => {analysis},
+    }
+}
+
+
 
 let transformOptions = [
     'seed',
@@ -14,41 +44,29 @@ let transformOptions = [
     //'merge'
 ]
 
-const createTransform = (name, analyze, transform) => {
+transformOptions
+
+const createTransform = (action, analyze, transform) => {
     return {
         action,
         files: [],
-        analyze: (x => x),
+        analyze,
         analysis: [],
-        transform: (x => x),
+        transform,
         
         options: {},
 
     }
 }
 
-const queryBackend = (url, files, options) => {
-    
-    files.forEach(file => {
-        // send file to backend
-        // get response
-        // store response
-    })
-
-    return fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(response => response.json());
-}
 
 
 import pmAssess from './pmSeed';
 
 export default { 
     name, 
+    storeFile,
     createTransform,
+    FileObject,
     pmAssess 
 }
