@@ -7,7 +7,15 @@
         @reset="resetStep1"
       />
 
-      <pmFileSeed />
+      <!-- Get data into preprocessor -->
+      <pmFileSeed 
+        @nextStep="initilizeFiles($event)"
+        />
+      
+      <!-- Determine steps for preprocessing -->
+      <pmFileRoute
+        :files="steps[0]"
+        />
 
     </v-container>
   
@@ -22,6 +30,7 @@
   //components
 import MenuBar from "@/components/MenuBar.vue";
 import pmFileSeed from '@/PreMilo/pmComponents/pmFileSeed.vue'
+import pmFileRoute from "../PreMilo/pmComponents/pmFileRoute.vue";
 
 import PreMilo from '@/PreMilo'
 
@@ -30,11 +39,13 @@ import PreMilo from '@/PreMilo'
     name: 'Integrated',
     components: {
         MenuBar,
-        pmFileSeed
+        pmFileSeed,
+        pmFileRoute
   
     },
     data() {
         return {
+          steps: [],
 
         }
     },
@@ -46,6 +57,10 @@ import PreMilo from '@/PreMilo'
         console.log(PreMilo)
     },
     methods: {
+        initilizeFiles(files) {
+            this.steps = []
+            this.steps.push(files)
+        }
   
     }
   

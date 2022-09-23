@@ -66,7 +66,7 @@
           </v-btn>
       </div>
   
-      <div class="mt-10" v-if="fileMetadata[0]">
+      <!-- <div class="mt-10" v-if="fileMetadata[0]">
         <div class="my-3">
           Pick your target column.
         </div>
@@ -76,23 +76,25 @@
               v-model="target" 
               dense 
               outlined 
-              :items="fileMetadata[0].fields"
+              :items="fileMetadata[0].columnNames"
               @change="targetChange"
               ></v-select>          
           </v-col>
         </v-row>
   
-      </div>
-      <div class="text-right" v-if="this.target !=null && files.length > 0">
+      </div> -->
+      {{fileIds}}
+      {{fileMetadata}}
+      <div class="text-right" v-if="files.length > 0">
         <v-btn
           class="primary"
           rounded
           text
           dark
           :disabled="disableNext"
-          @click="$emit('nextStep')"
+          @click="$emit('nextStep', fileMetadata)"
           >
-          Evaluate Files
+          Done adding data files
         </v-btn>
       </div>
     </v-card>
@@ -103,6 +105,7 @@
   import axios from 'axios'
   //support code
   
+  //import { storeFile } from '@/PreMilo'
 
 
   //components
@@ -116,14 +119,8 @@
     data() {
       return {
         files: [],
+        fileIds: [], //ids of files in the database, temporary
         fileMetadata: [],
-        input: null,
-        target: null,
-        backendFileData: null,
-        imputeWarning: {
-          rows: 2000,
-          cols: 50
-        }
       }
     },
     props: [
@@ -132,15 +129,16 @@
 
       files() {
         this.fileMetadata = []
+        this.fileIds = []
         this.files.forEach(file => {
           this.storeFile(file).then(r => {
-            return this.paramsFile(r.storageId)
+            this.fileIds.push(r)
+            return this.paramsFile(r)
           }).then(r => {
             this.fileMetadata.push(r)
           })
 
         })
-        this.filesChange() 
       }
     },
     mounted() {
@@ -160,9 +158,7 @@
           return response.data //returns key value pair with file name and storage key
       },   
       
-      async paramsFile(storageId) {
-
-          let json = {storageId}
+      async paramsFile(json) {
 
           const response = await axios.post('/preprocessor_api/integrated/params', json, {
             headers: {

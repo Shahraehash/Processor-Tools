@@ -6,17 +6,6 @@ import axios from 'axios'
 let name = 'PreMilo';
 
 
-const storeFile = async (file) => {
-    var formData = new FormData();
-    formData.append('files', file);
-
-    const response = await axios.post('/preprocessor_api/integrated/store', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    return response.data //returns key value pair with file name and storage key
-}
 
 
 
@@ -59,6 +48,18 @@ const createTransform = (action, analyze, transform) => {
     }
 }
 
+
+async function storeFile(file) {
+    var formData = new FormData();
+    formData.append('files', file);
+
+    const response = await axios.post('/preprocessor_api/integrated/store', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    return response.data //returns key value pair with file name and storage key
+}
 
 
 import pmAssess from './pmSeed';

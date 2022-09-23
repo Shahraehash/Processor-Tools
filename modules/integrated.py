@@ -36,6 +36,7 @@ def file_params(df):
     params['nanByColumnPercent'] = nanByColumnPercent[nanByColumnPercent !=0].to_dict()
     params['columns'] = int(df.shape[1])
     params['columnNames'] = list(df.columns.values)
+    params['columnNamesReverse'] = list(df.columns.values).reverse()
     params['describe'] = df.describe().to_dict()
 
     return params
@@ -75,8 +76,12 @@ def integrated_store():
 @integrated.route('/params',methods=['POST'])
 def integrated_params():
     storage_id = request.json['storageId']
+    name = request.json['name']
     df = load_file(storage_id)
     params = file_params(df)
+    #maintain storageId
+    params['storageId'] = storage_id
+    params['name'] = name
 
     response = make_response(
         simplejson.dumps(params, ignore_nan=True),
