@@ -25,18 +25,36 @@ integrated = Blueprint(
 
 def file_params(df):
     params = {}
-    params['rows'] = int(df.shape[0])
-    params['nanRows'] = int(df[df.isna().any(axis=1)].shape[0])
-    params['nanCells'] = int(df.isna().sum().sum())
-    params['valueCells'] = int(df.count().sum())
-    params['nanPercent'] = float(round(params['nanCells'] / (params['valueCells'] + params['nanCells']), 7) * 100)
-    nanByColumn = df.isna().sum()
-    params['nanByColumn'] = nanByColumn[nanByColumn != 0].to_dict()
-    nanByColumnPercent = round(df.isna().sum() / df.shape[0] * 100, 5)
-    params['nanByColumnPercent'] = nanByColumnPercent[nanByColumnPercent !=0].to_dict()
-    params['columns'] = int(df.shape[1])
-    params['columnNames'] = list(df.columns.values)
-    params['columnNamesReverse'] = list(df.columns.values).reverse()
+    #size
+    params['size'] = {}
+    params['size']['rows'] = int(df.shape[0])
+    params['size']['cols'] = int(df.shape[1])
+
+    #missing values
+    params['missing'] = {}
+    ##rows
+    params['missing']['rows'] = int(df[df.isna().any(axis=1)].shape[0])
+    params['missing']['rowsPercent'] = float(round(params['missing']['rows'] / params['size']['rows'], 7) * 100)
+    ##cells
+    params['missing']['cells'] = int(df.isna().sum().sum())
+    params['missing']['cellsPercent'] = float(round(params['missing']['cells'] / (params['size']['rows'] * params['size']['cols']), 7) * 100)
+    ##columns
+    missingColumn = df.isna().sum()
+    params['missing']['cols'] = missingColumn[missingColumn != 0].to_dict()
+    ###percent of total values in colums
+    nanByColumnPercent = round(df.isna().sum() / df.sum().sum() * 100, 4)
+    params['missing']['colsPercent'] = nanByColumnPercent[nanByColumnPercent !=0].to_dict()
+    ###percent ot total missing values
+    nanColumnContributionPercent = round(df.isna().sum() / df.isna().sum().sum() * 100, 2)
+    params['missing']['colsPercentContribution'] = nanColumnContributionPercent[nanColumnContributionPercent !=0].to_dict()
+
+    #names
+    params['names'] = {}
+    params['names']['cols'] = list(df.columns.values)
+    params['names']['colsReverse'] = list(df.columns.values)
+    params['names']['colsReverse'].reverse()
+
+    #describe
     params['describe'] = df.describe().to_dict()
 
     return params
