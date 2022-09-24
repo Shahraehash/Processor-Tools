@@ -50,7 +50,18 @@
             
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="1">{{fileMetadata[index].rows}}x {{fileMetadata[index].columns}}</v-col>
+          <v-col cols="1">
+            <div class="overline">Rows</div>
+            <div>{{fileMetadata[index].size.rows}}</div>
+          </v-col>
+          <v-col cols="1">
+            <div class="overline">Cols</div>
+            <div>{{fileMetadata[index].size.cols}}</div>
+          </v-col>     
+          <v-col cols="3">
+            <div class="overline">Rows Missing Data</div>
+            <div>{{fileMetadata[index].missing.rows}} ({{fileMetadata[index].missing.rowsPercent}}%)</div>
+          </v-col>                 
           <v-col cols="1" class="text-right">
           <v-btn icon @click="removeFile(file)" title="mdi-close"><v-icon color="primary">mdi-close</v-icon></v-btn>
         </v-col>          
@@ -65,8 +76,9 @@
           <v-icon>mdi-plus-circle-outline</v-icon>
           </v-btn>
       </div>
-  
-      <!-- <div class="mt-10" v-if="fileMetadata[0]">
+
+      <!-- Pick Target -->
+      <div class="mt-10" v-if="fileMetadata[0]">
         <div class="my-3">
           Pick your target column.
         </div>
@@ -76,22 +88,20 @@
               v-model="target" 
               dense 
               outlined 
-              :items="fileMetadata[0].columnNames"
-              @change="targetChange"
+              :items="fileMetadata[0].names.colsReverse"
+              @change="$emit('targetChanged', target)"
               ></v-select>          
           </v-col>
         </v-row>
   
-      </div> -->
-      {{fileIds}}
-      {{fileMetadata}}
+      </div>
+
       <div class="text-right" v-if="files.length > 0">
         <v-btn
           class="primary"
           rounded
           text
           dark
-          :disabled="disableNext"
           @click="$emit('nextStep', fileMetadata)"
           >
           Done adding data files
@@ -169,12 +179,7 @@
       },         
 
   
-      reset() {
-        this.files = []
-        this.fileMetadata = []
-        this.target = null
-        this.input = null
-      },
+
       clickAddFile(e) {
         for (let file of e.target.files) {
           this.files.push(file)

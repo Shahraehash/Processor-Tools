@@ -60,6 +60,40 @@ def file_params(df):
     return params
 
 
+def cross_file_validation(fileObjectArray, target):
+
+    #check for missing target
+    missingTarget = []
+    for z in fileObjectArray:
+        if not target in z['names']['cols']:
+            missingTarget.append(z)
+
+    #mismatched columns
+    mismatchedColumns = []
+
+    for z in fileObjectArray:
+        for y in fileObjectArray:
+            if z['storageId'] != y['storageId']:
+                comp = [x for x in y['names']['cols'] if x not in z['names']['cols']]
+                if len(comp) > 0:
+                    mismatchedColumns.append({
+                        'has': y['storageId'],
+                        'misisng': z['storageId'],
+                        'missingCols': comp
+                    })
+
+
+    validation = {
+        'valid': len(missingTarget) == 0 and len(mismatchedColumns) == 0,
+        'missingTarget': missingTarget,
+        'mismatchedColumns': mismatchedColumns
+    }
+
+    return validation
+
+
+
+
 def save_file(file_obj, storage_id):
     file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
     file_obj.save(file_path)
@@ -91,6 +125,7 @@ def integrated_store():
 
     return response    
 
+
 @integrated.route('/params',methods=['POST'])
 def integrated_params():
     storage_id = request.json['storageId']
@@ -103,6 +138,24 @@ def integrated_params():
 
     response = make_response(
         simplejson.dumps(params, ignore_nan=True),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response    
+
+
+@integrated.route('/crossvalidate',methods=['POST'])
+def integrated_crossvalidate():
+    fileObjectArray = request.json['fileObjectArray']
+    target = request.json['target']
+
+
+    validation = cross_file_validation(fileObjectArray, target)
+
+
+    response = make_response(
+        simplejson.dumps(validation, ignore_nan=True),
         200,
     )
     response.headers["Content-Type"] = "application/json"

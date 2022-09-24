@@ -9,12 +9,16 @@
 
       <!-- Get data into preprocessor -->
       <pmFileSeed 
+        @targetChanged="setTarget($event)"
         @nextStep="initilizeFiles($event)"
+
         />
       
       <!-- Determine steps for preprocessing -->
       <pmFileRoute
+        v-if="steps.length > 0 && target != null"
         :files="steps[0]"
+        :target="target"
         />
 
     </v-container>
@@ -46,6 +50,7 @@ import PreMilo from '@/PreMilo'
     data() {
         return {
           steps: [],
+          target: null,
 
         }
     },
@@ -57,10 +62,16 @@ import PreMilo from '@/PreMilo'
         console.log(PreMilo)
     },
     methods: {
-        initilizeFiles(files) {
-            this.steps = []
-            this.steps.push(files)
-        }
+      setTarget(target) {
+        console.log(target)
+        this.target = target
+      },
+
+
+      initilizeFiles(files) {
+          this.steps = []
+          this.steps.push(files)
+      }
   
     }
   
