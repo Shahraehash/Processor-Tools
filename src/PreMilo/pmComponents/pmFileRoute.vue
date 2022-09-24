@@ -19,7 +19,7 @@
   <script>
   //packages
 
-//  import axios from 'axios'
+  import axios from 'axios'
   //support code
   
 
@@ -36,6 +36,10 @@
       files: {
         type: Array,
         default: () => []
+      },
+      target: {
+        type: String,
+        default: null
       }
     },
     data() {
@@ -48,12 +52,37 @@
 
       files() {
         console.log(this.files)
+      },
+      taget() {
+        console.log(this.target)
+        this.crossValidateFiles()
       }
     },
-    mounted() {
+    async mounted() {
+      console.log(this.files.length)
+      console.log(this.target)
+      if (this.files.length > 1 && this.target != '') {
+        let r = await this.crossValidateFiles()
+
+      }
   
     },
     methods: {
+      async crossValidateFiles() {
+
+        let json = {
+          fileObjectArray: this.files,
+          target: this.target
+        }
+
+        const response = await axios.post('/preprocessor_api/integrated/crossvalidate', json, {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        return response.data
+      },         
+      
 
 
     }
