@@ -60,13 +60,23 @@ def file_params(df):
     return params
 
 
-def cross_file_validation(fileObjectArray, target):
+def file_validation(fileObjectArray, target):
 
     #check for missing target
     missingTarget = []
     for z in fileObjectArray:
         if not target in z['names']['cols']:
-            missingTarget.append(z)
+            missingTarget.append(z['storageId'])
+
+    #check for number of values within target
+    targetValuesArray = []
+    for z in fileObjectArray:
+        if not z['storageId'] in missingTarget:
+            df = load_file(z['storageId'])
+            targetValuesArray.append(df[target].unique())
+    r = np.array(targetValuesArray).flatten()
+    targetValues = list(np.unique(r))
+    targetValues = list(map(lambda n: str(n), targetValues)) #convert to string for json serialisation
 
     #mismatched columns
     mismatchedColumns = []
@@ -84,9 +94,10 @@ def cross_file_validation(fileObjectArray, target):
 
 
     validation = {
-        'valid': len(missingTarget) == 0 and len(mismatchedColumns) == 0,
+        'valid': len(missingTarget) == 0 and len(mismatchedColumns) == 0 and len(targetValues) == 2,
         'missingTarget': missingTarget,
-        'mismatchedColumns': mismatchedColumns
+        'mismatchedColumns': mismatchedColumns,
+        'targetValues': targetValues
     }
 
     return validation
@@ -145,13 +156,13 @@ def integrated_params():
     return response    
 
 
-@integrated.route('/crossvalidate',methods=['POST'])
-def integrated_crossvalidate():
+@integrated.route('/validate',methods=['POST'])
+def integrated_validate():
     fileObjectArray = request.json['fileObjectArray']
     target = request.json['target']
 
 
-    validation = cross_file_validation(fileObjectArray, target)
+    validation = file_validation(fileObjectArray, target)
 
 
     response = make_response(
