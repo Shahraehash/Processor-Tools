@@ -10,8 +10,14 @@
         We'll need to create seperate trianing and testing files from your single dataset.
       </div>
       <div v-if="files.length >= 2">
-        We need to check your data for consistency.
+        We're checking your files for consistent in columns and target.
+        <div>
+          {{crossValidate}}
+        </div>
+        
       </div>      
+
+      
     
 
     </v-card>
@@ -44,6 +50,7 @@
     },
     data() {
       return {
+        crossValidate: null
 
       }
     },
@@ -53,29 +60,28 @@
       files() {
         console.log(this.files)
       },
-      taget() {
-        console.log(this.target)
-        this.crossValidateFiles()
+      target() {
+        this.validateFiles().then(r => this.crossValidate = r)
       }
     },
     async mounted() {
       console.log(this.files.length)
       console.log(this.target)
       if (this.files.length > 1 && this.target != '') {
-        let r = await this.crossValidateFiles()
-
+        let r = await this.validateFiles()
+        this.crossValidate = r
       }
   
     },
     methods: {
-      async crossValidateFiles() {
+      async validateFiles() {
 
         let json = {
           fileObjectArray: this.files,
           target: this.target
         }
 
-        const response = await axios.post('/preprocessor_api/integrated/crossvalidate', json, {
+        const response = await axios.post('/preprocessor_api/integrated/validate', json, {
           headers: {
             'Content-Type': 'application/json',
           }

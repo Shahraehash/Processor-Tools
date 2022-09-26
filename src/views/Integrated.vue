@@ -4,7 +4,6 @@
         :title="$store.state.tools[$options.name].title"
         :icon="$store.state.tools[$options.name].icon"
         :description="$store.state.tools[$options.name].description"
-        @reset="resetStep1"
       />
 
       <!-- Get data into preprocessor -->
