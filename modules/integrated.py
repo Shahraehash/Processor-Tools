@@ -60,6 +60,12 @@ def file_params(df):
     return params
 
 
+def int_list_to_string(lst):
+    return list(map(lambda n: str(n), lst))
+
+
+
+
 def file_validation(fileObjectArray, target):
 
     #check for missing target
@@ -68,15 +74,17 @@ def file_validation(fileObjectArray, target):
         if not target in z['names']['cols']:
             missingTarget.append(z['storageId'])
 
-    #check for number of values within target
+    #check for number of values within target and actual values
     targetValuesArray = []
     for z in fileObjectArray:
         if not z['storageId'] in missingTarget:
             df = load_file(z['storageId'])
-            targetValuesArray.append(df[target].unique())
+            file_targets = list(df[target].unique())
+            targetValuesArray.append(int_list_to_string(file_targets))
     r = np.array(targetValuesArray).flatten()
-    targetValues = list(np.unique(r))
-    targetValues = list(map(lambda n: str(n), targetValues)) #convert to string for json serialisation
+    targetLengthArray = list(map(lambda n: len(n), targetValuesArray))
+    combinedTargetValues = list(np.unique(r))
+    combinedTargetValues = int_list_to_string(combinedTargetValues) #convert to string for json serialisation
 
     #mismatched columns
     mismatchedColumns = []
@@ -92,12 +100,13 @@ def file_validation(fileObjectArray, target):
                         'missingCols': comp
                     })
 
-
     validation = {
-        'valid': len(missingTarget) == 0 and len(mismatchedColumns) == 0 and len(targetValues) == 2,
+        'valid': len(missingTarget) == 0 and len(mismatchedColumns) == 0 and len(combinedTargetValues) == 2,
         'missingTarget': missingTarget,
         'mismatchedColumns': mismatchedColumns,
-        'targetValues': targetValues
+        'targetValuesArray': targetValuesArray,
+        'targetLengthArray': targetLengthArray,
+        'combinedTargetValues': combinedTargetValues
     }
 
     return validation

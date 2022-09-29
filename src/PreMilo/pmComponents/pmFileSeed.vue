@@ -1,5 +1,6 @@
 <template>
 
+
     <v-card 
       outlined 
       flat 
@@ -7,6 +8,10 @@
       @drop.prevent="addFile" 
       @dragover.prevent
       >
+      <StepHeading
+        :stepNumber="stepNumber"
+        :stepTitle="stepTitle"
+        />      
     <!-- If no files yet -->
       <div 
         v-if="files.length == 0" 
@@ -89,7 +94,7 @@
               dense 
               outlined 
               :items="fileMetadata[0].names.colsReverse"
-              @change="$emit('targetChanged', target)"
+              @change="update()"
               ></v-select>          
           </v-col>
         </v-row>
@@ -102,7 +107,7 @@
           rounded
           text
           dark
-          @click="$emit('nextStep', fileMetadata)"
+          @click="update()"
           >
           Done adding data files
         </v-btn>
@@ -119,11 +124,13 @@
 
 
   //components
+  import StepHeading from '@/components/StepHeading'
   
   //Inspired by: https://www.raymondcamden.com/2019/08/08/drag-and-drop-file-upload-in-vuejs
   export default {
     name: 'pmFileSeed',
     components: {
+      StepHeading
       
     },
     data() {
@@ -131,9 +138,12 @@
         files: [],
         fileIds: [], //ids of files in the database, temporary
         fileMetadata: [],
+        target: null
       }
     },
     props: [
+      'stepNumber',
+      'stepTitle',      
     ],
     watch: {
 
@@ -155,6 +165,15 @@
   
     },
     methods: {
+      update() {
+        this.$emit('update', {
+          files: this.files,
+          fileIds: this.fileIds,
+          fileMetadata: this.fileMetadata,
+          target: this.target
+        })
+      },
+
 
       async storeFile(file) {
           var formData = new FormData();

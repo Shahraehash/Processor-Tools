@@ -5,7 +5,34 @@
       flat 
       class="ma-3 pa-5" 
       >
+      <!-- Heading -->
+      <StepHeading
+        :stepNumber="stepNumber"
+        :stepTitle="stepTitle"
+        />           
       <!-- If one file -->
+
+      <!-- Cross Validation -->
+      <div>
+        <div class="overline purple--text">Cross-file Validation</div>
+        <!-- Single File -->
+        <div v-if="files.length == 1">
+          <div>
+            <v-icon color="green" >mdi-check-circle</v-icon>
+            Only single data file
+          </div>
+        </div>
+        <div v-else>
+          {{crossValidate}}
+        </div>
+
+      </div>
+      
+    
+      
+
+
+
       <div v-if="files.length == 1">
         We'll need to create seperate trianing and testing files from your single dataset.
       </div>
@@ -31,14 +58,22 @@
 
 
   //components
+  import StepHeading from '@/components/StepHeading'  
 
 
   export default {
     name: 'pmFileRoute',
     components: {
+      StepHeading
       
     },
     props: {
+      stepNumber: {
+        type: Number
+      },
+      stepTitle: {
+        type: String
+      },
       files: {
         type: Array,
         default: () => []
@@ -58,7 +93,7 @@
     watch: {
 
       files() {
-        console.log(this.files)
+        this.validateFiles().then(r => this.crossValidate = r)
       },
       target() {
         this.validateFiles().then(r => this.crossValidate = r)

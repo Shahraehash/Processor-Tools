@@ -6,19 +6,19 @@
         :description="$store.state.tools[$options.name].description"
       />
 
-      <!-- Get data into preprocessor -->
-      <pmFileSeed 
-        @targetChanged="setTarget($event)"
-        @nextStep="initilizeFiles($event)"
+      <!-- Dynamically Render Components Base on Need -->
+      <component 
+        v-for="(c, key) in componentList" 
+        :key="key"
+        :is="c.name"
+        :stepTitle="c.stepTitle"
+        :stepNumber="key + 1"
+        :files="files"
+        @next="c.events.next"
+        @update="c.events.update"
+        :ref="'step' + c.key"
 
-        />
-      
-      <!-- Determine steps for preprocessing -->
-      <pmFileRoute
-        v-if="steps.length > 0 && target != null"
-        :files="steps[0]"
-        :target="target"
-        />
+        ></component>
 
     </v-container>
   
@@ -33,7 +33,8 @@
   //components
 import MenuBar from "@/components/MenuBar.vue";
 import pmFileSeed from '@/PreMilo/pmComponents/pmFileSeed.vue'
-import pmFileRoute from "../PreMilo/pmComponents/pmFileRoute.vue";
+import pmFileValidate from "../PreMilo/pmComponents/pmFileValidate.vue";
+import testComponent from "../PreMilo/pmComponents/testComponent.vue";
 
 import PreMilo from '@/PreMilo'
 
@@ -43,13 +44,26 @@ import PreMilo from '@/PreMilo'
     components: {
         MenuBar,
         pmFileSeed,
-        pmFileRoute
+        pmFileValidate,
+        testComponent
   
     },
     data() {
         return {
           steps: [],
           target: null,
+
+          componentList: [
+            {
+              name: 'pmFileSeed',
+              stepTitle: 'File Import',
+              events: {
+                next: (e) => {console.log('next', e)},
+                update: (e) => {console.log('update', e)},
+              }
+          
+            }
+          ]
 
         }
     },
@@ -61,17 +75,9 @@ import PreMilo from '@/PreMilo'
         console.log(PreMilo)
     },
     methods: {
-      setTarget(target) {
-        console.log(target)
-        this.target = target
-      },
-
-
-      initilizeFiles(files) {
-          this.steps = []
-          this.steps.push(files)
+      initialStep(d) {
+        console.log(d)
       }
-  
     }
   
   }
