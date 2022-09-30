@@ -9,7 +9,8 @@
       <StepHeading
         :stepNumber="stepNumber"
         :stepTitle="stepTitle"
-        />           
+        />         
+        {{}}  
       <!-- If one file -->
 
       <!-- Cross Validation -->
@@ -43,6 +44,13 @@
         </div>
         
       </div>      
+      <div class="text-right" v-if="files.length > 0">
+        <v3ButtonNext 
+        @next="$emit('next')"
+        :disabled="currentStep > stepNumber - 1"
+        text="Next Step"
+        />
+      </div>      
 
       
     
@@ -59,12 +67,14 @@
 
   //components
   import StepHeading from '@/components/StepHeading'  
+  import v3ButtonNext from './v3ButtonNext.vue'
 
 
   export default {
     name: 'pmFileRoute',
     components: {
-      StepHeading
+      StepHeading,
+      v3ButtonNext
       
     },
     props: {
@@ -81,7 +91,10 @@
       target: {
         type: String,
         default: null
-      }
+      },
+      currentStep: {
+        type: Number
+      },
     },
     data() {
       return {
@@ -95,13 +108,8 @@
       files() {
         this.validateFiles().then(r => this.crossValidate = r)
       },
-      target() {
-        this.validateFiles().then(r => this.crossValidate = r)
-      }
     },
     async mounted() {
-      console.log(this.files.length)
-      console.log(this.target)
       if (this.files.length > 1 && this.target != '') {
         let r = await this.validateFiles()
         this.crossValidate = r
@@ -112,7 +120,7 @@
       async validateFiles() {
 
         let json = {
-          fileObjectArray: this.files,
+          fileObjectArray: this.files[this.stepNumber - 1].fileMetadata,
           target: this.target
         }
 
@@ -124,15 +132,8 @@
         return response.data
       },         
       
-
-
     }
   }
   </script>
-  <style scoped>
-  #indent-text {
-      margin-left: 1.8em;
-      text-indent: -1.8em;
-  }
-  </style>
+
   

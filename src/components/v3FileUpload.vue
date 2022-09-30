@@ -52,6 +52,9 @@
           <v-col cols="6">
             <v-icon>mdi-file</v-icon>
             {{ file.name }}
+            <div>
+              <v-select class="ma-2 mt-7" dense label="Data Type" :items="fileTypes" item-text="text" item-value="value"></v-select>
+            </div>
             
           </v-col>
           <v-spacer></v-spacer>
@@ -101,22 +104,22 @@
   
       </div>
 
+
+
+
+
       <div class="text-right" v-if="files.length > 0">
-        <v-btn
-          class="primary"
-          rounded
-          text
-          dark
-          @click="update()"
-          >
-          Done adding data files
-        </v-btn>
+        <v3ButtonNext 
+        @next="next"
+        :disabled="currentStep > stepNumber - 1"
+        text="Done adding data files"
+        />
       </div>
     </v-card>
   </template>
   <script>
   //packages
-  // import Papa from 'papaparse'
+
   import axios from 'axios'
   //support code
   
@@ -125,26 +128,40 @@
 
   //components
   import StepHeading from '@/components/StepHeading'
-  
+  import v3ButtonNext from '@/components/v3ButtonNext'
+
   //Inspired by: https://www.raymondcamden.com/2019/08/08/drag-and-drop-file-upload-in-vuejs
   export default {
-    name: 'pmFileSeed',
+    name: 'v3FileUpload',
     components: {
-      StepHeading
+      StepHeading,
+      v3ButtonNext
       
     },
     data() {
       return {
+        fileTypes: [
+          {text: 'Training/Initial Test', value: 'train'},
+          {text: 'Generalized Test', value: 'test'},
+          {text: 'Train/Test Combined', value: 'combined'},
+        ],
         files: [],
         fileIds: [], //ids of files in the database, temporary
         fileMetadata: [],
         target: null
       }
     },
-    props: [
-      'stepNumber',
-      'stepTitle',      
-    ],
+    props: {
+      stepNumber: {
+        type: Number
+      },
+      stepTitle: {
+        type: String
+      },
+      currentStep: {
+        type: Number
+      },
+    },
     watch: {
 
       files() {
@@ -152,13 +169,14 @@
         this.fileIds = []
         this.files.forEach(file => {
           this.storeFile(file).then(r => {
-            this.fileIds.push(r)
             return this.paramsFile(r)
           }).then(r => {
             this.fileMetadata.push(r)
           })
+          
 
         })
+        this.update()
       }
     },
     mounted() {
@@ -166,9 +184,10 @@
     },
     methods: {
       update() {
-        this.$emit('update', {
-          files: this.files,
-          fileIds: this.fileIds,
+        this.$emit('update')
+      },
+      next() {
+        this.$emit('next', {
           fileMetadata: this.fileMetadata,
           target: this.target
         })
