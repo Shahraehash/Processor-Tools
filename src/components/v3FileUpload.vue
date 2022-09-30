@@ -158,6 +158,7 @@
       currentStep: {
         type: Number
       },
+      
     },
     watch: {
 

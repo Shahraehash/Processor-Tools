@@ -16,11 +16,13 @@
         v-for="(c, key) in visibleComponents" 
         :key="key"
         :currentStep="currentStep"
-        :is="c.name"
+        :is="c.component"
+        :subcomponent="c.subcomponent"
         :stepTitle="c.stepTitle"
         :stepNumber="key + 1"
         :files="dataFiles"
         :target="target"
+        :analysisFunction="c.analysisFunction"
         @next="c.events.next"
         @update="c.events.update; setStep(key)"
         :ref="'step' + key"
@@ -73,13 +75,13 @@
 
   
   //support code
-  
+  import { validateFiles } from '@/v3Methods'
   
   //components
 import MenuBar from "@/components/MenuBar.vue";
-import v3FileUploadVue from "../components/v3FileUpload.vue";
-import v3FileValidateVue from "../components/v3FileValidate.vue";
-import v3testComponentVue from "../components/v3testComponent.vue";
+import v3FileUpload from "../components/v3FileUpload.vue";
+import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
+
 import PreMilo from '@/PreMilo'
 
 
@@ -88,9 +90,9 @@ import PreMilo from '@/PreMilo'
     name: 'Integrated',
     components: {
         MenuBar,
-        v3FileUploadVue,
-        v3FileValidateVue,
-        v3testComponentVue
+        v3FileUpload,
+        v3parentStepTemplate,
+
   
     },
     computed: {
@@ -126,7 +128,7 @@ import PreMilo from '@/PreMilo'
       exportComponent() {
         this.componentList.push(
           {
-              name: 'v3testComponentVue',
+              component: 'v3testComponentVue',
               stepTitle: 'Ouptut Validation',
               events: {
                 next: (e) => { this.nextStep(e);},
@@ -140,7 +142,7 @@ import PreMilo from '@/PreMilo'
       getComponentList() {
         return [
           {
-              name: 'v3FileUploadVue',
+              component: 'v3FileUpload',
               stepTitle: 'File Import',
               events: {
                 next: (e) => { this.nextStep(e.fileMetadata); this.target = e.target},
@@ -148,8 +150,10 @@ import PreMilo from '@/PreMilo'
               }
           },
           {
-              name: 'v3FileValidateVue',
+              component: 'v3parentStepTemplate',
+              subcomponent: 'v3subFileValidate',
               stepTitle: 'File Validation',
+              analysisFunction: validateFiles,
               events: {
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
                 update: (e) => {console.log('update', e); },
