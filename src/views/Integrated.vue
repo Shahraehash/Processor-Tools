@@ -10,7 +10,9 @@
       {{currentStep}}
 
       <!-- Dynamically Render Components Base on Need -->
-      <component 
+
+
+        <component 
         v-for="(c, key) in visibleComponents" 
         :key="key"
         :currentStep="currentStep"
@@ -22,8 +24,13 @@
         @next="c.events.next"
         @update="c.events.update; setStep(key)"
         :ref="'step' + key"
-
         ></component>
+
+
+
+
+
+
 
       <div class="text-center mt-10" v-if="componentList.length == currentStep">
         Additional optoins
@@ -136,16 +143,15 @@ import PreMilo from '@/PreMilo'
               name: 'v3FileUploadVue',
               stepTitle: 'File Import',
               events: {
-                next: (e) => { this.nextStep(e); this.target = e.target},
+                next: (e) => { this.nextStep(e.fileMetadata); this.target = e.target},
                 update: (e) => {console.log('update', e); },
               }
-          
           },
           {
               name: 'v3FileValidateVue',
               stepTitle: 'File Validation',
               events: {
-                next: (e) => { this.nextStep(e);},
+                next: (fileMetadata) => { this.nextStep(fileMetadata);},
                 update: (e) => {console.log('update', e); },
               }
           },              
@@ -159,8 +165,8 @@ import PreMilo from '@/PreMilo'
       initialStep(d) {
         console.log(d)
       },
-      nextStep(e) {
-        this.dataFiles.push(e)
+      nextStep(fileMetadata) {
+        this.dataFiles.push(fileMetadata)
         this.currentStep++
       },
       setStep(step) {

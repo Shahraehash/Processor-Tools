@@ -53,7 +53,7 @@
             <v-icon>mdi-file</v-icon>
             {{ file.name }}
             <div>
-              <v-select class="ma-2 mt-7" dense label="Data Type" :items="fileTypes" item-text="text" item-value="value"></v-select>
+              <v-select v-model="fileMetadata[index].type" class="ma-2 mt-7" dense label="Data Type" :items="fileTypes" item-text="text" item-value="value"></v-select>
             </div>
             
           </v-col>
@@ -105,13 +105,10 @@
       </div>
 
 
-
-
-
       <div class="text-right" v-if="files.length > 0">
         <v3ButtonNext 
         @next="next"
-        :disabled="currentStep > stepNumber - 1"
+        :disabled="currentStep > stepNumber - 1 || !target"
         text="Done adding data files"
         />
       </div>
@@ -120,10 +117,10 @@
   <script>
   //packages
 
-  import axios from 'axios'
+
   //support code
   
-  //import { storeFile } from '@/PreMilo'
+  import {  storeParamFile } from '@/v3Methods'
 
 
   //components
@@ -164,22 +161,22 @@
     },
     watch: {
 
-      files() {
-        this.fileMetadata = []
-        this.fileIds = []
-        this.files.forEach(file => {
-          this.storeFile(file).then(r => {
-            return this.paramsFile(r)
-          }).then(r => {
-            this.fileMetadata.push(r)
-          })
-          
+      files(current, previous) {
+        //Todo: figure out how to do this so it doesn't run on all files when new added
 
-        })
+        if (current.length >= previous.length) {
+          this.fileMetadata = []
+          this.files.forEach(file => {
+          storeParamFile(file).then(r => this.fileMetadata.push(r))
+          })          
+
+        }
+
         this.update()
       }
     },
     mounted() {
+
   
     },
     methods: {
@@ -193,30 +190,6 @@
         })
       },
 
-
-      async storeFile(file) {
-          var formData = new FormData();
-          formData.append('files', file);
-
-          const response = await axios.post('/preprocessor_api/integrated/store', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          })
-          return response.data //returns key value pair with file name and storage key
-      },   
-      
-      async paramsFile(json) {
-
-          const response = await axios.post('/preprocessor_api/integrated/params', json, {
-            headers: {
-              'Content-Type': 'application/json',
-            }
-          })
-          return response.data
-      },         
-
-  
 
       clickAddFile(e) {
         for (let file of e.target.files) {
