@@ -14,6 +14,7 @@
     <!-- Core Component -->
     <div>
       <v-component 
+        v-if="analysis"
         :is="subcomponent" 
         :currentFiles="currentFiles" 
         :analysis="analysis" 

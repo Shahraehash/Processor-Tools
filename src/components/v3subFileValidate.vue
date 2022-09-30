@@ -1,12 +1,38 @@
 <template>
     <div>
-        Test
-        <v-card>
-            {{analysis}}
-        </v-card>
-        <v-card>
+        <!-- Per File Target Validation -->
+        <div>
+            <div class="overline">Target Validation</div>
+            <v-row>
+                <v-col cols="4" v-for="(file, key) in currentFiles" :key="key">
+                    
+                    <v-card outlined class="pa-3">
+                        <div>
+                            <strong>{{file.name}}</strong>
+                        </div>
+                        
+                        {{analysis.targetValuesArray[key]}}
+                    </v-card>
+               
+
+                </v-col>
+            </v-row>
+            <div >
+
+
+            </div>
+
+        </div>
+        <!-- File Cross Validation -->
+        <div>
+            <div class="overline">File Cross Validation</div>
+            {{analysis.mismatchedColumns}}
+        </div>
+        <!-- Target Encoding -->
+        <div>
+            <div class="overline">Target Encoding</div>
             {{target}}
-        </v-card>
+        </div>
 
     </div>
 
@@ -28,5 +54,10 @@ export default {
             default: () => {}
         },
     },
+    data() {
+        return {
+
+        }
+    }
 }
 </script>

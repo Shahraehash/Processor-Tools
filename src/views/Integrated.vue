@@ -64,7 +64,17 @@
             </v-col>                        
           </v-row>
 
-        
+      
+      </div>
+      <div class="ma-5 white--text">x</div>
+      <div class="footer">
+        <div class="text-center">Step: {{currentStep + 1}} of {{componentList.length + 1}}</div>
+
+        <v-progress-linear 
+          :value="(currentStep) / (componentList.length + 1) * 100"
+          :height="10"
+          ></v-progress-linear>
+
       </div>
 
     </v-container>
@@ -172,6 +182,7 @@ import PreMilo from '@/PreMilo'
       nextStep(fileMetadata) {
         this.dataFiles.push(fileMetadata)
         this.currentStep++
+        window.scrollTo(0,document.body.scrollHeight);
       },
       setStep(step) {
         this.currentStep = step
@@ -182,7 +193,17 @@ import PreMilo from '@/PreMilo'
   
   }
   </script>
-  <style>
+  <style scoped>
+  .footer {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 0);
+      width: 100%;
+      background: white;
+  }
+
+    
 
   
   </style>
