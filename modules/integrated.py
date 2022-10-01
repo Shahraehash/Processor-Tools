@@ -38,16 +38,7 @@ def file_params(df):
     ##cells
     params['missing']['cells'] = int(df.isna().sum().sum())
     params['missing']['cellsPercent'] = float(round(params['missing']['cells'] / (params['size']['rows'] * params['size']['cols']), 7) * 100)
-    ##columns
-    missingColumn = df.isna().sum()
-    params['missing']['cols'] = missingColumn[missingColumn != 0].to_dict()
-    ###percent of total values in colums
-    nanByColumnPercent = round(df.isna().sum() / df.count().sum() * 100, 4)
-    params['missing']['colsPercent'] = nanByColumnPercent[nanByColumnPercent !=0].to_dict()
-    ###percent ot total missing values
-    nanColumnContributionPercent = round(df.isna().sum() / df.isna().sum().sum() * 100, 2)
-    params['missing']['colsPercentContribution'] = nanColumnContributionPercent[nanColumnContributionPercent !=0].to_dict()
-
+ 
     #names
     params['names'] = {}
     params['names']['cols'] = list(df.columns.values)
@@ -257,6 +248,54 @@ def integrated_transform():
 
     return response   
     
+
+@integrated.route('/analyze/',methods=['POST'])
+def integrated_analyze():
+    fileObjectArray = request.json['fileObjectArray']
+    target = request.json['target']
+    analyze = request.json['analyze']
+
+    output_array = []
+
+    for file in fileObjectArray:
+        df = load_file(file['storageId'])   
+
+        if analyze['method'] == 'missingColumns':
+            result = analyze_missing_columns(df, target)
+            output_array.append(result)
+
+    json = {'columnMetadata': output_array}
+
+    response = make_response(
+        simplejson.dumps(json, ignore_nan=True),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response       
+
+
+
+
+#ANALYSIS
+def analyze_missing_columns(df, target):
+    missing = {}
+   ##columns
+    missingColumn = df.isna().sum()
+    missing['cols'] = missingColumn[missingColumn != 0].to_dict()
+    ###percent of total values in colums
+    nanByColumnPercent = round(df.isna().sum() / df.count().sum() * 100, 4)
+    missing['colsPercent'] = nanByColumnPercent[nanByColumnPercent !=0].to_dict()
+    ###percent ot total missing values
+    nanColumnContributionPercent = round(df.isna().sum() / df.isna().sum().sum() * 100, 2)
+    missing['colsPercentContribution'] = nanColumnContributionPercent[nanColumnContributionPercent !=0].to_dict()
+    return missing
+
+
+
+
+
+##TRANSFORMS
 
 def transform_target_map(df, target, transform):
     df[target] = df[target].astype('str').map(transform['data']['map']).astype('int')

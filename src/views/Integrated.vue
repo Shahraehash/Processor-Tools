@@ -86,14 +86,16 @@
 
   
   //support code
-  import { validateFiles, transformTargetMap } from '@/v3Methods'
+  import { 
+    validateFiles, transformTargetMap,
+    analyzeMissingColumns,
+   } from '@/v3Methods'
   
   //components
 import MenuBar from "@/components/MenuBar.vue";
 import v3FileUpload from "../components/v3FileUpload.vue";
 import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
 
-import PreMilo from '@/PreMilo'
 
 
   
@@ -132,7 +134,7 @@ import PreMilo from '@/PreMilo'
     },
 
     mounted() {
-        console.log(PreMilo)
+
         this.componentList = this.getComponentList()
     },
     methods: {
@@ -173,10 +175,10 @@ import PreMilo from '@/PreMilo'
           },   
           {
               component: 'v3parentStepTemplate',
-              subcomponent: 'v3subFileValidate',
-              stepTitle: 'File Validation',
-              analysisFunction: validateFiles,
-              transformFunction: transformTargetMap,
+              subcomponent: 'v3subMissingColumns',
+              stepTitle: 'Column Pruning to Minimize Missing Data',
+              analysisFunction: analyzeMissingColumns,
+              transformFunction: null,
               events: {
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
                 update: (e) => {console.log('update', e); },
@@ -195,7 +197,6 @@ import PreMilo from '@/PreMilo'
       nextStep(fileMetadata) {
         this.dataFiles.push(fileMetadata)
         this.currentStep++
-        window.scrollTo(0,document.body.scrollHeight);
       },
       setStep(step) {
         this.currentStep = step

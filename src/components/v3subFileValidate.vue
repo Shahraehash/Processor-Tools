@@ -80,15 +80,11 @@
         <!-- Target Encoding -->
         <div>
             <div class="overline">Target Encoding</div>
-
-            
-            <v-row dense v-for="(val, cat) in analysis.targetMap" :key="cat">
-                <v-col class="text-right" cols="1">
-                    {{cat}}
-                </v-col>
-                <v-col class="text-center mt-1" cols="1"><v-icon>mdi-arrow-right</v-icon></v-col>
-                <v-col cols="1"><v-select @change="flipValues($event, cat)" outlined dense v-model="analysis.targetMap[cat]" :items="[0,1]"></v-select></v-col>
-            </v-row>
+            <div v-for="(val, cat) in analysis.targetMap" :key="cat">
+                <v-chip>{{cat}}</v-chip>
+                <v-icon>mdi-arrow-right</v-icon>
+                <v-select @change="flipValues($event, cat)" outlined dense v-model="analysis.targetMap[cat]" :items="[0,1]" style="display: inline-flex; width: 80px;"></v-select>
+            </div>
         </div>
 
     </div>

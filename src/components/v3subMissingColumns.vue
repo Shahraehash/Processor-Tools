@@ -2,7 +2,9 @@
     <div>
         <v3miniTrainTestLabel />
         <v3miniValidate />
-        Test
+        {{analysis}}
+
+        <v-select outlined dense width="50px" style="display: inline-flex; width: 80px;"></v-select>
    
     </div>
 
@@ -52,9 +54,9 @@ export default {
     methods: {
         buildTransform() {
             return {
-                type: 'targetMap',
+                type: 'columnPrune',
                 data: {
-                    map: this.analysis.targetMap
+                    columnsToRemove: []
                 }
             }
         },
