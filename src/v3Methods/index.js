@@ -61,6 +61,27 @@ let transformTargetMap = async (fileObjectArray, target, transform) => {
 
 }
 
+//ANALYSIS
+//Parent Function
+let analyzeFileArray = async (fileObjectArray, target, analyze) => {
+
+  let json = {fileObjectArray, target, analyze}
+  const response = await axios.post('/preprocessor_api/integrated/analyze', json, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  return response.data  
+
+}
+
+//Child Functions
+let analyzeMissingColumns = async (fileObjectArray, target) => {
+  const analysis = {method: 'missingColumns'}
+  const response = await analyzeFileArray(fileObjectArray, target, analysis)
+  return response
+}
+
 
 
 export { 
@@ -68,6 +89,7 @@ export {
     paramFile,
     storeParamFile,
     validateFiles,
-    transformTargetMap
+    transformTargetMap,
+    analyzeMissingColumns
 
 }
