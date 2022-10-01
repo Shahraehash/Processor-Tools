@@ -2,13 +2,13 @@
 
 
     <v-card 
-      outlined 
+
       flat 
       class="ma-3 pa-5" 
       @drop.prevent="addFile" 
       @dragover.prevent
       >
-      <StepHeading
+      <v3StepHeading
         :stepNumber="stepNumber"
         :stepTitle="stepTitle"
         />      
@@ -16,6 +16,7 @@
       <div 
         v-if="files.length == 0" 
         class="text-center"
+        style="border: 5px dashed #d3d3d3; border-radius: 10px; padding: 20px;"
         >
         <div >
           Drag and drop your CSV file(s) into this box or click the file icon below to select from systemc dialog.
@@ -124,14 +125,14 @@
 
 
   //components
-  import StepHeading from '@/components/StepHeading'
+  import v3StepHeading from '@/components/v3StepHeading'
   import v3ButtonNext from '@/components/v3ButtonNext'
 
   //Inspired by: https://www.raymondcamden.com/2019/08/08/drag-and-drop-file-upload-in-vuejs
   export default {
     name: 'v3FileUpload',
     components: {
-      StepHeading,
+      v3StepHeading,
       v3ButtonNext
       
     },

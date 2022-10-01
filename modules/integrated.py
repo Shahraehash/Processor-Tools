@@ -42,7 +42,7 @@ def file_params(df):
     missingColumn = df.isna().sum()
     params['missing']['cols'] = missingColumn[missingColumn != 0].to_dict()
     ###percent of total values in colums
-    nanByColumnPercent = round(df.isna().sum() / df.sum().sum() * 100, 4)
+    nanByColumnPercent = round(df.isna().sum() / df.count().sum() * 100, 4)
     params['missing']['colsPercent'] = nanByColumnPercent[nanByColumnPercent !=0].to_dict()
     ###percent ot total missing values
     nanColumnContributionPercent = round(df.isna().sum() / df.isna().sum().sum() * 100, 2)
@@ -67,24 +67,44 @@ def int_list_to_string(lst):
 
 
 def file_validation(fileObjectArray, target):
+    individual_file_validation = []
 
-    #check for missing target
-    missingTarget = []
-    for z in fileObjectArray:
-        if not target in z['names']['cols']:
-            missingTarget.append(z['storageId'])
+    for file in fileObjectArray:
+        checklist = {
+            'hasTarget': False,
+            'targetValues': None,
+            'targetCount': None,
+        }
 
-    #check for number of values within target and actual values
-    targetValuesArray = []
-    for z in fileObjectArray:
-        if not z['storageId'] in missingTarget:
-            df = load_file(z['storageId'])
-            file_targets = list(df[target].unique())
-            targetValuesArray.append(int_list_to_string(file_targets))
-    r = np.array(targetValuesArray).flatten()
-    targetLengthArray = list(map(lambda n: len(n), targetValuesArray))
-    combinedTargetValues = list(np.unique(r))
-    combinedTargetValues = int_list_to_string(combinedTargetValues) #convert to string for json serialisation
+        #check for target column
+        has_target = target in file['names']['cols']
+        if has_target:
+            checklist['hasTarget'] = True
+
+            df = load_file(file['storageId'])
+            target_values = list(df[target].unique())
+            target_count = len(target_values)
+
+            checklist['targetValues'] = int_list_to_string(target_values)
+            checklist['targetCount'] = target_count
+        
+        individual_file_validation.append(checklist)
+    
+    #All target values
+    all_target_values = []
+
+    for result in individual_file_validation:
+        if result['hasTarget']:
+            all_target_values.append(result['targetValues'])
+    
+    r = np.array(all_target_values).flatten()
+    unique_target_values = int_list_to_string(list(np.unique(r)))
+    unique_target_values.sort()
+
+    value_map = {}
+    for key, value in enumerate(unique_target_values):
+        value_map[value] = key
+
 
     #mismatched columns
     mismatchedColumns = []
@@ -100,13 +120,29 @@ def file_validation(fileObjectArray, target):
                         'missingCols': comp
                     })
 
-    validation = {
-        'valid': len(missingTarget) == 0 and len(mismatchedColumns) == 0 and len(combinedTargetValues) == 2,
-        'missingTarget': missingTarget,
-        'mismatchedColumns': mismatchedColumns,
-        'targetValuesArray': targetValuesArray,
-        'targetLengthArray': targetLengthArray,
-        'combinedTargetValues': combinedTargetValues
+    #evaluate file data for validity
+
+    valid_array = []
+    for result in individual_file_validation:
+        #check if target present
+        valid_array.append(True) if result['hasTarget'] else valid_array.append(False)
+        #ensure at least and only two values per file
+        valid_array.append(True) if result['targetCount'] == 2 else valid_array.append(False)
+    
+    #check if all target value pairs are the same
+    valid_array.append(True) if len(unique_target_values) == 2 else valid_array.append(False)
+    #check if all files have the same columns
+    valid_array.append(True) if len(mismatchedColumns) == 0 else valid_array.append(False)
+
+
+
+
+    validation = { 
+        'valid': all(valid_array), #use all() to check if all values are true
+        'targetMap': value_map,
+        'individualValidation': individual_file_validation,
+        'allTargetValues': unique_target_values,
+        'mismatchedColumns': mismatchedColumns
     }
 
     return validation
@@ -180,4 +216,48 @@ def integrated_validate():
     )
     response.headers["Content-Type"] = "application/json"
 
-    return response    
+    return response
+
+
+@integrated.route('/transform/',methods=['POST'])
+def integrated_transform():
+    fileObjectArray = request.json['fileObjectArray']
+    target = request.json['target']
+    transform = request.json['transform']
+
+    output_array = []
+
+    for file in fileObjectArray:
+        df = load_file(file['storageId'])
+
+
+        #define transforms
+
+        if transform['type'] == 'targetMap':
+
+            df = transform_target_map(df, target, transform)
+
+
+        storage_id = str(uuid.uuid4())
+        storage_file = df.to_csv(index=False)
+        df.to_csv(os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id), index=False)
+
+        params = file_params(df)
+        params['storageId'] = storage_id
+        params['name'] = file['name']
+
+
+        output_array.append(params)
+
+    response = make_response(
+        simplejson.dumps(output_array, ignore_nan=True),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response   
+    
+
+def transform_target_map(df, target, transform):
+    df[target] = df[target].astype('str').map(transform['data']['map']).astype('int')
+    return df

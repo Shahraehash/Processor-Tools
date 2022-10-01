@@ -23,6 +23,7 @@
         :files="dataFiles"
         :target="target"
         :analysisFunction="c.analysisFunction"
+        :transformFunction="c.transformFunction"
         @next="c.events.next"
         @update="c.events.update; setStep(key)"
         :ref="'step' + key"
@@ -85,7 +86,7 @@
 
   
   //support code
-  import { validateFiles } from '@/v3Methods'
+  import { validateFiles, transformTargetMap } from '@/v3Methods'
   
   //components
 import MenuBar from "@/components/MenuBar.vue";
@@ -164,11 +165,23 @@ import PreMilo from '@/PreMilo'
               subcomponent: 'v3subFileValidate',
               stepTitle: 'File Validation',
               analysisFunction: validateFiles,
+              transformFunction: transformTargetMap,
               events: {
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
                 update: (e) => {console.log('update', e); },
               }
-          },              
+          },   
+          {
+              component: 'v3parentStepTemplate',
+              subcomponent: 'v3subFileValidate',
+              stepTitle: 'File Validation',
+              analysisFunction: validateFiles,
+              transformFunction: transformTargetMap,
+              events: {
+                next: (fileMetadata) => { this.nextStep(fileMetadata);},
+                update: (e) => {console.log('update', e); },
+              }
+          },                        
               
 
           ]

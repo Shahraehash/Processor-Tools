@@ -47,7 +47,19 @@ let validateFiles = async (fileObjectArray, target)  => {
       }
     })
     return response.data
-}   
+}
+
+let transformTargetMap = async (fileObjectArray, target, transform) => {
+
+  let json = {fileObjectArray, target, transform}
+  const response = await axios.post('/preprocessor_api/integrated/transform', json, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  return response.data  
+
+}
 
 
 
@@ -55,6 +67,7 @@ export {
     storeFile,
     paramFile,
     storeParamFile,
-    validateFiles
+    validateFiles,
+    transformTargetMap
 
 }
