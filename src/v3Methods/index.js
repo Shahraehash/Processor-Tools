@@ -83,6 +83,19 @@ let analyzeMissingColumns = async (fileObjectArray, target) => {
 }
 
 
+let effectColumnRemoval = async (fileObjectArray, target, effect) => {
+  let json = {fileObjectArray, target, effect}
+  const response = await axios.post('/preprocessor_api/integrated/effect/column_removal', json, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })  
+  return response.data  
+
+}
+
+
+
 
 export { 
     storeFile,
@@ -90,6 +103,8 @@ export {
     storeParamFile,
     validateFiles,
     transformTargetMap,
-    analyzeMissingColumns
+    analyzeMissingColumns,
+    effectColumnRemoval
+    
 
 }

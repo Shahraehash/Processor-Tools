@@ -255,16 +255,18 @@ def integrated_analyze():
     target = request.json['target']
     analyze = request.json['analyze']
 
-    output_array = []
+    df_array = []
 
     for file in fileObjectArray:
         df = load_file(file['storageId'])   
 
-        if analyze['method'] == 'missingColumns':
-            result = analyze_missing_columns(df, target)
-            output_array.append(result)
+        df_array.append(df)
 
-    json = {'columnMetadata': output_array}
+    df = pd.concat(df_array)
+
+    result = analyze_missing_columns(df, target)
+
+    json = {'fileAnalysisCombined': result}
 
     response = make_response(
         simplejson.dumps(json, ignore_nan=True),
@@ -276,23 +278,88 @@ def integrated_analyze():
 
 
 
+@integrated.route('/effect/column_removal',methods=['POST'])
+def integrated_effect_column_removal():
+    fileObjectArray = request.json['fileObjectArray']
+    target = request.json['target']
+    effect = request.json['effect']
+
+    result = []
+
+    for file in fileObjectArray:
+        df = load_file(file['storageId'])  
+
+        r = effect_column_removal(df, target, effect) 
+
+        result.append(r)
+        
+
+    json = {'fileEffectArray': result}
+
+    response = make_response(
+        simplejson.dumps(json, ignore_nan=True),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response      
+
+
+
+
 
 #ANALYSIS
 def analyze_missing_columns(df, target):
-    missing = {}
-   ##columns
-    missingColumn = df.isna().sum()
-    missing['cols'] = missingColumn[missingColumn != 0].to_dict()
-    ###percent of total values in colums
-    nanByColumnPercent = round(df.isna().sum() / df.count().sum() * 100, 4)
-    missing['colsPercent'] = nanByColumnPercent[nanByColumnPercent !=0].to_dict()
-    ###percent ot total missing values
-    nanColumnContributionPercent = round(df.isna().sum() / df.isna().sum().sum() * 100, 2)
-    missing['colsPercentContribution'] = nanColumnContributionPercent[nanColumnContributionPercent !=0].to_dict()
+
+    df.drop(target, axis=1, inplace=True)
+    
+    missing = []
+
+    #determine how to relabel groupings of booleans
+    mapDict = {True: 'singleMissing', False: 'multipleMissing'}
+
+    #calculate how many rows have single missing values
+    #row_opporunities = (df[df.isnull().sum(axis=1) != 0].isnull().sum(axis=1) == 1).map(mapDict).value_counts()
+
+    #determine metrics for each individula column
+    for col in df.columns:
+
+        #determine how many rows have single missing values vs multiple
+        split = df[df[col].isna()].isna().sum(axis=1) > 1
+        d = split.map(mapDict).value_counts() #group
+
+        
+
+        #complete dictionary
+        if 'singleMissing' not in d:
+            d['singleMissing'] = 0
+        if 'multipleMissing' not in d:
+            d['multipleMissing'] = 0
+
+        #other metrics to use
+        d['total'] = d.sum()
+        d['percentValues'] = round(d['total'] / (df.shape[0] * df.shape[1]) * 100, 2)
+        d['percentContributions'] = round(d['total'] / df.isnull().sum().sum() * 100, 2)
+        d['col'] = col
+
+        if d['total'] > 0:
+            d = d.to_dict()
+            missing.append(d)
+
     return missing
 
 
+#EFFECTS
+def effect_column_removal(df, target, effect):
+    
+    df_drop = df.drop(effect['selectedColumns'], axis=1)
 
+
+
+    return {
+        'old': file_params(df),
+        'new': file_params(df_drop)
+    }
 
 
 ##TRANSFORMS
