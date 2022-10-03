@@ -21,6 +21,9 @@ def load_file(storage_id):
     df = df.replace(r'^\s*$', np.nan, regex=True) #replaces empty strings spacess with NaN
     return df
 
+def int_list_to_string(lst):
+    return list(map(lambda n: str(n), lst))
+
 def file_params(df):
     params = {}
     #size

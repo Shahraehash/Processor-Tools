@@ -99,7 +99,7 @@ export default {
       //
       analysis: null,
       complete: true,
-      transform: null,
+      transformObj: null,
 
     }
   },
@@ -118,12 +118,12 @@ export default {
   },
   methods: {
     next() {
-      this.transformFunction(this.currentFiles, this.target, this.transform)
+      this.transformFunction(this.currentFiles, this.target, this.transformObj)
       .then(r => this.$emit('next', r))
     },
     update(obj) {
       this.complete = obj.complete
-      this.transform = obj.transform
+      this.transformObj = obj.transformObj
       this.$emit('update')
     }
   }

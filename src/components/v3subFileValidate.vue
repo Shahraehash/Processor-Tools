@@ -91,6 +91,8 @@
 
 </template>
 <script>
+import {buildTransformObject} from '@/v3Methods'
+
 import v3miniValidate from './v3miniValidate.vue'
 import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
 
@@ -133,18 +135,11 @@ export default {
         },        
     },
     methods: {
-        buildTransform() {
-            return {
-                type: 'targetMap',
-                data: {
-                    map: this.analysis.targetMap
-                }
-            }
-        },
+
         update() {
             let result = {
                 complete: this.complete,
-                transform: this.buildTransform()
+                transformObj: buildTransformObject('file_validate_target_map', {map: this.analysis.targetMap})
             }
 
             this.$emit('update', result)

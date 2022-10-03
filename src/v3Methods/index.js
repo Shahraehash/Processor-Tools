@@ -4,6 +4,9 @@
 import axios from 'axios'
 
 
+let buildTransformObject =  (method, data) => {
+  return {method, data}
+}
 
 
 //Store file in backend and generate ID
@@ -63,6 +66,7 @@ let analyzeFileArray = async (fileObjectArray, target, analyze) => {
       'Content-Type': 'application/json',
     }
   })
+  console.log(response.data)
   return response.data  
 
 }
@@ -97,6 +101,7 @@ let transformFileArray = async (fileObjectArray, target, transform) => {
 
 
 export { 
+    buildTransformObject,
     storeFile,
     paramFile,
     storeParamFile,

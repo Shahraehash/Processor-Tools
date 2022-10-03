@@ -88,7 +88,7 @@
   
   //support code
   import { 
-    validateFiles, transformFileArray,
+    transformFileArray,
     analyzeFileArray,
    } from '@/v3Methods'
   
@@ -167,8 +167,8 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
               component: 'v3parentStepTemplate',
               subcomponent: 'v3subFileValidate',
               stepTitle: 'File Validation',
-              analysisFunction: validateFiles,
-              analysisMethod: '',
+              analysisFunction: analyzeFileArray,
+              analysisObj: {method: 'file_validate'},
               transformFunction: transformFileArray,
               events: {
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
