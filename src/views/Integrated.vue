@@ -181,12 +181,24 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
               stepTitle: 'Column Pruning to Minimize Missing Data',
               analysisFunction: analyzeFileArray,
               analysisObj: {method: 'column_removal'},
-              transformFunction: null,
+              transformFunction: transformFileArray,
               events: {
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
                 update: (e) => {console.log('update', e); },
               }
-          },                        
+          },
+          {
+              component: 'v3parentStepTemplate',
+              subcomponent: 'v3subEncodeNonnumeric',
+              stepTitle: 'Ensure all columns are numeric',
+              analysisFunction: analyzeFileArray,
+              analysisObj: {method: 'file_validate'},
+              transformFunction: transformFileArray,
+              events: {
+                next: (fileMetadata) => { this.nextStep(fileMetadata);},
+                update: (e) => {console.log('update', e); },
+              }
+          },                                 
               
 
           ]

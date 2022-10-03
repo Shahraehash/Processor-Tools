@@ -13,7 +13,7 @@ from tinydb import TinyDB
 from .helpers import convert_blanks_to_nan, find_nan_counts, file_params, save_file, load_file
 
 from .integrated_file_validate import analysis_file_validate, transform_file_validate_target_map
-from .integrated_column_removal import analyze_column_removal, effect_column_removal
+from .integrated_column_removal import analyze_column_removal, effect_column_removal, transform_column_removal
 
 
 
@@ -137,8 +137,10 @@ def integrated_transform():
         #define transforms
 
         if transform['method'] == 'file_validate_target_map':
-
             df = transform_file_validate_target_map(df, target, transform)
+
+        elif transform['method'] == 'column_removal':
+            df = transform_column_removal(df, target, transform)
         
 
 

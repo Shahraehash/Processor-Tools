@@ -89,7 +89,6 @@ def analysis_file_validate(fileObjectArray, target):
     return validation
 
 #EFFECT
-
 #None
 
 #TRANSFORM

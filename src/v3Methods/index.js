@@ -40,25 +40,9 @@ let storeParamFile = async (file) => {
     return result
 }
 
-//Validate files
-let validateFiles = async (fileObjectArray, target)  => {
-
-    let json = {fileObjectArray, target}
-    const response = await axios.post('/preprocessor_api/integrated/validate', json, {
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    return response.data
-}
-
-
 
 //ANALYSIS
 let analyzeFileArray = async (fileObjectArray, target, analyze) => {
-
-
-
   let json = {fileObjectArray, target, analyze}
   console.log(json)
   const response = await axios.post('/preprocessor_api/integrated/analyze', json, {
@@ -105,7 +89,6 @@ export {
     storeFile,
     paramFile,
     storeParamFile,
-    validateFiles,
     transformFileArray,
     analyzeFileArray,
     effectFileArray

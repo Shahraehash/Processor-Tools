@@ -91,7 +91,8 @@
 
 </template>
 <script>
-import { effectFileArray } from '@/v3Methods'
+import { effectFileArray, buildTransformObject } from '@/v3Methods'
+
 
 import v3miniValidate from './v3miniValidate.vue'
 import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
@@ -154,25 +155,17 @@ export default {
         },        
     },
     methods: {
-        selection(value) {
-            this.selectedColumns.includes(value) ? this.selectedColumns.splice(this.selectedColumns.indexOf(value), 1) : this.selectedColumns.push(value)
-        },
-
-        buildTransform() {
-            return {
-                type: 'columnPrune',
-                data: {
-                    columnsToRemove: []
-                }
-            }
-        },
         update() {
             let result = {
                 complete: this.complete,
-                transform: this.buildTransform()
+                transformObj: buildTransformObject('column_removal', {selectedColumns: this.selectedColumns})
             }
 
             this.$emit('update', result)
+        },        
+        selection(value) {
+            this.selectedColumns.includes(value) ? this.selectedColumns.splice(this.selectedColumns.indexOf(value), 1) : this.selectedColumns.push(value)
+            this.update()
         },
         makeGraphOptions(labels) {
             return {

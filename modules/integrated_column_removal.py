@@ -54,7 +54,6 @@ def analyze_column_removal(fileObjectArray, target):
 
 
 #EFFECT
-
 def effect_column_removal(fileObjectArray, target, effect):
 
     result = []
@@ -71,3 +70,11 @@ def effect_column_removal(fileObjectArray, target, effect):
     json = {'fileEffectArray': result}
 
     return json
+
+
+#TRANSFORM
+def transform_column_removal(df, target, transform):
+
+    df.drop(transform['data']['selectedColumns'], axis=1, inplace=True)
+
+    return df

@@ -2,6 +2,7 @@
     <div>
         <div>Pick which data you want...</div>
         <div v-if="analysis">
+            {{analysis}}
            
         </div>
     </div>
