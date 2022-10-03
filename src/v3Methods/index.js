@@ -49,23 +49,15 @@ let validateFiles = async (fileObjectArray, target)  => {
     return response.data
 }
 
-let transformTargetMap = async (fileObjectArray, target, transform) => {
 
-  let json = {fileObjectArray, target, transform}
-  const response = await axios.post('/preprocessor_api/integrated/transform', json, {
-    headers: {
-      'Content-Type': 'application/json',
-    }
-  })
-  return response.data  
-
-}
 
 //ANALYSIS
-//Parent Function
 let analyzeFileArray = async (fileObjectArray, target, analyze) => {
 
+
+
   let json = {fileObjectArray, target, analyze}
+  console.log(json)
   const response = await axios.post('/preprocessor_api/integrated/analyze', json, {
     headers: {
       'Content-Type': 'application/json',
@@ -75,24 +67,31 @@ let analyzeFileArray = async (fileObjectArray, target, analyze) => {
 
 }
 
-//Child Functions
-let analyzeMissingColumns = async (fileObjectArray, target) => {
-  const analysis = {method: 'missingColumns'}
-  const response = await analyzeFileArray(fileObjectArray, target, analysis)
-  return response
-}
-
-
-let effectColumnRemoval = async (fileObjectArray, target, effect) => {
+//EFFECT
+let effectFileArray = async (fileObjectArray, target, effect) => {
   let json = {fileObjectArray, target, effect}
-  const response = await axios.post('/preprocessor_api/integrated/effect/column_removal', json, {
+  const response = await axios.post('/preprocessor_api/integrated/effect', json, {
     headers: {
       'Content-Type': 'application/json',
     }
   })  
   return response.data  
-
 }
+
+//TRANSFORM
+let transformFileArray = async (fileObjectArray, target, transform) => {
+  let json = {fileObjectArray, target, transform}
+  const response = await axios.post('/preprocessor_api/integrated/transform', json, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  return response.data  
+}
+
+
+
+
 
 
 
@@ -102,9 +101,9 @@ export {
     paramFile,
     storeParamFile,
     validateFiles,
-    transformTargetMap,
-    analyzeMissingColumns,
-    effectColumnRemoval
+    transformFileArray,
+    analyzeFileArray,
+    effectFileArray
     
 
 }

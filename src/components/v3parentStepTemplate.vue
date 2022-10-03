@@ -45,7 +45,7 @@ import v3ButtonNext from './v3ButtonNext.vue'
 
 //subcomponents
 import v3subFileValidate from './v3subFileValidate'
-import v3subMissingColumns from './v3subMissingColumns.vue'
+import v3subColumnRemoval from './v3subColumnRemoval.vue'
 
 
 export default {
@@ -54,7 +54,7 @@ export default {
     v3StepHeading,
     v3ButtonNext,
     v3subFileValidate,
-    v3subMissingColumns
+    v3subColumnRemoval
   },
   props: {
     stepNumber: {
@@ -82,6 +82,10 @@ export default {
       type: Function,
       default: null
     },
+    analysisObj: {
+      type: Object,
+      default: () => {}
+    },    
     transformFunction: {
       type: Function,
       default: null
@@ -107,7 +111,7 @@ export default {
   async mounted() {
     window.scrollTo(0,document.body.scrollHeight);
     if (this.analysisFunction != null) {
-      this.analysisFunction(this.currentFiles, this.target)
+      this.analysisFunction(this.currentFiles, this.target, this.analysisObj)
       .then(r => this.analysis = r)
     }
     

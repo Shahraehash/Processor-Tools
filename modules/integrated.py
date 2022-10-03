@@ -10,7 +10,9 @@ from datetime import datetime
 from tinydb import TinyDB
 
 #helper functions
-from .helpers import convert_blanks_to_nan, find_nan_counts
+from .helpers import convert_blanks_to_nan, find_nan_counts, file_params
+
+from .integrated_column_removal import analyze_column_removal, effect_column_removal
 
 db = TinyDB('db.json')
 
@@ -23,32 +25,7 @@ integrated = Blueprint(
 
 
 
-def file_params(df):
-    params = {}
-    #size
-    params['size'] = {}
-    params['size']['rows'] = int(df.shape[0])
-    params['size']['cols'] = int(df.shape[1])
 
-    #missing values
-    params['missing'] = {}
-    ##rows
-    params['missing']['rows'] = int(df[df.isna().any(axis=1)].shape[0])
-    params['missing']['rowsPercent'] = float(round(params['missing']['rows'] / params['size']['rows'], 7) * 100)
-    ##cells
-    params['missing']['cells'] = int(df.isna().sum().sum())
-    params['missing']['cellsPercent'] = float(round(params['missing']['cells'] / (params['size']['rows'] * params['size']['cols']), 7) * 100)
- 
-    #names
-    params['names'] = {}
-    params['names']['cols'] = list(df.columns.values)
-    params['names']['colsReverse'] = list(df.columns.values)
-    params['names']['colsReverse'].reverse()
-
-    #describe
-    params['describe'] = df.describe().to_dict()
-
-    return params
 
 
 def int_list_to_string(lst):
@@ -255,18 +232,12 @@ def integrated_analyze():
     target = request.json['target']
     analyze = request.json['analyze']
 
-    df_array = []
+    #For Missing Columns
+    if analyze['method'] == 'column_removal':
+        json = analyze_column_removal(fileObjectArray, target)
 
-    for file in fileObjectArray:
-        df = load_file(file['storageId'])   
-
-        df_array.append(df)
-
-    df = pd.concat(df_array)
-
-    result = analyze_missing_columns(df, target)
-
-    json = {'fileAnalysisCombined': result}
+    else: 
+        json = {'error': 'invalid method'}
 
     response = make_response(
         simplejson.dumps(json, ignore_nan=True),
@@ -278,24 +249,18 @@ def integrated_analyze():
 
 
 
-@integrated.route('/effect/column_removal',methods=['POST'])
+@integrated.route('/effect/',methods=['POST'])
 def integrated_effect_column_removal():
     fileObjectArray = request.json['fileObjectArray']
     target = request.json['target']
     effect = request.json['effect']
 
-    result = []
+    if effect['method'] == 'column_removal':
+        json = effect_column_removal(fileObjectArray, target, effect) 
 
-    for file in fileObjectArray:
-        df = load_file(file['storageId'])  
-
-        r = effect_column_removal(df, target, effect) 
-
-        result.append(r)
+    else: 
+        json = {'error': 'invalid method'}
         
-
-    json = {'fileEffectArray': result}
-
     response = make_response(
         simplejson.dumps(json, ignore_nan=True),
         200,
@@ -308,58 +273,6 @@ def integrated_effect_column_removal():
 
 
 
-#ANALYSIS
-def analyze_missing_columns(df, target):
-
-    df.drop(target, axis=1, inplace=True)
-    
-    missing = []
-
-    #determine how to relabel groupings of booleans
-    mapDict = {True: 'singleMissing', False: 'multipleMissing'}
-
-    #calculate how many rows have single missing values
-    #row_opporunities = (df[df.isnull().sum(axis=1) != 0].isnull().sum(axis=1) == 1).map(mapDict).value_counts()
-
-    #determine metrics for each individula column
-    for col in df.columns:
-
-        #determine how many rows have single missing values vs multiple
-        split = df[df[col].isna()].isna().sum(axis=1) > 1
-        d = split.map(mapDict).value_counts() #group
-
-        
-
-        #complete dictionary
-        if 'singleMissing' not in d:
-            d['singleMissing'] = 0
-        if 'multipleMissing' not in d:
-            d['multipleMissing'] = 0
-
-        #other metrics to use
-        d['total'] = d.sum()
-        d['percentValues'] = round(d['total'] / (df.shape[0] * df.shape[1]) * 100, 2)
-        d['percentContributions'] = round(d['total'] / df.isnull().sum().sum() * 100, 2)
-        d['col'] = col
-
-        if d['total'] > 0:
-            d = d.to_dict()
-            missing.append(d)
-
-    return missing
-
-
-#EFFECTS
-def effect_column_removal(df, target, effect):
-    
-    df_drop = df.drop(effect['selectedColumns'], axis=1)
-
-
-
-    return {
-        'old': file_params(df),
-        'new': file_params(df_drop)
-    }
 
 
 ##TRANSFORMS

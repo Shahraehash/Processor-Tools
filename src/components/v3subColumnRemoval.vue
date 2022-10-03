@@ -91,7 +91,7 @@
 
 </template>
 <script>
-import { effectColumnRemoval } from '@/v3Methods'
+import { effectFileArray } from '@/v3Methods'
 
 import v3miniValidate from './v3miniValidate.vue'
 import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
@@ -139,9 +139,10 @@ export default {
         },
         selectedColumns: function(val) {
             let effect = {
+                method: 'column_removal',
                 selectedColumns: val
             }
-            effectColumnRemoval(this.currentFiles, this.target, effect).then((res) => {
+            effectFileArray(this.currentFiles, this.target, effect).then((res) => {
                 this.effect = res
             })
 

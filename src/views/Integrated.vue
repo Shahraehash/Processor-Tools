@@ -22,6 +22,7 @@
         :stepNumber="key + 1"
         :files="dataFiles"
         :target="target"
+        :analysisObj="c.analysisObj"
         :analysisFunction="c.analysisFunction"
         :transformFunction="c.transformFunction"
         @next="c.events.next"
@@ -87,8 +88,8 @@
   
   //support code
   import { 
-    validateFiles, transformTargetMap,
-    analyzeMissingColumns,
+    validateFiles, transformFileArray,
+    analyzeFileArray,
    } from '@/v3Methods'
   
   //components
@@ -167,7 +168,8 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
               subcomponent: 'v3subFileValidate',
               stepTitle: 'File Validation',
               analysisFunction: validateFiles,
-              transformFunction: transformTargetMap,
+              analysisMethod: '',
+              transformFunction: transformFileArray,
               events: {
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
                 update: (e) => {console.log('update', e); },
@@ -175,9 +177,10 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
           },   
           {
               component: 'v3parentStepTemplate',
-              subcomponent: 'v3subMissingColumns',
+              subcomponent: 'v3subColumnRemoval',
               stepTitle: 'Column Pruning to Minimize Missing Data',
-              analysisFunction: analyzeMissingColumns,
+              analysisFunction: analyzeFileArray,
+              analysisObj: {method: 'column_removal'},
               transformFunction: null,
               events: {
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
