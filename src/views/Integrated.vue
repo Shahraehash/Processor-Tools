@@ -128,14 +128,11 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
           dataFiles: [],
           target: null,
           refreshKey: 0,
-
           componentList: [],
-
         }
     },
 
     mounted() {
-
         this.componentList = this.getComponentList()
     },
     methods: {
@@ -192,7 +189,7 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
               subcomponent: 'v3subEncodeNonnumeric',
               stepTitle: 'Ensure all columns are numeric',
               analysisFunction: analyzeFileArray,
-              analysisObj: {method: 'file_validate'},
+              analysisObj: {method: 'encode_nonnumeric'},
               transformFunction: transformFileArray,
               events: {
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
