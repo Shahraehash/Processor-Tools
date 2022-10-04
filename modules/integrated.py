@@ -14,6 +14,7 @@ from .helpers import convert_blanks_to_nan, find_nan_counts, file_params, save_f
 
 from .integrated_file_validate import analysis_file_validate, transform_file_validate_target_map
 from .integrated_column_removal import analyze_column_removal, effect_column_removal, transform_column_removal
+from .integrated_encode_nonnumeric import analyze_encode_nonnumeric, transform_encode_nonnumeric
 
 
 
@@ -84,6 +85,12 @@ def integrated_analyze():
     elif analyze['method'] == 'column_removal':
         json = analyze_column_removal(fileObjectArray, target)
 
+    #For Non-Numeric Columns
+    elif analyze['method'] == 'encode_nonnumeric':
+        json = analyze_encode_nonnumeric(fileObjectArray, target)
+
+
+
 
     else: 
         json = {'error': 'invalid method'}
@@ -128,38 +135,21 @@ def integrated_transform():
     target = request.json['target']
     transform = request.json['transform']
 
-    output_array = []
 
-    for file in fileObjectArray:
-        df = load_file(file['storageId'])
+    if transform['method'] == 'file_validate_target_map':
+        json = transform_file_validate_target_map(fileObjectArray, target, transform)
 
-
-        #define transforms
-
-        if transform['method'] == 'file_validate_target_map':
-            df = transform_file_validate_target_map(df, target, transform)
-
-        elif transform['method'] == 'column_removal':
-            df = transform_column_removal(df, target, transform)
+    elif transform['method'] == 'column_removal':
+        json = transform_column_removal(fileObjectArray, target, transform)
         
+    elif transform['method'] == 'encode_nonnumeric':
+        json = transform_encode_nonnumeric(fileObjectArray, target, transform)
+            
 
 
-
-
-
-        storage_id = str(uuid.uuid4())
-        storage_file = df.to_csv(index=False)
-        df.to_csv(os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id), index=False)
-
-        params = file_params(df)
-        params['storageId'] = storage_id
-        params['name'] = file['name']
-
-
-        output_array.append(params)
 
     response = make_response(
-        simplejson.dumps(output_array, ignore_nan=True),
+        simplejson.dumps(json, ignore_nan=True),
         200,
     )
     response.headers["Content-Type"] = "application/json"
@@ -168,6 +158,24 @@ def integrated_transform():
 
 
 
+@integrated.route('/export/',methods=['POST'])
+def integrated_export():
+    fileObjectArray = request.json['fileObjectArray']
 
-##TRANSFORMS
+    json = []
 
+    for fileObject in fileObjectArray:
+        storage_id = fileObject['storageId']
+        df = load_file(storage_id)
+        json.append({
+            'name': fileObject['name'],
+            'content': df.to_csv(index=True, index_label="source_row")
+        })
+        
+    response = make_response(
+        simplejson.dumps(json, ignore_nan=True),
+        200,
+    )
+    response.headers["Content-Type"] = "application/json"
+
+    return response       

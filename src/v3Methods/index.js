@@ -50,7 +50,6 @@ let analyzeFileArray = async (fileObjectArray, target, analyze) => {
       'Content-Type': 'application/json',
     }
   })
-  console.log(response.data)
   return response.data  
 
 }
@@ -78,6 +77,18 @@ let transformFileArray = async (fileObjectArray, target, transform) => {
 }
 
 
+//EXPORT
+let exportFileArray = async (fileObjectArray) => {
+  let json = {fileObjectArray}
+  const response = await axios.post('/preprocessor_api/integrated/export', json, {
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  })
+  return response.data  
+}
+
+
 
 
 
@@ -91,7 +102,8 @@ export {
     storeParamFile,
     transformFileArray,
     analyzeFileArray,
-    effectFileArray
+    effectFileArray,
+    exportFileArray
     
 
 }

@@ -195,7 +195,19 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
                 next: (fileMetadata) => { this.nextStep(fileMetadata);},
                 update: (e) => {console.log('update', e); },
               }
-          },                                 
+          },  
+          {
+              component: 'v3parentStepTemplate',
+              subcomponent: 'v3subTrainTestSplit',
+              stepTitle: 'Split Data into Training and Testing Sets',
+              analysisFunction: analyzeFileArray,
+              analysisObj: {method: 'train_test_split'},
+              transformFunction: transformFileArray,
+              events: {
+                next: (fileMetadata) => { this.nextStep(fileMetadata);},
+                update: (e) => {console.log('update', e); },
+              }
+          },                                             
               
 
           ]

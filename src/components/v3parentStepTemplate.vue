@@ -9,7 +9,10 @@
     <v3StepHeading
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
-      />         
+      />    
+    
+    <!-- EXPORT -->
+    <v3miniExport :currentFiles="currentFiles" />
 
     <!-- Core Component -->
     <div>
@@ -42,11 +45,13 @@
 //components
 import v3StepHeading from '@/components/v3StepHeading'  
 import v3ButtonNext from './v3ButtonNext.vue'
+import v3miniExport from './v3miniExport.vue'
 
 //subcomponents
 import v3subFileValidate from './v3subFileValidate'
 import v3subColumnRemoval from './v3subColumnRemoval.vue'
 import v3subEncodeNonnumeric from './v3subEncodeNonnumeric.vue'
+import v3subTrainTestSplit from './v3subTrainTestSplit.vue'
 
 
 export default {
@@ -54,9 +59,11 @@ export default {
   components: {
     v3StepHeading,
     v3ButtonNext,
+    v3miniExport,
     v3subFileValidate,
     v3subColumnRemoval,
-    v3subEncodeNonnumeric
+    v3subEncodeNonnumeric,
+    v3subTrainTestSplit
   },
   props: {
     stepNumber: {

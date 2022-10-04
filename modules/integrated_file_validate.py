@@ -1,9 +1,13 @@
 
+
+
+from flask import Blueprint, current_app, jsonify, request, make_response, abort
 import pandas as pd
 import numpy as np
+import os
+import uuid
 
-from .helpers import load_file, save_file, file_params, int_list_to_string
-
+from .helpers import load_file, save_file, file_params, int_list_to_string, store_file_and_params
 
 #ANALYSIS
 
@@ -92,8 +96,21 @@ def analysis_file_validate(fileObjectArray, target):
 #None
 
 #TRANSFORM
-def transform_file_validate_target_map(df, target, transform):
-    df[target] = df[target].astype('str').map(transform['data']['map']).astype('int')
-    return df
+def transform_file_validate_target_map(fileObjectArray, target, transform):
+
+    result = []
+
+    for file in fileObjectArray:
+        df = load_file(file['storageId'])
+
+        df[target] = df[target].astype('str').map(transform['data']['map']).astype('int')
+        #store file and generate file object
+        result.append(store_file_and_params(df, file['name']))
+
+    return result
+
+
+    
+
 
 

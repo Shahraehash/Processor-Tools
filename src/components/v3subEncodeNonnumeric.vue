@@ -37,6 +37,7 @@
                                 item-text="text"
                                 outlined
                                 dense
+                                @change="update()"
                                 >
 
                             </v-select>
@@ -79,6 +80,7 @@ export default {
     data() {
         return {
             effect: null,
+            localAnalysis: null // this is a copy of the analysis object, needed to make changes
         }
     },
     mounted() {
@@ -102,7 +104,7 @@ export default {
         update() {
             let result = {
                 complete: this.complete,
-                transformObj: buildTransformObject('encode_nonnumeric', {})
+                transformObj: buildTransformObject('encode_nonnumeric', this.analysis['fileAnalysisCombined']) //data model in analysis
             }
 
             this.$emit('update', result)

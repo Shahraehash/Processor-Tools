@@ -2,6 +2,7 @@ from flask import current_app
 import pandas as pd
 import numpy as np
 import os
+import uuid
 
 
 def convert_blanks_to_nan(df):
@@ -50,3 +51,14 @@ def file_params(df):
     params['describe'] = df.describe().to_dict()
 
     return params    
+
+def store_file_and_params(df, file_name):
+
+    storage_id = str(uuid.uuid4())
+    df.to_csv(os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id), index=False)
+
+    params = file_params(df)
+    params['storageId'] = storage_id
+    params['name'] = file_name
+
+    return params   

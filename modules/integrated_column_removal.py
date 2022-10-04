@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 
-from .helpers import load_file, save_file, file_params
+from .helpers import load_file, save_file, file_params, store_file_and_params
 
 
 #ANALYSIS
@@ -73,8 +73,14 @@ def effect_column_removal(fileObjectArray, target, effect):
 
 
 #TRANSFORM
-def transform_column_removal(df, target, transform):
+def transform_column_removal(fileObjectArray, target, transform):
+    result = []
 
-    df.drop(transform['data']['selectedColumns'], axis=1, inplace=True)
+    for file in fileObjectArray:
+        df = load_file(file['storageId'])
 
-    return df
+        df.drop(transform['data']['selectedColumns'], axis=1, inplace=True)
+        #store file and generate file object
+        result.append(store_file_and_params(df, file['name']))
+
+    return result    
