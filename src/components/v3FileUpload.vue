@@ -42,49 +42,62 @@
         />
 
     <!-- If have files -->
-      <v-card 
-        flat 
-        outlined 
-        class="pa-3 my-2" 
-        v-for="(file, index) in files" 
-        :key="index"
-        >
-        <v-row dense v-if="fileMetadata[index]">
-          <v-col cols="6">
-            <v-icon>mdi-file</v-icon>
-            {{ file.name }}
-            <div>
-              <v-select v-model="fileMetadata[index].type" class="ma-2 mt-7" dense label="Data Type" :items="fileTypes" item-text="text" item-value="value"></v-select>
-            </div>
+
+      <v-row dense>
+        <v-col cols="4"
+          v-for="(file, index) in files" 
+          :key="index"
+          >
+
+          <v-card 
+            flat 
+            outlined 
+            class="pa-3 my-2 training-style" 
+            >
             
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="1">
-            <div class="overline">Rows</div>
-            <div>{{fileMetadata[index].size.rows}}</div>
-          </v-col>
-          <v-col cols="1">
-            <div class="overline">Cols</div>
-            <div>{{fileMetadata[index].size.cols}}</div>
-          </v-col>     
-          <v-col cols="3">
-            <div class="overline">Rows Missing Data</div>
-            <div>{{fileMetadata[index].missing.rows}} ({{fileMetadata[index].missing.rowsPercent}}%)</div>
-          </v-col>                 
-          <v-col cols="1" class="text-right">
-          <v-btn icon @click="removeFile(file)" title="mdi-close"><v-icon color="primary">mdi-close</v-icon></v-btn>
-        </v-col>          
-        </v-row>
-      </v-card>
+
+                <v-icon>mdi-file</v-icon>
+                {{ file.name }}
+                <v-btn icon @click="removeFile(file)" title="mdi-close"><v-icon color="primary">mdi-close</v-icon></v-btn>
+                <div>
+                  <v3miniValidate :valid="true" />
+                  {{fileMetadata[index].size.rows}} rows
+                </div>
+                <div>
+                  <v3miniValidate :valid="true" />
+                  {{fileMetadata[index].size.cols}} columns
+                </div>
+                <div>
+                  <v3miniValidate :valid="fileMetadata[index].missing.rows == 0" />
+                  {{fileMetadata[index].missing.rows}}
+                  <span v-if="fileMetadata[index].missing.rows > 0">({{fileMetadata[index].missing.rowsPercent}}%)</span>
+                  rows missing data
+                </div>
+                <div>
+                  <v-select outlined v-model="fileMetadata[index].type" class="ma-2 mt-7" dense label="Data Type" :items="fileTypes" item-text="text" item-value="value"></v-select>
+                </div>
+              
+
+
+
+          </v-card>          
+          
+        </v-col>
+        <v-col cols="4">
+          <div class="text-right mr-3" v-if="files.length > 0">
+            <v-btn icon
+              @click="$refs.fileClick.click()"
+              >
+              <v-icon large>mdi-plus-circle-outline</v-icon>
+              </v-btn>
+          </div>
+        </v-col>
+      </v-row>
+
+
 
   
-      <div class="text-right mr-3" v-if="files.length > 0">
-        <v-btn icon
-          @click="$refs.fileClick.click()"
-          >
-          <v-icon>mdi-plus-circle-outline</v-icon>
-          </v-btn>
-      </div>
+
 
       <!-- Pick Target -->
       <div class="mt-10" v-if="fileMetadata[0]">
@@ -127,13 +140,15 @@
   //components
   import v3StepHeading from '@/components/v3StepHeading'
   import v3ButtonNext from '@/components/v3ButtonNext'
+  import v3miniValidate from './v3miniValidate.vue'
 
   //Inspired by: https://www.raymondcamden.com/2019/08/08/drag-and-drop-file-upload-in-vuejs
   export default {
     name: 'v3FileUpload',
     components: {
       v3StepHeading,
-      v3ButtonNext
+      v3ButtonNext,
+      v3miniValidate
       
     },
     data() {
@@ -234,6 +249,12 @@
   #indent-text {
       margin-left: 1.8em;
       text-indent: -1.8em;
+  }
+
+  .training-style {
+    box-sizing: border-box;
+    border: 5px solid grey;
+    border-radius: 10px;
   }
   </style>
   
