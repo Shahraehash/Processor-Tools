@@ -6,8 +6,6 @@
         :description="$store.state.tools[$options.name].description"
         @reset="reset()"
       />
-      {{dataFiles.length}}
-      {{currentStep}}
 
       <!-- Dynamically Render Components Base on Need -->
 

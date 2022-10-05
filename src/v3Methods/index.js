@@ -8,6 +8,25 @@ let buildTransformObject =  (method, data) => {
   return {method, data}
 }
 
+let fileTypeColor = (fileType) => {
+  let color = null
+  switch (fileType) {
+    case 'traing':
+      color = 'green'
+      break;
+    case 'test':
+      color = 'blue'
+      break;
+    case 'combined':
+      color = 'red'
+      break;
+    default:
+      color = 'grey'
+      break;
+  }
+  return color
+}
+
 
 //Store file in backend and generate ID
 let storeFile = async (file) => {
@@ -97,6 +116,7 @@ let exportFileArray = async (fileObjectArray) => {
 
 export { 
     buildTransformObject,
+    fileTypeColor,
     storeFile,
     paramFile,
     storeParamFile,

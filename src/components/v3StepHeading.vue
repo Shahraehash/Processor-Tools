@@ -1,8 +1,8 @@
 <template>
     <div class="mb-3">
       <div class="title primary--text">
-        <div style="display: inline" class="text-h4">{{stepNumber}}</div>
-        <span class="ml-2">• {{stepTitle}}</span>
+        <div style="display: inline" class="text-h4 title-oval">{{stepNumber}}</div>
+        <span class="ml-1 text-h5"> {{stepTitle}}</span>
       </div>
     </div>
   </template>
@@ -25,4 +25,14 @@
     }
   }
   </script>
+  <style scoped>
+  .title-oval {
+
+    background: #1976d2;
+    padding: 0 20px;
+    border-radius: 200px;;
+    color: white;
+  }
+
+  </style>
   

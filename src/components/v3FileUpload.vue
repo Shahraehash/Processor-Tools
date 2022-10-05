@@ -53,6 +53,7 @@
             flat 
             outlined 
             class="pa-3 my-2 training-style" 
+            v-bind:style="{ 'border-color': mxfileTypeColor(fileMetadata[index].type)}"
             >
             
 
@@ -74,7 +75,25 @@
                   rows missing data
                 </div>
                 <div>
-                  <v-select outlined v-model="fileMetadata[index].type" class="ma-2 mt-7" dense label="Data Type" :items="fileTypes" item-text="text" item-value="value"></v-select>
+                  <v-select 
+                    
+                    v-model="fileMetadata[index].type" 
+                    class="ma-2 mt-7" 
+                     
+                    label="Data Type" 
+                    :items="mxfileTypes" 
+                    item-text="text" 
+                    item-value="value"
+                    >
+                    <template v-slot:selection="{ item, index }">
+                      <v-chip small v-if="index === 0" :color="mxfileTypeColor(item.value)" dark>
+                        <span>{{ item.text }}</span>
+                      </v-chip>
+     
+ 
+                    </template>
+
+                  </v-select>
                 </div>
               
 
@@ -133,8 +152,8 @@
 
 
   //support code
-  
-  import {  storeParamFile } from '@/v3Methods'
+  import { storeParamFile } from '@/v3Methods'
+  import v3Mixin from "@/components/v3Mixin.js";
 
 
   //components
@@ -145,6 +164,7 @@
   //Inspired by: https://www.raymondcamden.com/2019/08/08/drag-and-drop-file-upload-in-vuejs
   export default {
     name: 'v3FileUpload',
+    mixins: [ v3Mixin ],
     components: {
       v3StepHeading,
       v3ButtonNext,
@@ -153,11 +173,6 @@
     },
     data() {
       return {
-        fileTypes: [
-          {text: 'Training/Initial Test', value: 'train'},
-          {text: 'Generalized Test', value: 'test'},
-          {text: 'Train/Test Combined', value: 'combined'},
-        ],
         files: [],
         fileIds: [], //ids of files in the database, temporary
         fileMetadata: [],
@@ -197,6 +212,8 @@
   
     },
     methods: {
+      //import
+      //defined
       update() {
         this.$emit('update')
       },
@@ -253,7 +270,7 @@
 
   .training-style {
     box-sizing: border-box;
-    border: 5px solid grey;
+    border-width: 7px;
     border-radius: 10px;
   }
   </style>
