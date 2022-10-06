@@ -133,12 +133,12 @@ def transform_encode_nonnumeric(fileObjectArray, target, transform):
     result = []
 
     grouped = df.groupby(df.storage_id)
-    for storage_id in df['storage_id'].unique().tolist():
+    for file in fileObjectArray:
         file_index=0
-        df = grouped.get_group(storage_id)
+        df = grouped.get_group(file['storageId'])
         df = df.drop('storage_id', axis=1)
 
-        result.append(store_file_and_params(df, file['name']))
+        result.append(store_file_and_params(df, file['name'], file['type']))
         file_index += 1
     
     return result

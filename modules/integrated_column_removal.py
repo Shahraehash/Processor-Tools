@@ -81,6 +81,6 @@ def transform_column_removal(fileObjectArray, target, transform):
 
         df.drop(transform['data']['selectedColumns'], axis=1, inplace=True)
         #store file and generate file object
-        result.append(store_file_and_params(df, file['name']))
+        result.append(store_file_and_params(df, file['name'], file['type']))
 
     return result    

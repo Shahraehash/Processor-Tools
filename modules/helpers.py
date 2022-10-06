@@ -52,7 +52,7 @@ def file_params(df):
 
     return params    
 
-def store_file_and_params(df, file_name):
+def store_file_and_params(df, file_name, file_type):
 
     storage_id = str(uuid.uuid4())
     df.to_csv(os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id), index=False)
@@ -60,5 +60,6 @@ def store_file_and_params(df, file_name):
     params = file_params(df)
     params['storageId'] = storage_id
     params['name'] = file_name
+    params['type'] = file_type
 
     return params   

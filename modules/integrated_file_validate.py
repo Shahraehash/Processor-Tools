@@ -105,7 +105,7 @@ def transform_file_validate_target_map(fileObjectArray, target, transform):
 
         df[target] = df[target].astype('str').map(transform['data']['map']).astype('int')
         #store file and generate file object
-        result.append(store_file_and_params(df, file['name']))
+        result.append(store_file_and_params(df, file['name'], file['type']))
 
     return result
 
