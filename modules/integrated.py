@@ -55,6 +55,7 @@ def integrated_params():
     #maintain storageId
     params['storageId'] = storage_id
     params['name'] = name
+    params['type'] = None
 
     response = make_response(
         simplejson.dumps(params, ignore_nan=True),
