@@ -10,9 +10,10 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
       />    
+    <v3miniExport :currentFiles="currentFiles" class="mt-n15" />
     
     <!-- EXPORT -->
-    <v3miniExport :currentFiles="currentFiles" />
+
 
     <!-- Core Component -->
     <div>
@@ -33,6 +34,7 @@
       :disabled="currentStep > stepNumber - 1 || !complete"
       text="Next"
       />
+
     </div>      
   </v-card>
 </template>

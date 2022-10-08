@@ -1,92 +1,82 @@
 <template>
     <div>
-        <v3miniTrainTestLabel />
-        <v3miniValidate />
-        <div>All datasets are combined for this analysis. The effect or removing a column is shown by file below.</div>
+        
         <div v-if="analysis">
-            <v-row dense>
-                <v-col cols="6">
-                    
-                    <div class="text-center overline">Select Columns for Removal</div>
-
-                    
-                    <v-card class="mx-3 pa-1" flat>
-                        <v-row>
-                            <v-col cols="3">
-                            </v-col>
-                            <v-col cols="3" class="text-center">
-                                <div class="caption">Rows with only this column missing</div>
-                            </v-col>
-                            <v-col cols="3" class="text-center">
-                                <div class="caption">Rows with multiple columns missing</div>
-                            </v-col>
-                            <v-col cols="3" class="text-center">
-                                <div class="caption">% Contribution of Missing Cells</div>
-                            </v-col>   
-                        </v-row>
-                    </v-card>
-                    <v-card
-                         @click="selection(item.col)"
-                        class="ma-3 pa-1"
-                        v-bind:class="{selected: selectedColumns.includes(item.col)}"
+            
+            <div v-if="analysis.fileAnalysisCombined.length == 0" class="ma-4">
+                <v3miniValidate :valid="true"/> No files have missing values.
+            </div>
+           <div v-else>
+                <div>All datasets are combined for this analysis. The effect or removing a column is shown by file below.</div>
+                <v-row dense>
+                    <v-col cols="6">
                         
-                         v-for="(item, key) in analysis.fileAnalysisCombined" :key="key">
-
-
-                        <v-row dense>
-                            <v-col cols="1" style="text-decoration: none!important;">
-                                <v-icon v-if="selectedColumns.includes(item.col)">mdi-checkbox-marked</v-icon>
-                                <v-icon v-else>mdi-checkbox-blank-outline</v-icon>
-                            </v-col>
-                            <v-col cols="4">
-                                <v-chip>{{item.col}}</v-chip>
-                            </v-col>
-                            <v-col cols="2" class="text-center">
-                                {{item.singleMissing}}
-                            </v-col>
-                            <v-col cols="2" class="text-center">
-                                {{item.multipleMissing}}
-                            </v-col>
-                            <v-col cols="2" class="text-center">
-                                {{item.percentContributions}}%
-                            </v-col>                                                                           
-                        </v-row>
-                    
-                    </v-card>
-
-                </v-col>
-                <v-col cols="6">
-                    <div class="text-center overline">Summary of Missing Values</div>
-
-
-                    <apexchart v-if="graphOptions && graphSeries" width="80%"  type="donut" :options="graphOptions" :series="graphSeries"></apexchart>
-                    <div v-if="effect">
-                        <v-card v-for="(fileEffect, key) in effect.fileEffectArray" :key="key"> 
-                        {{currentFiles[key].name}}
-                        <div>>
-                            Rows with Missing Data: {{fileEffect.old.missing.rows}} => {{fileEffect.new.missing.rows}}
-                        </div>                                             
+                        <div class="text-center overline">Select Columns for Removal</div>
 
                         
-                        </v-card>>
+                        <v-card class="mx-3 pa-1" flat>
+                            <v-row>
+                                <v-col cols="3">
+                                </v-col>
+                                <!-- <v-col cols="3" class="text-center">
+                                    <div class="caption">Rows with only this column missing</div>
+                                </v-col>
+                                <v-col cols="3" class="text-center">
+                                    <div class="caption">Rows with multiple columns missing</div>
+                                </v-col> -->
+                                <v-col cols="9" class="text-center">
+                                    <div class="caption">% Contribution of Missing Cells</div>
+                                </v-col>   
+                            </v-row>
+                        </v-card>
+                        <v-card
+                            @click="selection(item.col)"
+                            class="ma-3 pa-1"
+                            flat
+                            v-bind:class="{selected: selectedColumns.includes(item.col)}"
+                            
+                            v-for="(item, key) in analysis.fileAnalysisCombined" :key="key">
 
-                    </div>
 
+                            <v-row dense>
+                                <v-col cols="1" style="text-decoration: none!important;">
+                                    <v-icon v-if="selectedColumns.includes(item.col)">mdi-checkbox-marked</v-icon>
+                                    <v-icon v-else>mdi-checkbox-blank-outline</v-icon>
+                                </v-col>
+                                <v-col cols="4">
+                                    <v-chip>{{item.col}}</v-chip>
+                                </v-col>
+                                <!-- <v-col cols="2" class="text-center">
+                                    {{item.singleMissing}}
+                                </v-col>
+                                <v-col cols="2" class="text-center">
+                                    {{item.multipleMissing}}
+                                </v-col> -->
+                                <v-col cols="7" class="text-center">
+                                    {{item.percentContributions}}%
+                                </v-col>                                                                           
+                            </v-row>
+                        
+                        </v-card>
 
+                    </v-col>
+                    <v-col cols="6">
+                        <div class="text-center overline">Summary of Missing Values</div>
+                        <apexchart v-if="graphOptions && graphSeries" width="80%"  type="donut" :options="graphOptions" :series="graphSeries"></apexchart>
+                        <div v-if="effect">
+                            <v-card outlined flat class="my-2 pa-3" v-for="(fileEffect, key) in effect.fileEffectArray" :key="key"> 
+                            {{currentFiles[key].name}}
+                            <div>
 
-                    
+                                Rows with Missing Data: {{fileEffect.old.missing.rows}} → {{fileEffect.new.missing.rows}}
+                            </div>                                             
+                            </v-card>
+                        </div>
+                    </v-col>            
+                </v-row>                
+           </div>
 
-                </v-col>            
-            </v-row>
-        
-        
         </div>
-
-
-
-
-        <v-select outlined dense width="50px" style="display: inline-flex; width: 80px;"></v-select>
-   
     </div>
 
 </template>
@@ -95,13 +85,13 @@ import { effectFileArray, buildTransformObject } from '@/v3Methods'
 
 
 import v3miniValidate from './v3miniValidate.vue'
-import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
+//import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
 
 export default {
     name: 'v3subFileValidate',
     components: {
         v3miniValidate,
-        v3miniTrainTestLabel
+        //v3miniTrainTestLabel
     },
     props: {
         currentFiles: {

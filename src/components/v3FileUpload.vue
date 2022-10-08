@@ -102,14 +102,18 @@
           </v-card>          
           
         </v-col>
-        <v-col cols="4">
-          <div class="text-right mr-3" v-if="files.length > 0">
+        <v-col cols="4" v-if="files.length > 0">
+          <v-card flat style="margin: 10px; padding: 100px 0;">
+            <div class="text-center mr-3" >
             <v-btn icon
               @click="$refs.fileClick.click()"
               >
               <v-icon large>mdi-plus-circle-outline</v-icon>
               </v-btn>
           </div>
+
+          </v-card>
+
         </v-col>
       </v-row>
 
@@ -270,7 +274,7 @@
 
   .training-style {
     box-sizing: border-box;
-    border-width: 7px;
+    border-width: 5px;
     border-radius: 10px;
   }
   </style>

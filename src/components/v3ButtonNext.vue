@@ -1,7 +1,7 @@
 <template>
       <v-btn
         @click="$emit('next')"
-        class="green"
+        class="primary"
         :disabled="disabled"
         rounded
         text

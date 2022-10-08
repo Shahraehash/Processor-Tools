@@ -1,91 +1,106 @@
 <template>
     <div>
-        <!-- Per File Target Validation -->
-        <div>
-            <div class="overline">Target Validation</div>
-            <v-row>
-                <v-col cols="4" v-for="(file, key) in currentFiles" :key="key">
-                    
-                    <v-card outlined class="pa-3">
-                        <div>
-                           <v3miniTrainTestLabel :type="file.type"/>
-                           {{file.name}} 
+        <v-row>
+            <v-col cols="4">
+                <!-- Per File Target Validation -->
+                <div>
+                    <div class="overline">Target Validation</div>
+                    <v-row>
+                        <v-col cols="12" v-for="(file, key) in currentFiles" :key="key">
+                            
+                            <v-card outlined class="pa-3">
+                                <div>
+                                <v3miniTrainTestLabel :type="file.type"/>
+                                {{file.name}} 
+                                </div>
+                                <div>
+                                    <div v-if="analysis.individualValidation[key].hasTarget">
+                                        <v3miniValidate :valid="true"/>
+                                        Has target column
+                                    </div>
+                                    <div v-else>
+                                        <v3miniValidate :valid="false"/>
+                                        Missing target column
+                                    </div>
+                                </div>
+                                <div>
+                                    <div v-if="analysis.individualValidation[key].targetCount == 2">
+                                        <v3miniValidate :valid="true"/>
+                                        Has two unique values
+                                    </div>
+                                    <div v-else>
+                                        <v3miniValidate :valid="false"/>
+                                        Has {{analysis.individualValidation[key].targetCount}} unique values
+                                    </div>
+                                </div>
+                                <div class="ml-6">
+                                    <v-chip small v-for="(item, y) in analysis.individualValidation[key].targetValues" :key="y"
+                                    > {{item}} </v-chip>
+                                </div>                    
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </div>                
+
+            </v-col>
+            <v-col cols="4">
+
+                <!-- File Cross Validation -->
+                <div>
+                    <div class="overline">File Cross Validation</div>
+                    <div>
+                        <div v-if="currentFiles.length == 1">
+                        <v3miniValidate :valid="true"/>
+                        Only one file
+                    </div>
+
+                    <div v-if="currentFiles.length > 1">
+                        <div v-if="analysis.allTargetValues.length == 2">
+                            <v3miniValidate :valid="true"/>
+                            All files have target column
                         </div>
-                        <div>
-                            <div v-if="analysis.individualValidation[key].hasTarget">
-                                <v3miniValidate :valid="true"/>
-                                Has target column
-                            </div>
-                            <div v-else>
-                                <v3miniValidate :valid="false"/>
-                                Missing target column
-                            </div>
+                        <div v-else>
+                            <v3miniValidate :valid="false"/>
+                            Values may vary between files
                         </div>
-                        <div>
-                            <div v-if="analysis.individualValidation[key].targetCount == 2">
-                                <v3miniValidate :valid="true"/>
-                                Has two unique values
-                            </div>
-                            <div v-else>
-                                <v3miniValidate :valid="false"/>
-                                Has {{analysis.individualValidation[key].targetCount}} unique values
-                            </div>
+                    </div>
+
+
+                    <div >
+                        <div v-if="analysis.mismatchedColumns.length == 0 ">
+                            <v3miniValidate :valid="true"/>
+                            All columns match between files
                         </div>
-                        <div class="ml-6">
-                            <v-chip small v-for="(item, y) in analysis.individualValidation[key].targetValues" :key="y"
-                            > {{item}} </v-chip>
-                        </div>                    
-                    </v-card>
-                </v-col>
-            </v-row>
-        </div>
-        <!-- File Cross Validation -->
-        <div>
-            <div class="overline">File Cross Validation</div>
-            <div>
-                <div v-if="currentFiles.length == 1">
-                <v3miniValidate :valid="true"/>
-                Only one file
-            </div>
+                        <div v-else>
+                            <v3miniValidate :valid="false"/>
+                            Columns Vary between files
+                            <!-- TODO -->
+                            {{analysis.mismatchedColumns}}
+                        </div>
+                    </div>            
 
-            <div v-if="currentFiles.length > 1">
-                <div v-if="analysis.allTargetValues.length == 2">
-                    <v3miniValidate :valid="true"/>
-                    All files have target column
-                </div>
-                <div v-else>
-                    <v3miniValidate :valid="false"/>
-                    Values may vary between files
-                </div>
-            </div>
+                    </div>
 
 
-            <div >
-                <div v-if="analysis.mismatchedColumns.length == 0 ">
-                    <v3miniValidate :valid="true"/>
-                    All columns match between files
-                </div>
-                <div v-else>
-                    <v3miniValidate :valid="false"/>
-                    Columns Vary between files
-                    <!-- TODO -->
-                    {{analysis.mismatchedColumns}}
-                </div>
-            </div>            
+                </div>                
+                        
+                    </v-col>
+                    <v-col cols="4">
 
-            </div>
+                        <!-- Target Encoding -->
+                        <div>
+                            <div class="overline">Target Encoding</div>
+                            <div v-for="(val, cat) in analysis.targetMap" :key="cat">
+                                <v-chip>{{cat}}</v-chip>
+                                <v-icon>mdi-arrow-right</v-icon>
+                                <v-select @change="flipValues($event, cat)" outlined dense v-model="analysis.targetMap[cat]" :items="[0,1]" style="display: inline-flex; width: 80px;"></v-select>
+                            </div>
+                        </div>                        
+                        
+                    </v-col>
+                </v-row>
 
 
-        </div>
-        <!-- Target Encoding -->
-        <div>
-            <div class="overline">Target Encoding</div>
-            <div v-for="(val, cat) in analysis.targetMap" :key="cat">
-                <v-chip>{{cat}}</v-chip>
-                <v-icon>mdi-arrow-right</v-icon>
-                <v-select @change="flipValues($event, cat)" outlined dense v-model="analysis.targetMap[cat]" :items="[0,1]" style="display: inline-flex; width: 80px;"></v-select>
-            </div>
-        </div>
 
     </div>
 

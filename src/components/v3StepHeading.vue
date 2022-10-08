@@ -1,7 +1,7 @@
 <template>
     <div class="mb-3">
       <div class="title primary--text">
-        <div style="display: inline" class="text-h4 title-oval">{{stepNumber}}</div>
+        <div style="display: inline" class="text-h5 title-oval"><strong>{{stepNumber}}</strong></div>
         <span class="ml-1 text-h5"> {{stepTitle}}</span>
       </div>
     </div>
