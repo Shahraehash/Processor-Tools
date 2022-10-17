@@ -1,6 +1,7 @@
 <template>
     <div class="text-right">
         <v-btn @click="exportFiles()" text icon x-large><v-icon>mdi-table-arrow-right</v-icon></v-btn>
+        <v-btn @click="$emit('manualUpdate')" text icon x-large><v-icon>mdi-restart</v-icon></v-btn>
     </div>
 </template>
 <script>    

@@ -10,7 +10,7 @@
       :stepNumber="stepNumber"
       :stepTitle="stepTitle"
       />    
-    <v3miniExport :currentFiles="currentFiles" class="mt-n15" />
+    <v3miniExport :currentFiles="currentFiles" class="mt-n15"  @manualUpdate="$emit('update')"/>
     
     <!-- EXPORT -->
 
