@@ -15,6 +15,7 @@ from .helpers import convert_blanks_to_nan, find_nan_counts, file_params, save_f
 from .integrated_file_validate import analysis_file_validate, transform_file_validate_target_map
 from .integrated_column_removal import analyze_column_removal, effect_column_removal, transform_column_removal
 from .integrated_encode_nonnumeric import analyze_encode_nonnumeric, transform_encode_nonnumeric
+from .integrated_train_test_split_impute import analyze_train_test_split_impute
 
 
 
@@ -55,7 +56,7 @@ def integrated_params():
     #maintain storageId
     params['storageId'] = storage_id
     params['name'] = name
-    params['type'] = None
+    params['type'] = 'combined' #TODO: change to smarter rule
 
     response = make_response(
         simplejson.dumps(params, ignore_nan=True),
@@ -90,7 +91,9 @@ def integrated_analyze():
     elif analyze['method'] == 'encode_nonnumeric':
         json = analyze_encode_nonnumeric(fileObjectArray, target)
 
-
+    #For Train Test Impute
+    elif analyze['method'] == 'train_test_split_impute':
+        json = analyze_train_test_split_impute(fileObjectArray, target)
 
 
     else: 

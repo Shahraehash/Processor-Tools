@@ -55,7 +55,6 @@ let paramFile = async (json) => {
 let storeParamFile = async (file) => {
     let response = await storeFile(file)
     let result = await paramFile(response)
-    result['type'] = null
     return result
 }
 

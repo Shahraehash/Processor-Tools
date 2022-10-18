@@ -185,7 +185,7 @@
     },
     props: {
       stepNumber: {
-        type: Number
+        type: Number || String
       },
       stepTitle: {
         type: String
