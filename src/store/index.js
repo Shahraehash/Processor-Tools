@@ -58,7 +58,7 @@ export default new Vuex.Store({
         proLicense: true
       },
       'Integrated': {
-        title: 'MERLIN',
+        title: 'Automated Preprocessing Tool',
         icon: 'mdi-bike-fast',
         description: 'Automatically select the appropriate steps to prepare your data for MILO.',
         isVisible: true,

@@ -1,22 +1,23 @@
 <template>
     <div>
-        <div>Prevalance of Classes and Rows with Missing Data</div>
+        
         <div v-if="analysis">
             
 
             <div v-if="Object.keys(analysis.fileAnalysisDict).includes('combined')">
 
-                <v3miniPrevalenceBar :metadata="analysis.fileAnalysisDict['combined']" />
+                <v3miniPrevalenceBar :metadata="analysis.fileAnalysisDict['combined']" class="mb-5"/>
             
                 <v-row>
                     <v-col cols="8">
                         <div class="overline">Handle Missing Values</div>
                         <v-radio-group
-                            v-model="missingValues"
+                            v-model="missingValuesSetting"
                             >
-                            <v-radio label="Include rows with missing values in training and impute up to 30% of training" value="0"></v-radio>
-                            <v-radio label="Include rows with missing values in training and impute all missing data" value="1"></v-radio>
-                            <v-radio label="Drop all missing values" value="2"></v-radio>
+                            <v-radio label="Drop all missing values" :value="0"></v-radio>
+                            <v-radio label="Include rows with missing values in training and impute up to 30% of training" :value="1"></v-radio>
+                            <v-radio label="Include rows with missing values in training and impute all missing data" :value="2"></v-radio>
+
                             
                         </v-radio-group>
                     </v-col>
@@ -24,13 +25,32 @@
                     <v-col cols="4">
                         <div class="overline">Handle Prevlence of Data</div>
                         <v-radio-group
-                            v-model="missingValues"
+                            v-model="prevalenceSetting"
+                            
                             >
-                            <v-radio label="Maintain Original Prevlence" value="0"></v-radio>
-                            <v-radio label="Adjust based on Data Change" value="1"></v-radio>
+                            <v-radio label="Maintain Original Prevlence" :value="0"></v-radio>
+                            <v-radio label="Adjust based on Data Change" :value="1"></v-radio>
                         </v-radio-group>
                     </v-col>                
+                    <v-col cols="12">
+                        <div class="overline">Set size of training data</div>
+                        <v-slider
+                            v-model="trainingSize"
+                            :max="100"
+                            :min="0"
+                            :step="1"
+                            :ticks="true"
+                            :thumb-label="true"
+                            thumb-color="primary"
+                            track-color="primary"
+                            tick-size="4"
+                            >
+                        </v-slider>
+
+                    </v-col>                       
                 </v-row>
+
+                <v3miniSplitBar :metadata="analysis.fileAnalysisDict['combined']" class="mb-5"/>
 
             
             
@@ -54,11 +74,13 @@
 import { buildTransformObject } from '@/v3Methods'
 
 import v3miniPrevalenceBar from '@/components/v3miniPrevalenceBar'
+import v3miniSplitBar from '@/components/v3miniSplitBar'
 
 export default {
     name: 'v3subFileValidate',
     components: {
-        v3miniPrevalenceBar
+        v3miniPrevalenceBar,
+        v3miniSplitBar
     },
     props: {
         currentFiles: {
@@ -77,7 +99,8 @@ export default {
     data() {
         return {
             effect: null,
-            missingValues: 0,
+            missingValuesSetting: 0,
+            prevalenceSetting: 0,
 
         }
     },
