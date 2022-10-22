@@ -1,5 +1,45 @@
 <template>
     <div>
+
+      <v-row>
+                    <v-col cols="8">
+                        <div class="overline">Handle Missing Values</div>
+                        <v-radio-group
+                            v-model="missingValuesSetting"
+                            >
+                            <v-radio label="Drop all missing values" :value="0"></v-radio>
+                            <v-radio label="Put missing values in the training set and impute them" :value="1"></v-radio>
+                        </v-radio-group>
+                    </v-col>
+
+                    <v-col cols="4">
+                        <div class="overline">Handle Prevlence in Generalization Set</div>
+                        <v-radio-group
+                            v-model="prevalenceSetting"
+                            
+                            >
+                            <v-radio label="Maintain Original Prevlence" :value="0"></v-radio>
+                            <v-radio label="Adjust based on Data Change" :value="1"></v-radio>
+                        </v-radio-group>
+                    </v-col>                
+                    <v-col cols="12">
+                        <div class="overline">Set size of training data</div>
+                        <v-slider
+                            v-model="trainingSize"
+                            :max="200"
+                            :min="25"
+                            :step="1"
+                            :ticks="true"
+                            :thumb-label="true"
+                            thumb-color="primary"
+                            track-color="primary"
+                            tick-size="4"
+                            >
+                        </v-slider>
+
+                    </v-col>                       
+                </v-row>
+
       <div class="overline">Allocation of Data</div>
 
       <div style="width:100%">
@@ -103,9 +143,16 @@
         }
     },
     data() {
+      return {
+        missingValuesSetting: 0,
+        prevalenceSetting: 0,
+        trainingSize: 25        
+
+      }
 
     },
     computed: {
+
 
     },
     mounted() {
