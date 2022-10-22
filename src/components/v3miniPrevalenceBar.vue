@@ -85,7 +85,7 @@
 
 
   export default {
-    name: 'ClassGroupBar',
+    name: 'v3miniPrevalenceBar',
     props: 
       {
         metadata: {
@@ -94,6 +94,9 @@
         }
     },
     data() {
+      return {
+        
+      }
 
     },
     computed: {

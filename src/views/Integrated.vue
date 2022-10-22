@@ -197,7 +197,7 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
           {
               component: 'v3parentStepTemplate',
               subcomponent: 'v3subTrainTestSplit',
-              stepTitle: 'Split Data into Training and Testing Sets',
+              stepTitle: 'Allocate Data for Training and Testing',
               analysisFunction: analyzeFileArray,
               analysisObj: {method: 'train_test_split_impute'},
               transformFunction: transformFileArray,
