@@ -5,27 +5,30 @@
                     <v-col cols="8">
                         <div class="overline">Handle Missing Values</div>
                         <v-radio-group
-                            v-model="missingValuesSetting"
+                            @change="change"
+                            v-model="missingValuesOption"
                             >
-                            <v-radio label="Drop all missing values" :value="0"></v-radio>
-                            <v-radio label="Put missing values in the training set and impute them" :value="1"></v-radio>
+                            <v-radio label="Remove missing values" :value="0"></v-radio>
+                            <v-radio label="Keep missing values in training and impute values - note: imputation cannot be used on generlization data as it compromises the validity of the generalization" :value="1"></v-radio>
                         </v-radio-group>
                     </v-col>
 
                     <v-col cols="4">
                         <div class="overline">Handle Prevlence in Generalization Set</div>
                         <v-radio-group
-                            v-model="prevalenceSetting"
+                            @change="change"
+                            v-model="prevalenceOption"
                             
                             >
-                            <v-radio label="Maintain Original Prevlence" :value="0"></v-radio>
-                            <v-radio label="Adjust based on Data Change" :value="1"></v-radio>
+                            <v-radio label="Use All Available Data" :value="0"></v-radio>
+                            <v-radio label="Maintain Original Data Prevelence" :value="1"></v-radio>
                         </v-radio-group>
                     </v-col>                
                     <v-col cols="12">
                         <div class="overline">Set size of training data</div>
                         <v-slider
-                            v-model="trainingSize"
+                            @change="change"
+                            v-model="localMetadata.train.counts[0]"
                             :max="200"
                             :min="25"
                             :step="1"
@@ -36,8 +39,8 @@
                             tick-size="4"
                             >
                         </v-slider>
-
-                    </v-col>                       
+                        {{localMetadata.train.counts[0]}}               
+                    </v-col>        
                 </v-row>
 
       <div class="overline">Allocation of Data</div>
@@ -48,7 +51,7 @@
             class="title-box"
             v-bind:style="{
               background: '#2196F3',
-              width:  '45%'
+              width:  localMetadata.train.percent[0] + localMetadata.train.percent[1] + '%'
               }"
               
             >
@@ -58,7 +61,7 @@
             class="title-box"
             v-bind:style="{
               background: '#9C27B0',
-              width:  '45%'
+              width:  localMetadata.test.percent[0] + localMetadata.test.percent[1] + '%'
               }"
             >
             Generalization Testing
@@ -67,7 +70,7 @@
             class="title-box"
             v-bind:style="{
               background: 'white',
-              width:  '10%'
+              width: localMetadata.remainder.percent + '%'
               }"
               
             >
@@ -76,22 +79,23 @@
 
       <div style="width:100%">     
         <div
-            class="title-box"
+            class="title-box "
             v-bind:style="{
               background: '#009688',
-              width:  '22.5%'
+              width:  localMetadata.train.percent[0] + '%'
               }"
               
             >
+            {{localMetadata.train.counts[0]}}
         </div>
         <div
-            class="title-box caption"
+            class="title-box "
             v-bind:style="{
               background: '#4CAF50',
-              width:  '22.5%'
+              width:  localMetadata.train.percent[1] + '%'
               }"
-              
             >
+            {{localMetadata.train.counts[1]}}
     
 
         </div>        
@@ -99,30 +103,36 @@
             class="title-box"
             v-bind:style="{
               background: '#009688',
-              width:  '22.5%'
+              width:  localMetadata.test.percent[0] + '%'
               }"
             >
+            {{localMetadata.test.counts[0]}}
         </div>   
         <div
-            class="title-box caption"
+            class="title-box"
             v-bind:style="{
               background: '#4CAF50',
-              width:   '22.5%' 
+              width: localMetadata.test.percent[1] + '%' 
               }"
             >
-
+            {{localMetadata.test.counts[1]}}
              
         </div>        
         <div
             class="title-box"
             v-bind:style="{
               background: 'grey',
-              width:  '10%'
+              width: localMetadata.remainder.percent + '%'
               }"
               
             >
+            {{localMetadata.remainder.counts}}
         </div>   
-      </div>      
+      </div>
+      
+      
+
+
 
 
 
@@ -140,14 +150,29 @@
         metadata: {
           type: Object,
           required: true
-        }
+        },
+        describe: {
+          type: Object,
+          required: true
+        },   
+        effectMetadata: {
+          type: Object,
+          required: false
+        },                
+    },
+    watch: {
+      effectMetadata: {
+        handler(newVal) {
+          this.localMetadata = newVal
+        },
+        deep: true
+      }
     },
     data() {
       return {
-        missingValuesSetting: 0,
-        prevalenceSetting: 0,
-        trainingSize: 25        
-
+        missingValuesOption: 0,
+        prevalenceOption: 0,  
+        localMetadata: null
       }
 
     },
@@ -155,12 +180,24 @@
 
 
     },
+    created() {
+      //when initiall loaded, metadata set by parent, then effect function will updated with watcher
+      this.localMetadata = this.metadata
+    },
     mounted() {
+      this.change()
+    },
 
   
   
-    },
     methods: {
+      change() {
+        this.$emit('effect', {
+            describeObj: this.describe,
+            missingValuesOption: this.missingValuesOption,
+            prevalenceOption: this.prevalenceOption, 
+            trainingClassSize: this.localMetadata.train.counts[0]})
+      }
     
   
     }

@@ -5,6 +5,11 @@ import os
 import uuid
 
 
+def global_params():
+    return {
+        'min_training_class_size': 25,
+    }
+
 def convert_blanks_to_nan(df):
     return df.replace(r'^\s*$', np.nan, regex=True)
 

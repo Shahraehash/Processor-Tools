@@ -35,7 +35,13 @@
 
 
       <div class="text-center mt-10" v-if="componentList.length == currentStep">
+        Testing
+
+        <v3miniExport :currentFiles="currentDataFiles" class="mt-n15"  />
+        
         Additional optoins
+
+
         <div>
           <v-btn @click="exportComponent">Export</v-btn>
         </div>
@@ -94,6 +100,7 @@
 import MenuBar from "@/components/MenuBar.vue";
 import v3FileUpload from "../components/v3FileUpload.vue";
 import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
+import V3miniExport from '../components/v3miniExport.vue';
 
 
 
@@ -101,12 +108,11 @@ import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
   export default {
     name: 'Integrated',
     components: {
-        MenuBar,
-        v3FileUpload,
-        v3parentStepTemplate,
-
-  
-    },
+    MenuBar,
+    v3FileUpload,
+    v3parentStepTemplate,
+    V3miniExport
+},
     computed: {
       currentDataFiles() {
         this.refreshKey

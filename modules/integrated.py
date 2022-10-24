@@ -15,7 +15,7 @@ from .helpers import convert_blanks_to_nan, find_nan_counts, file_params, save_f
 from .integrated_file_validate import analysis_file_validate, transform_file_validate_target_map
 from .integrated_column_removal import analyze_column_removal, effect_column_removal, transform_column_removal
 from .integrated_encode_nonnumeric import analyze_encode_nonnumeric, transform_encode_nonnumeric
-from .integrated_train_test_split_impute import analyze_train_test_split_impute
+from .integrated_train_test_split_impute import analyze_train_test_split_impute, effect_train_test_split_impute, transform_train_test_split_impute
 
 
 
@@ -118,6 +118,10 @@ def integrated_effect_column_removal():
     if effect['method'] == 'column_removal':
         json = effect_column_removal(fileObjectArray, target, effect) 
 
+    elif effect['method'] == 'train_test_split_impute':
+        json = effect_train_test_split_impute(fileObjectArray, target, effect)
+
+
     elif False:
         pass
 
@@ -149,6 +153,8 @@ def integrated_transform():
     elif transform['method'] == 'encode_nonnumeric':
         json = transform_encode_nonnumeric(fileObjectArray, target, transform)
             
+    elif transform['method'] == 'train_test_split_impute':
+        json = transform_train_test_split_impute(fileObjectArray, target, transform)
 
 
 
