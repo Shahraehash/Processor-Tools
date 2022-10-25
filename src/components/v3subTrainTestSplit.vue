@@ -80,8 +80,9 @@ export default {
 
             effectFileArray(this.currentFiles, this.target, effectObj).then((result) => {
                 this.effect = result
+                this.update()
             })
-            this.update()
+            
         }        
        
    
