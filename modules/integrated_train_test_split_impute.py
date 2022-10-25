@@ -1,7 +1,9 @@
 
 import pandas as pd
 import numpy as np
-import json
+
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
 
 from .helpers import load_file, save_file, file_params, int_list_to_string, store_file_and_params, global_params
 
@@ -287,7 +289,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
 
     
-
+    result = []
 
     if 'combined' in df_groups:
         print('combined')
@@ -296,49 +298,137 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         t = transform['data']
 
         major = int(t['major'])
+
         minor = int(t['minor'])
-
-
-        print(t)
-        print(major, minor)
 
         df_nan = df[df.isna().any(axis=1)]
         df = df.drop(df_nan.index)
-        
-        df_major = df[df[target] == major]
-        df_minor = df[df[target] == minor]
 
-        
-        df_train_minor = df_minor.sample(n=t['train']['counts'][str(minor)])
-        df_train_major = df_major.sample(n=t['train']['counts'][str(major)])
+        df_major = df[df[target] == major]
+        df_minor = df[df[target] == minor]        
+
+        if t['missing_values_option'] == 0:
+
+            #training does not use misisng data
+            df_train_minor = df_minor.sample(n=t['train']['counts'][str(minor)])
+            df_train_major = df_major.sample(n=t['train']['counts'][str(major)])
+
+            df_train = pd.concat([df_train_minor, df_train_major])
+
+        elif t['missing_values_option'] == 1:
+            
+            #training does use missing data
+            #count missing values
+            nan_counts = fill_in_zeros(df_nan[target].value_counts().to_dict())
+
+            #adjust samples based on missing data
+            df_train_minor = df_minor.sample(n=t['train']['counts'][str(minor)] - nan_counts[minor])
+            df_train_major = df_major.sample(n=t['train']['counts'][str(major)] - nan_counts[major])
+
+            df_train = pd.concat([df_train_minor, df_train_major, df_nan])
+
+            df_train = impute_processor(df_train, target)
+            
+
+            
+            
+
+        #prevalence option does not matter since we already have done the calculation and passsed it along from a previous step
+
+    
+        print('df_train_minor', df_train_minor.shape)
+        print('df_train_major', df_train_major.shape)
 
         df_major = df_major.drop(df_train_major.index)
         df_minor = df_minor.drop(df_train_minor.index)
 
+        print('df__minor', df_minor.shape)
+        print('df_major', df_major.shape)        
+
         df_test_minor = df_minor.sample(n=t['test']['counts'][str(minor)])
         df_test_major = df_major.sample(n=t['test']['counts'][str(major)])
 
-        df_train = pd.concat([df_train_minor, df_train_major])
+        
         df_test = pd.concat([df_test_minor, df_test_major])
 
         #TODO add extra data handling
-
-        result = []
-
 
         result.append(store_file_and_params(df_train, 'train.csv', 'train'))
         result.append(store_file_and_params(df_test, 'test.csv', 'test'))
     
 
+    return result
+
+
+
+
+        
+    
+        
+
+def impute_processor(df, target):
+
+        imp_mean = IterativeImputer(random_state=0)
+        X = df.drop(columns=[target])
+        y = df[target]
+
+        #check if negative values exist in each column before imputation
+        col_has_negative = ((X < 0).any()).to_dict()
+
+
+        #flag columns for rounding
+        col_is_binary = []
+        col_is_numeric_cat = {}
+
+        for col in X.columns:
+            feature = X[col]
+            
+            if feature.isna().sum() > 0: #ensure has nan values
+                unique = feature.dropna().unique()
+                unique.sort()
+                unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float                    
+
+                if len(unique) == unique_int_len and (unique_int_len <= 20): #set 
+                    col_is_numeric_cat[col] = unique
+
+
+        imp_mean.fit(X)
+        result = pd.DataFrame(imp_mean.transform(X),columns=X.columns, index=X.index)
+        result[df.columns[df.isna().any()]] = result[df.columns[df.isna().any()]].round(decimals=3)
+
+        #if column does not have negative values, change all imputed negative values to 0
+        for col in col_has_negative:
+            if(not col_has_negative[col]):
+                column = result[col]
+                column[column < 0 ] = 0
+        
+        # #round one hot encoded columns
+
+        ###TODO fix this
+        # for col in columns_added:
+        #     result[col] = result[col].round()
+
+        # ensure numerical categorial data is maintained with imputation
+        for col in col_is_numeric_cat.keys():
+            result[col] = result[col].round().astype(int)
+            possible_values = col_is_numeric_cat[col]
+            
+            #find values not matching original values in data set
+            extra_value_bool = ~result[col].isin(possible_values)
+            extra_values = result[col][extra_value_bool].unique()
+            
+            #find the closest original value and adjust it
+            for val in extra_values:
+                arr = np.asarray(possible_values)
+                i = (np.abs(arr - val)).argmin()
+                closest = arr[i]
+                result[col] = result[col].replace(val, closest)
+
+
+        print()
+        result[target] = y
+
         return result
-
-
-
-
-        
-        
-        
-
 
 
 
