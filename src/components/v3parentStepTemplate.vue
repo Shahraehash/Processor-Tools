@@ -11,6 +11,10 @@
       :stepTitle="stepTitle"
       />    
     <v3miniExport :currentFiles="currentFiles" class="mt-n15"  @manualUpdate="$emit('update')"/>
+
+    <v-btn icon v-if="optional">
+      <v-icon @click="$emit('removeComponent')">mdi-close</v-icon>
+    </v-btn>
     
     <!-- EXPORT -->
 
@@ -74,6 +78,10 @@ export default {
     stepTitle: {
       type: String
     },
+    optional: {
+      type: Boolean,
+      default: false
+    },    
     files: {
       type: Array,
       default: () => []

@@ -23,8 +23,10 @@
         :analysisObj="c.analysisObj"
         :analysisFunction="c.analysisFunction"
         :transformFunction="c.transformFunction"
+        :optional="c.optional"
         @next="c.events.next"
         @update="c.events.update; setStep(key)"
+        @removeComponent="removeComponent(key)"
         :ref="'step' + key"
         ></component>
 
@@ -35,39 +37,14 @@
 
 
       <div class="text-center mt-10" v-if="componentList.length == currentStep">
-        Testing
-
-        <v3miniExport :currentFiles="currentDataFiles" class="mt-n15"  />
-        
-        Additional optoins
-
-
-        <div>
-          <v-btn @click="exportComponent">Export</v-btn>
-        </div>
-
+        <div>Additional Steps</div>
           <v-row justify="center">
-            <v-col cols="3">
-              <v-card outlined>
-                Additioanl Step
-
+            <v-col cols="4" v-for="(item, key) in optional" :key="key">
+              <v-card outlined @click="addComponent(item.component)">
+                <div class="overline">{{item.title}}</div>
+                <v-icon x-large :color="item.icon == 'mdi-export' ? 'primary' : ''">{{item.icon}}</v-icon>
               </v-card>          
-
             </v-col>
-            <v-col cols="3">
-              <v-card outlined>
-                Additioanl Step
-
-              </v-card>          
-
-            </v-col>
-            <v-col cols="3">
-              <v-card outlined>
-                Additioanl Step
-
-              </v-card>          
-
-            </v-col>                        
           </v-row>
 
       
@@ -133,6 +110,24 @@ import V3miniExport from '../components/v3miniExport.vue';
           target: null,
           refreshKey: 0,
           componentList: [],
+          optional: [
+            {
+              'title': 'Multicollinearity Assessment & Removal',
+              'icon': 'mdi-chart-bell-curve-cumulative',
+              'component': this.getExportComponent()
+            },    
+            {
+              'title': 'Feature Selector',
+              'icon': 'mdi-select-all',
+              'component': this.getExportComponent()
+            },                          
+            {
+              'title': 'Export Files',
+              'icon': 'mdi-export',
+              'component': this.getExportComponent()
+            },    
+               
+          ]
         }
     },
 
@@ -153,12 +148,36 @@ import V3miniExport from '../components/v3miniExport.vue';
         )
         this.currentStep = this.componentList.length
       },
+      addComponent(component) {
+        this.componentList.push(component)
+      },
+      removeComponent(index) {
+        this.componentList.splice(index, 1)
+        this.currentStep = this.componentList.length
+      },
+
+      getExportComponent() {
+        return{
+          component: 'v3parentStepTemplate',
+          subcomponent: 'v3export',
+          stepTitle: 'Export Files for Use in Milo',
+          optional: true,
+          analysisFunction: analyzeFileArray,
+          analysisObj: {method: 'export'},
+          transformFunction: transformFileArray,
+          events: {
+            next: (fileMetadata) => { this.nextStep(fileMetadata);},
+            update: (e) => {console.log('update', e); },
+          }
+        }  
+      },
 
       getComponentList() {
         return [
           {
               component: 'v3FileUpload',
               stepTitle: 'File Import',
+              optional: false,
               events: {
                 next: (e) => { this.nextStep(e.fileMetadata); this.target = e.target},
                 update: (e) => {console.log('update', e); },
@@ -168,6 +187,7 @@ import V3miniExport from '../components/v3miniExport.vue';
               component: 'v3parentStepTemplate',
               subcomponent: 'v3subFileValidate',
               stepTitle: 'File Validation',
+              optional: false,
               analysisFunction: analyzeFileArray,
               analysisObj: {method: 'file_validate'},
               transformFunction: transformFileArray,
@@ -180,6 +200,7 @@ import V3miniExport from '../components/v3miniExport.vue';
               component: 'v3parentStepTemplate',
               subcomponent: 'v3subColumnRemoval',
               stepTitle: 'Column Pruning to Minimize Missing Data',
+              optional: false,
               analysisFunction: analyzeFileArray,
               analysisObj: {method: 'column_removal'},
               transformFunction: transformFileArray,
@@ -192,6 +213,7 @@ import V3miniExport from '../components/v3miniExport.vue';
               component: 'v3parentStepTemplate',
               subcomponent: 'v3subEncodeNonnumeric',
               stepTitle: 'Ensure all columns are numeric',
+              optional: false,
               analysisFunction: analyzeFileArray,
               analysisObj: {method: 'encode_nonnumeric'},
               transformFunction: transformFileArray,
@@ -204,6 +226,7 @@ import V3miniExport from '../components/v3miniExport.vue';
               component: 'v3parentStepTemplate',
               subcomponent: 'v3subTrainTestSplit',
               stepTitle: 'Allocate Data for Training and Testing',
+              optional: false,
               analysisFunction: analyzeFileArray,
               analysisObj: {method: 'train_test_split_impute'},
               transformFunction: transformFileArray,
