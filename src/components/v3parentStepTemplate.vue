@@ -4,17 +4,37 @@
     flat 
     class="ma-3 pa-5" 
     >
-    <v-divider class="mb-5"></v-divider>
+    
     <!-- Heading -->
-    <v3StepHeading
-      :stepNumber="stepNumber"
-      :stepTitle="stepTitle"
-      />    
-    <v3miniExport :currentFiles="currentFiles" class="mt-n15"  @manualUpdate="$emit('update')"/>
 
-    <v-btn icon v-if="optional">
-      <v-icon @click="$emit('removeComponent')">mdi-close</v-icon>
-    </v-btn>
+    <v-row dense>
+      <v-col>
+          <v3StepHeading
+        style="display: inline-flex;"
+        :stepNumber="stepNumber"
+        :stepTitle="stepTitle"
+        />    
+
+      </v-col>
+      <v-col>
+
+        <v-btn @click="$emit('removeComponent')" class="float-right" text v-if="optional" style="display: inline-flex;">
+          Remove Step
+          <v-icon >mdi-close</v-icon>
+        </v-btn>  
+        
+      </v-col>
+    </v-row>
+    <div>
+
+      <v-spacer></v-spacer>
+
+    <v-divider class="mb-5"></v-divider>  
+    </div>
+  
+    <v3miniExport :currentFiles="currentFiles" @manualUpdate="$emit('update')"/>
+
+
     
     <!-- EXPORT -->
 
@@ -58,6 +78,7 @@ import v3subFileValidate from './v3subFileValidate'
 import v3subColumnRemoval from './v3subColumnRemoval.vue'
 import v3subEncodeNonnumeric from './v3subEncodeNonnumeric.vue'
 import v3subTrainTestSplit from './v3subTrainTestSplit.vue'
+import v3subFinalize from './v3subFinalize.vue'
 
 
 export default {
@@ -69,7 +90,8 @@ export default {
     v3subFileValidate,
     v3subColumnRemoval,
     v3subEncodeNonnumeric,
-    v3subTrainTestSplit
+    v3subTrainTestSplit,
+    v3subFinalize
   },
   props: {
     stepNumber: {

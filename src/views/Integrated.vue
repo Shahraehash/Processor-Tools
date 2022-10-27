@@ -11,23 +11,23 @@
 
 
         <component 
-        v-for="(c, key) in visibleComponents" 
-        :key="key"
-        :currentStep="currentStep"
-        :is="c.component"
-        :subcomponent="c.subcomponent"
-        :stepTitle="c.stepTitle"
-        :stepNumber="key + 1"
-        :files="dataFiles"
-        :target="target"
-        :analysisObj="c.analysisObj"
-        :analysisFunction="c.analysisFunction"
-        :transformFunction="c.transformFunction"
-        :optional="c.optional"
-        @next="c.events.next"
-        @update="c.events.update; setStep(key)"
-        @removeComponent="removeComponent(key)"
-        :ref="'step' + key"
+          v-for="(c, key) in visibleComponents" 
+          :key="key"
+          :currentStep="currentStep"
+          :is="c.component"
+          :subcomponent="c.subcomponent"
+          :stepTitle="c.stepTitle"
+          :stepNumber="key + 1"
+          :files="dataFiles"
+          :target="target"
+          :analysisObj="c.analysisObj"
+          :analysisFunction="c.analysisFunction"
+          :transformFunction="c.transformFunction"
+          :optional="c.optional"
+          @next="c.events.next"
+          @update="c.events.update; setStep(key)"
+          @removeComponent="removeComponent(key)"
+          :ref="'step' + key"
         ></component>
 
 
@@ -40,7 +40,7 @@
         <div>Additional Steps</div>
           <v-row justify="center">
             <v-col cols="4" v-for="(item, key) in optional" :key="key">
-              <v-card outlined @click="addComponent(item.component)">
+              <v-card outlined @click="addComponent(item.component)" :disabled="item.disabled">
                 <div class="overline">{{item.title}}</div>
                 <v-icon x-large :color="item.icon == 'mdi-export' ? 'primary' : ''">{{item.icon}}</v-icon>
               </v-card>          
@@ -51,10 +51,10 @@
       </div>
       <div class="ma-5 white--text">x</div>
       <div class="footer">
-        <div class="text-center">Step: {{currentStep + 1}} of {{componentList.length + 1}}</div>
+        <div class="text-center">Step: {{currentStep + 1}} of {{componentList.length}}</div>
 
         <v-progress-linear 
-          :value="(currentStep) / (componentList.length + 1) * 100"
+          :value="(currentStep + 1) / (componentList.length) * 100"
           :height="10"
           ></v-progress-linear>
 
@@ -114,17 +114,20 @@ import V3miniExport from '../components/v3miniExport.vue';
             {
               'title': 'Multicollinearity Assessment & Removal',
               'icon': 'mdi-chart-bell-curve-cumulative',
-              'component': this.getExportComponent()
+              'component': this.getExportComponent(),
+              disabled: true
             },    
             {
               'title': 'Feature Selector',
               'icon': 'mdi-select-all',
-              'component': this.getExportComponent()
+              'component': this.getExportComponent(),
+              disabled: true
             },                          
             {
-              'title': 'Export Files',
+              'title': 'Finalize Files',
               'icon': 'mdi-export',
-              'component': this.getExportComponent()
+              'component': this.getExportComponent(),
+              disabled: false
             },    
                
           ]
@@ -159,7 +162,7 @@ import V3miniExport from '../components/v3miniExport.vue';
       getExportComponent() {
         return{
           component: 'v3parentStepTemplate',
-          subcomponent: 'v3export',
+          subcomponent: 'v3subFinalize',
           stepTitle: 'Export Files for Use in Milo',
           optional: true,
           analysisFunction: analyzeFileArray,
