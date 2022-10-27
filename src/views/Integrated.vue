@@ -163,7 +163,7 @@ import V3miniExport from '../components/v3miniExport.vue';
         return{
           component: 'v3parentStepTemplate',
           subcomponent: 'v3subFinalize',
-          stepTitle: 'Export Files for Use in Milo',
+          stepTitle: 'Finalize Files for Use in Milo',
           optional: true,
           analysisFunction: analyzeFileArray,
           analysisObj: {method: 'export'},
