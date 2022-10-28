@@ -1,10 +1,11 @@
+
 export default {
     data() {
       return {
         mxfileTypes: [
-          {text: 'Training/Initial Test', value: 'train'},
-          {text: 'Generalized Test', value: 'test'},
-          {text: 'Train/Test Combined', value: 'combined'},
+          {text: 'Only Training/Initial Test', value: 'train'},
+          {text: 'Only Generalization Test', value: 'test'},
+          {text: 'Combined Train/Generalization', value: 'combined'},
         ],
 
       };
@@ -13,6 +14,15 @@ export default {
 
     },
     methods: {
+        mxStylePercent(value) {
+          if (value < 1) {
+            return '<1'
+          }
+          else {
+            return Math.round(value)
+          }
+
+        },
         mxfileTypeColor(fileType) {
             let color = null
             switch (fileType) {
@@ -23,7 +33,7 @@ export default {
                 color = '#9C27B0'
                 break;
               case 'combined':
-                color = '#FFC107'
+                color = 'grey'
                 break;
               default:
                 color = 'grey'

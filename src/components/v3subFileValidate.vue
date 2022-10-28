@@ -1,5 +1,8 @@
 <template>
     <div>
+        <div>
+            This step ensures your file data is valid and consistent between files if using more than one data file.
+        </div>
         <v-row>
             <v-col cols="4">
                 <!-- Per File Target Validation -->
@@ -10,9 +13,12 @@
                             
                             <v-card outlined class="pa-3">
                                 <div>
-                                <v3miniTrainTestLabel :type="file.type"/>
-                                {{file.name}} 
+                                    <v3miniTrainTestLabel :type="file.type"/>
                                 </div>
+                                <div>
+                                    {{file.name}} 
+                                </div>
+       
                                 <div>
                                     <div v-if="analysis.individualValidation[key].hasTarget">
                                         <v3miniValidate :valid="true"/>
@@ -108,11 +114,13 @@
 <script>
 import {buildTransformObject} from '@/v3Methods'
 
+
 import v3miniValidate from './v3miniValidate.vue'
 import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
 
 export default {
     name: 'v3subFileValidate',
+
     components: {
         v3miniValidate,
         v3miniTrainTestLabel

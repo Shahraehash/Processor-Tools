@@ -7,24 +7,25 @@
     
     <!-- Heading -->
 
-    <v-row dense>
-      <v-col>
-          <v3StepHeading
+
+
+        <v3StepHeading
         style="display: inline-flex;"
         :stepNumber="stepNumber"
         :stepTitle="stepTitle"
-        />    
+        />
 
-      </v-col>
-      <v-col>
+        <v3miniExport :currentFiles="currentFiles" class="mt-n2"/>
+
+        <v-spacer></v-spacer>
 
         <v-btn @click="$emit('removeComponent')" class="float-right" text v-if="optional" style="display: inline-flex;">
           Remove Step
           <v-icon >mdi-close</v-icon>
         </v-btn>  
         
-      </v-col>
-    </v-row>
+
+
     <div>
 
       <v-spacer></v-spacer>
@@ -32,7 +33,7 @@
     <v-divider class="mb-5"></v-divider>  
     </div>
   
-    <v3miniExport :currentFiles="currentFiles" @manualUpdate="$emit('update')"/>
+    
 
 
     
@@ -47,6 +48,7 @@
         :currentFiles="currentFiles" 
         :analysis="analysis" 
         :target="target"
+        :files="files"
         @update="update($event)"
         >
       </v-component>

@@ -57,9 +57,23 @@
             >
             
 
-                <v-icon>mdi-file</v-icon>
-                {{ file.name }}
-                <v-btn icon @click="removeFile(file)" title="mdi-close"><v-icon color="primary">mdi-close</v-icon></v-btn>
+                
+                  <v-row>
+                    <v-col cols="11">
+                      <div style="white-space: nowrap; overflow:hidden; text-overflow: ellipsis;">
+                        <v-icon>mdi-file</v-icon>
+                        {{ file.name }}
+                      </div>
+
+                    </v-col>
+                    <v-col cols="1" class="ml-n5 mt-n2">
+                      <v-btn icon @click="removeFile(file)" title="mdi-close"><v-icon color="primary">mdi-close</v-icon></v-btn>
+                    
+                    </v-col>
+
+                  </v-row>
+                
+                
                 <div>
                   <v3miniValidate :valid="true" />
                   {{fileMetadata[index].size.rows}} rows
@@ -71,8 +85,8 @@
                 <div>
                   <v3miniValidate :valid="fileMetadata[index].missing.rows == 0" />
                   {{fileMetadata[index].missing.rows}}
-                  <span v-if="fileMetadata[index].missing.rows > 0">({{fileMetadata[index].missing.rowsPercent}}%)</span>
-                  rows missing data
+                  <span v-if="fileMetadata[index].missing.rows > 0"></span> 
+                  rows missing data ({{mxStylePercent(fileMetadata[index].missing.rowsPercent)}}%)
                 </div>
                 <div>
                   <v-select 
@@ -84,6 +98,7 @@
                     :items="mxfileTypes" 
                     item-text="text" 
                     item-value="value"
+                    @change="update()"
                     >
                     <template v-slot:selection="{ item, index }">
                       <v-chip small v-if="index === 0" :color="mxfileTypeColor(item.value)" dark>
@@ -104,9 +119,10 @@
         </v-col>
         <v-col cols="4" v-if="files.length > 0">
           <v-card flat style="margin: 10px; padding: 100px 0;">
-            <div class="text-center mr-3" >
+            <div class="text-center mr-3" @click="$refs.fileClick.click()">
+            <div class="overline">Add addtional file</div> 
             <v-btn icon
-              @click="$refs.fileClick.click()"
+              
               >
               <v-icon large>mdi-plus-circle-outline</v-icon>
               </v-btn>
@@ -211,7 +227,11 @@
         this.update()
       }
     },
-    mounted() {
+    computed: {
+      complete() {
+        return true
+      }
+
 
   
     },
