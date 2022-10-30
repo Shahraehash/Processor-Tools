@@ -77,6 +77,7 @@
 import MenuBar from "@/components/MenuBar.vue";
 import v3FileUpload from "../components/v3FileUpload.vue";
 import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
+import v3Finalize from '../components/v3Finalize.vue';
 import V3miniExport from '../components/v3miniExport.vue';
 
 
@@ -88,14 +89,10 @@ import V3miniExport from '../components/v3miniExport.vue';
     MenuBar,
     v3FileUpload,
     v3parentStepTemplate,
+    v3Finalize,
     V3miniExport
 },
     computed: {
-      currentDataFiles() {
-        this.refreshKey
-        let currentIndex = this.dataFiles.length - 1
-        return this.dataFiles[currentIndex]
-      },
       visibleComponents() {
         return this.componentList.filter((item, index) => {
           item
@@ -137,6 +134,7 @@ import V3miniExport from '../components/v3miniExport.vue';
     mounted() {
         this.componentList = this.getComponentList()
     },
+ 
     methods: {
       exportComponent() {
         this.componentList.push(
@@ -161,13 +159,13 @@ import V3miniExport from '../components/v3miniExport.vue';
 
       getExportComponent() {
         return{
-          component: 'v3parentStepTemplate',
-          subcomponent: 'v3subFinalize',
+          component: 'v3Finalize',
           stepTitle: 'Finalize Files for Use in Milo',
           optional: true,
+          files: this.dataFiles,
           analysisFunction: analyzeFileArray,
           analysisObj: {method: 'export'},
-          transformFunction: transformFileArray,
+          
           events: {
             next: (fileMetadata) => { this.nextStep(fileMetadata);},
             update: (e) => {console.log('update', e); },
