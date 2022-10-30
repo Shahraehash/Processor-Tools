@@ -11,17 +11,24 @@
           <v-icon >mdi-close</v-icon>
         </v-btn>  
 
+
         <v-row dense>
             <v-col cols="6">
-                <div class="overline">Original</div>
-                <v-card outlined v-for="(original, originalKey) in files[0]" :key="originalKey">
+                <div class="overline ml-4">Summary</div>
+                <v-card outlined class="pa-3 ma-2">
+                    <v3miniFilesDelta :originalArray="files[0]" :finalArray="files[files.length - 1]"/>        
+                </v-card>
+            </v-col>
+            <v-col cols="3">
+                <div class="overline ml-4">Original</div>
+                <v-card outlined class="pa-3 ma-2" v-for="(original, originalKey) in files[0]" :key="originalKey">
                     <v3miniFileInfo :fileInfo="original"/>
                 </v-card>
                 
             </v-col>
-            <v-col cols="6">
-                <div class="overline">Current</div>
-                <v-card outlined v-for="(current, currentKey) in files[files.length - 1]" :key="currentKey">
+            <v-col cols="3">
+                <div class="overline ml-4">Current</div>
+                <v-card outlined class="pa-3 ma-2" v-for="(current, currentKey) in files[files.length - 1]" :key="currentKey">
                     <v3miniFileInfo :fileInfo="current"/>
                 </v-card>             
             </v-col>                
@@ -52,6 +59,7 @@ import v3StepHeading from '@/components/v3StepHeading'
 import FileDownload from 'js-file-download'
 import JSZip from 'jszip'
 
+import v3miniFilesDelta from '@/components/v3miniFilesDelta'
 import v3miniFileInfo from './v3miniFileInfo.vue'
 import v3ButtonNext from './v3ButtonNext.vue'
 import { exportFileArray } from '@/v3Methods'
@@ -61,6 +69,7 @@ export default {
     name: 'v3Finalize',
     components: {
         v3StepHeading,
+        v3miniFilesDelta,
         v3miniFileInfo,
         v3ButtonNext
 

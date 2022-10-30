@@ -40,7 +40,7 @@
         <div>Additional Steps</div>
           <v-row justify="center">
             <v-col cols="4" v-for="(item, key) in optional" :key="key">
-              <v-card outlined @click="addComponent(item.component)" :disabled="item.disabled">
+              <v-card outlined @click="addComponent(item.component)" :disabled="item.disabled" class="pa-3">
                 <div class="overline">{{item.title}}</div>
                 <v-icon x-large :color="item.icon == 'mdi-export' ? 'primary' : ''">{{item.icon}}</v-icon>
               </v-card>          
