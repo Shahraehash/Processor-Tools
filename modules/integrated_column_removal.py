@@ -47,6 +47,7 @@ def analyze_column_removal(fileObjectArray, target):
         if d['total'] > 0:
             d = d.to_dict()
             result.append(d)
+        result.sort(key=lambda x: x['percentContributions'], reverse=True) #sort by total missing values
 
     json = {'fileAnalysisCombined': result}
 

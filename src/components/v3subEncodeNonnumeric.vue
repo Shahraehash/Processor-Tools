@@ -5,9 +5,12 @@
                 <v3miniValidate :valid="true"/> No columns need encoding.
             </div>
             <div v-else>
+                <div class="ma-3">
+                    <span class="primary--text text-h5">{{ analysis.fileAnalysisCombined.length}}</span> columns need adjusting
+                </div>
 
 
-                <v3miniValidate :valid="false"/>{{ analysis.fileAnalysisCombined.length}} columns need adjusting
+                
                 <v-row dense>
     
                     <v-col cols="6"
@@ -23,16 +26,22 @@
 
 
                             <div>
-                                <v-chip>{{column.name}}</v-chip>
+                                <v3miniValidate :valid="false"/>
+                                Column Needing Attention: <v-chip>{{column.name}}</v-chip>
                             </div>
-                            <div>
-                                {{column.method}}
-                            </div>  
-                            <div>
-                                Unique: {{column.unique_values}}
-                            </div>  
-                            <div>
-                                Nan: {{column.nan_row_index}}
+                            <div class="ma-3">
+
+                                <div v-if="column.method == 'one_hot_encode'">
+                                    The data in this column is <strong class="light-blue--text">categorical</strong> with the {{column.unique_values.length}} unique values: 
+                                    <v-chip color="light-blue" dark small v-for="(cat, catKey) in column.unique_values" :key="catKey">{{cat}}</v-chip>. 
+                                    <br>We can either convert each category to a seperate column or remove the column from the dataset. 
+                                    <!-- Message if >20 categories, the drop mode is set on the backend method analyze_encode_nonnumeric -->
+                                    <v-alert type="warning" text v-if="column.unique_values.length > 20">With so many categories, the increase in column number may adversely affect your dataset and we recommend you drop the column</v-alert>
+                                </div>
+                                <div v-if="column.method == 'mixed_to_numeric'">
+                                    The data in this column is <strong class="light-blue--text">mostly numeric</strong> ({{column.values.percent}}%) with some non-numeric values. We can covert to numeric data and treat non-numeric data as missing values or remove the column from the dataset.
+                                </div>                                
+
                             </div>   
                             <div>
                                 <v-select

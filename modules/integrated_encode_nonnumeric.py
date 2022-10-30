@@ -46,10 +46,12 @@ def analyze_encode_nonnumeric(fileObjectArray, target):
             t = {
                 'name': column,
                 'method': 'mixed_to_numeric',
-                'nan_row_index': list(col[col.isna() == True].index),
-                'non_numeric_row_index': list(numeric[numeric == False].index),
+                'values' : {
+                    'counts': int(numeric_count),
+                    'percent': float(round(numeric_count / total_count * 100))
+                },
                 'items': [
-                    {'text': 'Convert to numeric', 'value': 'mixed_to_numeric'},
+                    {'text': 'Convert column to numeric', 'value': 'mixed_to_numeric'},
                     {'text': 'Remove column', 'value': 'drop'}
                 ],
                 'selection': 'mixed_to_numeric'
