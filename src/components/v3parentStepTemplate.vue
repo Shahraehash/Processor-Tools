@@ -15,7 +15,7 @@
         :stepTitle="stepTitle"
         />
 
-        <v3miniExport :currentFiles="currentFiles" class="mt-n2"/>
+        <v3miniExport :currentFiles="currentFiles" class="mt-n13"/>
 
         <v-spacer></v-spacer>
 

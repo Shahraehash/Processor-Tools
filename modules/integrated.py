@@ -58,6 +58,17 @@ def integrated_params():
     params['name'] = name
     params['type'] = 'combined' #TODO: change to smarter rule
 
+    name_check = name.lower()
+    train_check = 'train' in name_check
+    test_check = 'test' in name_check
+    if train_check and test_check:
+        params['type'] = 'combined'
+    elif train_check:
+        params['type'] = 'train'
+    elif test_check:
+        params['type'] = 'test'
+
+
     response = make_response(
         simplejson.dumps(params, ignore_nan=True),
         200,
