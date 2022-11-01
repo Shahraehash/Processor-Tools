@@ -197,7 +197,7 @@ def integrated_export():
         df = load_file(storage_id)
         json.append({
             'name': fileObject['name'],
-            'content': df.to_csv(index=True, index_label="source_row")
+            'content': df.to_csv(index=False, index_label="source_row")
         })
         
     response = make_response(

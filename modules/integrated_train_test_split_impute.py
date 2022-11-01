@@ -103,6 +103,7 @@ def merge_files_training_class_size(describe_obj):
         return half_minor_class_non_nan_counts
 
 
+
 def merge_files_segments(describe_obj, training_class_size, missing_values_option, prevelence_option):
 
     print(describe_obj)
@@ -211,7 +212,7 @@ def analyze_train_test_split_impute(fileObjectArray, target):
 
         print()
 
-        df = load_file(file['storageId'])   
+        df = load_file(file['storageId'])
         if file['type'] == None:
             groups['unknown'].append(df)
         else:
@@ -274,6 +275,11 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         print()
 
         df = load_file(file['storageId'])   
+
+        #track original index
+        df['origin_file_name'] = file['name']
+        df['origin_file_source_row'] = df.index
+
         if file['type'] == None:
             groups['unknown'].append(df)
         else:

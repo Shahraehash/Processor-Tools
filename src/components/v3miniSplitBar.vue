@@ -1,6 +1,7 @@
 <template>
     <div>
 
+
       <v-row>
                     <v-col cols="8">
                         <div class="overline">Handle Missing Values</div>
@@ -27,9 +28,10 @@
                     <v-col cols="12">
                         <div class="overline">Set size of training data</div>
                         <v-slider
+                            style="display: inline-flex; width: 200px"
                             @change="change"
                             v-model="localMetadata.train.counts[0]"
-                            :max="200"
+                            :max="maxTraining"
                             :min="25"
                             :step="1"
                             :ticks="true"
@@ -38,8 +40,7 @@
                             track-color="primary"
                             tick-size="4"
                             >
-                        </v-slider>
-                        {{localMetadata.train.counts[0]}}               
+                        </v-slider>          
                     </v-col>        
                 </v-row>
 
@@ -177,6 +178,9 @@
 
     },
     computed: {
+      maxTraining() {
+        return this.describe.non_nan.counts[this.describe.minor] - 25
+      },
 
 
     },
