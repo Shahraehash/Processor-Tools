@@ -39,8 +39,11 @@
                         background: '#009688',
                         width:  graph.train.percent[0] + '%'
                         }"
-                        
                         >
+                        
+
+
+                 
                         {{graph.train.counts[0]}}
                     </div>
                     <div
@@ -134,7 +137,15 @@
                     percent: {
                         0: this.covertToPercent(this.train.describe.total.counts[0]),
                         1: this.covertToPercent(this.train.describe.total.counts[1])
-                    }
+                    },
+                    missing: {
+                        0: this.train.describe.nan.counts[0],
+                        1: this.train.describe.nan.counts[1]
+                    },
+                    // percentMissing: {
+                    //     0: this.toPercent(this.train.describe.nan.counts[0], this.train.describe.total.counts[0]),
+                    //     1: this.toPercent(this.train.describe.nan.counts[1], this.train.describe.total.counts[1])
+                    // }
                 },
                 test: {
                     counts: {
@@ -145,7 +156,15 @@
                     percent: {
                         0: this.covertToPercent(this.test.describe.total.counts[0]),
                         1: this.covertToPercent(this.test.describe.total.counts[1])
-                    }
+                    },
+                    missing: {
+                        0: this.test.describe.nan.counts[0],
+                        1: this.test.describe.nan.counts[1]
+                    },
+                    // percentMissing: {
+                    //     0: this.toPercent(this.test.describe.nan.counts[0], this.test.describe.total.counts[0]),
+                    //     1: this.toPercent(this.test.describe.nan.counts[1], this.test.describe.total.counts[0])
+                    // }                    
                 }                
             }
         }
@@ -162,7 +181,11 @@
         covertToPercent(val) {
             let perc = val / (this.train.describe.total.counts.total + this.test.describe.total.counts.total)
             return Math.round(perc * 1000) / 10 
-        }
+        },
+        toPercent(num, denom) {
+            let perc = num / (denom)
+            return Math.round(perc * 1000) / 10 
+        }        
     }
 
   

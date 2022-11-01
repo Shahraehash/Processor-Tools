@@ -15,11 +15,14 @@
                 <!-- Previous validation needs to ensure will have train and test file in first step -->
                 Handle missing values and unbalanced 
 
-
+                
                 <v-row>
-                    <v-col cols="8">
+
+                      <v-col cols="8">
                         <div class="overline">Handle Missing Values</div>
                         <v-radio-group
+                            v-model="analysis.fileAnalysisDict['train'].missing_value_option"
+                            
                             >
                             <v-radio label="Remove all missing values" :value="0"></v-radio>
                             <v-radio label="Keep missing values in training and impute values - note: imputation cannot be used on generlization data as it compromises the validity of the generalization" :value="1"></v-radio>
