@@ -219,7 +219,13 @@
         if (current.length >= previous.length) {
           this.fileMetadata = []
           this.files.forEach(file => {
-          storeParamFile(file).then(r => this.fileMetadata.push(r))
+            storeParamFile(file).then(r => {
+              //front end override of file typing if one file
+              if (current.length == 1) {
+                r.type = 'combined'
+              }
+              this.fileMetadata.push(r)
+            })
           })          
 
         }

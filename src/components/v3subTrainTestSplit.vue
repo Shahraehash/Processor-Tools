@@ -13,41 +13,12 @@
             </div>
             <div v-else>
                 <!-- Previous validation needs to ensure will have train and test file in first step -->
-                Handle missing values and unbalanced 
+                You already have your data allocated into two sets. We can now decide how to manage missing values in your data set and unbalanced training classes.
 
-                
-                <v-row>
-
-                      <v-col cols="8">
-                        <div class="overline">Handle Missing Values</div>
-                        <v-radio-group
-                            v-model="analysis.fileAnalysisDict['train'].missing_value_option"
-                            
-                            >
-                            <v-radio label="Remove all missing values" :value="0"></v-radio>
-                            <v-radio label="Keep missing values in training and impute values - note: imputation cannot be used on generlization data as it compromises the validity of the generalization" :value="1"></v-radio>
-                        </v-radio-group>
-                    </v-col>
-
-                    <v-col cols="4">
-                        <div class="overline">Training Equalization</div>
-                        <v-radio-group
-                            >
-                            <v-radio label="Downsample Major Class" :value="0"></v-radio>
-                            <v-radio label="Upsample Minor Class" :value="1"></v-radio>
-                        </v-radio-group>
-                    </v-col>  
-
-                </v-row>
-                <v3miniTrainTestBar 
+                <v3miniTrainTestSeperateImpute 
                     :train="analysis.fileAnalysisDict['train']"
                     :test="analysis.fileAnalysisDict['test']"
                     />
-               
-
-
-                
-
             </div>
         </div>
     </div>
@@ -57,15 +28,14 @@ import { effectFileArray, buildTransformObject } from '@/v3Methods'
 
 import v3miniPrevalenceBar from '@/components/v3miniPrevalenceBar'
 import v3miniSplitBar from '@/components/v3miniSplitBar'
-
-import v3miniTrainTestBar from './v3miniTrainTestBar.vue'
+import v3miniTrainTestSeperateImpute from './v3miniTrainTestSeperateImpute.vue'
 
 export default {
     name: 'v3subFileValidate',
     components: {
         v3miniPrevalenceBar,
         v3miniSplitBar,
-        v3miniTrainTestBar
+        v3miniTrainTestSeperateImpute
     },
     props: {
         currentFiles: {

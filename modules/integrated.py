@@ -58,6 +58,13 @@ def integrated_params():
     params['name'] = name
     params['type'] = 'combined' #TODO: change to smarter rule
 
+
+    #automatically label as train and test if in the names
+    #NOTE: since calls are made one file at a time, we cannot
+    #know if there are multiple files here.
+    #As such, there's an override rule in the frontend node that
+    #will change the type to 'combined' if there's onlye a single
+    #file
     name_check = name.lower()
     train_check = 'train' in name_check
     test_check = 'test' in name_check
