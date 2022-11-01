@@ -124,7 +124,7 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
         #remove all rows with missing values and use all data
         test_major = describe_obj['non_nan']['counts'][major] - training_class_size
         test_minor = describe_obj['non_nan']['counts'][minor] - training_class_size
-        remainder = 0
+        remainder = describe_obj['nan']['counts'][major] + describe_obj['nan']['counts'][minor]
     
     elif missing_values_option == 0 and prevelence_option == 1:
         #remove all rows with missing values and keep original prevalences
@@ -137,7 +137,7 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
 
         test_major = round((test_minor / minor_prev) * major_prev)
         print(test_major)
-        remainder = describe_obj['non_nan']['counts'][major] - training_class_size - test_major   
+        remainder = describe_obj['nan']['counts'][minor] + describe_obj['nan']['counts'][major]  + (describe_obj['non_nan']['counts'][major] - test_major - training_class_size) 
 
     elif missing_values_option == 1 and prevelence_option == 0:
         test_major = describe_obj['total']['counts'][major] - training_class_size
@@ -155,7 +155,7 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
         remainder = describe_obj['total']['counts'][major] - training_class_size - test_major             
 
 
-    total = training_class_size * 2 + test_major + test_minor + remainder
+    total = describe_obj['total']['counts'][major] + describe_obj['total']['counts'][minor]
 
 
     return {
