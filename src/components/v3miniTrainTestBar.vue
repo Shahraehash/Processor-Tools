@@ -99,7 +99,7 @@
                 
                 >
 
-                Removed
+                {{graphObject.remainder.count}}
             </div>   
         </div>            
         </div>

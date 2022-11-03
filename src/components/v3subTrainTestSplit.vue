@@ -18,6 +18,7 @@
                 <v3miniTrainTestSeperateImpute 
                     :train="analysis.fileAnalysisDict['train']"
                     :test="analysis.fileAnalysisDict['test']"
+                    @effect="setEffect($event)"
                     />
             </div>
         </div>
@@ -82,9 +83,11 @@ export default {
                 complete: this.complete,
                 transformObj: buildTransformObject('train_test_split_impute', this.effect)
             }
+            console.log(result)     
             this.$emit('update', result)
         },
         applyEffect(effectParams) {
+            //Requires backend calculation, only needed for single data file
             let effectObj = {
                 method: 'train_test_split_impute',
                 ...effectParams
@@ -97,6 +100,16 @@ export default {
                 this.update()
             })
             
+        },
+        setEffect(effectParams) {
+            //Does not rquire backend calculation, only priming data for transform
+            let effectObj = {
+                method: 'train_test_split_impute',
+                ...effectParams
+            }
+            this.effect = effectObj
+            this.update()
+                   
         }        
        
    

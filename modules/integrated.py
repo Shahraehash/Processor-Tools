@@ -196,10 +196,14 @@ def integrated_export():
         storage_id = fileObject['storageId']
         df = load_file(storage_id)
         json.append({
-            'name': fileObject['name'],
+            'name': 'with_source_rows_' + fileObject['name'],
             'content': df.to_csv(index=False, index_label="source_row")
         })
-        
+        df = df.drop(['origin_file_name', 'origin_file_source_row'], axis=1)
+        json.append({
+            'name': fileObject['name'],
+            'content': df.to_csv(index=False, index_label="source_row")
+        })        
     response = make_response(
         simplejson.dumps(json, ignore_nan=True),
         200,

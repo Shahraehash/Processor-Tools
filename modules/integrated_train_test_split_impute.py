@@ -19,7 +19,7 @@ def fill_in_zeros(dict):
     return dict
 
 def counts_to_percent(df):
-    return round(df['counts'] / df['counts'].sum() * 100,1)
+    return df['counts'] / df['counts'].sum() * 100
 
 
 def merged_files_describe(df,target):
@@ -297,7 +297,83 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     
     result = []
 
-    if 'combined' in df_groups:
+
+    #multiple files
+
+    if 'train' in df_groups and 'test' in df_groups:
+        
+        t = transform['data']
+        training_missing_setting = t['trainMissing'] #drop missing = 0, impute = 1
+        training_equalizate_setting = t['trainEqualize'] #no change = 0, equalize = 1
+        testing_missing = t['testMissing'] #drop missing = 0, only option currently
+        testing_prevalence = t['testPrevalence'] #use all data = 0, adjust to origial = 1
+
+        print(t)
+
+
+
+        print('test and train')
+  
+        
+
+
+        df_train = df_groups['train']
+        df_test = df_groups['test']
+
+        #Training
+        array_df_removed = []
+
+        #if drop missing rows
+        if training_missing_setting == 0:
+            df_train_nan = df_train[df_train.isna().any(axis=1)]
+            df_train = df_train.drop(df_train_nan.index)
+            array_df_removed.append(df_train_nan)
+
+        #if impute missing rows
+        elif training_missing_setting == 1:
+            df_train = impute_processor(df_train, target)
+
+        #if equalize classes
+        if training_equalizate_setting == 1:
+            df_train[target].value_counts().to_dict()
+            value_counts = df_train[target].value_counts().to_dict()
+            goal = df_train[target].value_counts().min()
+            for key in value_counts:
+                temp_drop = df_train[df_train[target] == key].sample(value_counts[key] - goal, replace=False)
+                print(temp_drop.shape)
+                df_train.drop(temp_drop.index, inplace=True)
+                array_df_removed.append(temp_drop)
+
+        #TESTING
+        #must drop missing rows
+        df_test_nan = df_test[df_test.isna().any(axis=1)]
+        df_test = df_test.drop(df_test_nan.index)
+        array_df_removed.append(df_test_nan)
+
+        #use all data or adjust prevlence to match original dataset
+        if testing_prevalence == 0:
+            pass
+        elif testing_prevalence == 1:
+            df_test[target].value_counts().to_dict()
+            value_counts = df_test[target].value_counts().to_dict()
+            for key in value_counts:
+                goal = t['finalValues']['test']['counts'][str(key)]
+                temp_drop = df_test[df_test[target] == key].sample(value_counts[key] - goal, replace=False)
+                print(temp_drop.shape)
+                df_test.drop(temp_drop.index, inplace=True)
+                array_df_removed.append(temp_drop)
+        
+        df_removed = pd.concat(array_df_removed)
+
+        #include dropped output in result
+        if df_removed.shape[0] > 0:
+            result.append(store_file_and_params(df_removed, 'removed_values.csv', 'removed'))
+
+        result.append(store_file_and_params(df_train, 'train.csv', 'train'))
+        result.append(store_file_and_params(df_test, 'test.csv', 'test'))
+
+
+    elif 'combined' in df_groups:
         print('combined')
         df = df_groups['combined']
 
@@ -320,6 +396,8 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
             df_train_major = df_major.sample(n=t['train']['counts'][str(major)])
 
             df_train = pd.concat([df_train_minor, df_train_major])
+
+            result.append(store_file_and_params(df_nan, 'removed_values.csv', 'removed'))
 
         elif t['missing_values_option'] == 1:
             
