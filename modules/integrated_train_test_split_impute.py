@@ -452,9 +452,14 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
 def impute_processor(df, target):
 
+
         imp_mean = IterativeImputer(random_state=0)
         X = df.drop(columns=[target])
         y = df[target]
+
+        print(X.columns)
+        extra = df[['origin_file_name', 'origin_file_source_row']]
+        X = X.drop(columns=['origin_file_name', 'origin_file_source_row'])
 
         #check if negative values exist in each column before imputation
         col_has_negative = ((X < 0).any()).to_dict()
@@ -511,6 +516,8 @@ def impute_processor(df, target):
 
         print()
         result[target] = y
+        result['origin_file_name'] = extra['origin_file_name']
+        result['origin_file_source_row'] = extra['origin_file_source_row']
 
         return result
 
