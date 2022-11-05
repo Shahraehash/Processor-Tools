@@ -12,14 +12,37 @@
         :stepNumber="stepNumber"
         :stepTitle="stepTitle"
         />      
+
+    <!-- Make Initial Chocie on Approach -->
+      <div>
+        <v-row>
+          <v-col cols="4" v-for="(path, pathKey) in paths" :key="pathKey">
+            <v-card 
+              v-bind:class="{'path-selection': pathKey == pathSelection, 'path-no-selection': pathKey != pathSelection}" 
+              flat 
+              class="ma-5 pa-3 text-center"
+              @click="setPath(pathKey)"
+              >
+              <div>
+                <v-icon size="35px" :style="pathKey == pathSelection ? 'color: white;' : ''">{{path.icon}}</v-icon>
+                <v-icon v-if="path.value == 'train-test'" size="35px" :style="pathKey == pathSelection ? 'color: white;' : ''">{{path.icon}}</v-icon>
+              </div>
+              <div class="mt-5">{{path.text}}</div>
+            </v-card>
+          </v-col>
+              
+          
+        </v-row>
+      </div>
     <!-- If no files yet -->
       <div 
-        v-if="files.length == 0" 
-        class="text-center"
-        style="border: 5px dashed #d3d3d3; border-radius: 10px; padding: 20px;"
+        v-if="files.length == 0 && pathSelection != null" 
+        class="text-center mx-5 mt-5"
+        style="border: 4px dashed #d3d3d3; border-radius: 10px; padding: 20px;"
         >
         <div >
-          Drag and drop your CSV file(s) into this box or click the file icon below to select from systemc dialog.
+
+          Drag and drop your CSV file<span v-if="['train-test', 'other'].includes(paths[pathSelection].value)">s</span> into this box or click the file icon below to select from systemc dialog.
         </div>
         <div>
           <v-icon 
@@ -33,9 +56,10 @@
       </div>
     <!-- Hidden file upload -->
       <input 
+        v-if="pathSelection"
         type="file" 
         ref="fileClick" 
-        multiple="multiple" 
+        :multiple="['train-test', 'other'].includes(paths[pathSelection].value) ? true : false" 
         @change="clickAddFile($event)" 
         style="display: none" 
         accept='.csv'
@@ -196,7 +220,25 @@
         files: [],
         fileIds: [], //ids of files in the database, temporary
         fileMetadata: [],
-        target: null
+        target: null,
+        pathSelection: null,
+        paths: [
+          { 
+            text: 'I have one data file',
+            icon: 'mdi-file-outline',
+            value: 'single'
+          },
+          { 
+            text: 'I have two files for model training and generalization testing',
+            icon: 'mdi-file-outline',
+            value: 'train-test'
+          },
+          { 
+            text: 'I have two or more files with a mix of data',
+            icon: 'mdi-file-multiple-outline',
+            value: 'other'
+          },          
+        ]
       }
     },
     props: {
@@ -253,8 +295,10 @@
           target: this.target
         })
       },
-
-
+      setPath(path) {
+        this.pathSelection = path
+        this.update()
+      },
       clickAddFile(e) {
         for (let file of e.target.files) {
           this.files.push(file)
@@ -293,6 +337,19 @@
   }
   </script>
   <style scoped>
+  .path-selection {
+    color: white;
+    background-color: #1976d2;
+    height:130px; 
+    border-radius: 10px       
+  }
+  .path-no-selection {
+    color: black;
+    height:130px; 
+    border: 1px solid #d3d3d3; 
+    border-radius: 10px    
+  }  
+
   #indent-text {
       margin-left: 1.8em;
       text-indent: -1.8em;
