@@ -24,9 +24,9 @@
                 </v-radio-group>
             </v-col>  
             <v-col cols="3">
-                <div class="overline purple--text">Testing Missing Values</div>
+                <div class="overline green--text">Testing Missing Values</div>
                 <v-radio-group
-                    color="purple"
+                    color="green"
                     v-model="testMissing"
                     @change="change"
                     >
@@ -34,9 +34,9 @@
                 </v-radio-group>
             </v-col>
             <v-col cols="3">
-                <div class="overline purple--text">Testing Prevalence</div>
+                <div class="overline green--text">Testing Prevalence</div>
                 <v-radio-group
-                    color="purple"
+                    color="green"
                     v-model="testPrevalence"
                     @change="change"
                     >

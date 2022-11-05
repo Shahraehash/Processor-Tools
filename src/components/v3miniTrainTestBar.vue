@@ -1,99 +1,110 @@
 <template>
     <div>
         <div v-if="graphObject">
-            <div style="width:100%" >
+            <div style="width:100%; height: 40px;" >
             <div
-                class="group-box "
+                class="group-box data-set-box right-spacer"
                 v-bind:style="{
-                background: '#2196F3',
-                width:  graphObject.train.percent[0] + graphObject.train.percent[1] + '%'
+                background: mxBarColors.train,
+                width:  graphObject.train.percent[0] + graphObject.train.percent[1] + '%',
+                borderRadius: '20px 25px 0px 0px'
                 }"
                 >
                 Training
             </div>
             <div
-                class="group-box "
+                class="group-box data-set-box right-spacer"
                 v-bind:style="{
-                background: '#9C27B0',
-                width:  graphObject.test.percent[0] + graphObject.test.percent[1] + '%'
+                background: mxBarColors.test,
+                width:  graphObject.test.percent[0] + graphObject.test.percent[1] + '%',
+                borderRadius: '20px 25px 0px 0px'
                 }"
                 >
                 Generalization Testing
             </div>        
             <div
-                class="group-box "
+                class="group-box data-set-box "
                 v-bind:style="{
-                background: 'white',
-                width: graphObject.remainder.percent + '%'
+                background: mxBarColors.blank,
+                width: graphObject.remainder.percent + '%',
                 }"
                 
                 >
+                Removed
             </div>        
             </div>
 
             <div style="width:100%">     
             <div
-                class="group-box "
+                class="group-box class-box "
                 v-bind:style="{
-                background: '#009688',
-                width:  graphObject.train.percent[0] + '%'
+                background: mxBarColors.classZero,
+                width:  graphObject.train.percent[0] + '%',
+                borderRadius: '0px 0px 0px 20px'
                 }"
                 
                 >
-                <div class="missing"
+                <div class="missing class-box"
                     v-bind:style="{
+                    background: mxBarColors.missing,
                     width: graphObject.train.missingPercent[0] +'%'
                     }"
                 ></div>                
                 Class 0: {{graphObject.train.counts[0]}}
             </div>
             <div
-                class="group-box "
+                class="group-box class-box right-spacer"
                 v-bind:style="{
-                background: '#4CAF50',
-                width:  graphObject.train.percent[1] + '%'
+                background: mxBarColors.classOne,
+                width:  graphObject.train.percent[1] + '%',
+                borderRadius: '0px 0px 25px 0px'
                 }"
                 >
-                <div class="missing"
+                <div class="missing class-box"
                     v-bind:style="{
+                    background: mxBarColors.missing,
                     width: graphObject.train.missingPercent[1] + '%'
                     }"
                 ></div>
                 Class 1: {{graphObject.train.counts[1]}}
             </div>        
             <div
-                class="group-box"
+                class="group-box class-box"
                 v-bind:style="{
-                background: '#009688',
-                width:  graphObject.test.percent[0] +'%'
+                background: mxBarColors.classZero,
+                width:  graphObject.test.percent[0] +'%',
+                borderRadius: '0px 0px 0px 20px'
                 }"
                 >
-                <div class="missing"
+                <div class="missing class-box"
                     v-bind:style="{
+                    background: mxBarColors.missing,
                     width: graphObject.test.missingPercent[0] +'%'
                     }"
                 ></div>
                 Class 0: {{graphObject.test.counts[0]}}
             </div>   
             <div
-                class="group-box"
+                class="group-box class-box right-spacer"
                 v-bind:style="{
-                background: '#4CAF50',
-                width: graphObject.test.percent[1] + '%' 
+                background: mxBarColors.classOne,
+                width: graphObject.test.percent[1] + '%',
+                borderRadius: '0px 0px 25px 0px'
                 }"
                 >
-                Class 0: {{graphObject.test.counts[1]}}
-                <div class="missing"
+                Class 1: {{graphObject.test.counts[1]}}
+                <div class="missing class-box"
                     v-bind:style="{
+                    background: mxBarColors.missing,
                     width: graphObject.test.missingPercent[1] + '%'
                     }"
                 ></div>
                 
             </div>        
             <div
-                class="group-box"
+                class="group-box class-box "
                 v-bind:style="{
-                background: 'grey',
+                background: mxBarColors.blank,
                 width: graphObject.remainder.percent + '%'
                 }"
                 
@@ -107,10 +118,11 @@
   
   </template>
   <script>
-
+  import v3Mixin from '@/components/v3Mixin';
 
   export default {
     name: 'v3miniTrainTestBar',
+    mixins: [v3Mixin],
     props: 
       {
         graphObject: {
@@ -153,10 +165,17 @@
   </script>
 
     <style scoped>
-
+    
+    .data-set-box {
+        padding-top: 8px;
+        height:40px;
+    }
+    .class-box {
+        padding-top: 8px;
+        height:40px;
+    }
     .group-box {
-        padding-top:5px;
-        height: 30px;
+        box-sizing: ;
         position: relative;
         transition: width 0.5s;
         display: inline-block;
@@ -164,12 +183,13 @@
         color: white;
         overflow: hidden;
     }
+    .right-spacer {
+        border-right: 5px white solid;
+    }
     .missing {
         position: absolute;
         top: 0;
         left: 0;
-        height: 30px;
-        background: orange;
         z-index: 1;
     }
 

@@ -7,6 +7,16 @@ export default {
           {text: 'Only Generalization Test', value: 'test'},
           {text: 'Combined Train/Generalization', value: 'combined'},
         ],
+        mxBarColors: {
+          train: '#2196F3',
+          test: '#4CAF50',
+          blank: 'grey',
+          classZero: '#9C27B0',
+          classOne: '#3F51B5',
+          missing: '#FF9800',
+
+        }
+
 
       };
     },
@@ -27,20 +37,21 @@ export default {
             let color = null
             switch (fileType) {
               case 'train':
-                color = '#2196F3'
+                color = this.mxBarColors.train
                 break;
               case 'test':
-                color = '#9C27B0'
+                color = this.mxBarColors.test
                 break;
               case 'combined':
-                color = 'grey'
+                color = this.mxBarColors.blank
                 break;
               default:
-                color = 'grey'
+                color = this.mxBarColors.blank
                 break;
             }
             return color
       },
+
 
     }
   };
