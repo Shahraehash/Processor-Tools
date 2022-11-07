@@ -213,7 +213,7 @@ import V3miniExport from '../components/v3miniExport.vue';
           {
               component: 'v3parentStepTemplate',
               subcomponent: 'v3subEncodeNonnumeric',
-              stepTitle: 'Ensure all columns are numeric',
+              stepTitle: 'Convert non-numeric columns to numeric representations',
               optional: false,
               analysisFunction: analyzeFileArray,
               analysisObj: {method: 'encode_nonnumeric'},

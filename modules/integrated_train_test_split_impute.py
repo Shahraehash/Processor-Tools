@@ -331,7 +331,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
         #if impute missing rows
         elif training_missing_setting == 1:
-            df_train = impute_processor(df_train, target)
+            df_train, df_imputed = impute_processor(df_train, target)
 
         #if equalize classes
         if training_equalizate_setting == 1:
@@ -411,7 +411,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
             df_train = pd.concat([df_train_minor, df_train_major, df_nan])
 
-            df_train = impute_processor(df_train, target)
+            df_train, df_imputed = impute_processor(df_train, target)
             
 
             
@@ -439,6 +439,11 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
         result.append(store_file_and_params(df_train, 'train.csv', 'train'))
         result.append(store_file_and_params(df_test, 'test.csv', 'test'))
+
+        try:
+            result.append(store_file_and_params(df_imputed, 'imputed.csv', 'imputed'))
+        except:
+            pass
     
 
     return result
@@ -456,6 +461,8 @@ def impute_processor(df, target):
         imp_mean = IterativeImputer(random_state=0)
         X = df.drop(columns=[target])
         y = df[target]
+
+        imputed_row_index = df[df.isna().any(axis=1)].index
 
         print(X.columns)
         extra = df[['origin_file_name', 'origin_file_source_row']]
@@ -519,7 +526,10 @@ def impute_processor(df, target):
         result['origin_file_name'] = extra['origin_file_name']
         result['origin_file_source_row'] = extra['origin_file_source_row']
 
-        return result
+
+        imputed = result.iloc[imputed_row_index]
+
+        return result, imputed
 
 
 
