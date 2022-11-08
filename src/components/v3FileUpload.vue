@@ -42,7 +42,7 @@
         >
         <div >
 
-          Drag and drop your CSV file<span v-if="['train-test', 'other'].includes(paths[pathSelection].value)">s</span> into this box or click the file icon below to select from systemc dialog.
+          Drag and drop your CSV file<span v-if="allowMultipleFiles">s</span> into this box or click the file icon below to select from systemc dialog.
         </div>
         <div>
           <v-icon 
@@ -56,10 +56,9 @@
       </div>
     <!-- Hidden file upload -->
       <input 
-        v-if="pathSelection"
         type="file" 
         ref="fileClick" 
-        :multiple="['train-test', 'other'].includes(paths[pathSelection].value) ? true : false" 
+        :multiple="allowMultipleFiles" 
         @change="clickAddFile($event)" 
         style="display: none" 
         accept='.csv'
@@ -119,7 +118,7 @@
                     class="ma-2 mt-7" 
                      
                     label="Data Type" 
-                    :items="mxfileTypes" 
+                    :items="filteredFileTypes" 
                     item-text="text" 
                     item-value="value"
                     @change="update()"
@@ -221,7 +220,7 @@
         fileIds: [], //ids of files in the database, temporary
         fileMetadata: [],
         target: null,
-        pathSelection: null,
+        pathSelection: 0,
         paths: [
           { 
             text: 'I have one data file',
@@ -278,7 +277,35 @@
     computed: {
       complete() {
         return true
-      }
+      },
+      allowMultipleFiles() {
+        if (this.pathSelection != null) {
+          return ['train-test', 'other'].includes(this.paths[this.pathSelection].value) ? true : false
+        }
+        else {
+          return true
+        }
+      },
+      filteredFileTypes() {
+        //based on selected pathway
+        if (this.pathSelection != null) {
+          switch (this.paths[this.pathSelection].value) {
+            case 'single':
+              return this.mxfileTypes.filter(t => t.value == 'combined')
+            case 'train-test':
+              return this.mxfileTypes.filter(t => t.value == 'train' && t.value == 'test')
+              //TODO - NOT WORKING
+            case 'other':
+              return this.mxfileTypes
+            default:
+              return this.mxfileTypes
+          }
+        }
+        else {
+          return this.mxfileTypes
+        }
+      },
+
 
 
   

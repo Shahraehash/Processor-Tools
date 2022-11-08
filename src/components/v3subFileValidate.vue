@@ -81,7 +81,20 @@
                             <v3miniValidate :valid="false"/>
                             Columns Vary between files
                             <!-- TODO -->
-                            {{analysis.mismatchedColumns}}
+                            <div v-for="(comparison, comparisonKey) in analysis.mismatchedColumns" :key="comparisonKey">
+                                <div class="ma-2">
+                                    <strong class="green--text">{{comparison.hasName}}</strong> has the following 
+                                    columns that are missing from <strong class="orange--text">{{comparison.missingName}}</strong>
+                                </div>
+                                
+                                <div class="px-3 py-1">
+                                    <v-chip small v-for="(col, colKey) in comparison.missingCols" :key="colKey">{{col}}</v-chip>
+                                </div>
+                                
+                            </div>
+                            
+                            
+
                         </div>
                     </div>            
 

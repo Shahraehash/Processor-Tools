@@ -61,7 +61,9 @@ def analysis_file_validate(fileObjectArray, target):
                 if len(comp) > 0:
                     mismatchedColumns.append({
                         'has': y['storageId'],
+                        'hasName': y['name'],
                         'misisng': z['storageId'],
+                        'missingName': z['name'],
                         'missingCols': comp
                     })
 
