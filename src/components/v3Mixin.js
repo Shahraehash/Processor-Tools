@@ -9,7 +9,7 @@ export default {
         ],
         mxBarColors: {
           train: '#2196F3',
-          test: '#8BC34A',  //alts 1 and alts 2: 
+          test: '#81C784',  //alts 1 and alts 2: 
           blank: 'grey', 
           classZero: '#9C27B0',
           classOne: '#3F51B5',

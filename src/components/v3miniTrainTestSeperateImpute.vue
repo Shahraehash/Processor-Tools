@@ -47,8 +47,10 @@
         </v-row>    
 
         <v3miniTrainTestBar :graphObject="graphObject"/>  
-        <div class="text-center">
-          <v-icon size="75">mdi-arrow-down</v-icon>Applying File Changes <v-icon size="75">mdi-arrow-down</v-icon>
+        <div class="text-center my-3">
+          <v-icon size="75" color="grey">mdi-arrow-down-bold-outline</v-icon>
+          <span class="overline grey--text">Applying File Changes </span>
+          <v-icon size="75" color="grey">mdi-arrow-down-bold-outline</v-icon>
         </div>
 
         <v3miniTrainTestBar :graphObject="graphObjectWithChanges"/>   

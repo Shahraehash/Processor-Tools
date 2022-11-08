@@ -1,26 +1,55 @@
 <template>
     <div>
         <div v-if="graphObject">
+            <div>
+                <div class="key-box" 
+                     v-bind:style="{
+                        background: mxBarColors.missing,
+                    }">    
+                </div>
+                <div v-bind:style="{
+                        display: 'inline-block',
+                    }">    
+                    Missing
+                </div>
+
+                <div class="key-box"
+                      v-bind:style="{
+                        background: mxBarColors.blank,
+    
+                    }">    
+                </div>
+                <div
+ 
+                    v-bind:style="{
+                        display: 'inline-block',
+                        
+                    }">    
+                    Removed
+                </div>
+                            
+
+            </div>
             <div style="width:100%; height: 40px;" >
             <div
                 class="group-box data-set-box right-spacer"
                 v-bind:style="{
                 background: mxBarColors.train,
                 width:  graphObject.train.percent[0] + graphObject.train.percent[1] + '%',
-                borderRadius: '20px 25px 0px 0px'
+
                 }"
                 >
-                Training
+                Training and Initial Validation File
             </div>
             <div
                 class="group-box data-set-box right-spacer"
                 v-bind:style="{
                 background: mxBarColors.test,
                 width:  graphObject.test.percent[0] + graphObject.test.percent[1] + '%',
-                borderRadius: '20px 25px 0px 0px'
+
                 }"
                 >
-                Generalization Testing
+                Generalization Testing File
             </div>        
             <div
                 class="group-box data-set-box "
@@ -40,7 +69,7 @@
                 v-bind:style="{
                 background: mxBarColors.classZero,
                 width:  graphObject.train.percent[0] + '%',
-                borderRadius: '0px 0px 0px 20px'
+
                 }"
                 
                 >
@@ -57,7 +86,7 @@
                 v-bind:style="{
                 background: mxBarColors.classOne,
                 width:  graphObject.train.percent[1] + '%',
-                borderRadius: '0px 0px 25px 0px'
+
                 }"
                 >
                 <div class="missing class-box"
@@ -73,7 +102,7 @@
                 v-bind:style="{
                 background: mxBarColors.classZero,
                 width:  graphObject.test.percent[0] +'%',
-                borderRadius: '0px 0px 0px 20px'
+
                 }"
                 >
                 <div class="missing class-box"
@@ -89,7 +118,7 @@
                 v-bind:style="{
                 background: mxBarColors.classOne,
                 width: graphObject.test.percent[1] + '%',
-                borderRadius: '0px 0px 25px 0px'
+
                 }"
                 >
                 Class 1: {{graphObject.test.counts[1]}}
@@ -191,6 +220,14 @@
         top: 0;
         left: 0;
         z-index: 1;
+    }
+    .key-box {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border-radius: 5px;
+        margin-right: 5px;
+        margin-left: 15px;
     }
 
   </style>
