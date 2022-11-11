@@ -3,13 +3,20 @@
         <div v-if="analysis">
             <div v-if="Object.keys(analysis.fileAnalysisDict).includes('combined')">
                 To prepare for use with MILO you need to split your data into a training data set and a generalization testing data set used to evaluate your model.
-                <v3miniPrevalenceBar :metadata="analysis.fileAnalysisDict['combined']" class="mb-5"/>
-                <v3miniSplitBar 
+                <v3miniTrainTestSingleFileImpute 
+                    :combinedFile="analysis.fileAnalysisDict['combined']" 
+                    :effectMetadata="effect"
+                    @effect="setEffect($event)"
+                    />
+
+
+                
+                <!-- <v3miniSplitBar 
                     :metadata="analysis.fileAnalysisDict['combined']['segments']" 
                     :describe="analysis.fileAnalysisDict['combined']['describe']" 
                     :effectMetadata="effect"
                     @effect="applyEffect($event)"
-                    class="mb-5"/>
+                    class="mb-5"/> -->
             </div>
             <div v-else>
                 <!-- Previous validation needs to ensure will have train and test file in first step -->
@@ -27,15 +34,15 @@
 <script>
 import { effectFileArray, buildTransformObject } from '@/v3Methods'
 
-import v3miniPrevalenceBar from '@/components/v3miniPrevalenceBar'
-import v3miniSplitBar from '@/components/v3miniSplitBar'
+import v3miniTrainTestSingleFileImpute from './v3miniTrainTestSingleFileImpute.vue'
+// import v3miniSplitBar from '@/components/v3miniSplitBar'
 import v3miniTrainTestSeperateImpute from './v3miniTrainTestSeperateImpute.vue'
 
 export default {
     name: 'v3subFileValidate',
     components: {
-        v3miniPrevalenceBar,
-        v3miniSplitBar,
+        v3miniTrainTestSingleFileImpute,
+        // v3miniSplitBar,
         v3miniTrainTestSeperateImpute
     },
     props: {

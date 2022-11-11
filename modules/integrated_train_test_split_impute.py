@@ -104,6 +104,7 @@ def merge_files_training_class_size(describe_obj):
 
 
 
+#this function is legacy and will be removed
 def merge_files_segments(describe_obj, training_class_size, missing_values_option, prevelence_option):
 
     print(describe_obj)
