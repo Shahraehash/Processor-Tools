@@ -201,7 +201,7 @@
             missingValuesOption: this.missingValuesOption,
             prevalenceOption: this.prevalenceOption, 
             trainingClassSize: this.localMetadata.train.counts[0]})
-      }
+        }
     
   
     }
