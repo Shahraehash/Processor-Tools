@@ -229,7 +229,7 @@ def analyze_train_test_split_impute(fileObjectArray, target):
             groups_result[group]['describe'] =  describe_obj
             training_class_size = merge_files_training_class_size(describe_obj)
             groups_result[group]['training_class_size'] = training_class_size
-            groups_result[group]['segments'] = merge_files_segments(describe_obj, training_class_size, 0, 1)
+            groups_result[group]['segments'] = merge_files_segments(describe_obj, training_class_size, 0, 1) #we don't actually use this now TODO
 
            
 
@@ -309,15 +309,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         testing_missing = t['testMissing'] #drop missing = 0, only option currently
         testing_prevalence = t['testPrevalence'] #use all data = 0, adjust to origial = 1
 
-        print(t)
-
-
-
-        print('test and train')
-  
-        
-
-
+        #define DFs
         df_train = df_groups['train']
         df_test = df_groups['test']
 
@@ -375,71 +367,111 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
 
     elif 'combined' in df_groups:
-        print('combined')
-        df = df_groups['combined']
 
         t = transform['data']
+        print(t)
 
-        major = int(t['major'])
 
-        minor = int(t['minor'])
+        missing_value_setting = t['missingValuesOption'] #drop missing = 0, impute = 1
+        testing_prevalence = t['prevalenceOption'] #use all data = 0, adjust to origial = 1
+        training_class_size = t['trainingClassSize']
 
-        df_nan = df[df.isna().any(axis=1)]
-        df = df.drop(df_nan.index)
+        df = df_groups['combined']
 
-        df_major = df[df[target] == major]
-        df_minor = df[df[target] == minor]        
+        array_df_removed = []
 
-        if t['missing_values_option'] == 0:
+        df_class_zero = df[df[target] == 0]
+        df_class_one = df[df[target] == 1]
 
-            #training does not use misisng data
-            df_train_minor = df_minor.sample(n=t['train']['counts'][str(minor)])
-            df_train_major = df_major.sample(n=t['train']['counts'][str(major)])
+        df_nan_class_zero = df_class_zero[df_class_zero.isna().any(axis=1)]
+        df_nan_class_one = df_class_one[df_class_one.isna().any(axis=1)]
 
-            df_train = pd.concat([df_train_minor, df_train_major])
 
-            result.append(store_file_and_params(df_nan, 'removed_values.csv', 'removed'))
+        print(df_class_zero.shape)
+        print(df_class_one.shape)
+        print(df_nan_class_zero.shape)
+        print(df_nan_class_one.shape)
 
-        elif t['missing_values_option'] == 1:
-            
-            #training does use missing data
-            #count missing values
-            nan_counts = fill_in_zeros(df_nan[target].value_counts().to_dict())
-
-            #adjust samples based on missing data
-            df_train_minor = df_minor.sample(n=t['train']['counts'][str(minor)] - nan_counts[minor])
-            df_train_major = df_major.sample(n=t['train']['counts'][str(major)] - nan_counts[major])
-
-            df_train = pd.concat([df_train_minor, df_train_major, df_nan])
-
-            df_train, df_imputed = impute_processor(df_train, target)
-            
-
-            
-            
-
-        #prevalence option does not matter since we already have done the calculation and passsed it along from a previous step
-
-    
-        print('df_train_minor', df_train_minor.shape)
-        print('df_train_major', df_train_major.shape)
-
-        df_major = df_major.drop(df_train_major.index)
-        df_minor = df_minor.drop(df_train_minor.index)
-
-        print('df__minor', df_minor.shape)
-        print('df_major', df_major.shape)        
-
-        df_test_minor = df_minor.sample(n=t['test']['counts'][str(minor)])
-        df_test_major = df_major.sample(n=t['test']['counts'][str(major)])
+        print(df_nan_class_one.head(1))
 
         
-        df_test = pd.concat([df_test_minor, df_test_major])
+        #if drop missing value rows
+       
+        if missing_value_setting == 0:
+            #remove missing values
+            df_class_zero = df_class_zero.drop(df_nan_class_zero.index)
+            df_class_one = df_class_one.drop(df_nan_class_one.index)
 
-        #TODO add extra data handling
+            #track missing values
+            array_df_removed.append(df_nan_class_zero)
+            array_df_removed.append(df_nan_class_one)
+
+            #sample training data
+            df_training_zero = df_class_zero.sample(training_class_size, replace=False)
+            df_training_one = df_class_one.sample(training_class_size, replace=False)
+
+            #combine training data
+            df_train = pd.concat([df_training_zero, df_training_one])
+
+            #remove training data from original sample
+            df_class_zero.drop(df_training_zero.index, inplace=True)
+            df_class_one.drop(df_training_one.index, inplace=True)
+
+        #if impute missing value rows
+         #TODO handle case if missing values > training class size
+        elif missing_value_setting == 1:
+            #isolate missing values
+            df_class_zero = df_class_zero.drop(df_nan_class_zero.index)
+            df_class_one = df_class_one.drop(df_nan_class_one.index)
+
+            #sample training data minus missing values
+            df_training_zero = df_class_zero.sample(training_class_size - df_nan_class_zero.shape[0], replace=False)
+            df_training_one = df_class_one.sample(training_class_size - df_nan_class_one.shape[0], replace=False)
+
+            #remove training data from original sample
+            df_class_zero.drop(df_training_zero.index, inplace=True)
+            df_class_one.drop(df_training_one.index, inplace=True)
+
+            df_train = pd.concat([df_training_zero, df_nan_class_zero, df_training_one, df_nan_class_one])
+
+
+            df_train, df_imputed = impute_processor(df_train, target)
+
+
+        #testing prevalance already set in front end, no further math needed based on settings
+        test_counts = t['finalValues']['test']['counts']
+
+        #sample testing data
+        #must use string as key since passed as JSON
+        df_testing_zero = df_class_zero.sample(test_counts['0'], replace=False)
+        df_testing_one = df_class_one.sample(test_counts['1'], replace=False)
+
+        #remove testing data from pool
+        df_class_zero.drop(df_testing_zero.index, inplace=True)
+        df_class_one.drop(df_testing_one.index, inplace=True)
+
+        #put remaining data in removed
+        array_df_removed.append(df_class_zero)
+        array_df_removed.append(df_class_one)
+
+        #combine testing data
+        df_test = pd.concat([df_testing_zero, df_testing_one])
+
+
+        #combined removed
+        df_removed = pd.concat(array_df_removed)
+
+
+
+
+
+        
 
         result.append(store_file_and_params(df_train, 'train.csv', 'train'))
         result.append(store_file_and_params(df_test, 'test.csv', 'test'))
+
+        if df_removed.shape[0] > 0:
+            result.append(store_file_and_params(df_removed, 'removed.csv', 'removed'))
 
         try:
             result.append(store_file_and_params(df_imputed, 'imputed.csv', 'imputed'))
@@ -463,9 +495,9 @@ def impute_processor(df, target):
         X = df.drop(columns=[target])
         y = df[target]
 
-        imputed_row_index = df[df.isna().any(axis=1)].index
+        imputed_row_index = list(df[df.isna().any(axis=1)].index)
 
-        print(X.columns)
+        print(imputed_row_index)
         extra = df[['origin_file_name', 'origin_file_source_row']]
         X = X.drop(columns=['origin_file_name', 'origin_file_source_row'])
 
@@ -522,13 +554,13 @@ def impute_processor(df, target):
                 result[col] = result[col].replace(val, closest)
 
 
-        print()
+
         result[target] = y
         result['origin_file_name'] = extra['origin_file_name']
         result['origin_file_source_row'] = extra['origin_file_source_row']
 
-
-        imputed = result.iloc[imputed_row_index]
+        imputed = result.loc[imputed_row_index]
+        #becaause of how the indexes are tracked, it becomes cast as a string and needs loc rather than iloc
 
         return result, imputed
 

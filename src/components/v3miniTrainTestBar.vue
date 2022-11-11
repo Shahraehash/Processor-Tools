@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="graphObject">
-            <div>
+            <!-- <div>
                 <div class="key-box" 
                      v-bind:style="{
                         background: mxBarColors.missing,
@@ -29,7 +29,7 @@
                 </div>
                             
 
-            </div>
+            </div> -->
             <div style="width:100%; height: 40px;" >
             <div
                 class="group-box data-set-box right-spacer"
@@ -78,7 +78,13 @@
                     background: mxBarColors.missing,
                     width: graphObject.train.missingPercent[0] +'%'
                     }"
-                ></div>                
+                ></div>
+                <div class="imputed class-box"
+                    v-if="graphObject.train['imputedCounts']"
+                    v-bind:style="{
+                    width: graphObject.train.imputedPercent[0] + '%'
+                    }"
+                ></div>            
                 Class 0: {{graphObject.train.counts[0]}}
             </div>
             <div
@@ -93,6 +99,13 @@
                     v-bind:style="{
                     background: mxBarColors.missing,
                     width: graphObject.train.missingPercent[1] + '%'
+                    }"
+                ></div>
+                <div class="imputed class-box"
+                    v-if="graphObject.train['imputedCounts']"
+                    v-bind:style="{
+
+                    width: graphObject.train.imputedPercent[1] + '%'
                     }"
                 ></div>
                 Class 1: {{graphObject.train.counts[1]}}
@@ -221,6 +234,14 @@
         left: 0;
         z-index: 1;
     }
+    .imputed {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        background: white;
+        opacity: 0.3;
+    }    
     .key-box {
         display: inline-block;
         width: 20px;

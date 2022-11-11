@@ -12,26 +12,33 @@
         </v-btn>  
 
 
-        <v-row dense>
-            <v-col cols="6">
+        <v-row dense wrap>
+            <v-col cols="4">
                 <div class="overline ml-4">Summary</div>
                 <v-card outlined class="pa-3 ma-2">
-                    <v3miniFilesDelta :originalArray="files[0]" :finalArray="files[files.length - 1]"/>        
+                    <v3miniFilesDelta :originalArray="originalFiles" :finalArray="finalFilesOnlyTrainTest"/>        
                 </v-card>
             </v-col>
             <v-col cols="3">
                 <div class="overline ml-4">Original</div>
-                <v-card outlined class="pa-3 ma-2" v-for="(original, originalKey) in files[0]" :key="originalKey">
+                <v-card outlined class="pa-3 ma-2" v-for="(original, originalKey) in originalFiles" :key="originalKey">
                     <v3miniFileInfo :fileInfo="original"/>
                 </v-card>
                 
             </v-col>
             <v-col cols="3">
                 <div class="overline ml-4">Current</div>
-                <v-card outlined class="pa-3 ma-2" v-for="(current, currentKey) in files[files.length - 1]" :key="currentKey">
+                <v-card outlined class="pa-3 ma-2" v-for="(current, currentKey) in finalFilesOnlyTrainTest" :key="currentKey">
                     <v3miniFileInfo :fileInfo="current"/>
                 </v-card>             
-            </v-col>                
+            </v-col>    
+     
+            <v-col cols="2" v-if="otherFiles.length > 0">
+                <div class="overline ml-4">Unused/Other</div>
+                <v-card disabled="true" outlined class="pa-3 ma-2" v-for="(current, currentKey) in otherFiles" :key="currentKey">
+                    <v3miniFileInfo :fileInfo="current"/>
+                </v-card>             
+            </v-col>                                    
         </v-row>
 
         <!-- <v-text-field outlined label="Training File" style="display:inline-flex; width: 200px"></v-text-field>
@@ -112,6 +119,19 @@ export default {
 
     },
     computed: {
+        originalFiles() {
+            return this.files[0]
+        },
+        finalFiles() {
+            return this.files[this.files.length - 1]
+        },
+        finalFilesOnlyTrainTest() {
+            return this.finalFiles.filter(file => file.type === 'train' || file.type === 'test')
+        },
+        otherFiles() {
+            return this.finalFiles.filter(file => file.type != 'train' && file.type != 'test')
+        },        
+
         complete() {
             return true
         },        
