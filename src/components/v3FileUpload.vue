@@ -66,17 +66,18 @@
 
     <!-- If have files -->
 
-      <v-row dense>
+      <v-row dense v-if="fileMetadata.length > 0">
         <v-col cols="4"
           v-for="(file, index) in files" 
+          
           :key="index"
           >
 
           <v-card 
+      
             flat 
             outlined 
             class="pa-3 my-2 training-style" 
-            v-bind:style="{ 'border-color': mxfileTypeColor(fileMetadata[index].type)}"
             >
             
 
@@ -116,7 +117,7 @@
                     
                     v-model="fileMetadata[index].type" 
                     class="ma-2 mt-7" 
-                     
+                    dense outlined
                     label="Data Type" 
                     :items="filteredFileTypes" 
                     item-text="text" 
@@ -141,7 +142,7 @@
           
         </v-col>
         <v-col cols="4" v-if="files.length > 0">
-          <v-card flat style="margin: 10px; padding: 100px 0;">
+          <v-card flat style="margin: 10px; padding: 100px 0;" v-if="showAddFile">
             <div class="text-center mr-3" @click="$refs.fileClick.click()">
             <div class="overline">Add addtional file</div> 
             <v-btn icon
@@ -155,6 +156,8 @@
 
         </v-col>
       </v-row>
+
+      <v-alert type="warning" v-if="trainTestFilesMatchError">With two data files, you need at least one training and one testing file specified for the data type.</v-alert>
 
 
 
@@ -184,7 +187,7 @@
       <div class="text-right" v-if="files.length > 0">
         <v3ButtonNext 
         @next="next"
-        :disabled="currentStep > stepNumber - 1 || !target"
+        :disabled="!complete"
         text="Done adding data files"
         />
       </div>
@@ -253,30 +256,101 @@
       
     },
     watch: {
+      pathSelection() {
+        this.files = []
+        this.target = null
+      },
 
-      files(current, previous) {
+      files(current) {
         //Todo: figure out how to do this so it doesn't run on all files when new added
 
-        if (current.length >= previous.length) {
-          this.fileMetadata = []
-          this.files.forEach(file => {
+        console.log(current)
+        let errorFiles = []
+        this.files.forEach((item) => {
+          console.log(item.type)
+          if (item.type != 'text/csv') {
+            errorFiles.push(item)
+          }
+        })
+        errorFiles.forEach(f => {
+          let r = this.files.indexOf(f)
+          this.files.splice(r, 1)
+        })
+        if (errorFiles.length > 0) {
+          let message = 'Some of your files were rejected due to an unsupported file format. '
+          this.$store.commit('snackbarMessageSet', {color: 'red', message})
+        }
+
+        
+
+
+
+        this.fileMetadata = []
+        this.files.forEach(file => {
             storeParamFile(file).then(r => {
               //front end override of file typing if one file
-              if (current.length == 1) {
+              if ([0, 2].includes(this.pathSelection)) {
                 r.type = 'combined'
               }
+              else if ([1].includes(this.pathSelection)) {
+                r.type = ''
+              }              
               this.fileMetadata.push(r)
             })
-          })          
+        })          
 
-        }
+
 
         this.update()
       }
     },
     computed: {
+      showAddFile() {
+        switch (this.pathSelection) {
+          case 'single':
+            return this.files.length <1
+
+          case 'train-test':
+            return this.files.length < 2
+
+          default:
+            return true
+        }
+
+      },
+      trainTestFilesMatchError() {
+        if (this.pathSelection == 1 && this.files.length == 2) {
+
+            return this.fileMetadata[0].type == this.fileMetadata[1].type && this.fileMetadata[0].type != ''
+
+        } 
+        else {
+          return false
+        }
+
+      },
+
+
+
+      
       complete() {
-        return true
+        let advancedStep = this.currentStep > this.stepNumber
+        advancedStep
+
+        let hasTarget = this.target != null
+        
+        let twoFileValidation = true
+        if (this.pathSelection == 1) {
+          twoFileValidation = this.fileMetadata.length == 2
+          this.fileMetadata.forEach(f => {
+            if (f.type == '' || f.type == null) {
+              twoFileValidation = false
+            }
+          })
+
+        }
+
+        return (hasTarget && twoFileValidation && !this.trainTestFilesMatchError)
       },
       allowMultipleFiles() {
         if (this.pathSelection != null) {
@@ -293,10 +367,9 @@
             case 'single':
               return this.mxfileTypes.filter(t => t.value == 'combined')
             case 'train-test':
-              return this.mxfileTypes.filter(t => t.value == 'train' && t.value == 'test')
-              //TODO - NOT WORKING
+              return this.mxfileTypes.filter(t => t.value == 'train' || t.value == 'test')
             case 'other':
-              return this.mxfileTypes
+              return this.mxfileTypes.filter(t => t.value == 'combined')
             default:
               return this.mxfileTypes
           }
@@ -334,26 +407,17 @@
       },
   
       addFile(e) {
-        let errorFiles = []
         let droppedFiles = e.dataTransfer.files;
         if(!droppedFiles) return;
         // this tip, convert FileList to array, credit: https://www.smashingmagazine.com/2018/01/drag-drop-file-uploader-vanilla-js/
         ([...droppedFiles]).forEach(f => {
-          if (f.type == 'text/csv') {
-            this.files.push(f)
-          }        
-          else {
-            errorFiles.push(f.name)
-          }             
-            
+          this.files.push(f)
         });
   
-        if (errorFiles.length > 0) {
-          let message = 'Some of your files were rejected due to an unsupported file format: '
-          message += errorFiles.join(', ')
-          this.$store.commit('snackbarMessageSet', {color: 'red', message})
+
+
   
-        }
+
       },
       removeFile(file){
         this.files = this.files.filter(f => {

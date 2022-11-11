@@ -264,6 +264,7 @@ export default {
     },
     mounted() {
         this.trainingClassSize = this.combinedFile.describe.combinedFile.counts[0]
+        this.change()
 
     },
 
