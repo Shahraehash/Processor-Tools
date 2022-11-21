@@ -306,7 +306,7 @@
     },
     computed: {
       showAddFile() {
-        switch (this.pathSelection) {
+        switch (this.paths[this.pathSelection].value) {
           case 'single':
             return this.files.length <1
 

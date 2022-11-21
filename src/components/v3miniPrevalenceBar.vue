@@ -2,7 +2,7 @@
     <div>
       <div v-if="describe != null" class="mt-5">
           <div class="overline">Prevalance of Classes from Single Dataset</div>
-          <div style="width:100%; height: 32px;" >
+          <div style="width:100%; height: 32px; white-space: nowrap;" >
             <div
                 class="group-box data-set-box"
                 v-bind:style="{
@@ -24,7 +24,7 @@
                 Class 1: {{mxRoundValue(describe.total.percent[1])}}%
             </div>        
           </div>
-          <div style="width:100%" class="caption">
+          <div style="width:100%; white-space: nowrap;" class="caption">
             <div
                 class="group-box class-box"
                 v-bind:style="{

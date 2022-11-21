@@ -30,7 +30,7 @@
                             
 
             </div> -->
-            <div style="width:100%; height: 40px;" >
+            <div style="width:100%; height: 40px; white-space: nowrap;" >
             <div
                 class="group-box data-set-box right-spacer"
                 v-bind:style="{
@@ -63,7 +63,7 @@
             </div>        
             </div>
 
-            <div style="width:100%">     
+            <div style="width:100%; white-space: nowrap;">     
             <div
                 class="group-box class-box "
                 v-bind:style="{
@@ -239,8 +239,8 @@
         top: 0;
         left: 0;
         z-index: 1;
-        background: white;
-        opacity: 0.3;
+        background: orange;
+        opacity: 0.6;
     }    
     .key-box {
         display: inline-block;
