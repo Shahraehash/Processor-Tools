@@ -3,9 +3,9 @@ export default {
     data() {
       return {
         mxfileTypes: [
-          {text: 'Only Training/Initial Test', value: 'train'},
-          {text: 'Only Generalization Test', value: 'test'},
-          {text: 'Combined Train/Generalization', value: 'combined'},
+          {text: 'Training', value: 'train'},
+          {text: 'Generalization Test', value: 'test'},
+          {text: 'Combined Train/Test', value: 'combined'},
         ],
         mxBarColors: {
           train: '#2196F3',

@@ -260,10 +260,11 @@ export default {
     },
     created() {
 
+
         
     },
     mounted() {
-        this.trainingClassSize = this.combinedFile.describe.combinedFile.counts[0]
+        this.trainingClassSize = this.combinedFile.segments.train.counts[0]
         this.change()
 
     },

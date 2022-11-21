@@ -14,6 +14,9 @@
         />      
 
     <!-- Make Initial Chocie on Approach -->
+      <div >
+        Let's start by uploading your data. How many files do you have?
+      </div>
       <div>
         <v-row>
           <v-col cols="4" v-for="(path, pathKey) in paths" :key="pathKey">
@@ -77,7 +80,7 @@
       
             flat 
             outlined 
-            class="pa-3 my-2 training-style" 
+            class="pa-3 my-2 app-file-box-style" 
             >
             
 
@@ -90,7 +93,7 @@
                       </div>
 
                     </v-col>
-                    <v-col cols="1" class="ml-n5 mt-n2">
+                    <v-col cols="1" class="ml-n7 mt-n2">
                       <v-btn icon @click="removeFile(file)" title="mdi-close"><v-icon color="primary">mdi-close</v-icon></v-btn>
                     
                     </v-col>
@@ -114,18 +117,18 @@
                 </div>
                 <div>
                   <v-select 
-                    
+                    v-if="pathSelection == 1"
                     v-model="fileMetadata[index].type" 
                     class="ma-2 mt-7" 
-                    dense outlined
                     label="Data Type" 
                     :items="filteredFileTypes" 
+                    outlined
                     item-text="text" 
                     item-value="value"
                     @change="update()"
                     >
                     <template v-slot:selection="{ item, index }">
-                      <v-chip small v-if="index === 0" :color="mxfileTypeColor(item.value)" dark>
+                      <v-chip class="mt-2" small v-if="index === 0" :color="mxfileTypeColor(item.value)" dark>
                         <span>{{ item.text }}</span>
                       </v-chip>
      
@@ -142,7 +145,7 @@
           
         </v-col>
         <v-col cols="4" v-if="files.length > 0">
-          <v-card flat style="margin: 10px; padding: 100px 0;" v-if="showAddFile">
+          <v-card flat style="margin: 10px; padding: 35px 0;" v-if="showAddFile">
             <div class="text-center mr-3" @click="$refs.fileClick.click()">
             <div class="overline">Add addtional file</div> 
             <v-btn icon
@@ -175,6 +178,7 @@
               v-model="target" 
               dense 
               outlined 
+              clearable
               :items="fileMetadata[0].names.colsReverse"
               @change="update()"
               ></v-select>          
@@ -188,7 +192,7 @@
         <v3ButtonNext 
         @next="next"
         :disabled="!complete"
-        text="Done adding data files"
+        text="Next"
         />
       </div>
     </v-card>
@@ -220,23 +224,22 @@
     data() {
       return {
         files: [],
-        fileIds: [], //ids of files in the database, temporary
         fileMetadata: [],
         target: null,
         pathSelection: 0,
         paths: [
           { 
-            text: 'I have one data file',
+            text: 'Single file',
             icon: 'mdi-file-outline',
             value: 'single'
           },
           { 
-            text: 'I have two files for model training and generalization testing',
+            text: 'Seperate training and generalization testing files',
             icon: 'mdi-file-outline',
             value: 'train-test'
           },
           { 
-            text: 'I have two or more files with a mix of data',
+            text: 'Multiple mixed data files needing combined',
             icon: 'mdi-file-multiple-outline',
             value: 'other'
           },          
@@ -384,8 +387,12 @@
   
     },
     methods: {
-      //import
-      //defined
+      resetComponent() {
+        this.files = []
+        this.fileMetadata = []
+        this.target = null
+        this.pathSelection = 0     
+      },
       update() {
         this.$emit('update')
       },
@@ -444,12 +451,6 @@
   #indent-text {
       margin-left: 1.8em;
       text-indent: -1.8em;
-  }
-
-  .training-style {
-    box-sizing: border-box;
-    border-width: 5px;
-    border-radius: 10px;
   }
   </style>
   

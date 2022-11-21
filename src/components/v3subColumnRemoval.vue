@@ -7,7 +7,9 @@
                 <v3miniValidate :valid="true"/> No files have missing values.
             </div>
            <div v-else>
-                <div>All datasets are combined for this analysis. The effect or removing a column is shown by file below.</div>
+                <div>
+                    We can now look at see if one column is disproportionately missing values. We can then remove it to boost the size of the dataset used in MILO.
+                </div>
                 <v-row dense>
                     <v-col cols="6">
                         

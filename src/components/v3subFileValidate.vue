@@ -1,7 +1,7 @@
 <template>
     <div>
         <div>
-            This step ensures your file data is valid and consistent between files if using more than one data file.
+            Now we'll confirm each file has a valid target and that the columns in each file match.
         </div>
         <v-row>
             <v-col cols="4">
@@ -11,8 +11,8 @@
                     <v-row>
                         <v-col cols="12" v-for="(file, key) in currentFiles" :key="key">
                             
-                            <v-card outlined class="pa-3">
-                                <div>
+                            <v-card outlined class="pa-3" >
+                                <div v-if="file.type != 'combined'" class="mb-2">
                                     <v3miniTrainTestLabel :type="file.type"/>
                                 </div>
                                 <div>
@@ -59,7 +59,7 @@
                         <v3miniValidate :valid="true"/>
                         Only one file
                     </div>
-
+                    <!-- Target Check -->
                     <div v-if="currentFiles.length > 1">
                         <div v-if="analysis.allTargetValues.length == 2">
                             <v3miniValidate :valid="true"/>
@@ -70,9 +70,8 @@
                             Values may vary between files
                         </div>
                     </div>
-
-
-                    <div >
+                    <!-- Column Check -->
+                    <div v-if="currentFiles.length > 1">
                         <div v-if="analysis.mismatchedColumns.length == 0 ">
                             <v3miniValidate :valid="true"/>
                             All columns match between files
@@ -86,15 +85,11 @@
                                     <strong class="green--text">{{comparison.hasName}}</strong> has the following 
                                     columns that are missing from <strong class="orange--text">{{comparison.missingName}}</strong>
                                 </div>
-                                
+
                                 <div class="px-3 py-1">
                                     <v-chip small v-for="(col, colKey) in comparison.missingCols" :key="colKey">{{col}}</v-chip>
                                 </div>
-                                
                             </div>
-                            
-                            
-
                         </div>
                     </div>            
 

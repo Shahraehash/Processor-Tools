@@ -39,7 +39,7 @@
 
                 }"
                 >
-                Training and Initial Validation File
+                Training
             </div>
             <div
                 class="group-box data-set-box right-spacer"
@@ -49,10 +49,10 @@
 
                 }"
                 >
-                Generalization Testing File
+                Gen Testing
             </div>        
             <div
-                class="group-box data-set-box "
+                class="group-box data-set-box"
                 v-bind:style="{
                 background: mxBarColors.blank,
                 width: graphObject.remainder.percent + '%',
