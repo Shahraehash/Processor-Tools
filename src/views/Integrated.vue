@@ -51,11 +51,11 @@
 
       <div class="ma-5 white--text">x</div>
       <div class="footer" v-if="progressBarData.show">
-        <div class="text-center">Step: {{progressBarData.current}} of {{progressBarData.total}}</div>
+        <div class="text-center text-h7 primary--text">Step: {{progressBarData.current}} of {{progressBarData.total}}</div>
 
         <v-progress-linear 
           :value="progressBarData.percentage"
-          :height="10"
+          :height="15"
           ></v-progress-linear>
 
       </div>
