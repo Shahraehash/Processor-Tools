@@ -7,6 +7,10 @@ import vuetify from './plugins/vuetify'
 import VueApexCharts from 'vue-apexcharts'
 import "@fontsource/roboto"
 
+import VueHtml2Canvas from 'vue-html2canvas'
+
+Vue.use(VueHtml2Canvas);
+
 Vue.use(VueApexCharts)
 
 Vue.component('apexchart', VueApexCharts)

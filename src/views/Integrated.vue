@@ -34,17 +34,18 @@
 
 
       <!-- Additional Step Selection -->
-      <div class="text-center mt-10" v-if="componentList.length == currentStep">
-        <div>Additional Steps</div>
-          <v-row justify="center">
-            <v-col cols="4" v-for="(item, key) in optional" :key="key">
-              <v-card outlined @click="addComponent(item.component)" :disabled="item.disabled" class="pa-3">
-                <div class="overline">{{item.title}}</div>
-                <v-icon x-large :color="item.icon == 'mdi-export' ? 'primary' : ''">{{item.icon}}</v-icon>
-              </v-card>          
-            </v-col>
-          </v-row>
-      </div>
+      <transition appear name="fade" tag="div">
+        <div class="text-center mt-10" v-if="componentList.length == currentStep">
+        <v3miniAdditionalSteps 
+          :optionalComponents="optionalComponents" 
+          @addComponent="addComponent($event)"
+          />
+
+
+      </div>        
+
+      </transition>
+
 
 
 
@@ -79,7 +80,7 @@ import v3FileUpload from "../components/v3FileUpload.vue";
 import v3parentStepTemplate from "../components/v3parentStepTemplate.vue";
 import v3Finalize from '../components/v3Finalize.vue';
 import V3miniExport from '../components/v3miniExport.vue';
-
+import v3miniAdditionalSteps from '../components/v3miniAdditionalSteps.vue';
 
 
   
@@ -90,8 +91,9 @@ import V3miniExport from '../components/v3miniExport.vue';
     v3FileUpload,
     v3parentStepTemplate,
     v3Finalize,
-    V3miniExport
-},
+    V3miniExport,
+    v3miniAdditionalSteps
+    },
     computed: {
       progressBarData() {
         let progress = {
@@ -127,7 +129,7 @@ import V3miniExport from '../components/v3miniExport.vue';
           target: null,
           refreshKey: 0,
           componentList: [],
-          optional: [
+          optionalComponents: [
             {
               'title': 'Multicollinearity Assessment & Removal',
               'icon': 'mdi-chart-bell-curve-cumulative',
@@ -296,8 +298,11 @@ import V3miniExport from '../components/v3miniExport.vue';
       background: white;
   }
 
-  .fade-enter-active, .fade-leave-active {
+  .fade-enter-active {
   transition: opacity .5s;
+}
+.fade-leave-active {
+  transition: opacity .3s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;

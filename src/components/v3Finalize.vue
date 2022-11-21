@@ -12,38 +12,43 @@
         </v-btn>  
 
 
-        <v-row dense wrap>
-            <v-col cols="4">
+        <div id="summary">
+            <v-row dense wrap>
+            <v-col cols="12">
                 <div class="overline ml-4">Summary</div>
                 <v-card outlined class="pa-3 ma-2">
                     <v3miniFilesDelta :originalArray="originalFiles" :finalArray="finalFilesOnlyTrainTest"/>        
                 </v-card>
             </v-col>
-            <v-col cols="3">
-                <div class="overline ml-4">Original</div>
+            <v-col cols="6">
+                <div class="overline ml-4">Original File<span v-if="originalFiles.length > 1">s</span></div>
                 <v-card outlined class="pa-3 ma-2" v-for="(original, originalKey) in originalFiles" :key="originalKey">
                     <v3miniFileInfo :fileInfo="original"/>
                 </v-card>
                 
             </v-col>
-            <v-col cols="3">
-                <div class="overline ml-4">Current</div>
+            <v-col cols="6">
+                <div class="overline ml-4">Current File<span v-if="finalFilesOnlyTrainTest.length > 1">s</span></div>
                 <v-card outlined class="pa-3 ma-2" v-for="(current, currentKey) in finalFilesOnlyTrainTest" :key="currentKey">
                     <v3miniFileInfo :fileInfo="current"/>
                 </v-card>             
             </v-col>    
      
-            <v-col cols="2" v-if="otherFiles.length > 0">
-                <div class="overline ml-4">Unused/Other</div>
+            <v-col cols="6" v-if="otherFiles.length > 0">
+                <div class="overline ml-4">Additional Audit Files</div>
                 <v-card disabled="true" outlined class="pa-3 ma-2" v-for="(current, currentKey) in otherFiles" :key="currentKey">
                     <v3miniFileInfo :fileInfo="current"/>
                 </v-card>             
             </v-col>                                    
-        </v-row>
+        </v-row>            
+
+        </div>
+
 
         <!-- <v-text-field outlined label="Training File" style="display:inline-flex; width: 200px"></v-text-field>
         <v-text-field outlined label="Testing File" style="display:inline-flex; width: 200px"></v-text-field> -->
         
+
 
 
 
@@ -70,6 +75,7 @@ import v3miniFilesDelta from '@/components/v3miniFilesDelta'
 import v3miniFileInfo from './v3miniFileInfo.vue'
 import v3ButtonNext from './v3ButtonNext.vue'
 import { exportFileArray } from '@/v3Methods'
+
 
 
 export default {
@@ -113,6 +119,7 @@ export default {
     },
     mounted() {
 
+
         
     },
     watch: {
@@ -144,8 +151,16 @@ export default {
             let fileObjects = await exportFileArray(this.files[this.files.length - 1])
             let zip = new JSZip()
             fileObjects.forEach(fileObj => {
-                zip.file(fileObj.name, fileObj.content)
+                if (['train.csv', 'test.csv'].includes(fileObj.name)) {
+                    zip.file(fileObj.name, fileObj.content)
+                }
+                else {
+                    zip.folder('audit_files').file(fileObj.name, fileObj.content)
+                }
+                
             })
+            let file = await this.saveSummary()
+            zip.file(file.name, file)
             let download = await zip.generateAsync({type:"blob"})
             
         
@@ -157,6 +172,24 @@ export default {
 
             FileDownload(download, 'milo-ready-files.zip')
             
+        },
+
+        async saveSummary() {
+            const el = document.getElementById('summary')
+              const options = {
+                type: 'dataURL'
+            }
+            this.output = await this.$html2canvas(el, options);    
+            return fetch(this.output).then(res => res.blob()).then(blob => {
+                let file = new File([blob], 'summary.png', {type: 'image/png'})
+                return file
+                
+            })
+
+            
+            
+            
+
         }
             
     }
