@@ -16,7 +16,7 @@ from .integrated_file_validate import analysis_file_validate, transform_file_val
 from .integrated_column_removal import analyze_column_removal, effect_column_removal, transform_column_removal
 from .integrated_encode_nonnumeric import analyze_encode_nonnumeric, transform_encode_nonnumeric
 from .integrated_train_test_split_impute import analyze_train_test_split_impute, effect_train_test_split_impute, transform_train_test_split_impute
-
+from .integrated_multicolinearity import analyze_multicolinearity, transform_multicolinearity
 
 
 db = TinyDB('db.json')
@@ -113,6 +113,9 @@ def integrated_analyze():
     elif analyze['method'] == 'train_test_split_impute':
         json = analyze_train_test_split_impute(fileObjectArray, target)
 
+    #For Multicolinearity
+    elif analyze['method'] == 'multicolinearity':
+        json = analyze_multicolinearity(fileObjectArray, target)
 
     else: 
         json = {'error': 'invalid method'}
@@ -174,7 +177,8 @@ def integrated_transform():
     elif transform['method'] == 'train_test_split_impute':
         json = transform_train_test_split_impute(fileObjectArray, target, transform)
 
-
+    elif transform['method'] == 'multicolinearity':
+        json = transform_multicolinearity(fileObjectArray, target, transform)
 
     response = make_response(
         simplejson.dumps(json, ignore_nan=True),

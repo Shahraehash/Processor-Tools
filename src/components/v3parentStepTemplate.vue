@@ -80,6 +80,7 @@ import v3subFileValidate from './v3subFileValidate'
 import v3subColumnRemoval from './v3subColumnRemoval.vue'
 import v3subEncodeNonnumeric from './v3subEncodeNonnumeric.vue'
 import v3subTrainTestSplit from './v3subTrainTestSplit.vue'
+import v3subMulticolinearity from './v3subMulticolinearity.vue'
 
 
 export default {
@@ -92,6 +93,7 @@ export default {
     v3subColumnRemoval,
     v3subEncodeNonnumeric,
     v3subTrainTestSplit,
+    v3subMulticolinearity
   },
   props: {
     stepNumber: {

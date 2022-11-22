@@ -131,17 +131,17 @@ import v3miniAdditionalSteps from '../components/v3miniAdditionalSteps.vue';
           componentList: [],
           optionalComponents: [
             {
-              'title': 'Multicollinearity Assessment & Removal',
+              'title': 'Multicollinearity Evaluation',
               'icon': 'mdi-chart-bell-curve-cumulative',
-              'component': this.getExportComponent(),
-              disabled: true
+              'component': this.getMulticolinearityComponent(),
+              disabled: false
             },    
-            {
-              'title': 'Feature Selector',
-              'icon': 'mdi-select-all',
-              'component': this.getExportComponent(),
-              disabled: true
-            },                          
+            // {
+            //   'title': 'Feature Selector',
+            //   'icon': 'mdi-select-all',
+            //   'component': this.getExportComponent(),
+            //   disabled: true
+            // },                          
             {
               'title': 'Finalize Files',
               'icon': 'mdi-export',
@@ -194,6 +194,21 @@ import v3miniAdditionalSteps from '../components/v3miniAdditionalSteps.vue';
           }
         }  
       },
+      getMulticolinearityComponent() {
+        return {
+          component: 'v3parentStepTemplate',
+          subcomponent: 'v3subMulticolinearity',
+          stepTitle: 'Assess for and Remove Multicolinearity',
+          optional: true,
+          analysisFunction: analyzeFileArray,
+          analysisObj: {method: 'multicolinearity'},
+          transformFunction: transformFileArray,
+          events: {
+            next: (fileMetadata) => { this.nextStep(fileMetadata);},
+            update: (e) => {console.log('update', e); },
+          },
+        }  
+      },      
 
       getComponentList() {
         return [
