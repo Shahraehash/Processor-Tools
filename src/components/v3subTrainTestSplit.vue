@@ -32,7 +32,7 @@
     </div>
 </template>
 <script>
-import { effectFileArray, buildTransformObject } from '@/v3Methods'
+import { buildTransformObject } from '@/v3Methods'
 
 import v3miniTrainTestSingleFileImpute from './v3miniTrainTestSingleFileImpute.vue'
 // import v3miniSplitBar from '@/components/v3miniSplitBar'
@@ -92,21 +92,6 @@ export default {
             }
             console.log(result)     
             this.$emit('update', result)
-        },
-        applyEffect(effectParams) {
-            //Requires backend calculation, only needed for single data file
-            let effectObj = {
-                method: 'train_test_split_impute',
-                ...effectParams
-            }
-
-            console.log(effectObj)
-
-            effectFileArray(this.currentFiles, this.target, effectObj).then((result) => {
-                this.effect = result
-                this.update()
-            })
-            
         },
         setEffect(effectParams) {
             //Does not rquire backend calculation, only priming data for transform

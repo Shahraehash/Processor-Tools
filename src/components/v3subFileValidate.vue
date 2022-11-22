@@ -114,6 +114,8 @@
                     </v-col>
                 </v-row>
 
+                <v3miniValidateFileSizes :analysis="analysis" :currentFiles="currentFiles" :target="target" />
+
 
 
     </div>
@@ -125,13 +127,15 @@ import {buildTransformObject} from '@/v3Methods'
 
 import v3miniValidate from './v3miniValidate.vue'
 import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
+import v3miniValidateFileSizes from './v3miniValidateFileSizes.vue'
 
 export default {
     name: 'v3subFileValidate',
 
     components: {
         v3miniValidate,
-        v3miniTrainTestLabel
+        v3miniTrainTestLabel,
+        v3miniValidateFileSizes
     },
     props: {
         currentFiles: {

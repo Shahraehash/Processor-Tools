@@ -289,6 +289,7 @@
       this.localMetadata = this.metadata
     },
     mounted() {
+      this.change()
 
     },
 

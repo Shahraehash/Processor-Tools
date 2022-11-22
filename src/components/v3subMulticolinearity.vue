@@ -76,6 +76,7 @@
                 
 
             </div>
+
             
        
         </div>
@@ -85,12 +86,14 @@
 <script>
 import { buildTransformObject } from '@/v3Methods'
 import d3HeatMap from '@/components/d3HeatMap.vue'
+import v3Mixin from '@/components/v3Mixin'
 
 //import v3miniValidate from './v3miniValidate.vue'
 //import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
 
 export default {
     name: 'v3subMulticolinearity',
+    mixins: [v3Mixin],
     components: {
         //v3miniValidate,
         d3HeatMap
@@ -121,6 +124,8 @@ export default {
     },
     mounted() {
         this.update()
+        //Rule for showing the graph, param set in v3Mixin
+        this.showGraph = (this.currentFiles[0].size.cols - 3) > this.mxMaxCorrelationFeatures
 
         
     },
@@ -129,7 +134,6 @@ export default {
             this.update()
 
         },
-
     },
     computed: {
         complete() {
@@ -139,7 +143,8 @@ export default {
             return this.analysis.list.filter((item) => {
                 return Math.abs(item.value) >= this.correlationThreshold
             })
-        },   
+        },
+
 
     },
     methods: {

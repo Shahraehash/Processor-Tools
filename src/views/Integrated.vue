@@ -36,7 +36,8 @@
       <!-- Additional Step Selection -->
       <transition appear name="fade" tag="div">
         <div class="text-center mt-10" v-if="componentList.length == currentStep">
-        <v3miniAdditionalSteps 
+        <v3miniAdditionalSteps
+          :componentList="componentList"
           :optionalComponents="optionalComponents" 
           @addComponent="addComponent($event)"
           />
@@ -158,6 +159,8 @@ import v3miniAdditionalSteps from '../components/v3miniAdditionalSteps.vue';
     },
  
     methods: {
+
+
       exportComponent() {
         this.componentList.push(
           {
@@ -175,7 +178,7 @@ import v3miniAdditionalSteps from '../components/v3miniAdditionalSteps.vue';
         this.componentList.push(component)
       },
       removeComponent(index) {
-        this.componentList.splice(index, 1)
+        this.componentList.splice(index, this.componentList.length - index)
         this.currentStep = this.componentList.length
       },
 

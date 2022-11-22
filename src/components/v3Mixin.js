@@ -2,6 +2,7 @@
 export default {
     data() {
       return {
+        mxMaxCorrelationFeatures: 10, //sets correlation feature limit in v3subMulticolinearity
         mxfileTypes: [
           {text: 'Training', value: 'train'},
           {text: 'Generalization Test', value: 'test'},
@@ -31,7 +32,7 @@ export default {
       },
 
       mxStylePercent(value) {
-        if (value < 1) {
+        if (value < 1 && value > 0) {
           return '<1'
         }
         else {

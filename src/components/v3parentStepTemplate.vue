@@ -42,16 +42,36 @@
 
     <!-- Core Component -->
     <div>
-      <v-component 
-        v-if="analysis"
-        :is="subcomponent" 
-        :currentFiles="currentFiles" 
-        :analysis="analysis" 
-        :target="target"
-        :files="files"
-        @update="update($event)"
-        >
-      </v-component>
+      <transition appear name="fade" tag="div">
+
+        <v-component 
+          v-if="analysis"
+          :is="subcomponent" 
+          :currentFiles="currentFiles" 
+          :analysis="analysis" 
+          :target="target"
+          :files="files"
+          @update="update($event)"
+          >
+        </v-component>
+        <div v-else class="text-center">
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          class="mt-5"
+          ></v-progress-circular>
+          <v-alert
+            class="mt-5"
+            color="primary"
+            text
+            dense
+            v-if="longProcessTimeAlert"
+            >
+            Larger datasets can take much longer to process.
+          </v-alert>
+        </div>
+      </transition>
+
     </div>
     <!-- Action Button -->
     <div class="text-right" v-if="files.length > 0">
@@ -139,6 +159,7 @@ export default {
     return {
       loading: false,
       loadingButton: false,
+      longProcessTimeAlert: false,
       //
       analysis: null,
       complete: true,
@@ -154,11 +175,15 @@ export default {
   async mounted() {
     window.scrollTo(0,document.body.scrollHeight);
     if (this.analysisFunction != null) {
-      this.analysisFunction(this.currentFiles, this.target, this.analysisObj)
-      .then(r => this.analysis = r)
+      let r = await this.analysisFunction(this.currentFiles, this.target, this.analysisObj)
+      let delay = (ms) => new Promise(res => setTimeout(res, ms));
+      await delay(1000)
+      this.longProcessTimeClock()
+      this.analysis = r
     }
     
   },
+  
   methods: {
     next() {
       this.transformFunction(this.currentFiles, this.target, this.transformObj)
@@ -168,9 +193,27 @@ export default {
       this.complete = obj.complete
       this.transformObj = obj.transformObj
       this.$emit('update')
+    },
+    async longProcessTimeClock() {
+      this.longProcessTimeAlert = false
+      let delay = (ms) => new Promise(res => setTimeout(res, ms));
+      await delay(5000)
+      this.longProcessTimeAlert = true
     }
   }
 
 }
 </script>
+
+<style scoped>
+  .fade-enter-active {
+  transition: opacity .5s;
+}
+.fade-leave-active {
+  transition: opacity 0s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
+}
+</style>
 
