@@ -58,7 +58,7 @@
                         multiple
                         :items="analysis.cols"
                         v-model="correlationFeatureRemovalList"
-                        @change="changedFeatureRemoval"
+                        @change="update"
                         clearable
                         >
                     <template #selection="{ item }">
@@ -178,6 +178,7 @@ export default {
         },
         toggleFeatureRemoval(feature) {
             !this.correlationFeatureRemovalList.includes(feature) ? this.correlationFeatureRemovalList.push(feature) : this.correlationFeatureRemovalList.splice(this.correlationFeatureRemovalList.indexOf(feature),1)
+            this.update()
         },            
 
 
