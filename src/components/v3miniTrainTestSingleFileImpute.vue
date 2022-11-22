@@ -50,9 +50,9 @@
 
         <v3miniPrevalenceBar :combinedFile="combinedFile"/>
         <div class="text-center my-3">
-          <v-icon size="75" color="grey">mdi-arrow-down-bold-outline</v-icon>
-          <span class="overline grey--text">Allocation</span>
-          <v-icon size="75" color="grey">mdi-arrow-down-bold-outline</v-icon>
+          <v-icon size="50" color="grey" style="transform: rotate(45deg);">mdi-arrow-down-thin</v-icon>
+          <span class="grey--text">Allocation</span>
+          <v-icon size="50" color="grey" style="transform: rotate(-45deg);">mdi-arrow-down-thin</v-icon>
         </div>
         
         <div class="overline">Training/Initial Testing and Generilization Testing Files</div>        
