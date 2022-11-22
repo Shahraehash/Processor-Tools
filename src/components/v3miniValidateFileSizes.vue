@@ -1,18 +1,21 @@
 <template>
     <div>
         <div v-if="analysis">
-            {{analysis}}
+
             <v-row>
                 <v-col cols="4">
                     <div class="overline">Row Numbers</div>
+                        {TODO ADD}
 
                 </v-col>
                 <v-col cols="4">
                     <div class="overline">Column Numbers</div>
+                        {TODO ADD}
                     
                 </v-col>
                 <v-col cols="4">
                     <div class="overline">Missing Data</div>
+                        {TODO ADD}
                     
                 </v-col>                                
             </v-row>
