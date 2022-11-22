@@ -102,11 +102,11 @@
                 
                 
                 <div>
-                  <v3miniValidate :valid="true" />
+                  <v3miniValidate :valid="fileMetadata[index].size.rows > 50" />
                   {{fileMetadata[index].size.rows}} rows
                 </div>
                 <div>
-                  <v3miniValidate :valid="true" />
+                  <v3miniValidate :valid="fileMetadata[index].size.cols < 1000" />
                   {{fileMetadata[index].size.cols}} columns
                 </div>
                 <div>
@@ -115,6 +115,7 @@
                   <span v-if="fileMetadata[index].missing.rows > 0"></span> 
                   rows missing data ({{mxStylePercent(fileMetadata[index].missing.rowsPercent)}}%)
                 </div>
+
                 <div>
                   <v-select 
                     v-if="pathSelection == 1"
@@ -136,6 +137,7 @@
                     </template>
 
                   </v-select>
+
                 </div>
               
 
@@ -159,6 +161,9 @@
 
         </v-col>
       </v-row>
+      <div v-if="files.length > 0" class="my-3">
+          We will address any <v3miniValidate :valid="false" /> alerts as we progress through the steps.
+      </div>
 
       <v-alert type="warning" v-if="trainTestFilesMatchError">With two data files, you need at least one training and one testing file specified for the data type.</v-alert>
 
@@ -170,11 +175,12 @@
       <!-- Pick Target -->
       <div class="mt-10" v-if="fileMetadata[0]">
         <div class="my-3">
-          Pick your target column.
+          Next we need to identify which column in the dataset is the target. This is your dependent variable or the outcome you're trying to predict.
         </div>
         <v-row>
           <v-col cols="6">
             <v-select 
+              label="Target Column"
               v-model="target" 
               dense 
               outlined 
