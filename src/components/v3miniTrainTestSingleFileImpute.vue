@@ -46,6 +46,8 @@
      
         </v-row>
 
+        <v-alert dense color="primary" text v-if="trainingClassSize < 50">We recommend a training class size of at least 50 with an absolute minimum of 25.</v-alert>
+
         <v3miniPrevalenceBar :combinedFile="combinedFile"/>
         <div class="text-center my-3">
           <v-icon size="75" color="grey">mdi-arrow-down-bold-outline</v-icon>
