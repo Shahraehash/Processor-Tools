@@ -11,7 +11,111 @@ from .helpers import load_file, save_file, file_params, int_list_to_string, stor
 
 #ANALYSIS
 
+#rules to detect potential errors in data
+def check_df(df, target, fileGroup):
+    rows_max_training = 100000
+    rows_max_testing = 100000
+    cols_max = 1000
+    missing_data_max = 0.5
+    min_training_class_size = 25
+    min_test_class_size = 10
+
+
+    testing_size_valid = True
+    training_size_valid = True
+    total_size_valid = True
+    rows_max_valid = True
+    cols_max_valid = True
+
+    df_missing = df[df.isna().any(axis=1)]
+
+    missing_count = int(df_missing.shape[0])
+    missing_percent = missing_count / df.shape[0]
+
+    df_non_missing = df.drop(df_missing.index)
+
+    if (fileGroup == 'combined'):
+        testing_size_valid = all(df_non_missing[target].value_counts() > min_test_class_size)
+        training_size_valid = all(df[target].value_counts() > min_training_class_size)
+        total_size_valid = all(df[target].value_counts() > min_training_class_size + min_test_class_size)
+
+        rows_max_valid = df.shape[0] < rows_max_training + rows_max_testing
+        cols_max_valid = df.shape[1] < cols_max
+
+    elif (fileGroup == 'train'):
+        training_size_valid = all(df[target].value_counts() > min_training_class_size)
+
+        rows_max_valid = df.shape[0] < rows_max_training
+        cols_max_valid = df.shape[1] < cols_max        
+
+    elif (fileGroup == 'test'):
+        testing_size_valid = all(df_non_missing[target].value_counts() > min_test_class_size)
+
+        rows_max_valid = df.shape[0] < rows_max_testing
+        cols_max_valid = df.shape[1] < cols_max        
+
+    return {
+        'missing_count': missing_count,
+        'missing_percent': missing_percent,
+        'testing_size_valid': testing_size_valid,
+        'training_size_valid': training_size_valid,
+        'total_size_valid': total_size_valid,
+        'rows_max_valid': rows_max_valid,
+        'cols_max_valid': cols_max_valid,
+        'all_valid': testing_size_valid and training_size_valid and total_size_valid and rows_max_valid and cols_max_valid
+    }
+
+def group_data(fileObjectArray, target):
+    combined = []
+    train = []
+    test = []
+
+    for file in fileObjectArray:
+        if file['type'] == 'combined':
+            combined.append(load_file(file['storageId']))
+        elif file['type'] == 'train':
+            train.append(load_file(file['storageId']))
+        elif file['type'] == 'test':
+            test.append(load_file(file['storageId']))
+    
+    if len(combined) > 0:
+        df_combined = pd.concat(combined)
+
+    else:
+        df_combined = None
+
+    if len(train) > 0:
+        df_train = pd.concat(train)
+    else:
+        df_train = None
+
+    if len(test) > 0:
+        df_test = pd.concat(test)    
+    else:
+        df_test = None
+
+
+    return {
+        'combined': df_combined,
+        'train': df_train,
+        'test': df_train
+    }
+
+
+
 def analysis_file_validate(fileObjectArray, target):
+    groups = group_data(fileObjectArray, target)
+
+    group_results = {}
+
+    for group in groups:
+        if groups[group] is not None:
+            r = check_df(groups[group], target, group)
+            group_results[group] = r
+
+    
+    print("GROUP RESULTS",group_results, )
+
     individual_file_validation = []
 
     for file in fileObjectArray:
@@ -89,7 +193,8 @@ def analysis_file_validate(fileObjectArray, target):
         'targetMap': value_map,
         'individualValidation': individual_file_validation,
         'allTargetValues': unique_target_values,
-        'mismatchedColumns': mismatchedColumns
+        'mismatchedColumns': mismatchedColumns,
+        'groupResults': group_results
     }
 
     return validation
