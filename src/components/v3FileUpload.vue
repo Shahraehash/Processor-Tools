@@ -244,11 +244,11 @@
             icon: 'mdi-file-outline',
             value: 'train-test'
           },
-          { 
-            text: 'Multiple mixed data files needing combined',
-            icon: 'mdi-file-multiple-outline',
-            value: 'other'
-          },          
+          // { 
+          //   text: 'Multiple mixed data files needing combined',
+          //   icon: 'mdi-file-multiple-outline',
+          //   value: 'other'
+          // },          
         ]
       }
     },
