@@ -258,6 +258,11 @@ def effect_train_test_split_impute(fileObjectArray, target, effect):
 #TRANSFORM
 def transform_train_test_split_impute(fileObjectArray, target, transform):
 
+    ##OUTPUT FILE NAMES
+    train_file_name = 'training_and_initial_validation.csv'
+    test_file_name = 'generalization_testing.csv'
+    removed__file_name = 'removed_values.csv'
+    imputed_file_name = 'imputed_values.csv'
 
 
     groups = {
@@ -358,12 +363,13 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         
         df_removed = pd.concat(array_df_removed)
 
+        #file names defined at top of method
         #include dropped output in result
         if df_removed.shape[0] > 0:
-            result.append(store_file_and_params(df_removed, 'removed_values.csv', 'removed'))
+            result.append(store_file_and_params(df_removed, removed__file_name, 'removed'))
 
-        result.append(store_file_and_params(df_train, 'train.csv', 'train'))
-        result.append(store_file_and_params(df_test, 'test.csv', 'test'))
+        result.append(store_file_and_params(df_train, train_file_name, 'train'))
+        result.append(store_file_and_params(df_test, test_file_name, 'test'))
 
 
     elif 'combined' in df_groups:
@@ -466,15 +472,15 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
 
         
-
-        result.append(store_file_and_params(df_train, 'train.csv', 'train'))
-        result.append(store_file_and_params(df_test, 'test.csv', 'test'))
+        #file names defined at top of method
+        result.append(store_file_and_params(df_train, train_file_name, 'train'))
+        result.append(store_file_and_params(df_test, test_file_name, 'test'))
 
         if df_removed.shape[0] > 0:
-            result.append(store_file_and_params(df_removed, 'removed.csv', 'removed'))
+            result.append(store_file_and_params(df_removed, removed__file_name, 'removed'))
 
         try:
-            result.append(store_file_and_params(df_imputed, 'imputed.csv', 'imputed'))
+            result.append(store_file_and_params(df_imputed, imputed_file_name, 'imputed'))
         except:
             pass
     

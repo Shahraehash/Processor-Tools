@@ -154,7 +154,7 @@ export default {
                 if (['train', 'test'].includes(fileObj.type) && fileObj.audit == false) {
                     zip.file(fileObj.name, fileObj.content)
                 }
-                else {
+                else if (fileObj.audit == true) {
                     zip.folder('audit_files').file(`audit_${fileObj.name}`, fileObj.content)
                 }
                 
