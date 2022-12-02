@@ -59,17 +59,60 @@ def analyze_encode_nonnumeric(fileObjectArray, target):
             result.append(t)
 
         else:
-            t = {
-                'name': column,
-                'method': 'one_hot_encode',
-                'unique_values': list(col.unique()),
-                'nan_row_index': list(col[col.isna() == True].index),
-                'items': [
-                    {'text': 'Covert each unique value to a column', 'value': 'one_hot_encode'},
-                    {'text': 'Remove column', 'value': 'drop'},
-                ],
-                'selection': 'one_hot_encode' if len(list(col.unique())) <=20 else 'drop' #rule to decide if column should be dropped by default
-            }
+            list_length = len(list(col.unique()))
+
+            print()
+            if list_length == 1:
+
+
+                t = {
+                    'name': column,
+                    'method': 'drop_single',
+                    'unique_values': list(col.unique()),
+                    'nan_row_index': list(col[col.isna() == True].index),
+                    'items': [
+                        {'text': 'Remove column', 'value': 'drop'},
+                    ],
+                    'selection': 'drop'
+                }       
+
+            elif list_length == 2:
+
+
+                #give option to map values
+                value_map = {}
+                for key, value in enumerate(list(col.unique())):
+                    value_map[value] = key                
+
+                t = {
+                    'name': column,
+                    'method': 'one_hot_encode_binary',
+                    'unique_values': list(col.unique()),
+                    'nan_row_index': list(col[col.isna() == True].index),
+                    'items': [
+                        {'text': 'Covert each unique value to a column', 'value': 'one_hot_encode'},
+                        {'text': 'Encode to binary', 'value': 'binary_encode'},
+                        {'text': 'Remove column', 'value': 'drop'}
+                    ],
+                    'selection': 'one_hot_encode',
+                    'valueMap': value_map
+                }     
+
+            else:    
+
+
+
+                t = {
+                    'name': column,
+                    'method': 'one_hot_encode',
+                    'unique_values': list(col.unique()),
+                    'nan_row_index': list(col[col.isna() == True].index),
+                    'items': [
+                        {'text': 'Covert each unique value to a column', 'value': 'one_hot_encode'},
+                        {'text': 'Remove column', 'value': 'drop'},
+                    ],
+                    'selection': 'one_hot_encode' if len(list(col.unique())) <=20 else 'drop' #rule to decide if column should be dropped by default
+                }
             #ADD LATER
             # if len(t['unique_values']) == 2: #allow for boolean conversion if only two unique values
             #     t['items'].insert(1,{'text': 'Convert to boolean', 'value': 'mixed_to_boolean'}) 
@@ -118,6 +161,10 @@ def transform_encode_nonnumeric(fileObjectArray, target, transform):
 
         elif column['selection'] == 'drop':
             df = df.drop(column['name'], axis=1)
+
+        elif column['selection'] == 'binary_encode':
+             #the valueMap property is created on the backend when two unique values exist and maniplated on front end
+            df[column['name']] = df[column['name']].astype('str').map(column['valueMap']).astype('int')
 
         #ensure target remains at end of file
 
