@@ -1,35 +1,6 @@
 <template>
     <div>
         <div v-if="graphObject">
-            <!-- <div>
-                <div class="key-box" 
-                     v-bind:style="{
-                        background: mxBarColors.missing,
-                    }">    
-                </div>
-                <div v-bind:style="{
-                        display: 'inline-block',
-                    }">    
-                    Missing
-                </div>
-
-                <div class="key-box"
-                      v-bind:style="{
-                        background: mxBarColors.blank,
-    
-                    }">    
-                </div>
-                <div
- 
-                    v-bind:style="{
-                        display: 'inline-block',
-                        
-                    }">    
-                    Removed
-                </div>
-                            
-
-            </div> -->
             <div style="width:100%; height: 40px; white-space: nowrap;" >
             <div
                 class="group-box data-set-box right-spacer"
@@ -39,7 +10,7 @@
 
                 }"
                 >
-                Training
+                Train/Initital Validation
             </div>
             <div
                 class="group-box data-set-box right-spacer"
@@ -49,10 +20,11 @@
 
                 }"
                 >
-                Gen Testing
+                Generalization Test
             </div>        
             <div
-                class="group-box data-set-box"
+                class="group-box class-box"
+                v-if="graphObject.remainder.count > 0"
                 v-bind:style="{
                 background: mxBarColors.blank,
                 width: graphObject.remainder.percent + '%',
@@ -65,7 +37,7 @@
 
             <div style="width:100%; white-space: nowrap;">     
             <div
-                class="group-box class-box "
+                class="group-box class-box class-box-width"
                 v-bind:style="{
                 background: mxBarColors.classZero,
                 width:  graphObject.train.percent[0] + '%',
@@ -88,7 +60,7 @@
                 Class 0: {{graphObject.train.counts[0]}}
             </div>
             <div
-                class="group-box class-box right-spacer"
+                class="group-box class-box class-box-width right-spacer "
                 v-bind:style="{
                 background: mxBarColors.classOne,
                 width:  graphObject.train.percent[1] + '%',
@@ -111,7 +83,7 @@
                 Class 1: {{graphObject.train.counts[1]}}
             </div>        
             <div
-                class="group-box class-box"
+                class="group-box class-box class-box-width"
                 v-bind:style="{
                 background: mxBarColors.classZero,
                 width:  graphObject.test.percent[0] +'%',
@@ -127,7 +99,7 @@
                 Class 0: {{graphObject.test.counts[0]}}
             </div>   
             <div
-                class="group-box class-box right-spacer"
+                class="group-box class-box class-box-width right-spacer"
                 v-bind:style="{
                 background: mxBarColors.classOne,
                 width: graphObject.test.percent[1] + '%',
@@ -145,6 +117,7 @@
             </div>        
             <div
                 class="group-box class-box "
+                v-if="graphObject.remainder.count > 0"
                 v-bind:style="{
                 background: mxBarColors.blank,
                 width: graphObject.remainder.percent + '%'
@@ -207,24 +180,29 @@
   </script>
 
     <style scoped>
-    
-    .data-set-box {
-        padding-top: 8px;
-        height:40px;
-    }
-    .class-box {
-        padding-top: 8px;
-        height:40px;
-    }
-    .group-box {
-        box-sizing: ;
+    .group-box {        
         position: relative;
         transition: width 0.5s;
         display: inline-block;
         text-align: center;
         color: white;
         overflow: hidden;
+        padding-top: 8px;
+        height:40px;
+    }    
+
+    
+    .data-set-box {
+        min-width: 20%;
     }
+    .class-box-width {
+        min-width: 10%;
+    }
+    .class-box {
+        padding-top: 8px;
+        height:40px;
+    }
+
     .right-spacer {
         border-right: 5px white solid;
     }
@@ -233,6 +211,9 @@
         top: 0;
         left: 0;
         z-index: 1;
+        padding-top: 8px;
+        height:40px;
+        
     }
     .imputed {
         position: absolute;
