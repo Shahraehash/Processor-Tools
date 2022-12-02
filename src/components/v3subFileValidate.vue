@@ -114,7 +114,13 @@
                     </v-col>
                 </v-row>
 
-                <v3miniValidateFileSizes :analysis="analysis" :currentFiles="currentFiles" :target="target" />
+
+                <div class="mt-5">
+                    We'll also check to ensure there is enough data to train and evaluate the model.
+                </div>                
+                <div class="overline">Sufficient Data Validation</div>
+
+                <v3miniValidateFileSizes @validation="setSizeValidation($event)" :analysis="analysis" :currentFiles="currentFiles" :target="target" />
 
 
 
@@ -153,7 +159,8 @@ export default {
     },
     data() {
         return {
-            transform: null
+            transform: null,
+            sizeValid: false,
         }
     },
     mounted() {
@@ -166,11 +173,14 @@ export default {
     },
     computed: {
         complete() {
-            return this.analysis.valid
+            return this.analysis.valid && this.sizeValid
         },        
     },
     methods: {
-
+        setSizeValidation(value) {
+            console.log('sizeVaidation',value)
+            this.sizeValid = value
+        },
         update() {
             let result = {
                 complete: this.complete,

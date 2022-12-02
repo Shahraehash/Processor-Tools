@@ -93,10 +93,6 @@ def integrated_analyze():
     target = request.json['target']
     analyze = request.json['analyze']
 
-
-    print(analyze['method'])
-
-
     #File Validate
     if analyze['method'] == 'file_validate':
         json = analysis_file_validate(fileObjectArray, target)
@@ -141,10 +137,6 @@ def integrated_effect_column_removal():
 
     elif effect['method'] == 'train_test_split_impute':
         json = effect_train_test_split_impute(fileObjectArray, target, effect)
-
-
-    elif False:
-        pass
 
     else: 
         json = {'error': 'invalid method'}
