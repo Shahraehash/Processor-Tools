@@ -2,7 +2,7 @@
 export default {
     data() {
       return {
-        mxMaxCorrelationFeatures: 10, //sets correlation feature limit in v3subMulticolinearity
+        mxMaxCorrelationFeatures: 30, //sets correlation feature limit in v3subMulticolinearity
         mxfileTypes: [
           {text: 'Training', value: 'train'},
           {text: 'Generalization Test', value: 'test'},

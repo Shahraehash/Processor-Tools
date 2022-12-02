@@ -177,7 +177,7 @@ export default {
     if (this.analysisFunction != null) {
       let r = await this.analysisFunction(this.currentFiles, this.target, this.analysisObj)
       let delay = (ms) => new Promise(res => setTimeout(res, ms));
-      await delay(1000)
+      await delay(500)
       this.longProcessTimeClock()
       this.analysis = r
     }

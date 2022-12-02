@@ -69,7 +69,8 @@
 
                 <!-- Graph -->
                 <div>
-                    <v-switch label="Show Graph" v-model="showGraph"></v-switch>
+                    <v-switch :disabled="diableGraph" label="Show Graph" v-model="showGraph"></v-switch>
+                    <v-alert dense v-if="diableGraph" type="info" text> With more than {{mxMaxCorrelationFeatures}} features, in the dataset, we cannot display a graphical representation.</v-alert>
                     <d3HeatMap ref="heatmap" v-if="showGraph" :heatMapXYVal="analysis.d3" :threshold="correlationThreshold"/>
                 </div>                
 
@@ -125,9 +126,7 @@ export default {
     mounted() {
         this.update()
         //Rule for showing the graph, param set in v3Mixin
-        this.showGraph = (this.currentFiles[0].size.cols - 3) > this.mxMaxCorrelationFeatures
-
-        
+        this.showGraph = (this.currentFiles[0].size.cols - 3) < this.mxMaxCorrelationFeatures      
     },
     watch: {
         analysis: () => {
@@ -136,6 +135,15 @@ export default {
         },
     },
     computed: {
+
+        diableGraph() {
+            if (this.currentFiles) {
+                return (this.currentFiles[0].size.cols - 3) >= this.mxMaxCorrelationFeatures 
+            }
+            else {
+                return false
+            }
+        },
         complete() {
             return true
         },

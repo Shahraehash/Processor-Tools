@@ -24,6 +24,8 @@ https://chartio.com/resources/tutorials/how-to-resize-an-svg-when-the-window-is-
 //General Functions
 import * as d3 from 'd3'
 import d3ToPng from 'd3-svg-to-png'
+import { textwrap } from 'd3-textwrap';
+d3.textwrap = textwrap;
 
 const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
 
@@ -129,7 +131,7 @@ export default {
         drawHeatMap(data, threshold) {
             /* eslint-disable */
             // set the dimensions and margins of the graph
-            const margin = {top: 100, right: 50, bottom: 200, left: 200},
+            const margin = {top: 100, right: 100, bottom: 300, left: 300},
                 width = 900 - margin.left - margin.right,
                 height = 900 - margin.top - margin.bottom;
                 
@@ -161,24 +163,26 @@ export default {
                 .attr("stop-color", function(d) { return d.color; });         
                 const legend = svg.append("g").attr('id', 'legend')
                 legend.append("rect")
-                    .attr("x", 125).attr("y", -60)
+                    .attr("x", 55).attr("y", -60)
                     .attr("width", 400)
                     .attr("height", 20)
                     .attr("rx", 10)
                     .attr("ry", 10)
                     .style("stroke", "grey")                    
                     .style("fill", "url(#linear-gradient)");
-                legend.append("text").text(-1).attr("x", 120).attr("y", -25)
-                legend.append("text").text(0).attr("x", 320).attr("y", -25)
-                legend.append("text").text(1).attr("x", 520).attr("y", -25)
+                legend.append("text").text(-1).attr("x", 55).attr("y", -25)
+                legend.append("text").text(0).attr("x", 250).attr("y", -25)
+                legend.append("text").text(1).attr("x", 440).attr("y", -25)
 
 
                 
                 // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
-                const myGroups = Array.from(new Set(data.map(d => d.group)))
-                const myVars = Array.from(new Set(data.map(d => d.variable)))
-                
+                var myGroups = Array.from(new Set(data.map(d => d.group)))
+                var myVars = Array.from(new Set(data.map(d => d.variable)))
+
                 // Build X scales and axis:
+
+
                 const x = d3.scaleBand()
                     .range([ 0, width ])
                     .domain(myGroups)
@@ -201,6 +205,7 @@ export default {
                     .style("font-size", 15)
                     .call(d3.axisLeft(y).tickSize(0))
                     .select(".domain").remove()
+                    
                 
                 // Build color scale=
                 const colorScale = buildColorScale(threshold)
