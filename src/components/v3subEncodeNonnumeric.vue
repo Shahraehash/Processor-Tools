@@ -31,6 +31,7 @@
                             </div>
                             <div class="ma-3">
 
+                                <!-- One hot encode >2 unique values -->
                                 <div v-if="column.method == 'one_hot_encode'">
                                     The data in this column is <strong class="light-blue--text">categorical</strong> with the {{column.unique_values.length}} unique values: 
                                     <v-chip color="light-blue" dark small v-for="(cat, catKey) in column.unique_values" :key="catKey">{{cat}}</v-chip>. 
@@ -38,9 +39,25 @@
                                     <!-- Message if >20 categories, the drop mode is set on the backend method analyze_encode_nonnumeric -->
                                     <v-alert type="warning" text v-if="column.unique_values.length > 20">With so many categories, the increase in column number may adversely affect your dataset and we recommend you drop the column</v-alert>
                                 </div>
+                                <!-- One hot encode vs. bindary for 2 unique avlues -->
+                                <div v-if="column.method == 'one_hot_encode_binary'">
+                                    The data in this column is <strong class="light-blue--text">categorical vs. binary</strong> with the {{column.unique_values.length}} unique values: 
+                                    <v-chip color="light-blue" dark small v-for="(cat, catKey) in column.unique_values" :key="catKey">{{cat}}</v-chip>. 
+                                    <br>We can convert each category to a seperate column, treat it as a binary representation, or remove the column from the dataset. 
+                                                                    
+                    
+                                    
+                                </div>
+
+                                <!-- Mixed to numerical conversion -->
                                 <div v-if="column.method == 'mixed_to_numeric'">
                                     The data in this column is <strong class="light-blue--text">mostly numeric</strong> ({{column.values.percent}}%) with some non-numeric values. We can covert to numeric data and treat non-numeric data as missing values or remove the column from the dataset.
-                                </div>                                
+                                </div>
+                                
+                                <!-- Drop a single row -->
+                                <div v-if="column.method == 'drop_single'">
+                                    The data in this column only contains a <strong class="light-blue--text">single value</strong> and does not add any new information to the dataset. It will be removed.
+                                </div>     
 
                             </div>   
                             <div>
@@ -55,7 +72,15 @@
                                     >
 
                                 </v-select>
-                            </div>                          
+                            </div>    
+                            
+                            <div v-if="(column.method == 'one_hot_encode_binary' && column.selection =='binary_encode')">
+                                <div v-for="(val, cat) in column.valueMap" :key="cat">
+                                <v-chip>{{cat}}</v-chip>
+                                <v-icon>mdi-arrow-right</v-icon>
+                                <v-select outlined dense v-model="column.valueMap[cat]" :items="[0,1]" style="display: inline-flex; width: 80px;"></v-select>
+                            </div>
+                            </div>
                         
                         </v-card>
                                                                                 
@@ -130,7 +155,9 @@ export default {
             }
 
             this.$emit('update', result)
-        },        
+        },
+       
+          
        
    
     }
