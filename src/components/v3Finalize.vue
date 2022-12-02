@@ -17,7 +17,7 @@
             <v-col cols="12">
                 <div class="overline ml-4">Summary</div>
                 <v-card outlined class="pa-3 ma-2">
-                    <v3miniFilesDelta :originalArray="originalFiles" :finalArray="finalFilesOnlyTrainTest"/>        
+                    <v3miniFilesDelta :originalArray="originalFiles" :finalArray="finalFiles"/>        
                 </v-card>
             </v-col>
             <v-col cols="6">

@@ -11,7 +11,13 @@
                     Rows missing data: {{original.missing}} → {{final.missing}}
                 </div>        
                 <div >
-                    Rows with imputed data: 0 → {{imputed}}
+                    <div v-if="imputed > 0">
+                        Rows with imputed data: 0 → {{imputed}}
+                    </div>
+                    <div v-else>
+                        Rows imputed: N/A
+                    </div>
+                    
                 </div>                        
                 <div>
                     Total Rows: {{original.rows}} → {{final.rows}}
@@ -59,8 +65,8 @@
                     <div v-else>
                         No removed columns
                     </div>                        
-                </div>                   
-                
+                </div>         
+             
             </v-col>            
         </v-row>
       
@@ -86,19 +92,28 @@ export default {
     },
     computed: {
         imputed() {
-            return this.original.missing - (this.original.rows - this.final.rows)
+            let imputedArray = this.finalArray.filter(file => file.type == 'imputed')
+            if (imputedArray.length > 0) {
+                return imputedArray[0].size.rows
+            } else {
+                return 0
+            }
         },
         original() {
             return this.mapProcess(this.originalArray)
         },
         final() {
-            return this.mapProcess(this.finalArray)
+            return this.mapProcess(this.finalArray.filter(x => x.type == 'train' || x.type == 'test'))
         },
+        finalColumnsFiltered() {
+            return this.final.columnList.filter(x => !['origin_file_name','origin_file_source_row'].includes(x))
+        },
+      
         columnDiff() {
 
             return {
                 removed: underscore.difference(this.original.columnList, this.final.columnList),
-                added: underscore.difference(this.final.columnList.filer, this.original.columnList)
+                added: underscore.difference(this.final.columnList, this.original.columnList)
             }
 
         }
@@ -113,7 +128,7 @@ export default {
                 rows += item.size.rows
                 missing += item.missing.rows
             })
-            let columnList = arr[0].names.cols
+            let columnList = arr[0].names.cols.filter(x => !['origin_file_name','origin_file_source_row'].includes(x))
             let cols = columnList.length
 
             return {
