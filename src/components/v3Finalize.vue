@@ -114,7 +114,7 @@ export default {
     },
     data() {
         return {
-            effect: null
+            effect: null,
         }
     },
     mounted() {
@@ -151,11 +151,11 @@ export default {
             let fileObjects = await exportFileArray(this.files[this.files.length - 1])
             let zip = new JSZip()
             fileObjects.forEach(fileObj => {
-                if (['train.csv', 'test.csv'].includes(fileObj.name)) {
+                if (['train', 'test'].includes(fileObj.type) && fileObj.audit == false) {
                     zip.file(fileObj.name, fileObj.content)
                 }
                 else {
-                    zip.folder('audit_files').file(fileObj.name, fileObj.content)
+                    zip.folder('audit_files').file(`audit_${fileObj.name}`, fileObj.content)
                 }
                 
             })

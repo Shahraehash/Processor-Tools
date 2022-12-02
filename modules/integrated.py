@@ -200,11 +200,15 @@ def integrated_export():
         storage_id = fileObject['storageId']
         df = load_file(storage_id)
         json.append({
-            'name': 'with_source_rows_' + fileObject['name'],
+            'type': fileObject['type'],
+            'audit': True, #value which tracks if that file has audit rows
+            'name': fileObject['name'],
             'content': df.to_csv(index=False, index_label="source_row")
         })
         df = df.drop(['origin_file_name', 'origin_file_source_row'], axis=1)
         json.append({
+            'type': fileObject['type'],
+            'audit': False,            
             'name': fileObject['name'],
             'content': df.to_csv(index=False, index_label="source_row")
         })        
