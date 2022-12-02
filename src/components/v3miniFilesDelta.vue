@@ -98,7 +98,7 @@ export default {
 
             return {
                 removed: underscore.difference(this.original.columnList, this.final.columnList),
-                added: underscore.difference(this.final.columnList, this.original.columnList)
+                added: underscore.difference(this.final.columnList.filer, this.original.columnList)
             }
 
         }

@@ -24,8 +24,6 @@ https://chartio.com/resources/tutorials/how-to-resize-an-svg-when-the-window-is-
 //General Functions
 import * as d3 from 'd3'
 import d3ToPng from 'd3-svg-to-png'
-import { textwrap } from 'd3-textwrap';
-d3.textwrap = textwrap;
 
 const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
 

@@ -15,7 +15,6 @@
         :stepTitle="stepTitle"
         />
 
-        <v3miniExport :currentFiles="currentFiles" class="mt-n13"/>
 
         <v-spacer></v-spacer>
 
@@ -93,7 +92,6 @@
 //components
 import v3StepHeading from '@/components/v3StepHeading'  
 import v3ButtonNext from './v3ButtonNext.vue'
-import v3miniExport from './v3miniExport.vue'
 
 //subcomponents
 import v3subFileValidate from './v3subFileValidate'
@@ -108,7 +106,6 @@ export default {
   components: {
     v3StepHeading,
     v3ButtonNext,
-    v3miniExport,
     v3subFileValidate,
     v3subColumnRemoval,
     v3subEncodeNonnumeric,
