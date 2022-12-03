@@ -149,7 +149,7 @@ export default {
                 `Minimum class size of ${this.mxMinClassSize} not met. There is insufficient data to use MILO`
 
             let validImputationPercentageMessaage = validImputationPercentage ?
-                `Some of the data will requiring imputing.` :
+                `Some of the data will requiring imputing or removal.` :
                 `More than the recommended amount (${this.mxImputationPercentageThreshold * 100}%) of your data will requiring imputing. We don't recommend this.`
 
 
@@ -184,7 +184,7 @@ export default {
                 `Minimum class size of ${this.mxMinClassSize * 2} not met. The data set must include at least 25 samples per class for training initial validation and at least ${this.mxMinClassSize} samples per class with complete data for generalization testing`
 
                 let validImputationPercentageMessaage = validImputationPercentage ?
-                `Some of the data will requiring imputing.` :
+                `Some of the data will requiring imputing or removal.` :
                 `More than the recommended amount (${this.mxImputationPercentageThreshold * 100}%) of your data will requiring imputing. We don't recommend this.`
 
 
