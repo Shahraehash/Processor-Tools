@@ -17,6 +17,8 @@ def check_df_size(df, target):
     df_missing = df[df.isna().any(axis=1)]
     df_non_missing = df.drop(df_missing.index)
 
+
+    #constructs a list of value counts for the various dfs for front end use
     table = pd.DataFrame([
         df[target].value_counts(),
         df_missing[target].value_counts(),
@@ -29,23 +31,27 @@ def check_df_size(df, target):
         ).to_dict(orient='index')    
 
 
-    result = {
-        'rowsCount': int(df.shape[0]),
-        'rowsCompleteCount': int(df_non_missing.shape[0]),
-        'rowsMissingCount': int(df_missing.shape[0]),
-        'rowMissingPercent': float(df_missing.shape[0] / df.shape[0]),
-        'classCount': df[target].value_counts().to_dict(),
-        'classMin': int(df[target].value_counts().min()),
-        'classCompleteCount': df_non_missing[target].value_counts().to_dict(),
-        'classCompleteMin': int(df_non_missing[target].value_counts().min()),
-        'classMissingCount': df_missing[target].value_counts().to_dict(),
-        'table': table
-    }
+    result = {}
+
+    result['rowsCount'] = int(df.shape[0])
+    result['rowsCompleteCount'] = int(df_non_missing.shape[0])
+    result['rowsMissingCount'] = int(df_missing.shape[0])
+    result['rowMissingPercent'] = float(df_missing.shape[0] / df.shape[0])
+    result['classMin'] = minClassSize(df, target)
+    result['classCompleteMin'] = minClassSize(df_non_missing, target)
+    result['table'] = table
 
     return result
             
-
-            
+# Special method to ensure value counts always return value 
+# even if a sub-dataframe ends up being empty
+def minClassSize(df, target):
+    value_counts = df[target].value_counts()
+    if len(value_counts > 1):
+        return int(value_counts.min())
+    else:
+        return 0
+               
 
 
 
