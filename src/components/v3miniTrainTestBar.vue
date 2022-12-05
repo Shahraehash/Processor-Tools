@@ -76,7 +76,7 @@
                 <div class="imputed class-box"
                     v-if="graphObject.train['imputedCounts']"
                     v-bind:style="{
-
+                    right: 0,
                     width: graphObject.train.imputedPercent[1] + '%'
                     }"
                 ></div>
@@ -224,7 +224,6 @@
     .imputed {
         position: absolute;
         top: 0;
-        left: 0;
         z-index: 1;
         background: orange;
         opacity: 0.6;

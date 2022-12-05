@@ -41,7 +41,7 @@
                   width:  describe.non_nan.percent[0] + '%'
                   }"
                 v-bind:class="{
-                  'text-left': describe.nan.counts[0] > 0
+                  'text-left pl-2': describe.nan.counts[0] > 0
                 }"  
                 >
                 
@@ -54,6 +54,25 @@
 
             </div>               
             <!-- Class 1 Missing -->
+
+            <div
+                class="group-box class-box"
+                v-bind:style="{
+                  background: mxBarColors.classOne,
+                  width:  describe.non_nan.percent[1] + '%'
+                  }"
+                v-bind:class="{
+                  'text-right pr-2': describe.nan.counts[1] > 0
+                }"                    
+                  
+                >
+                <span v-if="describe.nan.counts[1] > 0">
+                  {{describe.nan.percent[1]}}% ({{describe.nan.counts[1]}} rows) missing data →
+                </span>
+                  <span v-else>
+                    No missing data
+                  </span>            
+            </div>
             <div
                 class="group-box class-box"
                 v-bind:style="{
@@ -62,25 +81,7 @@
                   }"
                   
                 >
-            </div>
-            <div
-                class="group-box class-box"
-                v-bind:style="{
-                  background: mxBarColors.classOne,
-                  width:  describe.non_nan.percent[1] + '%'
-                  }"
-                v-bind:class="{
-                  'text-left pl-2': describe.nan.counts[1] > 0
-                }"                    
-                  
-                >
-                <span v-if="describe.nan.counts[1] > 0">
-                  ← {{describe.nan.percent[1]}}% ({{describe.nan.counts[1]}} rows) missing data
-                </span>
-                  <span v-else>
-                    No missing data
-                  </span>            
-            </div>              
+            </div>            
           </div>          
       </div>
     </div>
