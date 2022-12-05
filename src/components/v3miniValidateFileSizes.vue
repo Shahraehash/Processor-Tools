@@ -18,8 +18,17 @@
                             <!-- Valid Class Sizew -->
                             <div class="mt-3">
                                 <!-- Messaging -->
-                                <v3miniValidate :valid="validation[key].validMinClassSize"/>
-                                {{validation[key].validMinClassSizeMessaage}}
+                                <div v-if="validation[key].validMinClassSize">
+                                    <v3miniValidateError :valid="validation[key].validMinClassSize"/>
+                                    {{validation[key].validMinClassSizeMessaage}}
+                                </div>
+                                <div v-else>
+                                    <v-alert text dense type="error">
+                                        {{validation[key].validMinClassSizeMessaage}}
+                                    </v-alert>
+                                </div>
+                                
+
                                 
                                 <!-- Table -->
                                 <div>
@@ -81,12 +90,14 @@
 </template>
 <script>    
 import v3miniValidate from './v3miniValidate.vue'
+import v3miniValidateError from './v3miniValidateError.vue'
 import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
 
 export default {
     name: 'v3miniValidateFileSizes',
     components: {
         v3miniValidate,
+        v3miniValidateError,
         v3miniTrainTestLabel
     },
     props: {
@@ -146,7 +157,7 @@ export default {
 
             let validMinClassSizeMessaage = validMinClassSize ? 
                 `Minimum class size of ${this.mxMinClassSize} met. ` : 
-                `Minimum class size of ${this.mxMinClassSize} not met. There is insufficient data to use MILO`
+                `Minimum class size of ${this.mxMinClassSize} not met. There is insufficient data to use MILO.`
 
             let validImputationPercentageMessaage = validImputationPercentage ?
                 `Some of the data will requiring imputing or removal.` :
@@ -165,8 +176,8 @@ export default {
             let validMinClassSize = sizeChecks.classCompleteMin > this.mxMinClassSize
 
             let validMinClassSizeMessaage = validMinClassSize ? 
-                `Minimum class size of ${this.mxMinClassSize} with complete data met` : 
-                `Minimum class size of ${this.mxMinClassSize} with complete data not met`
+                `Minimum class size of ${this.mxMinClassSize} with complete data met.` : 
+                `Minimum class size of ${this.mxMinClassSize} with complete data not met.`
             
             
             return {
@@ -180,8 +191,8 @@ export default {
             let validImputationPercentage = sizeChecks.rowMissingPercent < this.mxImputationPercentageThreshold 
 
             let validMinClassSizeMessaage = validMinClassSize ? 
-                `Minimum class size of ${this.mxMinClassSize * 2} met` : 
-                `Minimum class size of ${this.mxMinClassSize * 2} not met. The data set must include at least 25 samples per class for training initial validation and at least ${this.mxMinClassSize} samples per class with complete data for generalization testing`
+                `Minimum class size of ${this.mxMinClassSize * 2} met.` : 
+                `Minimum class size of ${this.mxMinClassSize * 2} not met. The data set must include at least 25 samples per class for training initial validation and at least ${this.mxMinClassSize} samples per class with complete data for generalization testing. There is insufficient data to use MILO.`
 
                 let validImputationPercentageMessaage = validImputationPercentage ?
                 `Some of the data will requiring imputing or removal.` :

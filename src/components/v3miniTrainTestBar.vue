@@ -23,7 +23,7 @@
                 Generalization Test
             </div>        
             <div
-                class="group-box class-box-width"
+                class="group-box removed-box-width"
                 v-if="graphObject.remainder.count > 0"
                 v-bind:style="{
                 background: mxBarColors.blank,
@@ -116,10 +116,10 @@
                 
             </div>        
             <div
-                class="group-box class-box-width "
+                class="group-box removed-box-width "
                 v-if="graphObject.remainder.count > 0"
                 v-bind:style="{
-                background: mxBarColors.blank,
+                background: mxBarColors.missing,
                 width: graphObject.remainder.percent + '%'
                 }"
                 
@@ -199,6 +199,10 @@
     .class-box-width {
         min-width: 10%;
         max-width: 40%
+    }
+    .removed-box-width {
+        min-width: 7%;
+        max-width: 30%
     }
     .class-box {
         padding-top: 8px;
