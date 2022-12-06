@@ -170,14 +170,26 @@ export default {
                 'teal lighten-4',
                 'green lighten-4',
                 'orange lighten-4',
-                'pink lighten-4'
+                'blue lighten-4',
+                'red lighten-4',
+                'yellow lighten-4',
+                'purple lighten-4',
+                'cyan lighten-4',
+                'amber lighten-4',
             ]
+
             let index = correlationList.indexOf(item)
+            console.log(index, colors.length)
             if (index == -1) {
                 return ''
             }
-            else if (index < colors.length - 1) {
+            else if (index < colors.length) {
                 return colors[index]
+            }
+            else if (index + 1 >= colors.length) {
+                let i = index - (Math.floor(index / colors.length) * colors.length)
+                i
+                return 'orange'
             }
             else {
                 return 'grey lighten-2'
