@@ -78,7 +78,7 @@ def create_binary_map(unique_column_value_list):
     positives = [
         'true',
         '1',
-        'postive',
+        'positive',
         'pos',
         'neg',
         'present',
