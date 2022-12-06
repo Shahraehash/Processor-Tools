@@ -7,7 +7,7 @@ import numpy as np
 import os
 import uuid
 
-from .helpers import load_file, save_file, file_params, int_list_to_string, store_file_and_params
+from .helpers import load_file, save_file, file_params, int_list_to_string, store_file_and_params, create_binary_map
 
 #ANALYSIS
 
@@ -103,10 +103,7 @@ def analysis_file_validate(fileObjectArray, target):
     unique_target_values = int_list_to_string(list(np.unique(r)))
     unique_target_values.sort()
 
-    value_map = {}
-    for key, value in enumerate(unique_target_values):
-        value_map[value] = key
-
+    value_map = create_binary_map(unique_target_values)
 
     #mismatched columns
     mismatchedColumns = []

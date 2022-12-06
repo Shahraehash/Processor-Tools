@@ -68,3 +68,35 @@ def store_file_and_params(df, file_name, file_type):
     params['type'] = file_type
 
     return params   
+
+#create a smart binary map based on positive value names
+def create_binary_map(unique_column_value_list):
+    #list(df[column].unique())
+    items = unique_column_value_list
+    items.sort()
+
+    positives = [
+        'true',
+        '1',
+        'postive',
+        'pos',
+        'neg',
+        'present',
+        'yes',
+        'active'
+    ]
+
+    result = {}
+
+    for item in items:
+        item_match = str(item).lower()
+        val = any(list(map(lambda x: x in item_match, positives)))
+        result[item] = int(val)
+
+    if (0 in result.values() and 1 in result.values()):
+        return result
+
+    else:
+        pick = list(result.keys())[0]
+        result[pick] = int(not bool(result[pick]))
+        return result

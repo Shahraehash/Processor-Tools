@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 
-from .helpers import load_file, save_file, file_params, int_list_to_string, store_file_and_params
+from .helpers import load_file, save_file, file_params, int_list_to_string, store_file_and_params, create_binary_map
 
 
 #ANALYSIS
@@ -80,10 +80,8 @@ def analyze_encode_nonnumeric(fileObjectArray, target):
 
 
                 #give option to map values
-                value_map = {}
-                for key, value in enumerate(list(col.unique())):
-                    value_map[value] = key                
-
+                value_map = create_binary_map(list(col.unique()))
+    
                 t = {
                     'name': column,
                     'method': 'one_hot_encode_binary',
