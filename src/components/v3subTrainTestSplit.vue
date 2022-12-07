@@ -65,11 +65,7 @@ export default {
             effect: null
         }
     },
-    mounted() {
-        if (this.analysis.fileAnalysisDict['combined']) {
-            this.effect = this.analysis.fileAnalysisDict['combined']['segments'] //set initial effect
-        }
-        
+    mounted() {      
         this.update()
         
     },
