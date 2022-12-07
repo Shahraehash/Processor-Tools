@@ -172,11 +172,18 @@ export default {
   async mounted() {
     window.scrollTo(0,document.body.scrollHeight);
     if (this.analysisFunction != null) {
-      let r = await this.analysisFunction(this.currentFiles, this.target, this.analysisObj)
-      let delay = (ms) => new Promise(res => setTimeout(res, ms));
-      await delay(500)
-      this.longProcessTimeClock()
-      this.analysis = r
+
+      try {
+        let r = await this.analysisFunction(this.currentFiles, this.target, this.analysisObj)
+        let delay = (ms) => new Promise(res => setTimeout(res, ms));
+        await delay(500)
+        this.longProcessTimeClock()
+        this.analysis = r
+      }
+      catch (e) {
+        this.$store.commit('snackbarMessageSet', {color: 'red', message: e.message})
+      }
+
     }
     
   },
@@ -185,6 +192,7 @@ export default {
     next() {
       this.transformFunction(this.currentFiles, this.target, this.transformObj)
       .then(r => this.$emit('next', r))
+      .catch(e => this.$store.commit('snackbarMessageSet', {color: 'red', message: e}))
     },
     update(obj) {
       this.complete = obj.complete

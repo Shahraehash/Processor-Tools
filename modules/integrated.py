@@ -152,33 +152,46 @@ def integrated_effect_column_removal():
 
 @integrated.route('/transform/',methods=['POST'])
 def integrated_transform():
-    fileObjectArray = request.json['fileObjectArray']
-    target = request.json['target']
-    transform = request.json['transform']
+    try:
+        fileObjectArray = request.json['fileObjectArray']
+        target = request.json['target']
+        transform = request.json['transform']
 
 
-    if transform['method'] == 'file_validate_target_map':
-        json = transform_file_validate_target_map(fileObjectArray, target, transform)
+        if transform['method'] == 'file_validate_target_map':
+            json = transform_file_validate_target_map(fileObjectArray, target, transform)
 
-    elif transform['method'] == 'column_removal':
-        json = transform_column_removal(fileObjectArray, target, transform)
-        
-    elif transform['method'] == 'encode_nonnumeric':
-        json = transform_encode_nonnumeric(fileObjectArray, target, transform)
+        elif transform['method'] == 'column_removal':
+            json = transform_column_removal(fileObjectArray, target, transform)
             
-    elif transform['method'] == 'train_test_split_impute':
-        json = transform_train_test_split_impute(fileObjectArray, target, transform)
+        elif transform['method'] == 'encode_nonnumeric':
+            json = transform_encode_nonnumeric(fileObjectArray, target, transform)
+                
+        elif transform['method'] == 'train_test_split_impute':
+            json = transform_train_test_split_impute(fileObjectArray, target, transform)
 
-    elif transform['method'] == 'multicolinearity':
-        json = transform_multicolinearity(fileObjectArray, target, transform)
+        elif transform['method'] == 'multicolinearity':
+            json = transform_multicolinearity(fileObjectArray, target, transform)
 
-    response = make_response(
-        simplejson.dumps(json, ignore_nan=True),
-        200,
-    )
-    response.headers["Content-Type"] = "application/json"
+        response = make_response(
+            simplejson.dumps(json, ignore_nan=True),
+            200,
+        )
+        response.headers["Content-Type"] = "application/json"
 
-    return response   
+        return response      
+             
+    except Exception as e:
+        print(e)
+        response = make_response(
+            simplejson.dumps({'error': str(e)}),
+            500,
+        )
+        response.headers["Content-Type"] = "application/json"
+
+        return response
+    
+
 
 
 
