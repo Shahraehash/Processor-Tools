@@ -234,6 +234,8 @@
                 console.log('kind', type)
                 let percent = Math.round(num / denom * 100)
 
+
+                //use special logic for remainder -- half other sizes
                 if (type == 'remainder') {
                     if (percent < (minPercent / 2) && num > 0) {
                     minPercentSum += (minPercent / 2 )
