@@ -230,16 +230,33 @@
             let minPercentSum = 0
             let otherPercent = 0
 
-            const toPercent = ((num, denom) => {
+            const toPercent = ((num, denom, type) => {
+                console.log('kind', type)
                 let percent = Math.round(num / denom * 100)
-                if (percent < minPercent && num > 0) {
-                    minPercentSum += minPercent
-                    return minPercent
+
+                if (type == 'remainder') {
+                    if (percent < (minPercent / 2) && num > 0) {
+                    minPercentSum += (minPercent / 2 )
+                    return (minPercent / 2)
+                    }
+                    else {
+                        otherPercent += percent
+                        return percent
+                    }  
                 }
                 else {
-                    otherPercent += percent
-                    return percent
+                    if (percent < minPercent && num > 0) {
+                    minPercentSum += minPercent
+                    return minPercent
+                    }
+                    else {
+                        otherPercent += percent
+                        return percent
+                    }                    
                 }
+
+
+
             })
 
             let totalPercent = {}
@@ -254,7 +271,7 @@
                 totalPercent[key] = {}
                 for (let subkey in entry) {
                     let val = entry[subkey]
-                    totalPercent[key][subkey] = toPercent(val, denom)
+                    totalPercent[key][subkey] = toPercent(val, denom, key)
 
                 }
             }
@@ -288,10 +305,6 @@
 
                 }
             }
-
-   
-
-
 
 
             const scaleRemainingPercent = (percentVal) => {
