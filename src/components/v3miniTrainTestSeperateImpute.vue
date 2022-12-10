@@ -46,24 +46,26 @@
             </v-col>                      
         </v-row>    
 
-        <v3miniTrainTestBar :graphObject="graphObject"/>  
+        <v3miniTrainTestBarMinWidth :graphCounts="graphObject"/>  
         <div class="text-center my-3">
           <v-icon size="50" color="grey" >mdi-arrow-down-thin</v-icon>
           <span class="grey--text">Applying File Changes</span>
           <v-icon size="50" color="grey" >mdi-arrow-down-thin</v-icon>
         </div>
 
-        <v3miniTrainTestBar :graphObject="graphObjectWithChanges"/>   
+        <v3miniTrainTestBarMinWidth :graphCounts="graphObjectWithChanges"/>   
     </div>
   
   </template>
   <script>
-  import v3miniTrainTestBar from '@/components/v3miniTrainTestBar.vue'
+
+  import v3miniTrainTestBarMinWidth from '@/components/v3miniTrainTestBarMinWidth.vue'
 
   export default {
     name: 'v3miniTrainTestSeperateImpute',
     components: {
-      v3miniTrainTestBar
+
+      v3miniTrainTestBarMinWidth
     },
     props: 
       {
@@ -92,7 +94,7 @@
     computed: {
       trainingIsBalanced(){
         if (this.graphObjectWithChanges) {
-          return this.graphObjectWithChanges.train.counts[0] == this.graphObjectWithChanges.train.counts[1] && this.trainEqualize != 1
+          return this.graphObjectWithChanges.total.train[0] == this.graphObjectWithChanges.total.train[1] && this.trainEqualize != 1
         }
         else {
           return true
@@ -101,36 +103,49 @@
       },      
       graphObject() {
         if (this.train && this.test) {
-          let total =  this.train.describe.total.counts.total + this.test.describe.total.counts.total
-          let toPercent = (num, denom) => {return Math.round((num / denom) * 1000)/10}
+          let totalDenominator =  this.train.describe.total.counts.total + this.test.describe.total.counts.total
 
-          let makeObject = (name) => {
-            return {
-              counts: {
-              0: this[name].describe.total.counts[0],
-              1: this[name].describe.total.counts[1],
-              },
-              percent: {
-                0: toPercent(this[name].describe.total.counts[0], total),
-                1: toPercent(this[name].describe.total.counts[1], total),
-              },
-              missingCounts: {
-                0: this[name].describe.nan.counts[0],
-                1: this[name].describe.nan.counts[1],
-              },
-              missingPercent: {
-                0: this[name].describe.nan.percent[0],
-                1: this[name].describe.nan.percent[1],
-              },
+
+
+          let total = {
+                    train: {
+                        0: this['train'].describe.total.counts[0],
+                        1: this['train'].describe.total.counts[1]
+                    },
+                    test: {
+                        0: this['test'].describe.total.counts[0],
+                        1: this['test'].describe.total.counts[1]
+                    },
+                    remainder: {
+                        0: 0,
+                        1: 0
+                    }
+                }
+
+          let missing = {
+                train: {
+                  0: this['train'].describe.nan.counts[0],
+                    1: this['train'].describe.nan.counts[1]
+                },
+                test: {
+                    0: this['test'].describe.nan.counts[0],
+                    1: this['test'].describe.nan.counts[1]
+                }
             }
-          }
-          let remainder = {
-            count: 0,
-            percent: 0
-          }
-          let train = makeObject('train')
-          let test = makeObject('test')
-          return {total, train, test, remainder}
+
+          let imputed = {
+                train: {
+                    0: 0,
+                    1: 0
+                },
+                test: {
+                    0: 0,
+                    1: 0
+                }
+            }                
+
+
+          return {totalDenominator,total,missing,imputed}
         }
         else {
           return null
@@ -140,140 +155,127 @@
       graphObjectWithChanges() {
 
         if (this.graphObject) {
-          let total =  this.train.describe.total.counts.total + this.test.describe.total.counts.total
-          let toPercent = (num, denom) => {return Math.round((num / denom) * 10000)/100}
+          let totalDenominator =  this.train.describe.total.counts.total + this.test.describe.total.counts.total
 
-          //Training
-          let remainderCounter = 0
 
-          let train = {}
-          console.log(this.train.describe)
 
-          //Training remove missing values
-          if (this.trainMissing == 0) {
-            train = {
-              counts: {
-                0: this.train.describe.non_nan.counts[0],
-                1: this.train.describe.non_nan.counts[1],
-              },
-              percent: {
-                0: toPercent(this.train.describe.non_nan.counts[0], total),
-                1: toPercent(this.train.describe.non_nan.counts[1], total),
-              },
-              missingCounts: {
-                0: 0,
-                1: 0,
-              },
-              missingPercent: {
-                0: 0,
-                1: 0,
-            },
-          }
-          //count dropped values
+          let total = {
+                train: {
+                    0: 0,
+                    1: 0
+                },
+                test: {
+                    0: 0,
+                    1: 0
+                },
+                remainder: {
+                    0: 0,
+                    1: 0
+                }
+            }
+
+          let missing = {
+                train: {
+                    0: 0,
+                    1: 0
+                },
+                test: {
+                    0: 0,
+                    1: 0
+                }
+            }
+
+          let imputed = {
+                train: {
+                    0: 0,
+                    1: 0
+                },
+                test: {
+                    0: 0,
+                    1: 0
+                }
+            }                
+
 
           
-        }
+          //Training Impute Vs. Drop
 
-        //Training impute missing values    
-        else if (this.trainMissing == 1) {
-          train = {
-              counts: {
-                0: this.train.describe.total.counts[0],
-                1: this.train.describe.total.counts[1],
-              },
-              percent: {
-                0: toPercent(this.train.describe.total.counts[0], total),
-                1: toPercent(this.train.describe.total.counts[1], total),
-              },
-              missingCounts: {
-                0: 0,
-                1: 0,
-              },
-              missingPercent: {
-                0: 0,
-                1: 0,
-            },         
+          if (this.trainMissing == 0) {
+            total['train'] = {
+              0: this['train'].describe.non_nan.counts[0],
+              1: this['train'].describe.non_nan.counts[1]
+            }
+            total['remainder'][0] += this['train'].describe.nan.counts[0]
+            total['remainder'][1] += this['train'].describe.nan.counts[1]
 
           }
-        }
+          else if (this.trainMissing == 1) {
 
-        //Training equalize - down sample majority class
-        console.log(this.train)
+            total['train'] = {
+              0: this['train'].describe.total.counts[0],
+              1: this['train'].describe.total.counts[1]
+            }
+            imputed['train'] = {
+              0: this['train'].describe.nan.counts[0],
+              1: this['train'].describe.nan.counts[1]
+            }
+            
+            total['remainder'][0] += 0
+            total['remainder'][1] += 0
+
+
+          }
+        
+        //Training Class Equalization
+
         if (this.trainEqualize == 1) {
-          train['counts'][this.train.describe.major] = train['counts'][this.train.describe.minor]
-          train['percent'][this.train.describe.major] = train['percent'][this.train.describe.minor]
-          //count dropped values
-          remainderCounter += ( train['percent'][this.train.describe.major] - train['percent'][this.train.describe.minor] )
+            let diff = total['train'][this.train.describe.major] - total['train'][this.train.describe.minor]
+            total['train'][this.train.describe.major] = total['train'][this.train.describe.minor]
+            total['remainder'][this.train.describe.major] += diff
+        }          
 
-        }
+        // Testing Data
 
-        let trainChange = this.train.describe.total.counts.total - train.counts[0] - train.counts[1]
-        remainderCounter += trainChange
-
-
-
-        //Testing Data
-        let test = {
-          counts: {
+        total['test'] = {
           0: this.test.describe.non_nan.counts[0],
-          1: this.test.describe.non_nan.counts[1],
-          },
-          percent: {
-            0: toPercent(this.test.describe.non_nan.counts[0], total),
-            1: toPercent(this.test.describe.non_nan.counts[1], total),
-          },
-          missingCounts: {
-            0: 0,
-            1: 0,
-          },
-          missingPercent: {
-            0: 0,
-            1: 0,
-          },
+          1: this.test.describe.non_nan.counts[1],          
         }
+        total['remainder'][0] += this.test.describe.nan.counts[0]
+        total['remainder'][1] += this.test.describe.nan.counts[1]
+
 
 
         if (this.testPrevalence == 1) { 
-
-          let calcTotal = test.counts[0] + test.counts[1]
-          let prevelenceCurrentClassZero = test.counts[0] / calcTotal
-          let prevelenceOriginalClassZero = this.test.describe.total.percent[0] / 100
-
-          console.log(prevelenceCurrentClassZero)
-          console.log(prevelenceOriginalClassZero)
-
-          if (prevelenceCurrentClassZero > prevelenceOriginalClassZero) {
-           let newClassZero = Math.round(prevelenceOriginalClassZero * calcTotal)
-           remainderCounter += (test.counts[0] - newClassZero)
-            test.counts[0] = newClassZero
-            test.percent[0] = toPercent(newClassZero, total)
-            
-
+          let originalClassZeroPrev = this.test.describe.total.percent[0] / 100
+          let currentClassZeroPrev = total['test'][0] / ((total['test'][0] + total['test'][1]))
+          if (currentClassZeroPrev > originalClassZeroPrev) {
+            let newTotal = Math.round(total['test'][1] / (1 - originalClassZeroPrev))
+            let newClassZero = newTotal - total['test'][1]
+            total['remainder'][0] += (total['test'][0] - newClassZero)
+            total['test'][0] = newClassZero
           }
           else {
-           let newClassOne = Math.round((1 - prevelenceOriginalClassZero) * calcTotal)
-           remainderCounter += (test.counts[1] - newClassOne)
-            test.counts[1] = newClassOne
-            test.percent[1] = toPercent(newClassOne, total)
-          }          
+            let newTotal = Math.round(total['test'][0] / originalClassZeroPrev)
+            let newClassOne = newTotal - total['test'][0]
+            total['remainder'][1] += (total['test'][1] - newClassOne)
+            total['test'][1] = newClassOne
+          }
+        
 
-
-          
-          console.log(test.percent[0] > this.test.describe.total.percent[0])
-          
 
         }
 
 
-        //count missing
-        remainderCounter += this.test.describe.nan.counts[0] + this.test.describe.nan.counts[1]
+        return {totalDenominator,total,missing,imputed}
 
-          let remainder = {
-            count: remainderCounter,
-            percent: toPercent(remainderCounter, total)
-          }
 
-          return {total, train, test, remainder}          
+          
+
+
+
+
+
+
 
           }
         else {

@@ -445,7 +445,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
 
         #testing prevalance already set in front end, no further math needed based on settings
-        test_counts = t['finalValues']['test']['counts']
+        test_counts = t['finalValues']['total']['test']
 
         #sample testing data
         #must use string as key since passed as JSON

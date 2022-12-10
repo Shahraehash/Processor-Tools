@@ -56,19 +56,19 @@
         </div>
         
         <div class="overline">Training/Initial Testing and Generilization Testing Files</div>        
-        <v3miniTrainTestBar :graphObject="graphObject"/>  
+        <v3miniTrainTestBarMinWidth :graphCounts="graphCounts"/>  
     </div>
   
   </template>
   <script>
 import v3miniPrevalenceBar from '@/components/v3miniPrevalenceBar'
-import v3miniTrainTestBar from '@/components/v3miniTrainTestBar.vue'
+import v3miniTrainTestBarMinWidth from '@/components/v3miniTrainTestBarMinWidth.vue'
 
 export default {
     name: 'v3miniTrainTestSingleFileImpute',
     components: {
         v3miniPrevalenceBar,
-        v3miniTrainTestBar
+        v3miniTrainTestBarMinWidth
     },
     props: 
         {
@@ -105,151 +105,128 @@ export default {
             return this.combinedFile.describe.non_nan.counts[this.combinedFile.describe.minor] - 25
         },        
 
-        graphObject() {
+        graphCounts() {
             if (this.combinedFile) {
-                let total =  this.combinedFile.describe.total.counts.total
-                let toPercent = (num, denom) => {return Math.round((num / denom) * 1000)/10}
-                let remainderCounter = 0
-                remainderCounter
+                let totalDenominator =  this.combinedFile.describe.total.counts.total
 
-                let train = {}
+                let trainclassSize = this.trainingClassSize
 
-                if (this.missingValuesOption == 0) {
-                    train = {
-                        counts: {
-                                0: this.trainingClassSize,
-                                1: this.trainingClassSize,
-                            },
-                            percent: {
-                                0: toPercent(this.trainingClassSize, total),
-                                1: toPercent(this.trainingClassSize, total),
-                            },
-                            missingCounts: {
-                                0: 0,
-                                1: 0,
-                            },
-                            missingPercent: {
-                                0: 0,
-                                1: 0,
-                            },
-                            imputedCounts: {
-                                0: 0,
-                                1: 0,
-                            },
-                            imputedPercent: {
-                                0: 0,
-                                1: 0,  
-                            },                            
+                let missingZero = this.combinedFile.describe.nan.counts[0]
+                let missingOne = this.combinedFile.describe.nan.counts[1] 
+             
+
+
+                let total = {
+                    train: {
+                        0: 0,
+                        1: 0
+                    },
+                    test: {
+                        0: 0,
+                        1: 0
+                    },
+                    remainder: {
+                        0: 0,
+                        1: 0
                     }
-                    remainderCounter += this.combinedFile.describe.nan.counts.total
-               
                 }
-                
+
+                let missing = {
+                    train: {
+                        0: 0,
+                        1: 0
+                    },
+                    test: {
+                        0: 0,
+                        1: 0
+                    }
+                }
+
+                let imputed = {
+                    train: {
+                        0: 0,
+                        1: 0
+                    },
+                    test: {
+                        0: 0,
+                        1: 0
+                    }
+                }
+
+                total['train'] = {
+                    0: trainclassSize,
+                    1: trainclassSize
+                }
+
+                //Removing missing values
+                if (this.missingValuesOption == 0) {
+                    imputed['train'] = {
+                        0: 0,
+                        1: 0,
+                    }
+                    total['remainder'][0] += missingZero
+                    total['remainder'][1] += missingOne                    
+                }
+
+                //Imputing missing values
                 else if (this.missingValuesOption == 1) {
 
-                    train = {
-                        counts: {
-                                0: this.trainingClassSize,
-                                1: this.trainingClassSize,
-                            },
-                            percent: {
-                                0: toPercent(this.trainingClassSize, total),
-                                1: toPercent(this.trainingClassSize, total),
-                            },
-                            missingCounts: {
-                                0: 0,
-                                1: 0,
-                            },
-                            missingPercent: {
-                                0: 0,
-                                1: 0,  
-                            },
-                            imputedCounts: {
-                                0: this.combinedFile.describe.nan.counts[0],
-                                1: this.combinedFile.describe.nan.counts[1],
-                            },
-                            imputedPercent: {
-                                0: toPercent(this.combinedFile.describe.nan.counts[0], this.trainingClassSize),
-                                1: toPercent(this.combinedFile.describe.nan.counts[1], this.trainingClassSize),  
-                            },
-                    }                        
-               
+                    //Method to make sure we don't impute more than the class size
+                    let imputationReminderSize = ((classSize, missingCounts) => {
+                        if (classSize >= missingCounts) {
+                            return {imputed: missingCounts, remainder: 0}
+                        }
+                        else {
+                            return {imputed: trainclassSize, remainder: missingCounts - classSize}
+                        }
+                    })
+                    
+                    imputed['train'] = {
+                        0: imputationReminderSize(trainclassSize, missingZero).imputed,
+                        1: imputationReminderSize(trainclassSize, missingOne).imputed,
+                    }
+                    total['remainder'][0] += imputationReminderSize(trainclassSize, missingZero).remainder
+                    total['remainder'][1] += imputationReminderSize(trainclassSize, missingOne).remainder                 
                 }
 
-                console.log(train)
-
-                //Generalization
-
-
                 
-
-
                 let missingValueMode = this.missingValuesOption == 0 ? 'non_nan' : 'total'
-                let test = {
-                        counts: {
-                            0: this.combinedFile.describe[missingValueMode].counts[0] - this.trainingClassSize,
-                            1: this.combinedFile.describe[missingValueMode].counts[1] - this.trainingClassSize,
-                        },
-                        percent: {
-                            0: toPercent(this.combinedFile.describe[missingValueMode].counts[0] - this.trainingClassSize, total),
-                            1: toPercent(this.combinedFile.describe[missingValueMode].counts[1] - this.trainingClassSize, total),
-                        },
-                        missingCounts: {
-                            0: 0,
-                            1: 0,
-                        },
-                        missingPercent: {
-                            0: 0,
-                            1: 0,
-                        },
-                    }   
+                let testZero = this.combinedFile.describe[missingValueMode].counts[0] - this.trainingClassSize
+                let testOne = this.combinedFile.describe[missingValueMode].counts[1] - this.trainingClassSize
+
+
+                total['test'] = {
+                    0: testZero,
+                    1: testOne
+                }
 
                 //calculate original prevalence
                 if (this.prevalenceOption == 1) {
-                    let calcTotal = test.counts[0] + test.counts[1]
-                    let prevelenceCurrentClassZero = test.counts[0] / calcTotal
+                    let calcTotal = testZero + testOne
+                    let prevelenceCurrentClassZero = testZero / calcTotal
                     let prevelenceOriginalClassZero = this.combinedFile.describe.total.percent[0] / 100
 
-                    console.log(prevelenceCurrentClassZero)
-                    console.log(prevelenceOriginalClassZero)
-
                     if (prevelenceCurrentClassZero > prevelenceOriginalClassZero) {
-                        let newClassZero = Math.round(prevelenceOriginalClassZero * calcTotal)
-                        remainderCounter += (test.counts[0] - newClassZero)
-                        test.counts[0] = newClassZero
-                        test.percent[0] = toPercent(newClassZero, total)
-                        
+                        let newTotal = Math.round(testOne /  (1 - prevelenceOriginalClassZero))
+                        let newClassZero = newTotal - testOne
+                        total['remainder'][0] += (testZero - newClassZero)
+                        total['test'][0] = newClassZero
+                       
 
                     }
                     else {
-                        let newClassOne = Math.round((1 - prevelenceOriginalClassZero) * calcTotal)
-                        remainderCounter += (test.counts[1] - newClassOne)
-                        test.counts[1] = newClassOne
-                        test.percent[1] = toPercent(newClassOne, total)
+                        let newTotal = Math.round(testZero / prevelenceOriginalClassZero)
+                        let newClassOne = newTotal - testZero
+                        total['remainder'][1] += (testOne - newClassOne)
+                        total['test'][1] = newClassOne                        
+
                     }   
 
                 }
-                console.log(test)
+          
+                return {totalDenominator,total,missing,imputed}
+            }        
 
-   
-                
-                
-                let remainder = {
-                    count: remainderCounter,
-                    percent: toPercent(remainderCounter, total)
-                }
-
-                return {total, train, test, remainder}        
-        
-
-                
-
-    
-
-
-
-
-            }
             else {
                 return null
             }
@@ -276,7 +253,7 @@ export default {
     methods: {
         change() {
             this.$emit('effect', {
-                finalValues: this.graphObject,
+                finalValues: this.graphCounts,
                 missingValuesOption: this.missingValuesOption,
                 prevalenceOption: this.prevalenceOption, 
                 trainingClassSize: this.trainingClassSize            
