@@ -46,15 +46,17 @@
             </v-col>                      
         </v-row>    
 
-        <v3miniTrainTestBarMinWidth :graphCounts="graphObject"/>  
+        <v3miniTrainTestBarMinWidth :graphCounts="graphCounts"/>  
         <div class="text-center my-3">
           <v-icon size="50" color="grey" >mdi-arrow-down-thin</v-icon>
           <span class="grey--text">Applying File Changes</span>
           <v-icon size="50" color="grey" >mdi-arrow-down-thin</v-icon>
         </div>
 
-        <v3miniTrainTestBarMinWidth :graphCounts="graphObjectWithChanges"/>   
+        <v3miniTrainTestBarMinWidth :graphCounts="graphCountsWithChanges"/>   
     </div>
+
+
   
   </template>
   <script>
@@ -93,15 +95,15 @@
     },
     computed: {
       trainingIsBalanced(){
-        if (this.graphObjectWithChanges) {
-          return this.graphObjectWithChanges.total.train[0] == this.graphObjectWithChanges.total.train[1] && this.trainEqualize != 1
+        if (this.graphCountsWithChanges) {
+          return this.graphCountsWithChanges.total.train[0] == this.graphCountsWithChanges.total.train[1] && this.trainEqualize != 1
         }
         else {
           return true
         }
         
       },      
-      graphObject() {
+      graphCounts() {
         if (this.train && this.test) {
           let totalDenominator =  this.train.describe.total.counts.total + this.test.describe.total.counts.total
 
@@ -152,9 +154,9 @@
         }
 
       },
-      graphObjectWithChanges() {
+      graphCountsWithChanges() {
 
-        if (this.graphObject) {
+        if (this.graphCounts) {
           let totalDenominator =  this.train.describe.total.counts.total + this.test.describe.total.counts.total
 
 
@@ -300,7 +302,7 @@
     methods: {
       change() {
         this.$emit('effect', {
-            finalValues: this.graphObjectWithChanges,
+            finalValues: this.graphCountsWithChanges,
             trainMissing: this.trainMissing,
             trainEqualize: this.trainEqualize,
             testMissing: this.testMissing,

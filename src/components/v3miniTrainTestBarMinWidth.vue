@@ -11,7 +11,7 @@
                 class="group-box data-set-box right-spacer"
                 v-bind:style="{
                 background: mxBarColors.train,
-                width:  graphPercents.totalPercent.train[0] + graphPercents.totalPercent.train[0]  + '%',
+                width:  graphPercents.totalPercent.train[0] + graphPercents.totalPercent.train[1]  + '%',
 
                 }"
                 >
@@ -178,14 +178,28 @@
         <v-alert text type="warning" v-if="graphPercents.imputedPercent.train[0] > 30 || graphPercents.imputedPercent.train[0] > 30">
             More than 30% of the training data is imputed. This may cause problems with the model.
         </v-alert>
+        <!-- <v-row>
+            <v-col cols="6">
+                <vue-json-pretty :data="graphCounts"></vue-json-pretty>
+            </v-col>
+            <v-col cols="6">
+                <vue-json-pretty :data="graphPercents"></vue-json-pretty>
+            </v-col>            
+        </v-row> -->
+
+        
     </div>
   
   </template>
   <script>
   import v3Mixin from '@/components/v3Mixin';
+//   import VueJsonPretty from 'vue-json-pretty';
+//     import 'vue-json-pretty/lib/styles.css';
+
 
   export default {
     name: 'v3miniTrainTestBar',
+
     mixins: [v3Mixin],
     props: 
       {
@@ -209,7 +223,7 @@
     },
     computed: {
         graphPercents() {
-            let minPercent = 7
+            let minPercent = 7.5
             let minPercentCount = 0
             let otherPercent = 0
 

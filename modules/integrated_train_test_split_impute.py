@@ -355,7 +355,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
             df_test[target].value_counts().to_dict()
             value_counts = df_test[target].value_counts().to_dict()
             for key in value_counts:
-                goal = t['finalValues']['test']['counts'][str(key)]
+                goal = t['finalValues']['total']['test'][str(key)]
                 temp_drop = df_test[df_test[target] == key].sample(value_counts[key] - goal, replace=False)
                 print(temp_drop.shape)
                 df_test.drop(temp_drop.index, inplace=True)
