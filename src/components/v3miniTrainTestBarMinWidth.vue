@@ -173,7 +173,10 @@
 
                 {{graphCounts.total.remainder[0] + graphCounts.total.remainder[1]}}
             </div>   
-        </div>            
+        </div>    
+        <div>
+            c0 = Class 0, c1 = Class 1
+        </div>        
         </div>
         <v-alert text type="warning" v-if="graphPercents.imputedPercent.train[0] > 30 || graphPercents.imputedPercent.train[0] > 30">
             More than 30% of the training data is imputed. This may cause problems with the model.
@@ -224,13 +227,13 @@
     computed: {
         graphPercents() {
             let minPercent = 7.5
-            let minPercentCount = 0
+            let minPercentSum = 0
             let otherPercent = 0
 
             const toPercent = ((num, denom) => {
                 let percent = Math.round(num / denom * 100)
                 if (percent < minPercent && num > 0) {
-                    minPercentCount++
+                    minPercentSum += minPercent
                     return minPercent
                 }
                 else {
@@ -292,7 +295,7 @@
 
 
             const scaleRemainingPercent = (percentVal) => {
-                let remainingPercent = 100 - (minPercent * minPercentCount)
+                let remainingPercent = 100 - (minPercentSum)
                 let percentOfOther = percentVal / otherPercent
                 let scaledPercent = Math.round(percentOfOther * remainingPercent)
 
@@ -312,7 +315,7 @@
 
 
 
-            return {minPercent, minPercentCount, totalPercent, missingPercent, imputedPercent}
+            return {minPercent, minPercentSum, totalPercent, missingPercent, imputedPercent}
 
 
 
@@ -370,6 +373,7 @@
         z-index: 1;
         padding-top: 8px;
         height:40px;
+        opacity: 0.8
         
     }
     .imputed {
@@ -377,7 +381,7 @@
         top: 0;
         z-index: 1;
         background: orange;
-        opacity: 0.6;
+        opacity: 0.4;
     }    
     .key-box {
         display: inline-block;
