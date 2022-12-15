@@ -20,7 +20,7 @@
 
                 </v-row>
                 <div v-if="correlationFilteredList.length == 0">
-                    <v-alert dense color="primary" text>No pairs meet the correlation threshold.</v-alert>
+                    <v-alert dense type="info" text>No pairs meet the correlation threshold.</v-alert>
 
                 </div>
                 <div v-if="correlationFilteredList.length >0">

@@ -65,9 +65,8 @@
                                     </v-simple-table>
                                 </div>
                             </div>
-
-                            <!-- Valid Imputation Volume -->
-                            <div v-if="file.type != 'test'">
+                    
+                            <div v-if="file.type != 'test' && analysis.sizeChecks[key].rowMissingCount > 0">
                                 <v3miniValidate :valid="validation[key].validImputationPercentage"/>
                                 {{validation[key].validImputationPercentageMessaage}}
                             </div>

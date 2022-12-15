@@ -80,13 +80,13 @@
                             All columns match between files
                         </div>
                         <div v-else>
-                            <v3miniValidate :valid="false"/>
+                            <v3miniValidateErr :valid="false"/>
                             Columns Vary between files
                             <!-- TODO -->
                             <div v-for="(comparison, comparisonKey) in analysis.mismatchedColumns" :key="comparisonKey">
                                 <div class="ma-2">
-                                    <strong class="green--text">{{comparison.hasName}}</strong> has the following 
-                                    columns that are missing from <strong class="orange--text">{{comparison.missingName}}</strong>
+                                    <strong class="black--text">{{comparison.hasName}}</strong> has the following 
+                                    columns that are missing from <strong class="red--text">{{comparison.missingName}}</strong>
                                 </div>
 
                                 <div class="px-3 py-1">
@@ -105,7 +105,8 @@
                     <v-col cols="4">
 
                         <!-- Target Encoding -->
-                        <div>
+                        <!-- Hide if not two values -->
+                        <div v-if="analysis.allTargetValues.length == 2">
                             <div class="overline">Target Encoding</div>
                             <div v-for="(val, cat) in analysis.targetMap" :key="cat">
                                 <v-chip>{{cat}}</v-chip>
