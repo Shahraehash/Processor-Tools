@@ -36,7 +36,7 @@
                                     </div>
                                     <div v-else>
                                         <v3miniValidate :valid="false"/>
-                                        Has {{analysis.individualValidation[key].targetCount}} unique values
+                                        Has {{analysis.individualValidation[key].targetCount}} unique value<span v-if="analysis.individualValidation[key].targetCount > 1">s</span>. Two unique values are needed for binary classification. This target is not compatible with MILO.
                                     </div>
                                 </div>
                                 <div class="ml-6">

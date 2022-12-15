@@ -158,14 +158,18 @@
           </div>
 
           </v-card>
+          <v-alert type="warning" text dense v-if="files.length > 2">You should choose at maximum two files for processing.</v-alert>
 
         </v-col>
+
+        
       </v-row>
       <div v-if="files.length > 0" class="my-3">
           We will address any <v3miniValidate :valid="false" /> alerts as we progress through the steps.
       </div>
 
       <v-alert type="warning" v-if="trainTestFilesMatchError">With two data files, you need at least one training and one testing file specified for the data type.</v-alert>
+     
 
 
 
@@ -175,7 +179,7 @@
       <!-- Pick Target -->
       <div class="mt-10" v-if="fileMetadata[0]">
         <div class="my-3">
-          Next we need to identify which column in the dataset is the target. This is your dependent variable or the outcome you're trying to predict.
+          Next we need to identify which column in the dataset is the target. This is your dependent variable or the outcome you're trying to predict. This should have a binary value like 0 and 1, red or blue, true or false, etc.
         </div>
         <v-row>
           <v-col cols="6">
