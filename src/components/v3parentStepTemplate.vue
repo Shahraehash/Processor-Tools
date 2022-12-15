@@ -73,9 +73,10 @@
 
     </div>
     <!-- Action Button -->
-    <div class="text-right" v-if="files.length > 0">
+    <div class="text-right" v-if="files.length > 0 && analysis">
       <v3ButtonNext 
       @next="next"
+      :loading="loading"
       :disabled="currentStep > stepNumber - 1 || !complete"
       text="Next"
       />
@@ -155,7 +156,6 @@ export default {
   data() {
     return {
       loading: false,
-      loadingButton: false,
       longProcessTimeAlert: false,
       //
       analysis: null,
@@ -190,8 +190,12 @@ export default {
   
   methods: {
     next() {
+      this.loading = true
       this.transformFunction(this.currentFiles, this.target, this.transformObj)
-      .then(r => this.$emit('next', r))
+      .then(r => {
+        this.loading = false
+        this.$emit('next', r)
+      })
       .catch(e => this.$store.commit('snackbarMessageSet', {color: 'red', message: e}))
     },
     update(obj) {
