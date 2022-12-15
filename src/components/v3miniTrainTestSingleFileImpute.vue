@@ -28,7 +28,10 @@
                     v-model="missingValuesOption"
                     >
                     <v-radio label="Remove missing values" :value="0"></v-radio>
-                    <v-radio label="Keep and Impute Values (in Training/Initial Test)" :value="1"></v-radio>
+                    <v-radio label="Impute Values (in Training/Initial Test)" 
+                        :value="1" 
+                        :disabled="!imputeAvailable"
+                        ></v-radio>
                 </v-radio-group>
             </v-col>
 
@@ -101,6 +104,9 @@ export default {
 
     },
     computed: {
+        imputeAvailable() {
+            return this.combinedFile.describe.nan.counts[0] > 0 || this.combinedFile.describe.nan.counts[1] > 0
+        },
         maxTraining() {
             return this.combinedFile.describe.non_nan.counts[this.combinedFile.describe.minor] - 25
         },        

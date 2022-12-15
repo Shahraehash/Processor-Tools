@@ -9,7 +9,7 @@
                   @change="change"
                     >
                     <v-radio label="Remove all missing values" :value="0"></v-radio>
-                    <v-radio label="Impute missing values" :value="1"></v-radio>
+                    <v-radio label="Impute missing values" :value="1" :disabled="!imputeAvailable"></v-radio>
                 </v-radio-group>
             </v-col>
             <v-col cols="3">
@@ -94,6 +94,10 @@
 
     },
     computed: {
+
+      imputeAvailable() {
+            return this.train.describe.nan.counts[0] > 0 || this.train.describe.nan.counts[1] > 0
+        },      
       trainingIsBalanced(){
         if (this.graphCountsWithChanges) {
           return this.graphCountsWithChanges.total.train[0] == this.graphCountsWithChanges.total.train[1] && this.trainEqualize != 1
