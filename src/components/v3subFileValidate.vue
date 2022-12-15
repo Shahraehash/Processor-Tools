@@ -35,8 +35,11 @@
                                         Has two unique values
                                     </div>
                                     <div v-else>
-                                        <v3miniValidate :valid="false"/>
-                                        Has {{analysis.individualValidation[key].targetCount}} unique value<span v-if="analysis.individualValidation[key].targetCount > 1">s</span>. Two unique values are needed for binary classification. This target is not compatible with MILO.
+                                        <v3miniValidateErr :valid="false"/>
+
+                                            Has {{analysis.individualValidation[key].targetCount}} unique value<span v-if="analysis.individualValidation[key].targetCount > 1">s</span>. Two unique values are needed for binary classification. This target is not compatible with MILO.
+ 
+                                        
                                     </div>
                                 </div>
                                 <div class="ml-6">
@@ -132,6 +135,7 @@ import {buildTransformObject} from '@/v3Methods'
 
 
 import v3miniValidate from './v3miniValidate.vue'
+import v3miniValidateErr from './v3miniValidateErr.vue'
 import v3miniTrainTestLabel from './v3miniTrainTestLabel.vue'
 import v3miniValidateFileSizes from './v3miniValidateFileSizes.vue'
 
@@ -140,6 +144,7 @@ export default {
 
     components: {
         v3miniValidate,
+        v3miniValidateErr,
         v3miniTrainTestLabel,
         v3miniValidateFileSizes
     },
