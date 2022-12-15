@@ -89,40 +89,48 @@ def integrated_params():
 
 @integrated.route('/analyze/',methods=['POST'])
 def integrated_analyze():
-    fileObjectArray = request.json['fileObjectArray']
-    target = request.json['target']
-    analyze = request.json['analyze']
+    try: 
+        fileObjectArray = request.json['fileObjectArray']
+        target = request.json['target']
+        analyze = request.json['analyze']
 
-    #File Validate
-    if analyze['method'] == 'file_validate':
-        json = analysis_file_validate(fileObjectArray, target)
+        #File Validate
+        if analyze['method'] == 'file_validate':
+            json = analysis_file_validate(fileObjectArray, target)
 
-    #For Missing Columns
-    elif analyze['method'] == 'column_removal':
-        json = analyze_column_removal(fileObjectArray, target)
+        #For Missing Columns
+        elif analyze['method'] == 'column_removal':
+            json = analyze_column_removal(fileObjectArray, target)
 
-    #For Non-Numeric Columns
-    elif analyze['method'] == 'encode_nonnumeric':
-        json = analyze_encode_nonnumeric(fileObjectArray, target)
+        #For Non-Numeric Columns
+        elif analyze['method'] == 'encode_nonnumeric':
+            json = analyze_encode_nonnumeric(fileObjectArray, target)
 
-    #For Train Test Impute
-    elif analyze['method'] == 'train_test_split_impute':
-        json = analyze_train_test_split_impute(fileObjectArray, target)
+        #For Train Test Impute
+        elif analyze['method'] == 'train_test_split_impute':
+            json = analyze_train_test_split_impute(fileObjectArray, target)
 
-    #For Multicolinearity
-    elif analyze['method'] == 'multicolinearity':
-        json = analyze_multicolinearity(fileObjectArray, target)
+        #For Multicolinearity
+        elif analyze['method'] == 'multicolinearity':
+            json = analyze_multicolinearity(fileObjectArray, target)
 
-    else: 
-        json = {'error': 'invalid method'}
+        # else: 
+        #     json = {'error': 'invalid method'}
 
-    response = make_response(
-        simplejson.dumps(json, ignore_nan=True),
-        200,
-    )
-    response.headers["Content-Type"] = "application/json"
+        response = make_response(
+            simplejson.dumps(json, ignore_nan=True),
+            200,
+        )
+        response.headers["Content-Type"] = "application/json"
 
-    return response       
+        return response
+    except Exception as e:
+        response = make_response(
+            simplejson.dumps({'error': str(e)}),
+            200,
+        )
+        response.headers["Content-Type"] = "application/json"
+        return response
 
 
 
@@ -182,10 +190,9 @@ def integrated_transform():
         return response      
              
     except Exception as e:
-        print(e)
         response = make_response(
             simplejson.dumps({'error': str(e)}),
-            500,
+            200,
         )
         response.headers["Content-Type"] = "application/json"
 
