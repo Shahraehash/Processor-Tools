@@ -196,9 +196,8 @@ export default {
                 }
 
                 
-                let missingValueMode = this.missingValuesOption == 0 ? 'non_nan' : 'total'
-                let testZero = this.combinedFile.describe[missingValueMode].counts[0] - this.trainingClassSize
-                let testOne = this.combinedFile.describe[missingValueMode].counts[1] - this.trainingClassSize
+                let testZero = this.combinedFile.describe['non_nan'].counts[0] - (this.trainingClassSize - imputed.train[0])
+                let testOne = this.combinedFile.describe['non_nan'].counts[1] - (this.trainingClassSize - imputed.train[1])
 
 
                 total['test'] = {

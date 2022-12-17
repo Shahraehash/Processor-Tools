@@ -107,8 +107,6 @@ def merge_files_training_class_size(describe_obj):
 #this function is legacy and will be removed
 def merge_files_segments(describe_obj, training_class_size, missing_values_option, prevelence_option):
 
-    print(describe_obj)
-
     major = describe_obj['major']
     minor = describe_obj['minor']
 
@@ -138,7 +136,6 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
         major_prev = (describe_obj['total']['percent'][major] / 100)
 
         test_major = round((test_minor / minor_prev) * major_prev)
-        print(test_major)
         remainder = describe_obj['nan']['counts'][minor] + describe_obj['nan']['counts'][major]  + (describe_obj['non_nan']['counts'][major] - test_major - training_class_size) 
 
     elif missing_values_option == 1 and prevelence_option == 0:
@@ -211,8 +208,6 @@ def analyze_train_test_split_impute(fileObjectArray, target):
     result_array = []
     for file in fileObjectArray:
 
-        print()
-
         df = load_file(file['storageId'])
         if file['type'] == None:
             groups['unknown'].append(df)
@@ -277,8 +272,6 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     
     result_array = []
     for file in fileObjectArray:
-
-        print()
 
         df = load_file(file['storageId'])   
 
@@ -375,8 +368,6 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     elif 'combined' in df_groups:
 
         t = transform['data']
-        print(t)
-
 
         missing_value_setting = t['missingValuesOption'] #drop missing = 0, impute = 1
         testing_prevalence = t['prevalenceOption'] #use all data = 0, adjust to origial = 1
@@ -391,15 +382,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
         df_nan_class_zero = df_class_zero[df_class_zero.isna().any(axis=1)]
         df_nan_class_one = df_class_one[df_class_one.isna().any(axis=1)]
-
-
-        print(df_class_zero.shape)
-        print(df_class_one.shape)
-        print(df_nan_class_zero.shape)
-        print(df_nan_class_one.shape)
-
-        print(df_nan_class_one.head(1))
-
+       
         
         #if drop missing value rows
        
@@ -426,22 +409,55 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         #if impute missing value rows
          #TODO handle case if missing values > training class size
         elif missing_value_setting == 1:
+            
+            print(t)
+
+            #calculated on front end
+            train_imputed_zero_count = t['finalValues']['imputed']['train']['0']
+            train_imputed_one_count = t['finalValues']['imputed']['train']['1']
+            train_total_zero_count = t['finalValues']['total']['train']['0']
+            train_total_one_count = t['finalValues']['total']['train']['1']
+            train_nonimputed_zero_count = train_total_zero_count - train_imputed_zero_count
+            train_nonimputed_one_count = train_total_one_count - train_imputed_one_count
+
             #isolate missing values
             df_class_zero = df_class_zero.drop(df_nan_class_zero.index)
             df_class_one = df_class_one.drop(df_nan_class_one.index)
 
+
+            print('class zero', df_class_zero.shape)
+            print('class one', df_class_one.shape)
+
+            train_arrays = []
+
             #sample training data minus missing values
-            df_training_zero = df_class_zero.sample(training_class_size - df_nan_class_zero.shape[0], replace=False)
-            df_training_one = df_class_one.sample(training_class_size - df_nan_class_one.shape[0], replace=False)
+            if (train_nonimputed_zero_count > 0):
+                df_training_zero = df_class_zero.sample(train_nonimputed_zero_count, replace=False)
+                df_class_zero.drop(df_training_zero.index, inplace=True)
+                train_arrays.append(df_training_zero)
+            
+            if (train_nonimputed_one_count > 0):
+                df_training_one = df_class_one.sample(train_nonimputed_one_count, replace=False)
+                df_class_one.drop(df_training_one.index, inplace=True)
+                train_arrays.append(df_training_one)
+            
+            if (train_imputed_zero_count > 0):
+                df_train_zero_impute = df_nan_class_zero.sample(train_imputed_zero_count, replace=False)
+                df_nan_class_zero.drop(df_train_zero_impute.index, inplace=True)
+                train_arrays.append(df_train_zero_impute)
 
-            #remove training data from original sample
-            df_class_zero.drop(df_training_zero.index, inplace=True)
-            df_class_one.drop(df_training_one.index, inplace=True)
+            if (train_imputed_one_count > 0):
+                df_train_one_impute = df_nan_class_one.sample(train_imputed_one_count, replace=False)
+                df_nan_class_one.drop(df_train_one_impute.index, inplace=True)
+                train_arrays.append(df_train_one_impute)
 
-            df_train = pd.concat([df_training_zero, df_nan_class_zero, df_training_one, df_nan_class_one])
-
+            df_train = pd.concat(train_arrays)
 
             df_train, df_imputed = impute_processor(df_train, target)
+
+            #remove any additional unused nan values
+            array_df_removed.append(df_nan_class_zero)
+            array_df_removed.append(df_nan_class_one)
 
 
         #testing prevalance already set in front end, no further math needed based on settings
@@ -449,6 +465,10 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
         #sample testing data
         #must use string as key since passed as JSON
+        print(test_counts)
+        print(df_class_zero.shape)
+        print(df_class_one.shape)
+
         df_testing_zero = df_class_zero.sample(test_counts['0'], replace=False)
         df_testing_one = df_class_one.sample(test_counts['1'], replace=False)
 
@@ -460,16 +480,13 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         array_df_removed.append(df_class_zero)
         array_df_removed.append(df_class_one)
 
+
         #combine testing data
         df_test = pd.concat([df_testing_zero, df_testing_one])
 
 
         #combined removed
         df_removed = pd.concat(array_df_removed)
-
-
-
-
 
         
         #file names defined at top of method
