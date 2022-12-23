@@ -89,7 +89,7 @@
                 >
 
                 <!-- Missing -->
-                <div class="missing class-box"
+                <div class="missing class-box imputed-missing-right"
                     v-bind:style="{
                     background: mxBarColors.missing,
                     width: graphPercents.missingPercent.train[1] +'%'
@@ -97,7 +97,7 @@
                 ></div>
 
                 <!-- Imputed -->
-                <div class="imputed class-box"
+                <div class="imputed class-box imputed-missing-right"
                     v-bind:style="{
                     width: graphPercents.imputedPercent.train[1] + '%'
                     }"
@@ -143,7 +143,7 @@
                 >
 
                 <!-- Missing -->
-                <div class="missing class-box"
+                <div class="missing class-box imputed-missing-right"
                     v-bind:style="{
                     background: mxBarColors.missing,
                     width: graphPercents.missingPercent.test[1] +'%'
@@ -151,7 +151,7 @@
                 ></div>
 
                 <!-- Imputed -->
-                <div class="imputed class-box"
+                <div class="imputed class-box imputed-missing-right"
                     v-bind:style="{
                     width: graphPercents.imputedPercent.test[1] + '%'
                     }"
@@ -397,7 +397,10 @@
         z-index: 1;
         background: orange;
         opacity: 0.4;
-    }    
+    }
+    .imputed-missing-right {
+        right: 0
+    }
     .key-box {
         display: inline-block;
         width: 20px;
