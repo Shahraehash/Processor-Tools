@@ -206,6 +206,7 @@
         />
       </div>
     </v-card>
+
   </template>
   <script>
   //packages
@@ -299,8 +300,13 @@
 
 
         this.fileMetadata = []
+
+        let promises = []
         this.files.forEach(file => {
-            storeParamFile(file).then(r => {
+          promises.push(storeParamFile(file))
+        })
+        Promise.all(promises).then(result => {
+          result.forEach(r => {
               //front end override of file typing if one file
               if ([0, 2].includes(this.pathSelection)) {
                 r.type = 'combined'
@@ -309,11 +315,8 @@
                 r.type = ''
               }              
               this.fileMetadata.push(r)
-            })
-        })          
-
-
-
+          })
+        })
         this.update()
       }
     },
