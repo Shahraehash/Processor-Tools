@@ -211,6 +211,12 @@ def integrated_export():
     for fileObject in fileObjectArray:
         storage_id = fileObject['storageId']
         df = load_file(storage_id)
+
+        #cleaning rules
+        for col_name in df.columns:
+            if ('age' in col_name.lower()):
+                df[col_name] = df[col_name].astype(int)
+
         json.append({
             'type': fileObject['type'],
             'audit': True, #value which tracks if that file has audit rows
