@@ -27,15 +27,28 @@ import d3ToPng from 'd3-svg-to-png'
 
 const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
 
+// const colorsArray = (threshold) => {
+//     return [
+//         {value: -1, color: "#4A148C"},
+// //        {value: -threshold, color: "#4A148C"},
+//         {value: -threshold +.1, color: "#AB47BC"},
+//         {value: 0, color: "white"},
+//         {value: threshold -.1, color: "#42A5F5"},
+// //        {value: threshold, color: "#0D47A1"},
+//         {value: 1, color: "#0D47A1"}
+//     ]
+// }
+
 const colorsArray = (threshold) => {
+    threshold
     return [
-        {value: -1, color: "#4A148C"},
+        {value: -1, color: "red"},
 //        {value: -threshold, color: "#4A148C"},
-        {value: -threshold +.1, color: "#AB47BC"},
+ //       {value: -threshold +.1, color: "red"},
         {value: 0, color: "white"},
-        {value: threshold -.1, color: "#42A5F5"},
+ //       {value: threshold -.1, color: "blue"},
 //        {value: threshold, color: "#0D47A1"},
-        {value: 1, color: "#0D47A1"}
+        {value: 1, color: "blue"}
     ]
 }
 
