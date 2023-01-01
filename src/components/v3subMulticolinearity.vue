@@ -127,6 +127,7 @@ export default {
         this.update()
         //Rule for showing the graph, param set in v3Mixin
         this.showGraph = (this.currentFiles[0].size.cols - 3) < this.mxMaxCorrelationFeatures      
+        //remove 3 for two audit columns and one target column
     },
     watch: {
         analysis: () => {
