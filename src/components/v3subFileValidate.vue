@@ -81,7 +81,7 @@
                         </div>
                         <div v-else>
                             <v3miniValidateErr :valid="false"/>
-                            Columns Vary between files
+                            Columns Vary between files. The columns must match before proceeding.
                             <!-- TODO -->
                             <div v-for="(comparison, comparisonKey) in analysis.mismatchedColumns" :key="comparisonKey">
                                 <div class="ma-2">

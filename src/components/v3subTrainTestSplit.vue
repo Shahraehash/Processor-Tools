@@ -20,7 +20,7 @@
             </div>
             <div v-else>
                 <!-- Previous validation needs to ensure will have train and test file in first step -->
-                You already have your data allocated into two sets. We can now decide how to manage missing values in your data set and unbalanced training classes.
+                You already have your data allocated into two sets. We can now decide how to manage missing values in your respective data set and unbalanced training classes (if present).
 
                 <v3miniTrainTestSeperateImpute 
                     :train="analysis.fileAnalysisDict['train']"

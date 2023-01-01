@@ -178,8 +178,8 @@
             c0 = Class 0, c1 = Class 1
         </div>        
         </div>
-        <v-alert text type="warning" v-if="graphPercents.imputedPercent.train[0] > 30 || graphPercents.imputedPercent.train[0] > 30">
-            More than 30% of the training data is imputed. This may cause problems with the model.
+        <v-alert text type="warning" v-if="graphPercents.imputedPercent.train[0] + graphPercents.imputedPercent.train[1] > 30">
+            More than 30% of the training data is being imputed. This may cause problems with the model.
         </v-alert>
         <!-- <v-row>
             <v-col cols="6">

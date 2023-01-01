@@ -88,8 +88,8 @@ def analyze_encode_nonnumeric(fileObjectArray, target):
                     'unique_values': list(col.unique()),
                     'nan_row_index': list(col[col.isna() == True].index),
                     'items': [
-                        {'text': 'Covert each unique value to a column', 'value': 'one_hot_encode'},
-                        {'text': 'Encode to binary', 'value': 'binary_encode'},
+                        {'text': 'Convert each unique value to a seperate binary column', 'value': 'one_hot_encode'},
+                        {'text': 'Encode as a single binary column', 'value': 'binary_encode'},
                         {'text': 'Remove column', 'value': 'drop'}
                     ],
                     'selection': 'one_hot_encode',
@@ -106,7 +106,7 @@ def analyze_encode_nonnumeric(fileObjectArray, target):
                     'unique_values': list(col.unique()),
                     'nan_row_index': list(col[col.isna() == True].index),
                     'items': [
-                        {'text': 'Covert each unique value to a column', 'value': 'one_hot_encode'},
+                        {'text': 'Convert each unique value to a seperate binary column', 'value': 'one_hot_encode'},
                         {'text': 'Remove column', 'value': 'drop'},
                     ],
                     'selection': 'one_hot_encode' if len(list(col.unique())) <=20 else 'drop' #rule to decide if column should be dropped by default

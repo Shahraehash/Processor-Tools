@@ -5,9 +5,9 @@
         <!-- File Settings -->
         <v-row class="mt-5">
             <v-col cols="4">
-                <div class="overline">Set size of training data</div>
+                <div class="overline">Size of training/initial validation data</div>
                 <v-slider
-                    style="display: inline-flex; width: 200px"
+                    style="display: inline-flex; width: 250px"
                     v-model="trainingClassSize"
                     @change="change"
                     :max="maxTraining"

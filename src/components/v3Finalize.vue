@@ -28,7 +28,7 @@
                 
             </v-col>
             <v-col cols="6">
-                <div class="overline ml-4">Current File<span v-if="finalFilesOnlyTrainTest.length > 1">s</span></div>
+                <div class="overline ml-4">New Files to be Exported</div>
                 <v-card outlined class="pa-3 ma-2" v-for="(current, currentKey) in finalFilesOnlyTrainTest" :key="currentKey">
                     <v3miniFileInfo :fileInfo="current"/>
                 </v-card>             
@@ -56,7 +56,7 @@
         <div class="text-right" v-if="files.length > 0">
             <v3ButtonNext 
             @next="exportFiles"
-            text="Finalize Files"
+            text="Export Files"
         />
 
     </div>    

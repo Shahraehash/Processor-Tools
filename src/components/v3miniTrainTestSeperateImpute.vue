@@ -3,7 +3,7 @@
         
         <v-row wrap class="mt-3">                    
             <v-col cols="3">
-                <div class="overline blue--text">Training Missing Values</div>
+                <div class="overline blue--text">Training/Initial Validation Missing Values</div>
                 <v-radio-group
                   v-model="trainMissing"
                   @change="change"
@@ -13,7 +13,7 @@
                 </v-radio-group>
             </v-col>
             <v-col cols="3">
-                <div class="overline blue--text">Training Equalization</div>
+                <div class="overline blue--text">Training/Initial Validation Equalization</div>
                 <v-radio-group
                   v-model="trainEqualize"
                   @change="change"
@@ -24,7 +24,7 @@
                 </v-radio-group>
             </v-col>  
             <v-col cols="3">
-                <div class="overline green--text">Testing Missing Values</div>
+                <div class="overline green--text">Generalization Testing Missing Values</div>
                 <v-radio-group
                     color="green"
                     v-model="testMissing"
@@ -34,7 +34,7 @@
                 </v-radio-group>
             </v-col>
             <v-col cols="3">
-                <div class="overline green--text">Testing Prevalence</div>
+                <div class="overline green--text">Generalization Testing Prevalence</div>
                 <v-radio-group
                     color="green"
                     v-model="testPrevalence"
