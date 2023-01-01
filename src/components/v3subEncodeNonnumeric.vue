@@ -43,7 +43,7 @@
                                 <div v-if="column.method == 'one_hot_encode_binary'">
                                     The data in this column is <strong class="light-blue--text">categorical vs. binary</strong> with the {{column.unique_values.length}} unique values: 
                                     <v-chip color="light-blue" dark small v-for="(cat, catKey) in column.unique_values" :key="catKey">{{cat}}</v-chip>. 
-                                    <br>We can convert each category to a seperate column, treat it as a binary representation, or remove the column from the dataset. 
+                                    <br>We can convert each category to a seperate column, treat it as a binary representation in a single column, or remove the column from the dataset. 
                                                                     
                     
                                     
