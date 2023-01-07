@@ -143,7 +143,6 @@
     height:40px;
 }
 .group-box {
-    box-sizing: ;
     position: relative;
     transition: width 0.5s;
     display: inline-block;
