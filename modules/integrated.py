@@ -213,9 +213,12 @@ def integrated_export():
         df = load_file(storage_id)
 
         #cleaning rules
-        # for col_name in df.columns:
-        #     if ('age' in col_name.lower()):
-        #         df[col_name] = df[col_name].astype(int)
+        for col_name in df.columns:
+            if ('age' in col_name.lower()):
+                try:
+                    df[col_name] = df[col_name].astype(int)
+                except:
+                    print('error with age casting of ' + col_name)
 
         json.append({
             'type': fileObject['type'],
