@@ -46,7 +46,7 @@ def data_file_upload():
         #update file with cleaned up fields
 
         #trim column names
-        df.columns = df.columns.str.replace(' ', '')
+        # df.columns = df.columns.str.replace(' ', '')
 
         df.to_csv(file_path, index=False)
 
