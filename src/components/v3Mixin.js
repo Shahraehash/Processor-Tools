@@ -18,7 +18,8 @@ export default {
           classOneLight: '#5C6BC0',
           missing: '#FFA726',
 
-        }
+        },
+
 
 
       };

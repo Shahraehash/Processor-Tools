@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="validation">
-         
+    
             <v-row>
                 <v-col cols="6" v-for="(file, key) in currentFiles" :key="key">
                     <v-card outlined class="pa-3">
@@ -151,7 +151,7 @@ export default {
     methods: {
         validTrain(sizeChecks) {
             
-            let validMinClassSize = sizeChecks.classMin > this.mxMinClassSize
+            let validMinClassSize = sizeChecks.classMin >= this.mxMinClassSize
             let validImputationPercentage = sizeChecks.rowMissingPercent < this.mxImputationPercentageThreshold 
 
             let validMinClassSizeMessaage = validMinClassSize ? 
@@ -172,7 +172,7 @@ export default {
             }            
         },
         validTest(sizeChecks) {
-            let validMinClassSize = sizeChecks.classCompleteMin > this.mxMinClassSize
+            let validMinClassSize = sizeChecks.classCompleteMin >= this.mxMinClassSize
 
             let validMinClassSizeMessaage = validMinClassSize ? 
                 `Minimum class size of ${this.mxMinClassSize} with complete data met.` : 
@@ -186,7 +186,7 @@ export default {
             }
         },
         validCombined(sizeChecks) {
-            let validMinClassSize = sizeChecks.classCompleteMin > this.mxMinClassSize && sizeChecks.classMin > this.mxMinClassSize * 2
+            let validMinClassSize = sizeChecks.classCompleteMin >= this.mxMinClassSize && sizeChecks.classMin >= this.mxMinClassSize * 2
             let validImputationPercentage = sizeChecks.rowMissingPercent < this.mxImputationPercentageThreshold 
 
             let validMinClassSizeMessaage = validMinClassSize ? 

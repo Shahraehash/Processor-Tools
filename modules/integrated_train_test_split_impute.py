@@ -87,20 +87,20 @@ def merged_files_describe(df,target):
 
 
 
-def merge_files_training_class_size(describe_obj):
-    #takes describe object from merged_files_describe() and returns the appropriate class size for training
-    minor_class = describe_obj['minor']
-    minor_class_non_nan_counts = describe_obj["non_nan"]['counts'][minor_class]
+# def merge_files_training_class_size(describe_obj):
+#     #takes describe object from merged_files_describe() and returns the appropriate class size for training
+#     minor_class = describe_obj['minor']
+#     minor_class_non_nan_counts = describe_obj["non_nan"]['counts'][minor_class]
 
-    half_minor_class_non_nan_counts = round(minor_class_non_nan_counts / 2)
+#     half_minor_class_non_nan_counts = round(minor_class_non_nan_counts / 2)
 
 
-    min_training_class_size = global_params()['min_training_class_size']
+#     min_training_class_size = global_params()['min_training_class_size']
 
-    if half_minor_class_non_nan_counts < min_training_class_size:
-        return min_training_class_size
-    else:
-        return half_minor_class_non_nan_counts
+#     if half_minor_class_non_nan_counts < min_training_class_size:
+#         return min_training_class_size
+#     else:
+#         return half_minor_class_non_nan_counts
 
 
 
@@ -222,7 +222,7 @@ def analyze_train_test_split_impute(fileObjectArray, target):
 
             groups_result[group] = {}
             groups_result[group]['describe'] =  describe_obj
-            training_class_size = merge_files_training_class_size(describe_obj)
+            training_class_size = 25 #merge_files_training_class_size(describe_obj)
             groups_result[group]['training_class_size'] = training_class_size
             groups_result[group]['segments'] = merge_files_segments(describe_obj, training_class_size, 0, 1) #we don't actually use this now TODO
 
