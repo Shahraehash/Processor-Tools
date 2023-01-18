@@ -1,7 +1,9 @@
 <template>
     <div>
-        
-
+        <div>
+            {{ minTrainingSize }}
+            {{ maxTrainingSize }}
+        </div>
         <!-- File Settings -->
         <v-row class="mt-5">
             <v-col cols="4">
@@ -10,8 +12,8 @@
                     style="display: inline-flex; width: 250px"
                     v-model="trainingClassSize"
                     @change="change"
-                    :max="maxTraining"
-                    :min="25"
+                    :max="maxTrainingSize"
+                    :min="minTrainingSize"
                     :step="1"
                     :ticks="true"
                     :thumb-label="true"
@@ -27,7 +29,10 @@
                     @change="change"
                     v-model="missingValuesOption"
                     >
-                    <v-radio label="Remove missing values" :value="0"></v-radio>
+                    <v-radio label="Remove missing values" 
+                        :value="0"
+                        :disabled="onlyAllowImpute"
+                        ></v-radio>
                     <v-radio label="Impute Values (in Training/Initial Test)" 
                         :value="1" 
                         :disabled="!imputeAvailable"
@@ -67,6 +72,7 @@
 import v3miniPrevalenceBar from '@/components/v3miniPrevalenceBar'
 import v3miniTrainTestBarMinWidth from '@/components/v3miniTrainTestBarMinWidth.vue'
 
+
 export default {
     name: 'v3miniTrainTestSingleFileImpute',
     components: {
@@ -91,19 +97,40 @@ export default {
             this.localEffectMetadata = newVal
             },
             deep: true
-        }        
-
+        },
     },
     data() {
         return {
             missingValuesOption: 0,
             prevalenceOption: 0,  
-            trainingClassSize: null,         
+            trainingClassSize: 25,         
 
         }
 
     },
     computed: {
+        onlyAllowImpute() {
+            return this.combinedFile.describe.non_nan.counts[this.combinedFile.describe.minor] < 50
+        },
+        maxTrainingSize() {
+            if (this.missingValuesOption == 0) {
+                return this.combinedFile.describe.non_nan.counts[this.combinedFile.describe.minor] - 25
+            }
+            else if (this.missingValuesOption == 1) {
+                return this.combinedFile.describe.total.counts[this.combinedFile.describe.minor] - 25
+            }
+            else {
+                return 25
+            }
+        },
+        minTrainingSize() {
+            return 25
+        },
+        
+        meanTrainingSize() {
+            return Math.round((this.maxTrainingSize + this.minTrainingSize) / 2)
+        },
+
         imputeAvailable() {
             return this.combinedFile.describe.nan.counts[0] > 0 || this.combinedFile.describe.nan.counts[1] > 0
         },
@@ -248,7 +275,12 @@ export default {
         
     },
     mounted() {
-        this.trainingClassSize = this.combinedFile.segments.train.counts[0]
+        if (this.onlyAllowImpute) {
+            this.missingValuesOption = 1
+        }
+        this.trainingClassSize = this.maxTrainingSize
+
+
         this.change()
 
     },
