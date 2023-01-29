@@ -190,7 +190,7 @@ export default {
             let validImputationPercentage = sizeChecks.rowMissingPercent < this.mxImputationPercentageThreshold 
 
             let validMinClassSizeMessaage = validMinClassSize ? 
-                `Minimum class size of ${this.mxMinClassSize * 2} met. The tool cannot proceed further.` : 
+                `Minimum class size of ${this.mxMinClassSize * 2} met.` : 
                 `Minimum class size of ${this.mxMinClassSize * 2} not met. The data set must include at least ${this.mxMinClassSize} samples per class for training/initial validation and at least ${this.mxMinClassSize} samples per class with complete data for generalization testing. The dataset does not meet these minimum requirements and the tool cannot proceed further.`
 
                 let validImputationPercentageMessaage = validImputationPercentage ?

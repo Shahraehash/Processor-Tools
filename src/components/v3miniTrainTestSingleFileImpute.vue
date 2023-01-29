@@ -41,7 +41,7 @@
             </v-col>
 
             <v-col cols="4">
-                <div class="overline">Handle Prevlence in Generalization Set</div>
+                <div class="overline">Handle Prevalence in Generalization Set</div>
                 <v-radio-group
                     @change="change"
                     v-model="prevalenceOption"
