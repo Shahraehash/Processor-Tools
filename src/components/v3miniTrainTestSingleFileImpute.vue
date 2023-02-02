@@ -1,9 +1,5 @@
 <template>
     <div>
-        <div>
-            {{ minTrainingSize }}
-            {{ maxTrainingSize }}
-        </div>
         <!-- File Settings -->
         <v-row class="mt-5">
             <v-col cols="4">
