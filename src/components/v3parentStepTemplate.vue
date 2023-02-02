@@ -80,8 +80,24 @@
       :disabled="currentStep > stepNumber - 1 || !complete"
       text="Next"
       />
+      <transition appear name="fade" tag="div">
+        <div class="text-center">
+          <v-alert
+            class="mt-5 text-center"
+            color="primary"
+            text
+            dense
+            v-if="loading && slowProcessMessage"
+            >
+            Larger datasets can take much longer to process.
+          </v-alert>    
+        </div>
 
-    </div>      
+      </transition>
+
+
+    </div>  
+
   </v-card>
 </template>
 <script>
@@ -161,6 +177,9 @@ export default {
       analysis: null,
       complete: true,
       transformObj: null,
+      //
+      timeId: null,
+      slowProcessMessage: false,
 
     }
   },
@@ -195,9 +214,18 @@ export default {
   methods: {
     next() {
       this.loading = true
+      this.timeId = setTimeout(() => {
+        this.slowProcessMessage = true
+      }, 3000)
+
       this.transformFunction(this.currentFiles, this.target, this.transformObj)
       .then(r => {
         this.loading = false
+
+        //stop timeout count and hide message
+        clearTimeout(this.timeId)
+        this.slowProcessMessage = false
+
         if ('error' in r) {
           this.$store.commit('snackbarMessageSet', {color: 'red',  message: 'Error with file: ' + r.error})
         }
