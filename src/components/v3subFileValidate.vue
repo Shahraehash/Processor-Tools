@@ -69,8 +69,8 @@
                             All files have target column
                         </div>
                         <div v-else>
-                            <v3miniValidate :valid="false"/>
-                            Values may vary between files
+                            <v3miniValidateErr :valid="false"/>
+                            Target values vary between files. This must be fixed before proceeding.
                         </div>
                     </div>
                     <!-- Column Check -->
