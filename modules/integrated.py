@@ -212,6 +212,16 @@ def integrated_export():
         storage_id = fileObject['storageId']
         df = load_file(storage_id)
 
+        #move audit columns to front
+        cols = df.columns.tolist()
+        cols.remove('origin_file_name')
+        cols.remove('origin_file_source_row')
+        cols.insert(0, 'origin_file_source_row')
+        cols.insert(0, 'origin_file_name')
+        df = df[cols]
+
+        df['origin_file_source_row'] = df['origin_file_source_row'] + 2
+
         #cleaning rules
         for col_name in df.columns:
             if ('age' in col_name.lower()):
