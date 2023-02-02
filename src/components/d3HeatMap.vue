@@ -151,6 +151,7 @@ export default {
                 .append("svg")
                 .attr("preserveAspectRatio", "xMinYMin meet")
                 .attr("viewBox", "0 0 900 900")
+                .attr("id", "heatmapid")
                 .style("background-color", "white")
                 .classed("svg-content", true)   
 
@@ -280,9 +281,9 @@ export default {
                     .on("mouseleave", mouseleave)
         },
         downloadPng() {
-            const svg = document.querySelector('svg')
+            //const svg = document.querySelector('svg')
             //library to export svg to png
-            d3ToPng('svg', 'heatmap', {download: true})
+            d3ToPng('#heatmapid', 'heatmap', {download: true})
         }
     }
 }
