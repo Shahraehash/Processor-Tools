@@ -9,7 +9,8 @@ from .helpers import load_file, save_file, file_params, int_list_to_string, stor
 
 #LOCAL HELPERS
 
-
+def sort_values_original_order(df):
+    return df.sort_values(by=['origin_file_name','origin_file_source_row'])
 
 def fill_in_zeros(dict):
     if not 1 in dict:
@@ -359,8 +360,23 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         #file names defined at top of method
         #include dropped output in result
         if df_removed.shape[0] > 0:
+            #sort
+            df_removed = sort_values_original_order(df_removed)
+            #output
             result.append(store_file_and_params(df_removed, removed__file_name, 'removed'))
 
+        try:
+            #sort
+            df_imputed = sort_values_original_order(df_imputed)
+            result.append(store_file_and_params(df_imputed, imputed_file_name, 'imputed'))
+        except:
+            pass
+
+        #sort
+        df_train = sort_values_original_order(df_train)
+        df_test = sort_values_original_order(df_test)
+
+        #output
         result.append(store_file_and_params(df_train, train_file_name, 'train'))
         result.append(store_file_and_params(df_test, test_file_name, 'test'))
 
@@ -488,15 +504,28 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         #combined removed
         df_removed = pd.concat(array_df_removed)
 
+
+
+
         
         #file names defined at top of method
+
+        #sort
+        df_train = sort_values_original_order(df_train)
+        df_test = sort_values_original_order(df_test)
+
+
         result.append(store_file_and_params(df_train, train_file_name, 'train'))
         result.append(store_file_and_params(df_test, test_file_name, 'test'))
 
         if df_removed.shape[0] > 0:
+            #sort
+            df_removed = sort_values_original_order(df_removed)
             result.append(store_file_and_params(df_removed, removed__file_name, 'removed'))
 
         try:
+            #sort
+            df_imputed = sort_values_original_order(df_imputed)
             result.append(store_file_and_params(df_imputed, imputed_file_name, 'imputed'))
         except:
             pass
