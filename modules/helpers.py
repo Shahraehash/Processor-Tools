@@ -53,7 +53,24 @@ def file_params(df):
     params['names']['colsReverse'].reverse()
 
     #describe
-    params['describe'] = df.describe().to_dict()
+    skew = df.skew()
+    skew.name = 'skew'
+
+    describe = df.describe().append(skew).transpose()
+    describe.reset_index(inplace=True)
+    describe = describe.rename(columns={'index':'feature'})
+    describe = describe.round({
+        'mean': 1,
+        'std': 1,
+        'min': 1,
+        '25%': 1,
+        '50%': 1,
+        '75%': 1,
+        'max': 1,
+        'skew': 1
+    })
+    params['describe'] = describe.to_dict(orient="records")
+
 
     return params    
 

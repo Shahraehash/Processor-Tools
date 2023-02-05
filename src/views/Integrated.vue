@@ -73,6 +73,8 @@
   import { 
     transformFileArray,
     analyzeFileArray,
+    analysisBypass,
+    transformBypass,
    } from '@/v3Methods'
   
   //components
@@ -224,6 +226,19 @@ import v3miniAdditionalSteps from '../components/v3miniAdditionalSteps.vue';
                 update: (e) => {console.log('update', e); },
               },
           },
+          {
+              component: 'v3parentStepTemplate',
+              subcomponent: 'v3subFileDescription',
+              stepTitle: 'File Description',
+              optional: false,
+              analysisFunction: analysisBypass,
+              analysisObj: null,
+              transformFunction: transformBypass,
+              events: {
+                next: (fileMetadata) => { this.nextStep(fileMetadata);},
+                update: (e) => {console.log('update', e); },
+              },
+          },  
           {
               component: 'v3parentStepTemplate',
               subcomponent: 'v3subFileValidate',

@@ -58,6 +58,16 @@ let storeParamFile = async (file) => {
     return result
 }
 
+let analysisBypass = (fileObjectArray) => {
+  return fileObjectArray
+}
+
+let transformBypass = (fileObjectArray) => {
+  return new Promise((resolve) => {
+    resolve(fileObjectArray)
+  })
+}
+
 
 //ANALYSIS
 let analyzeFileArray = async (fileObjectArray, target, analyze) => {
@@ -119,6 +129,8 @@ export {
     storeFile,
     paramFile,
     storeParamFile,
+    analysisBypass,
+    transformBypass,
     transformFileArray,
     analyzeFileArray,
     effectFileArray,

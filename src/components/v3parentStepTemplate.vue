@@ -111,6 +111,7 @@ import v3StepHeading from '@/components/v3StepHeading'
 import v3ButtonNext from './v3ButtonNext.vue'
 
 //subcomponents
+import v3subFileDescription from './v3subFileDescription.vue'
 import v3subFileValidate from './v3subFileValidate'
 import v3subColumnRemoval from './v3subColumnRemoval.vue'
 import v3subEncodeNonnumeric from './v3subEncodeNonnumeric.vue'
@@ -123,6 +124,7 @@ export default {
   components: {
     v3StepHeading,
     v3ButtonNext,
+    v3subFileDescription,
     v3subFileValidate,
     v3subColumnRemoval,
     v3subEncodeNonnumeric,
