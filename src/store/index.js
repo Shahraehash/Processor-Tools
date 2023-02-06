@@ -57,6 +57,13 @@ export default new Vuex.Store({
         isVisible: true,
         proLicense: true
       },
+      'Integrated': {
+        title: 'Automated Preprocessing Tool (MILO-APT)',
+        icon: 'mdi-bike-fast',
+        description: 'Automatically select the appropriate steps to prepare your data for MILO.',
+        isVisible: true,
+        proLicense: true
+      },      
 
     },
     diagnosticsEnabled: false

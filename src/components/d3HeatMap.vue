@@ -27,15 +27,28 @@ import d3ToPng from 'd3-svg-to-png'
 
 const rangeToPercent = (val)  => { return ( (val + 1) / 2) * 100 + '%' }
 
+// const colorsArray = (threshold) => {
+//     return [
+//         {value: -1, color: "#4A148C"},
+// //        {value: -threshold, color: "#4A148C"},
+//         {value: -threshold +.1, color: "#AB47BC"},
+//         {value: 0, color: "white"},
+//         {value: threshold -.1, color: "#42A5F5"},
+// //        {value: threshold, color: "#0D47A1"},
+//         {value: 1, color: "#0D47A1"}
+//     ]
+// }
+
 const colorsArray = (threshold) => {
+    threshold
     return [
-        {value: -1, color: "#4A148C"},
+        {value: -1, color: "red"},
 //        {value: -threshold, color: "#4A148C"},
-        {value: -threshold +.1, color: "#AB47BC"},
+ //       {value: -threshold +.1, color: "red"},
         {value: 0, color: "white"},
-        {value: threshold -.1, color: "#42A5F5"},
+ //       {value: threshold -.1, color: "blue"},
 //        {value: threshold, color: "#0D47A1"},
-        {value: 1, color: "#0D47A1"}
+        {value: 1, color: "blue"}
     ]
 }
 
@@ -129,7 +142,7 @@ export default {
         drawHeatMap(data, threshold) {
             /* eslint-disable */
             // set the dimensions and margins of the graph
-            const margin = {top: 100, right: 50, bottom: 200, left: 200},
+            const margin = {top: 100, right: 100, bottom: 300, left: 300},
                 width = 900 - margin.left - margin.right,
                 height = 900 - margin.top - margin.bottom;
                 
@@ -138,6 +151,7 @@ export default {
                 .append("svg")
                 .attr("preserveAspectRatio", "xMinYMin meet")
                 .attr("viewBox", "0 0 900 900")
+                .attr("id", "heatmapid")
                 .style("background-color", "white")
                 .classed("svg-content", true)   
 
@@ -161,24 +175,26 @@ export default {
                 .attr("stop-color", function(d) { return d.color; });         
                 const legend = svg.append("g").attr('id', 'legend')
                 legend.append("rect")
-                    .attr("x", 125).attr("y", -60)
+                    .attr("x", 55).attr("y", -60)
                     .attr("width", 400)
                     .attr("height", 20)
                     .attr("rx", 10)
                     .attr("ry", 10)
                     .style("stroke", "grey")                    
                     .style("fill", "url(#linear-gradient)");
-                legend.append("text").text(-1).attr("x", 120).attr("y", -25)
-                legend.append("text").text(0).attr("x", 320).attr("y", -25)
-                legend.append("text").text(1).attr("x", 520).attr("y", -25)
+                legend.append("text").text(-1).attr("x", 55).attr("y", -25)
+                legend.append("text").text(0).attr("x", 250).attr("y", -25)
+                legend.append("text").text(1).attr("x", 440).attr("y", -25)
 
 
                 
                 // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
-                const myGroups = Array.from(new Set(data.map(d => d.group)))
-                const myVars = Array.from(new Set(data.map(d => d.variable)))
-                
+                var myGroups = Array.from(new Set(data.map(d => d.group)))
+                var myVars = Array.from(new Set(data.map(d => d.variable)))
+
                 // Build X scales and axis:
+
+
                 const x = d3.scaleBand()
                     .range([ 0, width ])
                     .domain(myGroups)
@@ -201,6 +217,7 @@ export default {
                     .style("font-size", 15)
                     .call(d3.axisLeft(y).tickSize(0))
                     .select(".domain").remove()
+                    
                 
                 // Build color scale=
                 const colorScale = buildColorScale(threshold)
@@ -264,9 +281,9 @@ export default {
                     .on("mouseleave", mouseleave)
         },
         downloadPng() {
-            const svg = document.querySelector('svg')
+            //const svg = document.querySelector('svg')
             //library to export svg to png
-            d3ToPng('svg', 'heatmap', {download: true})
+            d3ToPng('#heatmapid', 'heatmap', {download: true})
         }
     }
 }

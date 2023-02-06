@@ -57,3 +57,10 @@ export default {
   }
 };
 </script>
+<style>
+  .g-box-style {
+    box-sizing: border-box;
+    border-width: 5px;
+    border-radius: 10px;
+  }
+</style>

@@ -9,7 +9,16 @@
 <script>
 export default {
   name: 'StepHeading',
-  props: ['stepNumber','stepTitle'],
+  props: {
+    stepNumber: {
+        type: Number,
+        default: () => '{{add stepNumber}}'
+      },
+      stepTitle: {
+        type: String,
+        default: () => '{{Add stepTitle}}'
+      }
+  },
   data() {
     return {
     }

@@ -6,6 +6,7 @@
       :description="$store.state.tools[$options.name].description"
       @reset="$refs.step1.reset()"
     />
+    <v-alert class="mx-3" type="warning" text><strong>Only impute training data.</strong> - With great power comes great responsibility. While inputting can often solve your missing data problems, it should never be used on a dataset that in full or in part will be used as part of the final generalization testing of a model.  </v-alert>
     <StepFileDropUpload
       ref="step1"
       stepTitle="File Selection"
