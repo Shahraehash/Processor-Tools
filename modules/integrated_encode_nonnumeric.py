@@ -136,13 +136,12 @@ def transform_encode_nonnumeric(fileObjectArray, target, transform):
 
     df = pd.concat(df_array) #combine all files into one dataframe
 
+    # ensure no duplicate index values when combining two files
+    # name of original index column is 'index'
+    df.reset_index(inplace=True)
     
-
-    
-
+    #process each transform
     for column in transform['data']:
-
-
 
 
         if column['selection'] == 'mixed_to_numeric':
@@ -154,7 +153,18 @@ def transform_encode_nonnumeric(fileObjectArray, target, transform):
         #     df[column] = transform_category_to_binary(df[column], t['map'])
         
         elif column['selection'] == 'one_hot_encode':
-            df = pd.concat([df, local_transform_one_hot_encode(df[column['name']])], axis=1)
+
+            #get position of column to be encoded
+            position = df.columns.get_loc(column['name'])
+
+            #encode new columns
+            new_columns = local_transform_one_hot_encode(df[column['name']])
+
+            #insert new columns at position of old column
+            for new_column in new_columns[0:0]:
+                df.insert(position, new_column, new_columns[new_column])
+
+            #remove old column
             df = df.drop(column['name'], axis=1)
 
         elif column['selection'] == 'drop':
@@ -176,7 +186,10 @@ def transform_encode_nonnumeric(fileObjectArray, target, transform):
     
     #Split files and save
 
-    print(df.columns)
+
+    #reset individual file indexes
+    df.set_index('index', inplace=True)
+
     result = []
 
     grouped = df.groupby(df.storage_id)
