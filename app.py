@@ -21,6 +21,10 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 def home(path='index.html'):
     return send_from_directory('dist', path)
 
+@app.route('/health', methods=['GET'])
+def health():
+    return "Serve is running"
+
 #Modules
 app.register_blueprint(parent_preprocessor)
 

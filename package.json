@@ -3,17 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "npm run build-ui && python app.py",
-    "serve-all": "concurrently 'npm run serve-ui' 'npm run serve-api'",
-    "serve-api": "watchmedo auto-restart -d . -R -p \"*.py\" -- python -u app.py",
-    "serve-ui": "vue-cli-service serve",
-    "build-ui": "vue-cli-service build",
+    
+    "dev": "docker compose -f docker-compose-dev.yml up --build", 
+
     "milo-build": "vue-cli-service build --mode milo",
     "update-requirements": "pip freeze > requirements.txt",
     "docker-build": "docker build ./ -t preprocessor",
     "docker-save": "docker save preprocessor | gzip > ml-preprocessor-$npm_package_version.tar.gz",
     "docker-run": "docker run -d -p 4998 preprocessor:latest",
-    "lint": "vue-cli-service lint"
+
+    "serve-all": "concurrently 'npm run serve-ui' 'npm run serve-api'",
+    "serve-api": "watchmedo auto-restart -d . -R -p \"*.py\" -- python -u app.py",
+    "serve-ui": "vue-cli-service serve",
+    "build-ui": "vue-cli-service build"
   },
   "dependencies": {
     "@fontsource/roboto": "^4.5.5",
@@ -27,6 +29,7 @@
     "jszip": "^3.9.0",
     "lodash": "^4.17.21",
     "papaparse": "^5.3.1",
+    "regenerator-runtime": "^0.14.1",
     "register-service-worker": "^1.7.1",
     "socket.io-client": "^2.4.0",
     "underscore": "^1.13.4",
