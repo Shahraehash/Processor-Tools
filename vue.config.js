@@ -1,6 +1,8 @@
 module.exports = {
   devServer: {
     proxy: 'http://backend:5000'
+    // this is configured to proxy for the docker-compose-dev.yml file
+    // if you are running outside of docker, you'll need to change this
   },
   transpileDependencies: [
     'vuetify'
