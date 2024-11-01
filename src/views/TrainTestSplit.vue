@@ -46,7 +46,7 @@
             </v-layout>
           </v-card>
 
-          <ErrorMessage v-if="fileDataValid ? fileDataValid.alerts.textData : false" type="error" text="Milo cannot use columns with non-numerical data. We advise fixing this before proceeding." />
+          <ErrorMessage v-if="fileDataValid ? fileDataValid.alerts.textData : false" type="error" text="Milo cannot use columns with non-numerical data. Please use the APT (Automated Preprocessing Tool) to automatically transform your non-numerical columns to numerical represenations." />
 
         </div>
       </v-card>
