@@ -87,7 +87,7 @@ def integrated_params():
 
    
 
-@integrated.route('/analyze/',methods=['POST'])
+@integrated.route('/analyze',methods=['POST'])
 def integrated_analyze():
     try: 
         fileObjectArray = request.json['fileObjectArray']
@@ -134,7 +134,7 @@ def integrated_analyze():
 
 
 
-@integrated.route('/effect/',methods=['POST'])
+@integrated.route('/effect',methods=['POST'])
 def integrated_effect_column_removal():
     fileObjectArray = request.json['fileObjectArray']
     target = request.json['target']
@@ -158,7 +158,7 @@ def integrated_effect_column_removal():
     return response      
 
 
-@integrated.route('/transform/',methods=['POST'])
+@integrated.route('/transform',methods=['POST'])
 def integrated_transform():
     try:
         fileObjectArray = request.json['fileObjectArray']
@@ -202,7 +202,7 @@ def integrated_transform():
 
 
 
-@integrated.route('/export/',methods=['POST'])
+@integrated.route('/export',methods=['POST'])
 def integrated_export():
     fileObjectArray = request.json['fileObjectArray']
 

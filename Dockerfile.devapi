@@ -1,0 +1,20 @@
+# Use an official Python image
+FROM python:3.8-slim
+
+# Set working directory in the container
+WORKDIR /app
+
+# Copy the requirements.txt and install dependencies
+COPY ./requirements.txt .
+
+# Install Flask and other dependencies
+RUN pip install -r requirements.txt
+
+# Copy the rest of the codebase
+COPY . .
+
+# Expose the Flask API port
+EXPOSE 5000
+
+# Run the Flask app in development mode
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]

@@ -1,3 +1,0 @@
-#identify process hosting port
-sudo lsof -i:5000
-kill $PID #stop process

@@ -6,6 +6,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import VueApexCharts from 'vue-apexcharts'
 import "@fontsource/roboto"
+import 'regenerator-runtime/runtime'
 
 import VueHtml2Canvas from 'vue-html2canvas'
 
