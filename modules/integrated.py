@@ -94,6 +94,10 @@ def integrated_analyze():
         target = request.json['target']
         analyze = request.json['analyze']
 
+        print(f"DEBUG: Analyze method: {analyze['method']}")
+        print(f"DEBUG: Target: {target}")
+        print(f"DEBUG: Number of files: {len(fileObjectArray)}")
+
         #File Validate
         if analyze['method'] == 'file_validate':
             json = analysis_file_validate(fileObjectArray, target)
@@ -108,7 +112,9 @@ def integrated_analyze():
 
         #For Train Test Impute
         elif analyze['method'] == 'train_test_split_impute':
+            print("DEBUG: Starting train_test_split_impute analyze")
             json = analyze_train_test_split_impute(fileObjectArray, target)
+            print("DEBUG: Completed train_test_split_impute analyze")
 
         #For Multicolinearity
         elif analyze['method'] == 'multicolinearity':
@@ -125,8 +131,16 @@ def integrated_analyze():
 
         return response
     except Exception as e:
+        import traceback
+        error_details = {
+            'error': str(e),
+            'traceback': traceback.format_exc(),
+            'method': analyze.get('method', 'unknown') if 'analyze' in locals() else 'unknown'
+        }
+        print(f"ERROR in integrated_analyze: {error_details}")
+        
         response = make_response(
-            simplejson.dumps({'error': str(e)}),
+            simplejson.dumps(error_details),
             200,
         )
         response.headers["Content-Type"] = "application/json"
@@ -165,6 +179,9 @@ def integrated_transform():
         target = request.json['target']
         transform = request.json['transform']
 
+        print(f"DEBUG: Transform method: {transform['method']}")
+        print(f"DEBUG: Target: {target}")
+        print(f"DEBUG: Number of files: {len(fileObjectArray)}")
 
         if transform['method'] == 'file_validate_target_map':
             json = transform_file_validate_target_map(fileObjectArray, target, transform)
@@ -176,7 +193,9 @@ def integrated_transform():
             json = transform_encode_nonnumeric(fileObjectArray, target, transform)
                 
         elif transform['method'] == 'train_test_split_impute':
+            print("DEBUG: Starting train_test_split_impute transform")
             json = transform_train_test_split_impute(fileObjectArray, target, transform)
+            print("DEBUG: Completed train_test_split_impute transform")
 
         elif transform['method'] == 'multicolinearity':
             json = transform_multicolinearity(fileObjectArray, target, transform)
@@ -190,8 +209,16 @@ def integrated_transform():
         return response      
              
     except Exception as e:
+        import traceback
+        error_details = {
+            'error': str(e),
+            'traceback': traceback.format_exc(),
+            'method': transform.get('method', 'unknown') if 'transform' in locals() else 'unknown'
+        }
+        print(f"ERROR in integrated_transform: {error_details}")
+        
         response = make_response(
-            simplejson.dumps({'error': str(e)}),
+            simplejson.dumps(error_details),
             200,
         )
         response.headers["Content-Type"] = "application/json"
@@ -249,4 +276,4 @@ def integrated_export():
     )
     response.headers["Content-Type"] = "application/json"
 
-    return response       
+    return response

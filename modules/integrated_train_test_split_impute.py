@@ -10,6 +10,17 @@ from .helpers import load_file, save_file, file_params, int_list_to_string, stor
 #LOCAL HELPERS
 
 def sort_values_original_order(df):
+    if df.empty:
+        print("WARNING: Attempting to sort empty DataFrame")
+        return df
+    
+    # Check if required columns exist
+    required_cols = ['origin_file_name', 'origin_file_source_row']
+    missing_cols = [col for col in required_cols if col not in df.columns]
+    if missing_cols:
+        print(f"WARNING: Missing columns for sorting: {missing_cols}")
+        return df
+    
     return df.sort_values(by=['origin_file_name','origin_file_source_row'])
 
 def fill_in_zeros(dict):
@@ -20,69 +31,100 @@ def fill_in_zeros(dict):
     return dict
 
 def counts_to_percent(df):
-    return df['counts'] / df['counts'].sum() * 100
+    total = df['counts'].sum()
+    if total > 0:
+        return round(df['counts'] / total * 100, 1)
+    else:
+        return pd.Series([0] * len(df), index=df.index)
 
 
 def merged_files_describe(df,target):
+    print(f"DEBUG: merged_files_describe called with df shape: {df.shape}, target: {target}")
+
+    if target not in df.columns:
+        raise ValueError(f"Target column '{target}' not found in dataframe")
+
+    if df.empty:
+        raise ValueError("DataFrame is empty")
 
     describe = {}
+    
+    # Get all unique classes in the target column
+    unique_classes = sorted(df[target].dropna().unique())
+    print(f"DEBUG: unique_classes: {unique_classes}")
+    
+    if len(unique_classes) == 0:
+        raise ValueError(f"No valid values found in target column '{target}'")
 
     #counts
-    total_df = pd.DataFrame(df[target].value_counts())
-    total_df.rename(columns={target: 'counts'}, inplace=True)
-    #percentage
+    total_counts = df[target].value_counts()
+    total_df = pd.DataFrame({'counts': total_counts})
     total_df['percent'] = counts_to_percent(total_df)
-
     total_df.loc['total'] = total_df.sum() #make total row
-
-    describe['total'] = total_df.to_dict()        
-
+    describe['total'] = total_df.to_dict()
+    print(f"DEBUG: total counts: {describe['total']}")
 
     #nan values
-    nan_df = df[df.isna().any(axis=1)][target].value_counts()
-    nan_df = fill_in_zeros(nan_df)
-
-    nan_df = pd.DataFrame(nan_df)
-    nan_df.rename(columns={target: 'counts'}, inplace=True)
-
-    nan_df['percent'] = round(nan_df['counts'] / total_df['counts'].loc['total'] * 100,1)
+    nan_rows = df[df.isna().any(axis=1)]
+    if not nan_rows.empty:
+        nan_counts = nan_rows[target].value_counts()
+    else:
+        nan_counts = pd.Series(dtype='int64')
+    
+    # Ensure all classes are represented - create a proper Series with all classes
+    nan_counts_dict = {}
+    for cls in unique_classes:
+        nan_counts_dict[cls] = nan_counts.get(cls, 0)
+    
+    nan_counts = pd.Series(nan_counts_dict)
+    nan_df = pd.DataFrame({'counts': nan_counts})
+    
+    # Safe division to avoid division by zero
+    total_count = total_df['counts'].loc['total']
+    if total_count > 0:
+        nan_df['percent'] = round(nan_df['counts'] / total_count * 100, 1)
+    else:
+        nan_df['percent'] = 0
 
     nan_df.loc['total'] = nan_df.sum() #make total row
-
     describe['nan'] = nan_df.to_dict()
-
+    print(f"DEBUG: nan counts: {describe['nan']}")
 
     #normal values
-    non_nan_df = df[~df.isna().any(axis=1)][target].value_counts()
-    non_nan_df = fill_in_zeros(non_nan_df)
-
-    non_nan_df = pd.DataFrame(non_nan_df)
-    non_nan_df.rename(columns={target: 'counts'}, inplace=True)
-
-    non_nan_df['percent'] = counts_to_percent(non_nan_df)
-
-    non_nan_df['percent'] = round(non_nan_df['counts'] / total_df['counts'].loc['total'] * 100,1)
+    non_nan_rows = df[~df.isna().any(axis=1)]
+    if not non_nan_rows.empty:
+        non_nan_counts = non_nan_rows[target].value_counts()
+    else:
+        non_nan_counts = pd.Series(dtype='int64')
+    
+    # Fill in zeros for all classes that might not have non-NaN values - create a proper Series with all classes
+    non_nan_counts_dict = {}
+    for cls in unique_classes:
+        non_nan_counts_dict[cls] = non_nan_counts.get(cls, 0)
+    
+    non_nan_counts = pd.Series(non_nan_counts_dict)
+    non_nan_df = pd.DataFrame({'counts': non_nan_counts})
+    
+    # Safe division to avoid division by zero
+    if total_count > 0:
+        non_nan_df['percent'] = round(non_nan_df['counts'] / total_count * 100, 1)
+    else:
+        non_nan_df['percent'] = 0
 
     non_nan_df.loc['total'] = non_nan_df.sum() #make total row
-
     describe['non_nan'] = non_nan_df.to_dict()
-    
+    print(f"DEBUG: non_nan counts: {describe['non_nan']}")
 
-    major = df[target].value_counts().idxmax()
-    minor = df[target].value_counts().idxmin()
+    # For multi-class, identify majority and minority classes
+    class_counts = df[target].value_counts()
+    major = class_counts.idxmax()
+    minor = class_counts.idxmin()
 
-    #if the class sizes are the same, check to see if the non_missing data classes are the same and base the assignement on that
-    if major == minor:
-        if describe['non_nan']['counts'][0] > describe['non_nan']['counts'][1]:
-            major = 0
-            minor = 1
-        else:
-            major = 1
-            minor = 0
-
-
-    describe['major'] = int(major)
-    describe['minor'] = int(minor)
+    # Store all unique classes for multi-class support (convert to regular Python types for JSON serialization)
+    describe['unique_classes'] = [int(cls) if isinstance(cls, (int, np.integer)) else cls for cls in unique_classes]
+    describe['num_classes'] = len(unique_classes)
+    describe['major'] = int(major) if isinstance(major, (int, np.integer)) else major
+    describe['minor'] = int(minor) if isinstance(minor, (int, np.integer)) else minor
 
     return describe
 
@@ -107,10 +149,56 @@ def merged_files_describe(df,target):
 
 #this function is legacy and will be removed
 def merge_files_segments(describe_obj, training_class_size, missing_values_option, prevelence_option):
+    print(f"DEBUG: merge_files_segments called with training_class_size: {training_class_size}")
+    print(f"DEBUG: describe_obj keys: {describe_obj.keys()}")
+    print(f"DEBUG: unique_classes: {describe_obj.get('unique_classes', 'not found')}")
+    print(f"DEBUG: num_classes: {describe_obj.get('num_classes', 'not found')}")
 
+    # Handle multi-class scenarios
+    if describe_obj.get('num_classes', 2) > 2:
+        print("DEBUG: Multi-class scenario detected, returning simplified segments")
+        # For multi-class, return a simplified structure
+        unique_classes = describe_obj.get('unique_classes', [])
+        total_samples = describe_obj['total']['counts'].get('total', 0)
+        
+        # Create a simplified response for multi-class
+        train_counts = {}
+        test_counts = {}
+        
+        for cls in unique_classes:
+            cls_key = str(cls)
+            total_cls_count = describe_obj['total']['counts'].get(cls, 0)
+            train_counts[cls_key] = min(training_class_size, total_cls_count)
+            test_counts[cls_key] = max(0, total_cls_count - train_counts[cls_key])
+        
+        total_train = sum(train_counts.values())
+        total_test = sum(test_counts.values())
+        remainder = max(0, total_samples - total_train - total_test)
+        
+        return {
+            'train': {
+                'counts': train_counts,
+                'percent': {cls: round((count / total_samples) * 100, 1) if total_samples > 0 else 0 
+                           for cls, count in train_counts.items()}
+            },
+            'test': {
+                'counts': test_counts,
+                'percent': {cls: round((count / total_samples) * 100, 1) if total_samples > 0 else 0 
+                           for cls, count in test_counts.items()}
+            },
+            'remainder': {
+                'counts': remainder,
+                'percent': round((remainder / total_samples) * 100, 1) if total_samples > 0 else 0
+            },
+            'missing_values_option': missing_values_option,
+            'prevelence_option': prevelence_option,
+            'major': describe_obj.get('major', unique_classes[0] if unique_classes else 0),
+            'minor': describe_obj.get('minor', unique_classes[-1] if unique_classes else 0)
+        }
+
+    # Original binary classification logic
     major = describe_obj['major']
     minor = describe_obj['minor']
-
 
     #special condition to convert keys that are normally ints to strings if passed via json to avoid key error later
     #this applies only when applying the effect function because the describe_obj is coming from the front end
@@ -120,43 +208,72 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
         major = str(describe_obj['major'])
         minor = str(describe_obj['minor'])
 
+    print(f"DEBUG: Binary classification - major: {major}, minor: {minor}")
+
+    # Safe access to counts with error handling
+    try:
+        major_non_nan = describe_obj['non_nan']['counts'].get(major, 0)
+        minor_non_nan = describe_obj['non_nan']['counts'].get(minor, 0)
+        major_nan = describe_obj['nan']['counts'].get(major, 0)
+        minor_nan = describe_obj['nan']['counts'].get(minor, 0)
+        major_total = describe_obj['total']['counts'].get(major, 0)
+        minor_total = describe_obj['total']['counts'].get(minor, 0)
+        
+        print(f"DEBUG: major_non_nan: {major_non_nan}, minor_non_nan: {minor_non_nan}")
+        print(f"DEBUG: major_total: {major_total}, minor_total: {minor_total}")
+        
+    except Exception as e:
+        print(f"ERROR accessing counts in merge_files_segments: {e}")
+        # Return a safe default structure
+        return {
+            'train': {'counts': {major: 0, minor: 0}, 'percent': {major: 0, minor: 0}},
+            'test': {'counts': {major: 0, minor: 0}, 'percent': {major: 0, minor: 0}},
+            'remainder': {'counts': 0, 'percent': 0},
+            'missing_values_option': missing_values_option,
+            'prevelence_option': prevelence_option,
+            'major': major,
+            'minor': minor
+        }
 
     if missing_values_option == 0 and prevelence_option == 0:
         #remove all rows with missing values and use all data
-        test_major = describe_obj['non_nan']['counts'][major] - training_class_size
-        test_minor = describe_obj['non_nan']['counts'][minor] - training_class_size
-        remainder = describe_obj['nan']['counts'][major] + describe_obj['nan']['counts'][minor]
+        test_major = max(0, major_non_nan - training_class_size)
+        test_minor = max(0, minor_non_nan - training_class_size)
+        remainder = major_nan + minor_nan
     
     elif missing_values_option == 0 and prevelence_option == 1:
         #remove all rows with missing values and keep original prevalences
-
-        test_minor = describe_obj['non_nan']['counts'][minor] - training_class_size  
+        test_minor = max(0, minor_non_nan - training_class_size)
 
         ##TODO: make sure the right prevalences are used
-        minor_prev = (describe_obj['total']['percent'][minor] / 100)
-        major_prev = (describe_obj['total']['percent'][major] / 100)
+        minor_prev = (describe_obj['total']['percent'].get(minor, 0) / 100)
+        major_prev = (describe_obj['total']['percent'].get(major, 0) / 100)
 
-        test_major = round((test_minor / minor_prev) * major_prev)
-        remainder = describe_obj['nan']['counts'][minor] + describe_obj['nan']['counts'][major]  + (describe_obj['non_nan']['counts'][major] - test_major - training_class_size) 
+        if minor_prev > 0:
+            test_major = round((test_minor / minor_prev) * major_prev)
+        else:
+            test_major = 0
+        remainder = major_nan + minor_nan + max(0, major_non_nan - test_major - training_class_size)
 
     elif missing_values_option == 1 and prevelence_option == 0:
-        test_major = describe_obj['total']['counts'][major] - training_class_size
-        test_minor = describe_obj['total']['counts'][minor] - training_class_size
+        test_major = max(0, major_total - training_class_size)
+        test_minor = max(0, minor_total - training_class_size)
         remainder = 0     
 
     elif missing_values_option == 1 and prevelence_option == 1:
-        test_minor = describe_obj['total']['counts'][minor] - training_class_size
+        test_minor = max(0, minor_total - training_class_size)
 
-        minor_prev = (describe_obj['total']['percent'][minor] / 100)
-        major_prev = (describe_obj['total']['percent'][major] / 100)
+        minor_prev = (describe_obj['total']['percent'].get(minor, 0) / 100)
+        major_prev = (describe_obj['total']['percent'].get(major, 0) / 100)
 
-        test_major = round((test_minor / minor_prev) * major_prev)
+        if minor_prev > 0:
+            test_major = round((test_minor / minor_prev) * major_prev)
+        else:
+            test_major = 0
 
-        remainder = describe_obj['total']['counts'][major] - training_class_size - test_major             
+        remainder = max(0, major_total - training_class_size - test_major)
 
-
-    total = describe_obj['total']['counts'][major] + describe_obj['total']['counts'][minor]
-
+    total = major_total + minor_total
 
     return {
         'train': {
@@ -165,8 +282,8 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
                 minor: training_class_size
             },
             'percent': {
-                major: round((training_class_size / total) * 100,1) - 1,
-                minor: round((training_class_size / total) * 100,1) - 1
+                major: round((training_class_size / total) * 100,1) if total > 0 else 0,
+                minor: round((training_class_size / total) * 100,1) if total > 0 else 0
             }
         },
         'test': {
@@ -175,13 +292,13 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
                 minor: test_minor
             },
             'percent': {
-                major: round((test_major / total) * 100,1) - 1,
-                minor: round((test_minor / total) * 100,1) -1 
+                major: round((test_major / total) * 100,1) if total > 0 else 0,
+                minor: round((test_minor / total) * 100,1) if total > 0 else 0
             }            
         },
         'remainder': {
             'counts': remainder,
-            'percent': round((remainder / total) * 100,1)
+            'percent': round((remainder / total) * 100,1) if total > 0 else 0
         },
         'missing_values_option': missing_values_option,
         'prevelence_option': prevelence_option,
@@ -218,18 +335,29 @@ def analyze_train_test_split_impute(fileObjectArray, target):
     for group in groups:
         if len(groups[group]) > 0:
             df = pd.concat(groups[group])
+            print(f"DEBUG: Processing group '{group}' with df shape: {df.shape}")
 
             describe_obj = merged_files_describe(df,target)
+            print(f"DEBUG: merged_files_describe completed for group '{group}'")
 
             groups_result[group] = {}
             groups_result[group]['describe'] =  describe_obj
             training_class_size = 25 #merge_files_training_class_size(describe_obj)
             groups_result[group]['training_class_size'] = training_class_size
-            groups_result[group]['segments'] = merge_files_segments(describe_obj, training_class_size, 0, 1) #we don't actually use this now TODO
+            
+            print(f"DEBUG: About to call merge_files_segments for group '{group}'")
+            try:
+                groups_result[group]['segments'] = merge_files_segments(describe_obj, training_class_size, 0, 1) #we don't actually use this now TODO
+                print(f"DEBUG: merge_files_segments completed for group '{group}'")
+            except Exception as e:
+                print(f"ERROR in merge_files_segments for group '{group}': {e}")
+                import traceback
+                print(f"Traceback: {traceback.format_exc()}")
+                raise
 
            
 
-    return {'fileAnalysisDict': groups_result} 
+    return {'fileAnalysisDict': groups_result}
 
 
 #EFFECT
@@ -327,14 +455,21 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
         #if equalize classes
         if training_equalizate_setting == 1:
-            df_train[target].value_counts().to_dict()
-            value_counts = df_train[target].value_counts().to_dict()
-            goal = df_train[target].value_counts().min()
-            for key in value_counts:
-                temp_drop = df_train[df_train[target] == key].sample(value_counts[key] - goal, replace=False)
-                print(temp_drop.shape)
-                df_train.drop(temp_drop.index, inplace=True)
-                array_df_removed.append(temp_drop)
+            if not df_train.empty:
+                df_train[target].value_counts().to_dict()
+                value_counts = df_train[target].value_counts().to_dict()
+                goal = df_train[target].value_counts().min()
+                for key in value_counts:
+                    samples_to_drop = value_counts[key] - goal
+                    if samples_to_drop > 0:
+                        class_subset = df_train[df_train[target] == key]
+                        if len(class_subset) >= samples_to_drop:
+                            temp_drop = class_subset.sample(samples_to_drop, replace=False)
+                            print(temp_drop.shape)
+                            df_train.drop(temp_drop.index, inplace=True)
+                            array_df_removed.append(temp_drop)
+                        else:
+                            print(f"WARNING: Not enough samples to drop for class {key}. Available: {len(class_subset)}, Required: {samples_to_drop}")
 
         #TESTING
         #must drop missing rows
@@ -346,16 +481,26 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         if testing_prevalence == 0:
             pass
         elif testing_prevalence == 1:
-            df_test[target].value_counts().to_dict()
-            value_counts = df_test[target].value_counts().to_dict()
-            for key in value_counts:
-                goal = t['finalValues']['total']['test'][str(key)]
-                temp_drop = df_test[df_test[target] == key].sample(value_counts[key] - goal, replace=False)
-                print(temp_drop.shape)
-                df_test.drop(temp_drop.index, inplace=True)
-                array_df_removed.append(temp_drop)
+            if not df_test.empty:
+                df_test[target].value_counts().to_dict()
+                value_counts = df_test[target].value_counts().to_dict()
+                for key in value_counts:
+                    goal = t['finalValues']['total']['test'][str(key)]
+                    samples_to_drop = value_counts[key] - goal
+                    if samples_to_drop > 0:
+                        class_subset = df_test[df_test[target] == key]
+                        if len(class_subset) >= samples_to_drop:
+                            temp_drop = class_subset.sample(samples_to_drop, replace=False)
+                            print(temp_drop.shape)
+                            df_test.drop(temp_drop.index, inplace=True)
+                            array_df_removed.append(temp_drop)
+                        else:
+                            print(f"WARNING: Not enough test samples to drop for class {key}. Available: {len(class_subset)}, Required: {samples_to_drop}")
         
-        df_removed = pd.concat(array_df_removed)
+        # Safe concatenation to avoid axis=0 error with empty DataFrames
+        non_empty_removed = [df for df in array_df_removed if not df.empty]
+        df_removed = pd.concat(non_empty_removed) if non_empty_removed else pd.DataFrame()
+        print(f"DEBUG: df_removed shape after concat: {df_removed.shape}")
 
         #file names defined at top of method
         #include dropped output in result
@@ -393,116 +538,161 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
         array_df_removed = []
 
-        df_class_zero = df[df[target] == 0]
-        df_class_one = df[df[target] == 1]
-
-        df_nan_class_zero = df_class_zero[df_class_zero.isna().any(axis=1)]
-        df_nan_class_one = df_class_one[df_class_one.isna().any(axis=1)]
+        # Get all unique classes dynamically
+        unique_classes = sorted(df[target].dropna().unique())
+        print(f"DEBUG: Processing {len(unique_classes)} classes: {unique_classes}")
+        
+        # Create dictionaries to hold class-specific dataframes
+        df_classes = {}
+        df_nan_classes = {}
+        
+        # Split data by class
+        for cls in unique_classes:
+            df_classes[cls] = df[df[target] == cls]
+            df_nan_classes[cls] = df_classes[cls][df_classes[cls].isna().any(axis=1)]
+            print(f"DEBUG: Class {cls} - Total: {len(df_classes[cls])}, NaN: {len(df_nan_classes[cls])}")
        
         
         #if drop missing value rows
        
         if missing_value_setting == 0:
-            #remove missing values
-            df_class_zero = df_class_zero.drop(df_nan_class_zero.index)
-            df_class_one = df_class_one.drop(df_nan_class_one.index)
+            #remove missing values for all classes
+            for cls in unique_classes:
+                df_classes[cls] = df_classes[cls].drop(df_nan_classes[cls].index)
+                #track missing values
+                array_df_removed.append(df_nan_classes[cls])
 
-            #track missing values
-            array_df_removed.append(df_nan_class_zero)
-            array_df_removed.append(df_nan_class_one)
-
-            #sample training data
-            df_training_zero = df_class_zero.sample(training_class_size, replace=False)
-            df_training_one = df_class_one.sample(training_class_size, replace=False)
+            #sample training data for all classes
+            train_arrays = []
+            for cls in unique_classes:
+                print(f"DEBUG: Class {cls} shape before sampling: {df_classes[cls].shape}")
+                print(f"DEBUG: training_class_size: {training_class_size}")
+                
+                if len(df_classes[cls]) >= training_class_size:
+                    df_training_class = df_classes[cls].sample(training_class_size, replace=False)
+                    train_arrays.append(df_training_class)
+                    #remove training data from original sample
+                    df_classes[cls].drop(df_training_class.index, inplace=True)
+                else:
+                    print(f"WARNING: Not enough class {cls} samples. Available: {len(df_classes[cls])}, Required: {training_class_size}")
+                    if len(df_classes[cls]) > 0:
+                        train_arrays.append(df_classes[cls])
+                        df_classes[cls] = df_classes[cls].iloc[0:0]  # Empty the dataframe
 
             #combine training data
-            df_train = pd.concat([df_training_zero, df_training_one])
-
-            #remove training data from original sample
-            df_class_zero.drop(df_training_zero.index, inplace=True)
-            df_class_one.drop(df_training_one.index, inplace=True)
+            non_empty_train_arrays = [df for df in train_arrays if not df.empty]
+            df_train = pd.concat(non_empty_train_arrays) if non_empty_train_arrays else pd.DataFrame()
+            print(f"DEBUG: df_train shape after sampling: {df_train.shape}")
 
         #if impute missing value rows
-         #TODO handle case if missing values > training class size
+        #TODO handle case if missing values > training class size
         elif missing_value_setting == 1:
             
             print(t)
 
-            #calculated on front end
-            train_imputed_zero_count = t['finalValues']['imputed']['train']['0']
-            train_imputed_one_count = t['finalValues']['imputed']['train']['1']
-            train_total_zero_count = t['finalValues']['total']['train']['0']
-            train_total_one_count = t['finalValues']['total']['train']['1']
-            train_nonimputed_zero_count = train_total_zero_count - train_imputed_zero_count
-            train_nonimputed_one_count = train_total_one_count - train_imputed_one_count
-
-            #isolate missing values
-            df_class_zero = df_class_zero.drop(df_nan_class_zero.index)
-            df_class_one = df_class_one.drop(df_nan_class_one.index)
-
-
-            print('class zero', df_class_zero.shape)
-            print('class one', df_class_one.shape)
+            #remove missing values from non-nan data for all classes
+            for cls in unique_classes:
+                df_classes[cls] = df_classes[cls].drop(df_nan_classes[cls].index)
+                print(f'class {cls}', df_classes[cls].shape)
 
             train_arrays = []
 
-            #sample training data minus missing values
-            if (train_nonimputed_zero_count > 0):
-                df_training_zero = df_class_zero.sample(train_nonimputed_zero_count, replace=False)
-                df_class_zero.drop(df_training_zero.index, inplace=True)
-                train_arrays.append(df_training_zero)
-            
-            if (train_nonimputed_one_count > 0):
-                df_training_one = df_class_one.sample(train_nonimputed_one_count, replace=False)
-                df_class_one.drop(df_training_one.index, inplace=True)
-                train_arrays.append(df_training_one)
-            
-            if (train_imputed_zero_count > 0):
-                df_train_zero_impute = df_nan_class_zero.sample(train_imputed_zero_count, replace=False)
-                df_nan_class_zero.drop(df_train_zero_impute.index, inplace=True)
-                train_arrays.append(df_train_zero_impute)
+            # Process each class dynamically
+            for cls in unique_classes:
+                cls_str = str(cls)  # Convert to string for JSON key access
+                
+                # Get counts from frontend calculations
+                train_imputed_count = t['finalValues']['imputed']['train'].get(cls_str, 0)
+                train_total_count = t['finalValues']['total']['train'].get(cls_str, 0)
+                train_nonimputed_count = train_total_count - train_imputed_count
+                
+                print(f"DEBUG: Class {cls} - Total: {train_total_count}, Imputed: {train_imputed_count}, Non-imputed: {train_nonimputed_count}")
 
-            if (train_imputed_one_count > 0):
-                df_train_one_impute = df_nan_class_one.sample(train_imputed_one_count, replace=False)
-                df_nan_class_one.drop(df_train_one_impute.index, inplace=True)
-                train_arrays.append(df_train_one_impute)
+                #sample training data minus missing values
+                if train_nonimputed_count > 0 and len(df_classes[cls]) >= train_nonimputed_count:
+                    df_training_class = df_classes[cls].sample(train_nonimputed_count, replace=False)
+                    df_classes[cls].drop(df_training_class.index, inplace=True)
+                    train_arrays.append(df_training_class)
+                elif train_nonimputed_count > 0:
+                    print(f"WARNING: Not enough class {cls} non-imputed samples. Available: {len(df_classes[cls])}, Required: {train_nonimputed_count}")
+                    if len(df_classes[cls]) > 0:
+                        train_arrays.append(df_classes[cls])
+                        df_classes[cls] = df_classes[cls].iloc[0:0]  # Empty the dataframe
+                
+                # Sample imputed training data
+                if train_imputed_count > 0 and len(df_nan_classes[cls]) >= train_imputed_count:
+                    df_train_impute = df_nan_classes[cls].sample(train_imputed_count, replace=False)
+                    df_nan_classes[cls].drop(df_train_impute.index, inplace=True)
+                    train_arrays.append(df_train_impute)
+                elif train_imputed_count > 0:
+                    print(f"WARNING: Not enough class {cls} imputed samples. Available: {len(df_nan_classes[cls])}, Required: {train_imputed_count}")
+                    if len(df_nan_classes[cls]) > 0:
+                        train_arrays.append(df_nan_classes[cls])
+                        df_nan_classes[cls] = df_nan_classes[cls].iloc[0:0]  # Empty the dataframe
 
-            df_train = pd.concat(train_arrays)
+            # Safe concatenation to avoid axis=0 error with empty DataFrames
+            print(f"DEBUG: train_arrays length: {len(train_arrays)}")
+            for i, arr in enumerate(train_arrays):
+                print(f"DEBUG: train_arrays[{i}] shape: {arr.shape}")
+            non_empty_train_arrays = [df for df in train_arrays if not df.empty]
+            df_train = pd.concat(non_empty_train_arrays) if non_empty_train_arrays else pd.DataFrame()
+            print(f"DEBUG: Final df_train shape: {df_train.shape}")
 
             df_train, df_imputed = impute_processor(df_train, target)
 
-            #remove any additional unused nan values
-            array_df_removed.append(df_nan_class_zero)
-            array_df_removed.append(df_nan_class_one)
+            #remove any additional unused nan values for all classes
+            for cls in unique_classes:
+                array_df_removed.append(df_nan_classes[cls])
 
 
         #testing prevalance already set in front end, no further math needed based on settings
         test_counts = t['finalValues']['total']['test']
 
-        #sample testing data
+        #sample testing data with safety checks for all classes
         #must use string as key since passed as JSON
-        print(test_counts)
-        print(df_class_zero.shape)
-        print(df_class_one.shape)
+        print(f"DEBUG: test_counts: {test_counts}")
+        for cls in unique_classes:
+            print(f"DEBUG: Class {cls} shape before test sampling: {df_classes[cls].shape}")
 
-        df_testing_zero = df_class_zero.sample(test_counts['0'], replace=False)
-        df_testing_one = df_class_one.sample(test_counts['1'], replace=False)
-
-        #remove testing data from pool
-        df_class_zero.drop(df_testing_zero.index, inplace=True)
-        df_class_one.drop(df_testing_one.index, inplace=True)
+        test_arrays = []
+        
+        # Safe sampling for all classes
+        for cls in unique_classes:
+            cls_str = str(cls)  # Convert to string for JSON key access
+            test_count = test_counts.get(cls_str, 0)
+            
+            if test_count > 0 and len(df_classes[cls]) >= test_count:
+                df_testing_class = df_classes[cls].sample(test_count, replace=False)
+                test_arrays.append(df_testing_class)
+                #remove testing data from pool
+                df_classes[cls].drop(df_testing_class.index, inplace=True)
+            elif test_count > 0 and len(df_classes[cls]) > 0:
+                print(f"WARNING: Not enough class {cls} samples for testing. Available: {len(df_classes[cls])}, Required: {test_count}")
+                test_arrays.append(df_classes[cls])
+                df_classes[cls] = df_classes[cls].iloc[0:0]  # Empty the dataframe
+            else:
+                print(f"DEBUG: No class {cls} samples needed for testing or available")
 
         #put remaining data in removed
-        array_df_removed.append(df_class_zero)
-        array_df_removed.append(df_class_one)
+        for cls in unique_classes:
+            array_df_removed.append(df_classes[cls])
 
 
         #combine testing data
-        df_test = pd.concat([df_testing_zero, df_testing_one])
-
+        print(f"DEBUG: test_arrays length: {len(test_arrays)}")
+        for i, arr in enumerate(test_arrays):
+            print(f"DEBUG: test_arrays[{i}] shape: {arr.shape}")
+        non_empty_test_arrays = [df for df in test_arrays if not df.empty]
+        df_test = pd.concat(non_empty_test_arrays) if non_empty_test_arrays else pd.DataFrame()
+        print(f"DEBUG: Final df_test shape: {df_test.shape}")
 
         #combined removed
-        df_removed = pd.concat(array_df_removed)
+        print(f"DEBUG: array_df_removed length: {len(array_df_removed)}")
+        for i, arr in enumerate(array_df_removed):
+            print(f"DEBUG: array_df_removed[{i}] shape: {arr.shape}")
+        non_empty_removed_arrays = [df for df in array_df_removed if not df.empty]
+        df_removed = pd.concat(non_empty_removed_arrays) if non_empty_removed_arrays else pd.DataFrame()
+        print(f"DEBUG: Final df_removed shape: {df_removed.shape}")
 
 
 
@@ -542,20 +732,33 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
 def impute_processor(df, target):
 
+        # Check if DataFrame is empty
+        if df.empty:
+            print("WARNING: Empty DataFrame passed to impute_processor")
+            return df, pd.DataFrame()
 
         imp_mean = IterativeImputer(random_state=0)
         X = df.drop(columns=[target])
         y = df[target]
 
         imputed_row_index = list(df[df.isna().any(axis=1)].index)
+        print(f"DEBUG: imputed_row_index: {imputed_row_index}")
 
-        print(imputed_row_index)
+        # If no rows need imputation, return original data
+        if len(imputed_row_index) == 0:
+            print("DEBUG: No rows need imputation")
+            return df, pd.DataFrame()
+
         extra = df[['origin_file_name', 'origin_file_source_row']]
         X = X.drop(columns=['origin_file_name', 'origin_file_source_row'])
 
+        # Check if X is empty after dropping columns
+        if X.empty or len(X.columns) == 0:
+            print("WARNING: No features available for imputation")
+            return df, pd.DataFrame()
+
         #check if negative values exist in each column before imputation
         col_has_negative = ((X < 0).any()).to_dict()
-
 
         #flag columns for rounding
         col_is_binary = []
@@ -566,61 +769,67 @@ def impute_processor(df, target):
             
             if feature.isna().sum() > 0: #ensure has nan values
                 unique = feature.dropna().unique()
-                unique.sort()
-                unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float                    
+                if len(unique) > 0:  # Check if unique values exist
+                    unique.sort()
+                    unique_int_len = len(list(filter(lambda x: x.is_integer(), unique))) #checks to ensure values are ints even if cast as float                    
 
-                if len(unique) == unique_int_len and (unique_int_len <= 20): #set 
-                    col_is_numeric_cat[col] = unique
+                    if len(unique) == unique_int_len and (unique_int_len <= 20): #set 
+                        col_is_numeric_cat[col] = unique
 
-
-        imp_mean.fit(X)
-        result = pd.DataFrame(imp_mean.transform(X),columns=X.columns, index=X.index)
-        result[df.columns[df.isna().any()]] = result[df.columns[df.isna().any()]].round(decimals=3)
-
-        #if column does not have negative values, change all imputed negative values to 0
-        for col in col_has_negative:
-            if(not col_has_negative[col]):
-                column = result[col]
-                column[column < 0 ] = 0
-        
-        # #round one hot encoded columns
-
-        ###TODO fix this
-        # for col in columns_added:
-        #     result[col] = result[col].round()
-
-        # ensure numerical categorial data is maintained with imputation
-        for col in col_is_numeric_cat.keys():
-            result[col] = result[col].round().astype(int)
-            possible_values = col_is_numeric_cat[col]
+        try:
+            imp_mean.fit(X)
+            result = pd.DataFrame(imp_mean.transform(X),columns=X.columns, index=X.index)
             
-            #find values not matching original values in data set
-            extra_value_bool = ~result[col].isin(possible_values)
-            extra_values = result[col][extra_value_bool].unique()
+            # Only round columns that actually have NaN values and exist in the result
+            nan_columns = df.columns[df.isna().any()]
+            existing_nan_columns = [col for col in nan_columns if col in result.columns]
+            if existing_nan_columns:
+                result[existing_nan_columns] = result[existing_nan_columns].round(decimals=3)
+
+            #if column does not have negative values, change all imputed negative values to 0
+            for col in col_has_negative:
+                if col in result.columns and not col_has_negative[col]:
+                    column = result[col]
+                    column[column < 0 ] = 0
             
-            #find the closest original value and adjust it
-            for val in extra_values:
-                arr = np.asarray(possible_values)
-                i = (np.abs(arr - val)).argmin()
-                closest = arr[i]
-                result[col] = result[col].replace(val, closest)
+            # ensure numerical categorial data is maintained with imputation
+            for col in col_is_numeric_cat.keys():
+                if col in result.columns:
+                    result[col] = result[col].round().astype(int)
+                    possible_values = col_is_numeric_cat[col]
+                    
+                    #find values not matching original values in data set
+                    extra_value_bool = ~result[col].isin(possible_values)
+                    extra_values = result[col][extra_value_bool].unique()
+                    
+                    #find the closest original value and adjust it
+                    for val in extra_values:
+                        arr = np.asarray(possible_values)
+                        i = (np.abs(arr - val)).argmin()
+                        closest = arr[i]
+                        result[col] = result[col].replace(val, closest)
 
+            result[target] = y
+            result['origin_file_name'] = extra['origin_file_name']
+            result['origin_file_source_row'] = extra['origin_file_source_row']
 
+            # Safe access to imputed rows
+            if len(imputed_row_index) > 0:
+                # Filter imputed_row_index to only include indices that exist in result
+                valid_indices = [idx for idx in imputed_row_index if idx in result.index]
+                if valid_indices:
+                    imputed = result.loc[valid_indices]
+                else:
+                    print("WARNING: No valid indices found for imputed rows")
+                    imputed = pd.DataFrame()
+            else:
+                imputed = pd.DataFrame()
 
-        result[target] = y
-        result['origin_file_name'] = extra['origin_file_name']
-        result['origin_file_source_row'] = extra['origin_file_source_row']
-
-        imputed = result.loc[imputed_row_index]
-        #becaause of how the indexes are tracked, it becomes cast as a string and needs loc rather than iloc
-
-        return result, imputed
-
-
-
-
-
-
-
-
-
+            return result, imputed
+            
+        except Exception as e:
+            print(f"ERROR in impute_processor: {e}")
+            print(f"DataFrame shape: {df.shape}")
+            print(f"X shape: {X.shape}")
+            print(f"Target: {target}")
+            return df, pd.DataFrame()
