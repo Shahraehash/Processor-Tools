@@ -94,202 +94,235 @@
 
     },
     computed: {
+      uniqueClasses() {
+        if (this.train && this.test) {
+          // Get unique classes from both train and test files
+          const trainClasses = this.train.describe.unique_classes || Object.keys(this.train.describe.total.counts).filter(key => key !== 'total').map(Number);
+          const testClasses = this.test.describe.unique_classes || Object.keys(this.test.describe.total.counts).filter(key => key !== 'total').map(Number);
+          
+          // Combine and deduplicate classes
+          const allClasses = [...new Set([...trainClasses, ...testClasses])].sort((a, b) => a - b);
+          return allClasses;
+        }
+        return [0, 1]; // fallback to binary
+      },
+      
+      isMultiClass() {
+        return this.uniqueClasses.length > 2;
+      },
 
       imputeAvailable() {
-            return this.train.describe.nan.counts[0] > 0 || this.train.describe.nan.counts[1] > 0
-        },      
+        return this.uniqueClasses.some(cls => 
+          (this.train.describe.nan.counts[cls] || 0) > 0 || 
+          (this.test.describe.nan.counts[cls] || 0) > 0
+        );
+      },      
+      
       trainingIsBalanced(){
-        if (this.graphCountsWithChanges) {
-          return this.graphCountsWithChanges.total.train[0] == this.graphCountsWithChanges.total.train[1] && this.trainEqualize != 1
+        if (this.graphCountsWithChanges && this.trainEqualize != 1) {
+          // Check if all classes have equal counts
+          const trainCounts = Object.values(this.graphCountsWithChanges.total.train);
+          const firstCount = trainCounts[0];
+          return trainCounts.every(count => count === firstCount);
         }
         else {
-          return true
+          return false
         }
-        
-      },      
+      },
       graphCounts() {
         if (this.train && this.test) {
-          let totalDenominator =  this.train.describe.total.counts.total + this.test.describe.total.counts.total
-
-
+          let totalDenominator = this.train.describe.total.counts.total + this.test.describe.total.counts.total
 
           let total = {
-                    train: {
-                        0: this['train'].describe.total.counts[0],
-                        1: this['train'].describe.total.counts[1]
-                    },
-                    test: {
-                        0: this['test'].describe.total.counts[0],
-                        1: this['test'].describe.total.counts[1]
-                    },
-                    remainder: {
-                        0: 0,
-                        1: 0
-                    }
-                }
+            train: {},
+            test: {},
+            remainder: this.isMultiClass ? 0 : {}
+          }
 
           let missing = {
-                train: {
-                  0: this['train'].describe.nan.counts[0],
-                    1: this['train'].describe.nan.counts[1]
-                },
-                test: {
-                    0: this['test'].describe.nan.counts[0],
-                    1: this['test'].describe.nan.counts[1]
-                }
-            }
+            train: {},
+            test: {}
+          }
 
           let imputed = {
-                train: {
-                    0: 0,
-                    1: 0
-                },
-                test: {
-                    0: 0,
-                    1: 0
-                }
-            }                
+            train: {},
+            test: {}
+          }
 
+          // Initialize data for each class
+          this.uniqueClasses.forEach(cls => {
+            total.train[cls] = this.train.describe.total.counts[cls] || 0;
+            total.test[cls] = this.test.describe.total.counts[cls] || 0;
+            if (!this.isMultiClass) {
+              total.remainder[cls] = 0;
+            }
+            missing.train[cls] = this.train.describe.nan.counts[cls] || 0;
+            missing.test[cls] = this.test.describe.nan.counts[cls] || 0;
+            imputed.train[cls] = 0;
+            imputed.test[cls] = 0;
+          });
 
-          return {totalDenominator,total,missing,imputed}
+          return {totalDenominator, total, missing, imputed, uniqueClasses: this.uniqueClasses, isMultiClass: this.isMultiClass}
         }
         else {
           return null
         }
-
       },
       graphCountsWithChanges() {
-
         if (this.graphCounts) {
-          let totalDenominator =  this.train.describe.total.counts.total + this.test.describe.total.counts.total
-
-
+          let totalDenominator = this.train.describe.total.counts.total + this.test.describe.total.counts.total
+          let totalRemainder = 0;
 
           let total = {
-                train: {
-                    0: 0,
-                    1: 0
-                },
-                test: {
-                    0: 0,
-                    1: 0
-                },
-                remainder: {
-                    0: 0,
-                    1: 0
-                }
-            }
+            train: {},
+            test: {},
+            remainder: this.isMultiClass ? 0 : {}
+          }
 
           let missing = {
-                train: {
-                    0: 0,
-                    1: 0
-                },
-                test: {
-                    0: 0,
-                    1: 0
-                }
-            }
+            train: {},
+            test: {}
+          }
 
           let imputed = {
-                train: {
-                    0: 0,
-                    1: 0
-                },
-                test: {
-                    0: 0,
-                    1: 0
-                }
-            }                
+            train: {},
+            test: {}
+          }
 
-
-          
-          //Training Impute Vs. Drop
-
-          if (this.trainMissing == 0) {
-            total['train'] = {
-              0: this['train'].describe.non_nan.counts[0],
-              1: this['train'].describe.non_nan.counts[1]
+          // Initialize data for each class
+          this.uniqueClasses.forEach(cls => {
+            total.train[cls] = 0;
+            total.test[cls] = 0;
+            if (!this.isMultiClass) {
+              total.remainder[cls] = 0;
             }
-            total['remainder'][0] += this['train'].describe.nan.counts[0]
-            total['remainder'][1] += this['train'].describe.nan.counts[1]
+            missing.train[cls] = 0;
+            missing.test[cls] = 0;
+            imputed.train[cls] = 0;
+            imputed.test[cls] = 0;
+          });
 
+          // Training Impute Vs. Drop
+          if (this.trainMissing == 0) {
+            // Remove missing values
+            this.uniqueClasses.forEach(cls => {
+              total.train[cls] = this.train.describe.non_nan.counts[cls] || 0;
+              const missingCount = this.train.describe.nan.counts[cls] || 0;
+              totalRemainder += missingCount;
+              if (!this.isMultiClass) {
+                total.remainder[cls] += missingCount;
+              }
+            });
           }
           else if (this.trainMissing == 1) {
+            // Impute missing values
+            this.uniqueClasses.forEach(cls => {
+              total.train[cls] = this.train.describe.total.counts[cls] || 0;
+              imputed.train[cls] = this.train.describe.nan.counts[cls] || 0;
+            });
+          }
 
-            total['train'] = {
-              0: this['train'].describe.total.counts[0],
-              1: this['train'].describe.total.counts[1]
-            }
-            imputed['train'] = {
-              0: this['train'].describe.nan.counts[0],
-              1: this['train'].describe.nan.counts[1]
-            }
+          // Training Class Equalization
+          if (this.trainEqualize == 1) {
+            // Find the minimum class count to downsample all classes to
+            const trainCounts = this.uniqueClasses.map(cls => total.train[cls]);
+            const minCount = Math.min(...trainCounts);
             
-            total['remainder'][0] += 0
-            total['remainder'][1] += 0
-
-
+            // Downsample all classes to the minimum count
+            this.uniqueClasses.forEach(cls => {
+              const excess = total.train[cls] - minCount;
+              if (excess > 0) {
+                total.train[cls] = minCount;
+                totalRemainder += excess;
+                if (!this.isMultiClass) {
+                  total.remainder[cls] += excess;
+                }
+              }
+            });
           }
-        
-        //Training Class Equalization
 
-        if (this.trainEqualize == 1) {
-            let diff = total['train'][this.train.describe.major] - total['train'][this.train.describe.minor]
-            total['train'][this.train.describe.major] = total['train'][this.train.describe.minor]
-            total['remainder'][this.train.describe.major] += diff
-        }          
+          // Testing Data - always remove missing values
+          this.uniqueClasses.forEach(cls => {
+            total.test[cls] = this.test.describe.non_nan.counts[cls] || 0;
+            const missingCount = this.test.describe.nan.counts[cls] || 0;
+            totalRemainder += missingCount;
+            if (!this.isMultiClass) {
+              total.remainder[cls] += missingCount;
+            }
+          });
 
-        // Testing Data
+          // Test Prevalence Matching
+          if (this.testPrevalence == 1) {
+            console.log('DEBUG: Prevalence matching activated');
+            
+            // Calculate original prevalence percentages for each class
+            const totalOriginal = this.test.describe.total.counts.total;
+            const originalPrevalences = {};
+            
+            this.uniqueClasses.forEach(cls => {
+              originalPrevalences[cls] = (this.test.describe.total.counts[cls] || 0) / totalOriginal;
+            });
+            
+            console.log('DEBUG: Original prevalences:', originalPrevalences);
+            console.log('DEBUG: Available test data before prevalence:', {...total.test});
+            
+            // Calculate total available test data
+            const totalAvailable = this.uniqueClasses.reduce((sum, cls) => sum + total.test[cls], 0);
+            
+            // Find the constraining class - the one that would require the smallest total to maintain its proportion
+            let constrainingTotal = Infinity;
+            let constrainingClass = null;
+            
+            this.uniqueClasses.forEach(cls => {
+              if (originalPrevalences[cls] > 0 && total.test[cls] > 0) {
+                const requiredTotal = Math.floor(total.test[cls] / originalPrevalences[cls]);
+                if (requiredTotal < constrainingTotal) {
+                  constrainingTotal = requiredTotal;
+                  constrainingClass = cls;
+                }
+              }
+            });
+            
+            console.log('DEBUG: Constraining class:', constrainingClass, 'requires total:', constrainingTotal);
+            console.log('DEBUG: Total available before constraint:', totalAvailable);
+            
+            // Only apply prevalence matching if it would actually reduce the data
+            if (constrainingTotal < totalAvailable && constrainingTotal > 0) {
+              this.uniqueClasses.forEach(cls => {
+                const targetCount = Math.floor(constrainingTotal * originalPrevalences[cls]);
+                const excess = total.test[cls] - targetCount;
+                
+                console.log(`DEBUG: Class ${cls}: ${total.test[cls]} -> ${targetCount} (excess: ${excess})`);
+                
+                total.test[cls] = Math.max(0, targetCount);
+                
+                // Add excess to remainder
+                if (excess > 0) {
+                  totalRemainder += excess;
+                  if (!this.isMultiClass) {
+                    total.remainder[cls] += excess;
+                  }
+                }
+              });
+              
+              console.log('DEBUG: Final test data after prevalence:', {...total.test});
+              console.log('DEBUG: Total remainder added:', totalRemainder);
+            } else {
+              console.log('DEBUG: No prevalence adjustment needed - constraint would not reduce data');
+            }
+          }
 
-        total['test'] = {
-          0: this.test.describe.non_nan.counts[0],
-          1: this.test.describe.non_nan.counts[1],          
+          // Set remainder for multi-class
+          if (this.isMultiClass) {
+            total.remainder = totalRemainder;
+          }
+
+          return {totalDenominator, total, missing, imputed, uniqueClasses: this.uniqueClasses, isMultiClass: this.isMultiClass}
         }
-        total['remainder'][0] += this.test.describe.nan.counts[0]
-        total['remainder'][1] += this.test.describe.nan.counts[1]
-
-
-
-        if (this.testPrevalence == 1) { 
-          let originalClassZeroPrev = this.test.describe.total.percent[0] / 100
-          let currentClassZeroPrev = total['test'][0] / ((total['test'][0] + total['test'][1]))
-          if (currentClassZeroPrev > originalClassZeroPrev) {
-            let newTotal = Math.round(total['test'][1] / (1 - originalClassZeroPrev))
-            let newClassZero = newTotal - total['test'][1]
-            total['remainder'][0] += (total['test'][0] - newClassZero)
-            total['test'][0] = newClassZero
-          }
-          else {
-            let newTotal = Math.round(total['test'][0] / originalClassZeroPrev)
-            let newClassOne = newTotal - total['test'][0]
-            total['remainder'][1] += (total['test'][1] - newClassOne)
-            total['test'][1] = newClassOne
-          }
-        
-
-
-        }
-
-
-        return {totalDenominator,total,missing,imputed}
-
-
-          
-
-
-
-
-
-
-
-          }
         else {
           return null
         }
-
-
-      }      
+      }
 
     },
     created() {
@@ -324,5 +357,3 @@
 
 
   </style>
-
-  
