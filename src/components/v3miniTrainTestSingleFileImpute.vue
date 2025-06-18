@@ -220,26 +220,43 @@ export default {
                     }
                 });
 
-                // For prevalence adjustment in multi-class, we'll keep it simple for now
-                if (this.prevalenceOption == 1 && !isMultiClass) {
-                    // Only apply detailed prevalence adjustment for binary classification
-                    let testZero = total.test[0];
-                    let testOne = total.test[1];
-                    let calcTotal = testZero + testOne;
-                    let prevelenceCurrentClassZero = testZero / calcTotal;
-                    let prevelenceOriginalClassZero = this.combinedFile.describe.total.percent[0] / 100;
-
-                    if (prevelenceCurrentClassZero > prevelenceOriginalClassZero) {
-                        let newTotal = Math.round(testOne / (1 - prevelenceOriginalClassZero));
-                        let newClassZero = newTotal - testOne;
-                        total.remainder[0] += (testZero - newClassZero);
-                        total.test[0] = newClassZero;
-                    }
-                    else {
-                        let newTotal = Math.round(testZero / prevelenceOriginalClassZero);
-                        let newClassOne = newTotal - testZero;
-                        total.remainder[1] += (testOne - newClassOne);
-                        total.test[1] = newClassOne;
+                // Apply prevalence adjustment for both binary and multi-class
+                if (this.prevalenceOption == 1) {
+                    // Calculate original prevalence for each class
+                    const totalOriginal = this.combinedFile.describe.total.counts.total;
+                    const originalPrevalences = {};
+                    
+                    uniqueClasses.forEach(cls => {
+                        originalPrevalences[cls] = this.combinedFile.describe.total.counts[cls] / totalOriginal;
+                    });
+                    
+                    // Find the limiting factor (class that constrains the total)
+                    let limitingFactor = Infinity;
+                    uniqueClasses.forEach(cls => {
+                        if (originalPrevalences[cls] > 0 && total.test[cls] > 0) {
+                            const factor = total.test[cls] / originalPrevalences[cls];
+                            if (factor < limitingFactor) {
+                                limitingFactor = factor;
+                            }
+                        }
+                    });
+                    
+                    // Adjust test allocation for each class based on prevalence
+                    if (limitingFactor !== Infinity && limitingFactor > 0) {
+                        uniqueClasses.forEach(cls => {
+                            const targetCount = Math.round(limitingFactor * originalPrevalences[cls]);
+                            const excess = total.test[cls] - targetCount;
+                            
+                            total.test[cls] = Math.max(0, targetCount);
+                            
+                            // Add excess to remainder
+                            if (excess > 0) {
+                                totalRemainder += excess;
+                                if (!isMultiClass) {
+                                    total.remainder[cls] += excess;
+                                }
+                            }
+                        });
                     }
                 }
 

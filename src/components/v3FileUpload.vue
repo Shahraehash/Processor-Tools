@@ -179,7 +179,7 @@
       <!-- Pick Target -->
       <div class="mt-10" v-if="fileMetadata[0]">
         <div class="my-3">
-          Next we need to identify which column in the dataset is the target. This is your dependent variable or the outcome you're trying to predict. This should have a binary value like 0 and 1, red or blue, true or false, etc.
+          Next we need to identify which column in the dataset is the target. This is your dependent variable or the outcome you're trying to predict.
         </div>
         <v-row>
           <v-col cols="6">
