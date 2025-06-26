@@ -55,25 +55,25 @@
                     :class="{ 'right-spacer': index === graphCounts.uniqueClasses.length - 1 }"
                     v-bind:style="{
                         background: getClassColor(index),
-                        width: graphPercents.totalPercent.train[cls] + '%',
+                        width: graphPercents.totalPercent.train[String(cls)] + '%',
                     }"
                 >
                     <!-- Missing -->
                     <div class="missing class-box"
                         v-bind:style="{
                         background: mxBarColors.missing,
-                        width: graphPercents.missingPercent.train[cls] +'%'
+                        width: graphPercents.missingPercent.train[String(cls)] +'%'
                         }"
                     ></div>
 
                     <!-- Imputed -->
                     <div class="imputed class-box"
                         v-bind:style="{
-                        width: graphPercents.imputedPercent.train[cls] + '%'
+                        width: graphPercents.imputedPercent.train[String(cls)] + '%'
                         }"
                     ></div>       
                     
-                    c{{cls}}: {{graphCounts.total.train[cls]}}
+                    c{{cls}}: {{graphCounts.total.train[String(cls)]}}
                 </div>
 
                 <!-- Test bars for each class -->
@@ -84,25 +84,25 @@
                     :class="{ 'right-spacer': index === graphCounts.uniqueClasses.length - 1 }"
                     v-bind:style="{
                         background: getClassColor(index),
-                        width: graphPercents.totalPercent.test[cls] + '%',
+                        width: graphPercents.totalPercent.test[String(cls)] + '%',
                     }"
                 >
                     <!-- Missing -->
                     <div class="missing class-box"
                         v-bind:style="{
                         background: mxBarColors.missing,
-                        width: graphPercents.missingPercent.test[cls] +'%'
+                        width: graphPercents.missingPercent.test[String(cls)] +'%'
                         }"
                     ></div>
 
                     <!-- Imputed -->
                     <div class="imputed class-box"
                         v-bind:style="{
-                        width: graphPercents.imputedPercent.test[cls] + '%'
+                        width: graphPercents.imputedPercent.test[String(cls)] + '%'
                         }"
                     ></div>   
 
-                    c{{cls}}: {{graphCounts.total.test[cls]}}
+                    c{{cls}}: {{graphCounts.total.test[String(cls)]}}
                 </div>
 
                 <!-- Remainder -->
@@ -110,10 +110,10 @@
                     class="group-box removed-box-width"
                     v-bind:style="{
                     background: mxBarColors.missing,
-                    width: graphPercents.totalPercent.remainder + '%'
+                    width: getTotalPercentForGroup('remainder') + '%'
                     }"
                 >
-                    {{graphCounts.total.remainder}}
+                    {{graphCounts.uniqueClasses.reduce((total, cls) => total + (graphCounts.total.remainder[String(cls)] || 0), 0)}}
                 </div>
             </div>
 
@@ -235,7 +235,7 @@
                     class="group-box removed-box-width "
                     v-bind:style="{
                     background: mxBarColors.missing,
-                    width: graphPercents.totalPercent.remainder[0] + graphPercents.totalPercent.remainder[1] + '%'
+                    width: getTotalPercentForGroup('remainder') + '%'
                     }"
                     
                     >
@@ -424,7 +424,27 @@
 
     },
     mounted() {
-
+        console.log('=== TRAIN/TEST BAR DEBUG ===');
+        console.log('graphCounts received:', this.graphCounts);
+        
+        if (this.graphCounts) {
+          console.log('uniqueClasses:', this.graphCounts.uniqueClasses);
+          console.log('total structure:', this.graphCounts.total);
+          console.log('isMultiClass:', this.graphCounts.isMultiClass);
+          
+          // Test accessing data for each class
+          if (this.graphCounts.uniqueClasses) {
+            this.graphCounts.uniqueClasses.forEach(cls => {
+              console.log(`Class ${cls}:`);
+              console.log(`  total.train[${cls}]:`, this.graphCounts.total?.train?.[cls]);
+              console.log(`  total.test[${cls}]:`, this.graphCounts.total?.test?.[cls]);
+              console.log(`  total.remainder[${cls}]:`, this.graphCounts.total?.remainder?.[cls]);
+            });
+          }
+        }
+        console.log('=== END TRAIN/TEST DEBUG ===');
+        
+        // this.change() - removed as this method doesn't exist in this component
     },
 
   
@@ -454,25 +474,11 @@
             
             const groupData = this.graphPercents.totalPercent[groupType];
             
-            if (this.graphCounts.isMultiClass) {
-                // For multi-class, sum all class percentages
-                if (groupType === 'remainder') {
-                    // Remainder is a single number for multi-class
-                    return groupData || 0;
-                } else {
-                    // Sum percentages for all classes
-                    return this.graphCounts.uniqueClasses.reduce((total, cls) => {
-                        return total + (groupData[cls] || 0);
-                    }, 0);
-                }
-            } else {
-                // For binary classification, use the original logic
-                if (groupType === 'remainder') {
-                    return (groupData[0] || 0) + (groupData[1] || 0);
-                } else {
-                    return (groupData[0] || 0) + (groupData[1] || 0);
-                }
-            }
+            // Always use class-based structure for consistency
+            // Sum percentages for all classes using string keys
+            return this.graphCounts.uniqueClasses.reduce((total, cls) => {
+                return total + (groupData[String(cls)] || 0);
+            }, 0);
         }
     }
   

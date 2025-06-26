@@ -154,7 +154,13 @@ def transform_file_validate_target_map(fileObjectArray, target, transform):
     for file in fileObjectArray:
         df = load_file(file['storageId'])
 
-        df[target] = df[target].astype('str').map(transform['data']['map']).astype('int')
+        # Convert to string, map values, but handle NaN properly
+        mapped_series = df[target].astype('str').map(transform['data']['map'])
+        
+        # Convert 'nan' strings back to actual NaN, then convert to float (which can handle NaN)
+        mapped_series = mapped_series.replace('nan', np.nan)
+        df[target] = mapped_series.astype('float')
+        
         #store file and generate file object
         result.append(store_file_and_params(df, file['name'], file['type']))
 

@@ -11,10 +11,10 @@
                 class="group-box data-set-box"
                 v-bind:style="{
                   background: getClassColor(index, true),
-                  width: describe.total.percent[cls] + '%'
+                  width: (describe.total.percent[String(cls)] || 0) + '%'
                   }"
                 >
-                Class {{cls}}: {{mxRoundValue(describe.total.percent[cls])}}%
+                Class {{cls}}: {{mxRoundValue(describe.total.percent[String(cls)] || 0)}}%
             </div>
           </div>
           
@@ -26,11 +26,11 @@
                 class="group-box class-box"
                 v-bind:style="{
                   background: getClassColor(index, false),
-                  width: describe.non_nan.percent[cls] + '%'
+                  width: (describe.total.percent[String(cls)] || 0) + '%'
                   }"
                 >
-                <span v-if="describe.nan.counts[cls] > 0" class="missing-text">
-                  {{describe.nan.percent[cls]}}% ({{describe.nan.counts[cls]}}) missing
+                <span v-if="(describe.nan.counts[String(cls)] || 0) > 0" class="missing-text">
+                  {{describe.nan.percent[String(cls)] || 0}}% ({{describe.nan.counts[String(cls)] || 0}}) missing
                 </span>
                 <span v-else class="missing-text">
                   No missing
@@ -41,7 +41,7 @@
                     class="missing-overlay"
                     v-bind:style="{
                       background: mxBarColors.missing,
-                      width: describe.nan.percent[cls] + '%',
+                      width: (describe.nan.percent[String(cls)] || 0) + '%',
                       opacity: 0.8
                       }"
                     >
@@ -95,9 +95,25 @@
     },
     
     mounted() {
-      console.log('DEBUG: v3miniPrevalenceBar mounted');
-      console.log('DEBUG: describe:', this.describe);
-      console.log('DEBUG: uniqueClasses:', this.uniqueClasses);
+      console.log('=== PREVALENCE BAR DEBUG ===');
+      console.log('describe object:', this.describe);
+      console.log('uniqueClasses:', this.uniqueClasses);
+      
+      if (this.describe) {
+        console.log('total structure:', this.describe.total);
+        console.log('nan structure:', this.describe.nan);
+        console.log('non_nan structure:', this.describe.non_nan);
+        
+        // Test accessing data for each class
+        this.uniqueClasses.forEach(cls => {
+          console.log(`Class ${cls}:`);
+          console.log(`  total.percent[${cls}]:`, this.describe.total?.percent?.[cls]);
+          console.log(`  total.percent["${cls}"]:`, this.describe.total?.percent?.[String(cls)]);
+          console.log(`  nan.counts[${cls}]:`, this.describe.nan?.counts?.[cls]);
+          console.log(`  non_nan.percent[${cls}]:`, this.describe.non_nan?.percent?.[cls]);
+        });
+      }
+      console.log('=== END PREVALENCE DEBUG ===');
     },
     
     methods: {

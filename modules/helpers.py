@@ -130,6 +130,13 @@ def store_file_and_params(df, file_name, file_type):
 def create_binary_map(unique_column_value_list):
     #list(df[column].unique())
     items = unique_column_value_list
+    
+    # Filter out NaN, None, empty string values, and string representations of NaN
+    items = [item for item in items if pd.notna(item) and str(item).strip() != '' and str(item).lower() != 'nan']
+    
+    if not items:  # If no valid items after filtering
+        return {}
+        
     items.sort()
 
     # If already numeric and sequential, use as-is

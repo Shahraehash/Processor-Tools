@@ -9,7 +9,19 @@ from .helpers import load_file, save_file, file_params, int_list_to_string, stor
 
 #LOCAL HELPERS
 
+def normalize_class_key(cls):
+    """Convert any class identifier to a consistent string format"""
+    if isinstance(cls, (float, np.floating)) and cls.is_integer():
+        return str(int(cls))  # 0.0 -> "0"
+    elif isinstance(cls, (int, np.integer)):
+        return str(cls)       # 0 -> "0"
+    else:
+        return str(cls)       # anything else -> string
+
 def sort_values_original_order(df):
+    # Check if the required columns exist before sorting
+    if df.empty or 'origin_file_name' not in df.columns or 'origin_file_source_row' not in df.columns:
+        return df
     return df.sort_values(by=['origin_file_name','origin_file_source_row'])
 
 def fill_in_zeros(dict):
@@ -30,18 +42,48 @@ def counts_to_percent(df):
 def merged_files_describe(df,target):
     describe = {}
     
-    # Get all unique classes in the target column
+    # Debug: Check if target column exists
+    print(f"DEBUG merged_files_describe: Target column: {target}")
+    print(f"DEBUG merged_files_describe: Available columns: {list(df.columns)}")
+    print(f"DEBUG merged_files_describe: Target '{target}' in columns: {target in df.columns}")
+    
+    if target not in df.columns:
+        raise KeyError(f"Target column '{target}' not found in dataframe during describe. Available columns: {list(df.columns)}")
+    
+    # Get all unique classes in the target column, excluding NaN values
     unique_classes = sorted(df[target].dropna().unique())
+    
+    # Ensure we only work with valid (non-NaN) target values for class analysis
+    df_valid_target = df.dropna(subset=[target])
 
-    #counts
-    total_counts = df[target].value_counts()
+    #counts - only count valid target values (excluding NaN in target column)
+    total_counts = df_valid_target[target].value_counts()
     total_df = pd.DataFrame({'counts': total_counts})
     total_df['percent'] = counts_to_percent(total_df)
     total_df.loc['total'] = total_df.sum() #make total row
-    describe['total'] = total_df.to_dict()
+    
+    # Use consistent string keys throughout
+    total_dict = total_df.to_dict()
+    
+    # Convert all class keys to consistent string format
+    for key in ['counts', 'percent']:
+        new_dict = {}
+        # First copy the 'total' key if it exists
+        if 'total' in total_dict[key]:
+            new_dict['total'] = total_dict[key]['total']
+        
+        # Convert all class keys to strings using normalize_class_key
+        for cls in unique_classes:
+            if cls in total_dict[key]:
+                cls_key = normalize_class_key(cls)
+                new_dict[cls_key] = total_dict[key][cls]
+        
+        total_dict[key] = new_dict
+    
+    describe['total'] = total_dict
 
-    #nan values
-    nan_rows = df[df.isna().any(axis=1)]
+    #nan values - only consider rows where target is valid but other columns have NaN
+    nan_rows = df[df.drop(columns=[target]).isna().any(axis=1) & df[target].notna()]
     if not nan_rows.empty:
         nan_counts = nan_rows[target].value_counts()
     else:
@@ -63,7 +105,26 @@ def merged_files_describe(df,target):
         nan_df['percent'] = 0
 
     nan_df.loc['total'] = nan_df.sum() #make total row
-    describe['nan'] = nan_df.to_dict()
+    
+    # Use consistent string keys throughout
+    nan_dict = nan_df.to_dict()
+    
+    # Convert all class keys to consistent string format
+    for key in ['counts', 'percent']:
+        new_dict = {}
+        # First copy the 'total' key if it exists
+        if 'total' in nan_dict[key]:
+            new_dict['total'] = nan_dict[key]['total']
+        
+        # Convert all class keys to strings using normalize_class_key
+        for cls in unique_classes:
+            if cls in nan_dict[key]:
+                cls_key = normalize_class_key(cls)
+                new_dict[cls_key] = nan_dict[key][cls]
+        
+        nan_dict[key] = new_dict
+    
+    describe['nan'] = nan_dict
 
     #normal values
     non_nan_rows = df[~df.isna().any(axis=1)]
@@ -87,18 +148,52 @@ def merged_files_describe(df,target):
         non_nan_df['percent'] = 0
 
     non_nan_df.loc['total'] = non_nan_df.sum() #make total row
-    describe['non_nan'] = non_nan_df.to_dict()
+    
+    # Use consistent string keys throughout
+    non_nan_dict = non_nan_df.to_dict()
+    
+    # Convert all class keys to consistent string format
+    for key in ['counts', 'percent']:
+        new_dict = {}
+        # First copy the 'total' key if it exists
+        if 'total' in non_nan_dict[key]:
+            new_dict['total'] = non_nan_dict[key]['total']
+        
+        # Convert all class keys to strings using normalize_class_key
+        for cls in unique_classes:
+            if cls in non_nan_dict[key]:
+                cls_key = normalize_class_key(cls)
+                new_dict[cls_key] = non_nan_dict[key][cls]
+        
+        non_nan_dict[key] = new_dict
+    
+    describe['non_nan'] = non_nan_dict
 
-    # For multi-class, identify majority and minority classes
-    class_counts = df[target].value_counts()
+    # For multi-class, identify majority and minority classes (only from valid target values)
+    class_counts = df_valid_target[target].value_counts()
     major = class_counts.idxmax()
     minor = class_counts.idxmin()
 
     # Store all unique classes for multi-class support (convert to regular Python types for JSON serialization)
-    describe['unique_classes'] = [int(cls) if isinstance(cls, (int, np.integer)) else cls for cls in unique_classes]
+    # Convert float classes to integers for consistency
+    describe['unique_classes'] = []
+    for cls in unique_classes:
+        if isinstance(cls, (float, np.floating)) and cls.is_integer():
+            describe['unique_classes'].append(int(cls))
+        elif isinstance(cls, (int, np.integer)):
+            describe['unique_classes'].append(int(cls))
+        else:
+            describe['unique_classes'].append(cls)
     describe['num_classes'] = len(unique_classes)
     describe['major'] = int(major) if isinstance(major, (int, np.integer)) else major
     describe['minor'] = int(minor) if isinstance(minor, (int, np.integer)) else minor
+
+    print("=== BACKEND DESCRIBE DEBUG ===")
+    print(f"unique_classes: {describe['unique_classes']}")
+    print(f"total structure: {describe['total']}")
+    print(f"nan structure: {describe['nan']}")
+    print(f"non_nan structure: {describe['non_nan']}")
+    print("=== END BACKEND DEBUG ===")
 
     return describe
 
@@ -148,7 +243,10 @@ def apply_prevalence_adjustment(result, describe_obj, unique_classes, total_reco
             
             result['test']['counts'][cls_str] = max(0, target_count)
             if excess > 0:
-                result['remainder']['counts'] += excess
+                # Always use class-specific remainder structure
+                if cls_str not in result['remainder']['counts']:
+                    result['remainder']['counts'][cls_str] = 0
+                result['remainder']['counts'][cls_str] += excess
     
     return result
 
@@ -160,15 +258,20 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
         # Fallback to major/minor for legacy support
         unique_classes = [describe_obj['major'], describe_obj['minor']]
     
-    # Initialize result structure
+    # Initialize result structure with consistent class-based remainder
     result = {
         'train': {'counts': {}, 'percent': {}},
         'test': {'counts': {}, 'percent': {}},
-        'remainder': {'counts': 0, 'percent': 0},
+        'remainder': {'counts': {}, 'percent': {}},
         'missing_values_option': missing_values_option,
         'prevelence_option': prevelence_option,
         'unique_classes': unique_classes
     }
+    
+    # Initialize remainder counts for each class
+    for cls in unique_classes:
+        cls_str = str(cls)
+        result['remainder']['counts'][cls_str] = 0
     
     # Add legacy fields for backward compatibility
     if len(unique_classes) >= 2:
@@ -210,8 +313,8 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
         # Set initial test allocation
         result['test']['counts'][cls_str] = available_for_test
         
-        # Add missing values to remainder
-        result['remainder']['counts'] += remainder_from_missing
+        # Add missing values to remainder (class-specific)
+        result['remainder']['counts'][cls_str] += remainder_from_missing
     
     # Apply prevalence adjustment if requested
     if prevelence_option == 1:
@@ -223,14 +326,11 @@ def merge_files_segments(describe_obj, training_class_size, missing_values_optio
         if total_records > 0:
             result['train']['percent'][cls_str] = round((result['train']['counts'][cls_str] / total_records) * 100, 1)
             result['test']['percent'][cls_str] = round((result['test']['counts'][cls_str] / total_records) * 100, 1)
+            result['remainder']['percent'][cls_str] = round((result['remainder']['counts'][cls_str] / total_records) * 100, 1)
         else:
             result['train']['percent'][cls_str] = 0
             result['test']['percent'][cls_str] = 0
-    
-    if total_records > 0:
-        result['remainder']['percent'] = round((result['remainder']['counts'] / total_records) * 100, 1)
-    else:
-        result['remainder']['percent'] = 0
+            result['remainder']['percent'][cls_str] = 0
     
     return result
 
@@ -308,6 +408,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     removed__file_name = 'removed_values.csv'
     imputed_file_name = 'imputed_values.csv'
 
+    print(f"DEBUG: Starting transform_train_test_split_impute with target: {target}")
 
     groups = {
         'train': [],
@@ -323,6 +424,9 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     for file in fileObjectArray:
 
         df = load_file(file['storageId'])   
+        
+        print(f"DEBUG: Loaded file {file['name']} with columns: {list(df.columns)}")
+        print(f"DEBUG: Target '{target}' in columns: {target in df.columns}")
 
         #track original index
         df['origin_file_name'] = file['name']
@@ -336,6 +440,11 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     for group in groups:
         if len(groups[group]) > 0:
             df = pd.concat(groups[group])
+            
+            print(f"DEBUG: After concatenating {group} files:")
+            print(f"DEBUG: Columns: {list(df.columns)}")
+            print(f"DEBUG: Target '{target}' in concatenated dataframe: {target in df.columns}")
+            print(f"DEBUG: DataFrame shape: {df.shape}")
 
             df_groups[group] = df
     
@@ -509,78 +618,110 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
                 df_classes[cls] = df_classes[cls].drop(df_nan_classes[cls].index)
                 print(f'class {cls}', df_classes[cls].shape)
 
+            # CORRECT LOGIC: First sample test data (only from complete data), then training data
+            test_counts = t['finalValues']['total']['test']
+            test_arrays = []
+            
+            # Step 1: Sample test data first (only from complete non-NaN data)
+            for cls in unique_classes:
+                # Use consistent string key normalization
+                cls_key = normalize_class_key(cls)
+                test_count = test_counts.get(cls_key, 0)
+                
+                print(f"DEBUG: Class {cls} test sampling:")
+                print(f"  - normalized key: {cls_key}")
+                print(f"  - test_counts keys: {list(test_counts.keys())}")
+                print(f"  - requested test samples: {test_count}")
+                print(f"  - available complete samples: {len(df_classes[cls])}")
+                
+                if test_count > 0 and len(df_classes[cls]) >= test_count:
+                    df_testing_class = df_classes[cls].sample(test_count, replace=False)
+                    test_arrays.append(df_testing_class)
+                    df_classes[cls].drop(df_testing_class.index, inplace=True)
+                    print(f"  - sampled {test_count} test samples")
+                elif test_count > 0 and len(df_classes[cls]) > 0:
+                    test_arrays.append(df_classes[cls])
+                    df_classes[cls] = df_classes[cls].iloc[0:0]
+                    print(f"  - sampled all remaining {len(df_classes[cls])} samples")
+                else:
+                    print(f"  - no samples available for testing")
+
             train_arrays = []
 
-            # Process each class dynamically
+            # Step 2: Sample training data from remaining complete data + NaN data for imputation
             for cls in unique_classes:
-                cls_str = str(cls)  # Convert to string for JSON key access
+                # Use consistent string key normalization
+                cls_key = normalize_class_key(cls)
                 
                 # Get counts from frontend calculations
-                train_imputed_count = t['finalValues']['imputed']['train'].get(cls_str, 0)
-                train_total_count = t['finalValues']['total']['train'].get(cls_str, 0)
+                train_imputed_count = t['finalValues']['imputed']['train'].get(cls_key, 0)
+                train_total_count = t['finalValues']['total']['train'].get(cls_key, 0)
                 train_nonimputed_count = train_total_count - train_imputed_count
                 
-                #sample training data minus missing values
-                if train_nonimputed_count > 0 and len(df_classes[cls]) >= train_nonimputed_count:
-                    df_training_class = df_classes[cls].sample(train_nonimputed_count, replace=False)
+                print(f"DEBUG: Class {cls} training sampling:")
+                print(f"  - train_total_count: {train_total_count}")
+                print(f"  - train_imputed_count: {train_imputed_count}")
+                print(f"  - train_nonimputed_count: {train_nonimputed_count}")
+                print(f"  - available non-NaN samples after test: {len(df_classes[cls])}")
+                print(f"  - available NaN samples: {len(df_nan_classes[cls])}")
+                
+                # Safety check: if frontend provides no training allocation, use default sampling
+                if train_total_count == 0:
+                    print(f"  - WARNING: Frontend provided 0 training samples for class {cls}, using fallback sampling")
+                    # Use remaining data for training
+                    fallback_nonimputed = len(df_classes[cls])
+                    fallback_imputed = len(df_nan_classes[cls])
+                    
+                    actual_nonimputed_count = fallback_nonimputed
+                    actual_imputed_count = fallback_imputed
+                    
+                    print(f"  - fallback: {actual_nonimputed_count} non-imputed + {actual_imputed_count} imputed = {actual_nonimputed_count + actual_imputed_count} total")
+                else:
+                    #sample training data minus missing values
+                    actual_nonimputed_count = min(train_nonimputed_count, len(df_classes[cls]))
+                    # Sample imputed training data
+                    actual_imputed_count = min(train_imputed_count, len(df_nan_classes[cls]))
+                
+                if actual_nonimputed_count > 0:
+                    df_training_class = df_classes[cls].sample(actual_nonimputed_count, replace=False)
                     df_classes[cls].drop(df_training_class.index, inplace=True)
                     train_arrays.append(df_training_class)
-                elif train_nonimputed_count > 0:
-                    if len(df_classes[cls]) > 0:
-                        train_arrays.append(df_classes[cls])
-                        df_classes[cls] = df_classes[cls].iloc[0:0]  # Empty the dataframe
+                    print(f"  - sampled {actual_nonimputed_count} non-imputed samples")
                 
-                # Sample imputed training data
-                if train_imputed_count > 0 and len(df_nan_classes[cls]) >= train_imputed_count:
-                    df_train_impute = df_nan_classes[cls].sample(train_imputed_count, replace=False)
+                if actual_imputed_count > 0:
+                    df_train_impute = df_nan_classes[cls].sample(actual_imputed_count, replace=False)
                     df_nan_classes[cls].drop(df_train_impute.index, inplace=True)
                     train_arrays.append(df_train_impute)
-                elif train_imputed_count > 0:
-                    if len(df_nan_classes[cls]) > 0:
-                        train_arrays.append(df_nan_classes[cls])
-                        df_nan_classes[cls] = df_nan_classes[cls].iloc[0:0]  # Empty the dataframe
+                    print(f"  - sampled {actual_imputed_count} imputed samples")
 
             # Safe concatenation to avoid axis=0 error with empty DataFrames
             non_empty_train_arrays = [df for df in train_arrays if not df.empty]
             df_train = pd.concat(non_empty_train_arrays) if non_empty_train_arrays else pd.DataFrame()
 
-            df_train, df_imputed = impute_processor(df_train, target)
+            print(f"DEBUG: Final training dataframe before imputation:")
+            print(f"  - Shape: {df_train.shape}")
+            print(f"  - Columns: {list(df_train.columns) if not df_train.empty else 'EMPTY'}")
+            print(f"  - Target column present: {target in df_train.columns if not df_train.empty else 'N/A'}")
+
+            # Safety check: only call impute_processor if we have data
+            if not df_train.empty and target in df_train.columns:
+                df_train, df_imputed = impute_processor(df_train, target)
+            else:
+                print(f"WARNING: Empty training dataframe or missing target column, skipping imputation")
+                df_imputed = pd.DataFrame()
 
             #remove any additional unused nan values for all classes
             for cls in unique_classes:
                 array_df_removed.append(df_nan_classes[cls])
 
 
-        #testing prevalance already set in front end, no further math needed based on settings
-        test_counts = t['finalValues']['total']['test']
-
-        #sample testing data with safety checks for all classes
-        #must use string as key since passed as JSON
-        test_arrays = []
-        
-        # Safe sampling for all classes
-        for cls in unique_classes:
-            cls_str = str(cls)  # Convert to string for JSON key access
-            test_count = test_counts.get(cls_str, 0)
-            
-            if test_count > 0 and len(df_classes[cls]) >= test_count:
-                df_testing_class = df_classes[cls].sample(test_count, replace=False)
-                test_arrays.append(df_testing_class)
-                #remove testing data from pool
-                df_classes[cls].drop(df_testing_class.index, inplace=True)
-            elif test_count > 0 and len(df_classes[cls]) > 0:
-                test_arrays.append(df_classes[cls])
-                df_classes[cls] = df_classes[cls].iloc[0:0]  # Empty the dataframe
-            
+        # Combine testing data (already sampled above)
+        non_empty_test_arrays = [df for df in test_arrays if not df.empty]
+        df_test = pd.concat(non_empty_test_arrays) if non_empty_test_arrays else pd.DataFrame()
 
         #put remaining data in removed
         for cls in unique_classes:
             array_df_removed.append(df_classes[cls])
-
-
-        #combine testing data
-        non_empty_test_arrays = [df for df in test_arrays if not df.empty]
-        df_test = pd.concat(non_empty_test_arrays) if non_empty_test_arrays else pd.DataFrame()
 
         #combined removed
         non_empty_removed_arrays = [df for df in array_df_removed if not df.empty]
@@ -620,6 +761,15 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
 def impute_processor(df, target):
         imp_mean = IterativeImputer(random_state=0)
+        
+        # Debug: Check if target column exists
+        print(f"DEBUG: Target column: {target}")
+        print(f"DEBUG: Available columns: {list(df.columns)}")
+        print(f"DEBUG: DataFrame shape: {df.shape}")
+        
+        if target not in df.columns:
+            raise KeyError(f"Target column '{target}' not found in dataframe. Available columns: {list(df.columns)}")
+        
         X = df.drop(columns=[target])
         y = df[target]
 

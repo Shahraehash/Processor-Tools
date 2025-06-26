@@ -106,18 +106,42 @@ export default {
     },
     computed: {
         onlyAllowImpute() {
-            return this.combinedFile.describe.non_nan.counts[this.combinedFile.describe.minor] < 50
+            // For multi-class, check the minimum class size across all classes
+            const uniqueClasses = this.combinedFile.describe.unique_classes || [0, 1];
+            let minClassSize = Infinity;
+            
+            uniqueClasses.forEach(cls => {
+                const clsKey = String(cls);
+                const classSize = this.combinedFile.describe.non_nan.counts[clsKey] || 0;
+                if (classSize < minClassSize) {
+                    minClassSize = classSize;
+                }
+            });
+            
+            return minClassSize < 50;
         },
         maxTrainingSize() {
-            if (this.missingValuesOption == 0) {
-                return this.combinedFile.describe.non_nan.counts[this.combinedFile.describe.minor] - 25
-            }
-            else if (this.missingValuesOption == 1) {
-                return this.combinedFile.describe.total.counts[this.combinedFile.describe.minor] - 25
-            }
-            else {
-                return 25
-            }
+            // For multi-class, find the minimum class size to determine max training size
+            const uniqueClasses = this.combinedFile.describe.unique_classes || [0, 1];
+            let minClassSize = Infinity;
+            
+            uniqueClasses.forEach(cls => {
+                const clsKey = String(cls);
+                let classSize;
+                if (this.missingValuesOption == 0) {
+                    classSize = this.combinedFile.describe.non_nan.counts[clsKey] || 0;
+                } else if (this.missingValuesOption == 1) {
+                    classSize = this.combinedFile.describe.total.counts[clsKey] || 0;
+                } else {
+                    classSize = 25;
+                }
+                
+                if (classSize < minClassSize) {
+                    minClassSize = classSize;
+                }
+            });
+            
+            return Math.max(25, minClassSize - 25);
         },
         minTrainingSize() {
             return 25
@@ -130,10 +154,25 @@ export default {
         imputeAvailable() {
             // Check if any class has missing values (multi-class support)
             const uniqueClasses = this.combinedFile.describe.unique_classes || [0, 1];
-            return uniqueClasses.some(cls => this.combinedFile.describe.nan.counts[cls] > 0);
+            return uniqueClasses.some(cls => {
+                const clsKey = String(cls);
+                return this.combinedFile.describe.nan.counts[clsKey] > 0;
+            });
         },
         maxTraining() {
-            return this.combinedFile.describe.non_nan.counts[this.combinedFile.describe.minor] - 25
+            // For multi-class, find the minimum class size to determine max training
+            const uniqueClasses = this.combinedFile.describe.unique_classes || [0, 1];
+            let minClassSize = Infinity;
+            
+            uniqueClasses.forEach(cls => {
+                const clsKey = String(cls);
+                const classSize = this.combinedFile.describe.non_nan.counts[clsKey] || 0;
+                if (classSize < minClassSize) {
+                    minClassSize = classSize;
+                }
+            });
+            
+            return Math.max(25, minClassSize - 25);
         },
 
         graphCounts() {
@@ -148,7 +187,7 @@ export default {
                 let total = {
                     train: {},
                     test: {},
-                    remainder: isMultiClass ? 0 : {} // For multi-class, remainder is a single number
+                    remainder: {} // Always use object with class keys for consistency
                 }
 
                 let missing = {
@@ -161,62 +200,53 @@ export default {
                     test: {}
                 }
 
-                // Initialize data for each class
+                // Initialize data for each class (including remainder) - use consistent string keys
                 uniqueClasses.forEach(cls => {
-                    total.train[cls] = trainclassSize;
-                    total.test[cls] = 0;
-                    if (!isMultiClass) {
-                        total.remainder[cls] = 0;
-                    }
-                    missing.train[cls] = 0;
-                    missing.test[cls] = 0;
-                    imputed.train[cls] = 0;
-                    imputed.test[cls] = 0;
+                    const clsKey = String(cls);
+                    total.train[clsKey] = trainclassSize;
+                    total.test[clsKey] = 0;
+                    total.remainder[clsKey] = 0; // Always initialize remainder with class keys
+                    missing.train[clsKey] = 0;
+                    missing.test[clsKey] = 0;
+                    imputed.train[clsKey] = 0;
+                    imputed.test[clsKey] = 0;
                 });
-
-                let totalRemainder = 0;
 
                 //Removing missing values
                 if (this.missingValuesOption == 0) {
                     uniqueClasses.forEach(cls => {
-                        imputed.train[cls] = 0;
-                        const missingCount = this.combinedFile.describe.nan.counts[cls] || 0;
-                        totalRemainder += missingCount;
-                        if (!isMultiClass) {
-                            total.remainder[cls] += missingCount;
-                        }
+                        const clsKey = String(cls);
+                        imputed.train[clsKey] = 0;
+                        const missingCount = this.combinedFile.describe.nan.counts[clsKey] || 0;
+                        total.remainder[clsKey] += missingCount;
                     });
                 }
 
                 //Imputing missing values
                 else if (this.missingValuesOption == 1) {
                     uniqueClasses.forEach(cls => {
-                        const missingCount = this.combinedFile.describe.nan.counts[cls] || 0;
+                        const clsKey = String(cls);
+                        const missingCount = this.combinedFile.describe.nan.counts[clsKey] || 0;
                         if (trainclassSize >= missingCount) {
-                            imputed.train[cls] = missingCount;
+                            imputed.train[clsKey] = missingCount;
                         } else {
-                            imputed.train[cls] = trainclassSize;
+                            imputed.train[clsKey] = trainclassSize;
                             const remainder = missingCount - trainclassSize;
-                            totalRemainder += remainder;
-                            if (!isMultiClass) {
-                                total.remainder[cls] += remainder;
-                            }
+                            total.remainder[clsKey] += remainder;
                         }
                     });
                 }
 
                 // Calculate test allocation for each class
                 uniqueClasses.forEach(cls => {
-                    const nonNanCount = this.combinedFile.describe.non_nan.counts[cls] || 0;
-                    const testCount = nonNanCount - (trainclassSize - imputed.train[cls]);
-                    total.test[cls] = Math.max(0, testCount);
+                    const clsKey = String(cls);
+                    const nonNanCount = this.combinedFile.describe.non_nan.counts[clsKey] || 0;
+                    const testCount = nonNanCount - (trainclassSize - imputed.train[clsKey]);
+                    total.test[clsKey] = Math.max(0, testCount);
                     
                     // Add any excess to remainder
                     if (testCount < 0) {
-                        totalRemainder += Math.abs(testCount);
-                        if (!isMultiClass) {
-                            total.remainder[cls] += Math.abs(testCount);
-                        }
+                        total.remainder[clsKey] += Math.abs(testCount);
                     }
                 });
 
@@ -227,14 +257,16 @@ export default {
                     const originalPrevalences = {};
                     
                     uniqueClasses.forEach(cls => {
-                        originalPrevalences[cls] = this.combinedFile.describe.total.counts[cls] / totalOriginal;
+                        const clsKey = String(cls);
+                        originalPrevalences[clsKey] = this.combinedFile.describe.total.counts[clsKey] / totalOriginal;
                     });
                     
                     // Find the limiting factor (class that constrains the total)
                     let limitingFactor = Infinity;
                     uniqueClasses.forEach(cls => {
-                        if (originalPrevalences[cls] > 0 && total.test[cls] > 0) {
-                            const factor = total.test[cls] / originalPrevalences[cls];
+                        const clsKey = String(cls);
+                        if (originalPrevalences[clsKey] > 0 && total.test[clsKey] > 0) {
+                            const factor = total.test[clsKey] / originalPrevalences[clsKey];
                             if (factor < limitingFactor) {
                                 limitingFactor = factor;
                             }
@@ -244,30 +276,20 @@ export default {
                     // Adjust test allocation for each class based on prevalence
                     if (limitingFactor !== Infinity && limitingFactor > 0) {
                         uniqueClasses.forEach(cls => {
-                            const targetCount = Math.round(limitingFactor * originalPrevalences[cls]);
-                            const excess = total.test[cls] - targetCount;
+                            const clsKey = String(cls);
+                            const targetCount = Math.round(limitingFactor * originalPrevalences[clsKey]);
+                            const excess = total.test[clsKey] - targetCount;
                             
-                            total.test[cls] = Math.max(0, targetCount);
+                            total.test[clsKey] = Math.max(0, targetCount);
                             
-                            // Add excess to remainder
+                            // Add excess to remainder (always use class-specific structure)
                             if (excess > 0) {
-                                totalRemainder += excess;
-                                if (!isMultiClass) {
-                                    total.remainder[cls] += excess;
-                                }
+                                total.remainder[clsKey] += excess;
                             }
                         });
                     }
                 }
 
-                // Set remainder for multi-class
-                if (isMultiClass) {
-                    total.remainder = totalRemainder;
-                }
-
-                console.log('DEBUG FRONTEND: uniqueClasses:', uniqueClasses);
-                console.log('DEBUG FRONTEND: isMultiClass:', isMultiClass);
-                console.log('DEBUG FRONTEND: total structure:', total);
                 
                 return {totalDenominator, total, missing, imputed, uniqueClasses, isMultiClass}
             }        
@@ -286,11 +308,6 @@ export default {
         
     },
     mounted() {
-        console.log('DEBUG: v3miniTrainTestSingleFileImpute mounted');
-        console.log('DEBUG: combinedFile:', this.combinedFile);
-        console.log('DEBUG: combinedFile.describe:', this.combinedFile?.describe);
-        console.log('DEBUG: unique_classes:', this.combinedFile?.describe?.unique_classes);
-        
         if (this.onlyAllowImpute) {
             this.missingValuesOption = 1
         }

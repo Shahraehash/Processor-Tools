@@ -17,9 +17,6 @@ def analyze_encode_nonnumeric(fileObjectArray, target):
 
     df = pd.concat(df_array)
 
-    print(df.shape)
-
-
     valid_data_types = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64', 'bool']
 
     valid = df.select_dtypes(include=valid_data_types)
@@ -60,11 +57,7 @@ def analyze_encode_nonnumeric(fileObjectArray, target):
 
         else:
             list_length = len(list(col.unique()))
-
-            print()
             if list_length == 1:
-
-
                 t = {
                     'name': column,
                     'method': 'drop_single',
@@ -145,7 +138,6 @@ def transform_encode_nonnumeric(fileObjectArray, target, transform):
 
 
         if column['selection'] == 'mixed_to_numeric':
-            print(column['name'])
             df[column['name']] = local_transform_mixed_to_numeric(df[column['name']])
 
         #ADD LATER
@@ -172,7 +164,17 @@ def transform_encode_nonnumeric(fileObjectArray, target, transform):
 
         elif column['selection'] == 'binary_encode':
              #the valueMap property is created on the backend when two unique values exist and maniplated on front end
-            df[column['name']] = df[column['name']].astype('str').map(column['valueMap']).astype('int')
+            # Special handling for target column to preserve NaN values
+            if column['name'] == target:
+                # Convert to string but preserve NaN
+                series_for_mapping = df[column['name']].astype('str')
+                # Map values, but convert 'nan' back to actual NaN
+                mapped_series = series_for_mapping.map(column['valueMap'])
+                # Convert 'nan' strings back to actual NaN
+                mapped_series = mapped_series.replace('nan', np.nan)
+                df[column['name']] = mapped_series.astype('float')
+            else:
+                df[column['name']] = df[column['name']].astype('str').map(column['valueMap']).astype('float')
 
         #ensure target remains at end of file
 

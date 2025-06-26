@@ -41,7 +41,7 @@
                     @change="change"
                     >
                     <v-radio label="Use all data" :value="0"></v-radio>
-                    <v-radio label="Match original file prevelence" :value="1"></v-radio>
+                    <v-radio label="Match original file prevalence" :value="1"></v-radio>
                 </v-radio-group>
             </v-col>                      
         </v-row>    

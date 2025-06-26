@@ -9,7 +9,7 @@
         :stepTitle="stepTitle"
       />
       <div>
-        <p>Click below to selected columns or paste a comma seperated list of columns to be outputted. <br /> You can also <a @click="$refs.MiloFileUploadDialog.open()">import from a MILO results "report.csv" file</a>.</p>
+        <p>Click below to selected columns or paste a comma separated list of columns to be outputted. <br /> You can also <a @click="$refs.MiloFileUploadDialog.open()">import from a MILO results "report.csv" file</a>.</p>
         <v-layout class="ma-5">
           <v-row wrap>
             <v-col cols="12">

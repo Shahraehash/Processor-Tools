@@ -35,7 +35,7 @@
                                 <div v-if="column.method == 'one_hot_encode'">
                                     The data in this column is <strong class="light-blue--text">categorical</strong> with the {{column.unique_values.length}} unique values: 
                                     <v-chip color="light-blue" dark small v-for="(cat, catKey) in column.unique_values" :key="catKey">{{cat}}</v-chip>. 
-                                    <br>We can either convert each category to a seperate column or remove the column from the dataset. 
+                                    <br>We can either convert each category to a separate column or remove the column from the dataset.
                                     <!-- Message if >20 categories, the drop mode is set on the backend method analyze_encode_nonnumeric -->
                                     <v-alert type="warning" text v-if="column.unique_values.length > 20">With so many categories, the increase in column number may adversely affect your dataset and we recommend you drop the column</v-alert>
                                 </div>
@@ -43,7 +43,7 @@
                                 <div v-if="column.method == 'one_hot_encode_binary'">
                                     The data in this column is <strong class="light-blue--text">categorical vs. binary</strong> with the {{column.unique_values.length}} unique values: 
                                     <v-chip color="light-blue" dark small v-for="(cat, catKey) in column.unique_values" :key="catKey">{{cat}}</v-chip>. 
-                                    <br>We can convert each category to a seperate column, treat it as a binary representation in a single column, or remove the column from the dataset. 
+                                    <br>We can convert each category to a separate column, treat it as a binary representation in a single column, or remove the column from the dataset.
                                                                     
                     
                                     

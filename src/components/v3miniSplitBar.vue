@@ -10,19 +10,19 @@
                             v-model="missingValuesOption"
                             >
                             <v-radio label="Remove missing values" :value="0"></v-radio>
-                            <v-radio label="Keep missing values in training and impute values - note: imputation cannot be used on generlization data as it compromises the validity of the generalization" :value="1"></v-radio>
+                            <v-radio label="Keep missing values in training and impute values - note: imputation cannot be used on generalization data as it compromises the validity of the generalization" :value="1"></v-radio>
                         </v-radio-group>
                     </v-col>
 
                     <v-col cols="4">
-                        <div class="overline">Handle Prevlence in Generalization Set</div>
+                        <div class="overline">Handle Prevalence in Generalization Set</div>
                         <v-radio-group
                             @change="change"
                             v-model="prevalenceOption"
                             
                             >
                             <v-radio label="Use All Available Data" :value="0"></v-radio>
-                            <v-radio label="Maintain Original Data Prevelence" :value="1"></v-radio>
+                            <v-radio label="Maintain Original Data Prevalence" :value="1"></v-radio>
                         </v-radio-group>
                     </v-col>                
                     <v-col cols="12">
@@ -208,4 +208,3 @@
   
   }
   </script>
-  
