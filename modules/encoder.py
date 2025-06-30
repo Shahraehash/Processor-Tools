@@ -131,7 +131,7 @@ def apply_column_transforms(dataframe, columns_to_remove, transforms, target, ta
     try:
         df[target] = df[target].astype('str').map(target_map).astype('int')
     except:
-        print('ERROR APPLYING TARGET MAP')
+        pass
 
     #ensure target remains at end of file
     col_list = list(df.columns)
@@ -430,7 +430,6 @@ def encoder_store():
             file['params'] = file_params(df)
 
         except Exception as e:
-            print(e)
             file['validFile'] = False
 
     pipeline = {
@@ -445,5 +444,4 @@ def encoder_store():
     )
     response.headers["Content-Type"] = "application/json"
 
-    return response    
-
+    return response

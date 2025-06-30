@@ -42,11 +42,6 @@ def counts_to_percent(df):
 def merged_files_describe(df,target):
     describe = {}
     
-    # Debug: Check if target column exists
-    print(f"DEBUG merged_files_describe: Target column: {target}")
-    print(f"DEBUG merged_files_describe: Available columns: {list(df.columns)}")
-    print(f"DEBUG merged_files_describe: Target '{target}' in columns: {target in df.columns}")
-    
     if target not in df.columns:
         raise KeyError(f"Target column '{target}' not found in dataframe during describe. Available columns: {list(df.columns)}")
     
@@ -187,13 +182,6 @@ def merged_files_describe(df,target):
     describe['num_classes'] = len(unique_classes)
     describe['major'] = int(major) if isinstance(major, (int, np.integer)) else major
     describe['minor'] = int(minor) if isinstance(minor, (int, np.integer)) else minor
-
-    print("=== BACKEND DESCRIBE DEBUG ===")
-    print(f"unique_classes: {describe['unique_classes']}")
-    print(f"total structure: {describe['total']}")
-    print(f"nan structure: {describe['nan']}")
-    print(f"non_nan structure: {describe['non_nan']}")
-    print("=== END BACKEND DEBUG ===")
 
     return describe
 
@@ -408,8 +396,6 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     removed__file_name = 'removed_values.csv'
     imputed_file_name = 'imputed_values.csv'
 
-    print(f"DEBUG: Starting transform_train_test_split_impute with target: {target}")
-
     groups = {
         'train': [],
         'test': [],
@@ -425,9 +411,6 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
         df = load_file(file['storageId'])   
         
-        print(f"DEBUG: Loaded file {file['name']} with columns: {list(df.columns)}")
-        print(f"DEBUG: Target '{target}' in columns: {target in df.columns}")
-
         #track original index
         df['origin_file_name'] = file['name']
         df['origin_file_source_row'] = df.index
@@ -440,12 +423,6 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     for group in groups:
         if len(groups[group]) > 0:
             df = pd.concat(groups[group])
-            
-            print(f"DEBUG: After concatenating {group} files:")
-            print(f"DEBUG: Columns: {list(df.columns)}")
-            print(f"DEBUG: Target '{target}' in concatenated dataframe: {target in df.columns}")
-            print(f"DEBUG: DataFrame shape: {df.shape}")
-
             df_groups[group] = df
     
     
@@ -494,7 +471,6 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
                         class_subset = df_train[df_train[target] == key]
                         if len(class_subset) >= samples_to_drop:
                             temp_drop = class_subset.sample(samples_to_drop, replace=False)
-                            print(temp_drop.shape)
                             df_train.drop(temp_drop.index, inplace=True)
                             array_df_removed.append(temp_drop)
                         else:
@@ -521,7 +497,6 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
                         class_subset = df_test[df_test[target] == key]
                         if len(class_subset) >= samples_to_drop:
                             temp_drop = class_subset.sample(samples_to_drop, replace=False)
-                            print(temp_drop.shape)
                             df_test.drop(temp_drop.index, inplace=True)
                             array_df_removed.append(temp_drop)
                         else:
@@ -610,13 +585,9 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         #if impute missing value rows
         #TODO handle case if missing values > training class size
         elif missing_value_setting == 1:
-            
-            print(t)
-
             #remove missing values from non-nan data for all classes
             for cls in unique_classes:
                 df_classes[cls] = df_classes[cls].drop(df_nan_classes[cls].index)
-                print(f'class {cls}', df_classes[cls].shape)
 
             # CORRECT LOGIC: First sample test data (only from complete data), then training data
             test_counts = t['finalValues']['total']['test']
@@ -628,23 +599,13 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
                 cls_key = normalize_class_key(cls)
                 test_count = test_counts.get(cls_key, 0)
                 
-                print(f"DEBUG: Class {cls} test sampling:")
-                print(f"  - normalized key: {cls_key}")
-                print(f"  - test_counts keys: {list(test_counts.keys())}")
-                print(f"  - requested test samples: {test_count}")
-                print(f"  - available complete samples: {len(df_classes[cls])}")
-                
                 if test_count > 0 and len(df_classes[cls]) >= test_count:
                     df_testing_class = df_classes[cls].sample(test_count, replace=False)
                     test_arrays.append(df_testing_class)
                     df_classes[cls].drop(df_testing_class.index, inplace=True)
-                    print(f"  - sampled {test_count} test samples")
                 elif test_count > 0 and len(df_classes[cls]) > 0:
                     test_arrays.append(df_classes[cls])
                     df_classes[cls] = df_classes[cls].iloc[0:0]
-                    print(f"  - sampled all remaining {len(df_classes[cls])} samples")
-                else:
-                    print(f"  - no samples available for testing")
 
             train_arrays = []
 
@@ -658,24 +619,11 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
                 train_total_count = t['finalValues']['total']['train'].get(cls_key, 0)
                 train_nonimputed_count = train_total_count - train_imputed_count
                 
-                print(f"DEBUG: Class {cls} training sampling:")
-                print(f"  - train_total_count: {train_total_count}")
-                print(f"  - train_imputed_count: {train_imputed_count}")
-                print(f"  - train_nonimputed_count: {train_nonimputed_count}")
-                print(f"  - available non-NaN samples after test: {len(df_classes[cls])}")
-                print(f"  - available NaN samples: {len(df_nan_classes[cls])}")
-                
                 # Safety check: if frontend provides no training allocation, use default sampling
                 if train_total_count == 0:
-                    print(f"  - WARNING: Frontend provided 0 training samples for class {cls}, using fallback sampling")
                     # Use remaining data for training
-                    fallback_nonimputed = len(df_classes[cls])
-                    fallback_imputed = len(df_nan_classes[cls])
-                    
-                    actual_nonimputed_count = fallback_nonimputed
-                    actual_imputed_count = fallback_imputed
-                    
-                    print(f"  - fallback: {actual_nonimputed_count} non-imputed + {actual_imputed_count} imputed = {actual_nonimputed_count + actual_imputed_count} total")
+                    actual_nonimputed_count = len(df_classes[cls])
+                    actual_imputed_count = len(df_nan_classes[cls])
                 else:
                     #sample training data minus missing values
                     actual_nonimputed_count = min(train_nonimputed_count, len(df_classes[cls]))
@@ -686,28 +634,20 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
                     df_training_class = df_classes[cls].sample(actual_nonimputed_count, replace=False)
                     df_classes[cls].drop(df_training_class.index, inplace=True)
                     train_arrays.append(df_training_class)
-                    print(f"  - sampled {actual_nonimputed_count} non-imputed samples")
                 
                 if actual_imputed_count > 0:
                     df_train_impute = df_nan_classes[cls].sample(actual_imputed_count, replace=False)
                     df_nan_classes[cls].drop(df_train_impute.index, inplace=True)
                     train_arrays.append(df_train_impute)
-                    print(f"  - sampled {actual_imputed_count} imputed samples")
 
             # Safe concatenation to avoid axis=0 error with empty DataFrames
             non_empty_train_arrays = [df for df in train_arrays if not df.empty]
             df_train = pd.concat(non_empty_train_arrays) if non_empty_train_arrays else pd.DataFrame()
 
-            print(f"DEBUG: Final training dataframe before imputation:")
-            print(f"  - Shape: {df_train.shape}")
-            print(f"  - Columns: {list(df_train.columns) if not df_train.empty else 'EMPTY'}")
-            print(f"  - Target column present: {target in df_train.columns if not df_train.empty else 'N/A'}")
-
             # Safety check: only call impute_processor if we have data
             if not df_train.empty and target in df_train.columns:
                 df_train, df_imputed = impute_processor(df_train, target)
             else:
-                print(f"WARNING: Empty training dataframe or missing target column, skipping imputation")
                 df_imputed = pd.DataFrame()
 
             #remove any additional unused nan values for all classes
@@ -761,11 +701,6 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
 
 def impute_processor(df, target):
         imp_mean = IterativeImputer(random_state=0)
-        
-        # Debug: Check if target column exists
-        print(f"DEBUG: Target column: {target}")
-        print(f"DEBUG: Available columns: {list(df.columns)}")
-        print(f"DEBUG: DataFrame shape: {df.shape}")
         
         if target not in df.columns:
             raise KeyError(f"Target column '{target}' not found in dataframe. Available columns: {list(df.columns)}")

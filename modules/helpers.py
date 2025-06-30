@@ -35,7 +35,6 @@ def file_params(df):
     
     # Check if DataFrame is empty
     if df.empty:
-        print("WARNING: Empty DataFrame passed to file_params")
         return {
             'size': {'rows': 0, 'cols': 0},
             'missing': {'rows': 0, 'rowsPercent': 0.0, 'cells': 0, 'cellsPercent': 0.0},
@@ -93,10 +92,8 @@ def file_params(df):
             })
             params['describe'] = describe.to_dict(orient="records")
         else:
-            print("WARNING: No numeric columns found for describe")
             params['describe'] = []
     except Exception as e:
-        print(f"ERROR in file_params describe section: {e}")
         params['describe'] = []
 
     return params
@@ -105,7 +102,6 @@ def store_file_and_params(df, file_name, file_type):
     
     # Check if DataFrame is empty
     if df.empty:
-        print(f"WARNING: Attempting to store empty DataFrame: {file_name}")
         # Create a minimal CSV file for empty DataFrame
         storage_id = str(uuid.uuid4())
         # Create empty CSV with just headers if columns exist
