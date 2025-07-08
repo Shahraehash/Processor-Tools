@@ -542,6 +542,7 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         df = df_groups['combined']
 
         array_df_removed = []
+        test_arrays = []  # Initialize test_arrays for both branches
 
         # Get all unique classes dynamically
         unique_classes = sorted(df[target].dropna().unique())
@@ -581,6 +582,11 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
             #combine training data
             non_empty_train_arrays = [df for df in train_arrays if not df.empty]
             df_train = pd.concat(non_empty_train_arrays) if non_empty_train_arrays else pd.DataFrame()
+
+            # Add remaining clean data (after training sampling) to test_arrays
+            for cls in unique_classes:
+                if not df_classes[cls].empty:
+                    test_arrays.append(df_classes[cls])
 
         #if impute missing value rows
         #TODO handle case if missing values > training class size

@@ -22,7 +22,7 @@
                                 <div>
                                     <div v-if="analysis.individualValidation[key].hasTarget">
                                         <v3miniValidate :valid="true"/>
-                                        Has target column
+                                        Has target column: {{target}}
                                     </div>
                                     <div v-else>
                                         <v3miniValidate :valid="false"/>
