@@ -22,7 +22,7 @@
                                 <div>
                                     <div v-if="analysis.individualValidation[key].hasTarget">
                                         <v3miniValidate :valid="true"/>
-                                        Has target column
+                                        Has target column: {{target}}
                                     </div>
                                     <div v-else>
                                         <v3miniValidate :valid="false"/>
@@ -30,17 +30,8 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <div v-if="analysis.individualValidation[key].targetCount == 2">
-                                        <v3miniValidate :valid="true"/>
-                                        Has two unique values
-                                    </div>
-                                    <div v-else>
-                                        <v3miniValidateErr :valid="false"/>
-
-                                            Has {{analysis.individualValidation[key].targetCount}} unique value<span v-if="analysis.individualValidation[key].targetCount > 1">s</span>. Two unique values are needed for binary classification. This target is not compatible with MILO.
- 
-                                        
-                                    </div>
+                                    <v3miniValidate :valid="true"/>
+                                    Has {{analysis.individualValidation[key].targetCount}} unique value<span v-if="analysis.individualValidation[key].targetCount > 1">s</span>.
                                 </div>
                                 <div class="ml-6">
                                     <v-chip small v-for="(item, y) in analysis.individualValidation[key].targetValues" :key="y"

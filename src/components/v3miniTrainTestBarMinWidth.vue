@@ -11,8 +11,7 @@
                 class="group-box data-set-box right-spacer"
                 v-bind:style="{
                 background: mxBarColors.train,
-                width:  graphPercents.totalPercent.train[0] + graphPercents.totalPercent.train[1]  + '%',
-
+                width: getTotalPercentForGroup('train') + '%',
                 }"
                 >
                 Train/Initital Validation 
@@ -23,8 +22,7 @@
                 class="group-box data-set-box right-spacer"
                 v-bind:style="{
                 background: mxBarColors.test,
-                width:  graphPercents.totalPercent.test[0] + graphPercents.totalPercent.test[1] + '%',
-
+                width: getTotalPercentForGroup('test') + '%',
                 }"
                 >
                 Generalization Test
@@ -33,12 +31,10 @@
             <!-- Remainder -->
             <div
                 class="group-box removed-box-width"
-
                 v-bind:style="{
                 background: mxBarColors.blank,
-                width: graphPercents.totalPercent.remainder[0] + graphPercents.totalPercent.remainder[1] + '%',
+                width: getTotalPercentForGroup('remainder') + '%',
                 }"
-                
                 >
                 Removed
             </div>        
@@ -49,134 +45,211 @@
             <!-- Class Bars -->
             <div style="width:100%; white-space: nowrap;">     
             
-            <!-- Train -->
-            <!-- Train Class 0 -->
-            <div
-                class="group-box class-box class-box-width"
-                v-bind:style="{
-                background: mxBarColors.classZero,
-                width:  graphPercents.totalPercent.train[0] + '%',
-                }"
+            <!-- Multi-class visualization -->
+            <div v-if="graphCounts.isMultiClass">
+                <!-- Train bars for each class -->
+                <div 
+                    v-for="(cls, index) in graphCounts.uniqueClasses" 
+                    :key="'train-' + cls"
+                    class="group-box class-box class-box-width"
+                    :class="{ 'right-spacer': index === graphCounts.uniqueClasses.length - 1 }"
+                    v-bind:style="{
+                        background: getClassColor(index),
+                        width: graphPercents.totalPercent.train[String(cls)] + '%',
+                    }"
                 >
+                    <!-- Missing -->
+                    <div class="missing class-box"
+                        v-bind:style="{
+                        background: mxBarColors.missing,
+                        width: graphPercents.missingPercent.train[String(cls)] +'%'
+                        }"
+                    ></div>
 
-                <!-- Missing -->
-                <div class="missing class-box"
+                    <!-- Imputed -->
+                    <div class="imputed class-box"
+                        v-bind:style="{
+                        width: graphPercents.imputedPercent.train[String(cls)] + '%'
+                        }"
+                    ></div>       
+                    
+                    c{{cls}}: {{graphCounts.total.train[String(cls)]}}
+                </div>
+
+                <!-- Test bars for each class -->
+                <div 
+                    v-for="(cls, index) in graphCounts.uniqueClasses" 
+                    :key="'test-' + cls"
+                    class="group-box class-box class-box-width"
+                    :class="{ 'right-spacer': index === graphCounts.uniqueClasses.length - 1 }"
+                    v-bind:style="{
+                        background: getClassColor(index),
+                        width: graphPercents.totalPercent.test[String(cls)] + '%',
+                    }"
+                >
+                    <!-- Missing -->
+                    <div class="missing class-box"
+                        v-bind:style="{
+                        background: mxBarColors.missing,
+                        width: graphPercents.missingPercent.test[String(cls)] +'%'
+                        }"
+                    ></div>
+
+                    <!-- Imputed -->
+                    <div class="imputed class-box"
+                        v-bind:style="{
+                        width: graphPercents.imputedPercent.test[String(cls)] + '%'
+                        }"
+                    ></div>   
+
+                    c{{cls}}: {{graphCounts.total.test[String(cls)]}}
+                </div>
+
+                <!-- Remainder -->
+                <div
+                    class="group-box removed-box-width"
                     v-bind:style="{
                     background: mxBarColors.missing,
-                    width: graphPercents.missingPercent.train[0] +'%'
+                    width: getTotalPercentForGroup('remainder') + '%'
                     }"
-                ></div>
-
-                <!-- Imputed -->
-                <div class="imputed class-box"
-                    v-bind:style="{
-                    width: graphPercents.imputedPercent.train[0] + '%'
-                    }"
-                ></div>       
-                
-                
-                c0: {{graphCounts.total.train[0]}}
+                >
+                    {{graphCounts.uniqueClasses.reduce((total, cls) => total + (graphCounts.total.remainder[String(cls)] || 0), 0)}}
+                </div>
             </div>
 
-            <!-- Train Class 1 -->
-            <div
-                class="group-box class-box class-box-width right-spacer "
-                v-bind:style="{
-                background: mxBarColors.classOne,
-                width:  graphPercents.totalPercent.train[1] + '%',
-
-                }"
-                >
-
-                <!-- Missing -->
-                <div class="missing class-box imputed-missing-right"
+            <!-- Binary classification visualization (original) -->
+            <div v-else>
+                <!-- Train Class 0 -->
+                <div
+                    class="group-box class-box class-box-width"
                     v-bind:style="{
-                    background: mxBarColors.missing,
-                    width: graphPercents.missingPercent.train[1] +'%'
+                    background: mxBarColors.classZero,
+                    width:  graphPercents.totalPercent.train[0] + '%',
                     }"
-                ></div>
+                    >
 
-                <!-- Imputed -->
-                <div class="imputed class-box imputed-missing-right"
+                    <!-- Missing -->
+                    <div class="missing class-box"
+                        v-bind:style="{
+                        background: mxBarColors.missing,
+                        width: graphPercents.missingPercent.train[0] +'%'
+                        }"
+                    ></div>
+
+                    <!-- Imputed -->
+                    <div class="imputed class-box"
+                        v-bind:style="{
+                        width: graphPercents.imputedPercent.train[0] + '%'
+                        }"
+                    ></div>       
+                    
+                    c0: {{graphCounts.total.train[0]}}
+                </div>
+
+                <!-- Train Class 1 -->
+                <div
+                    class="group-box class-box class-box-width right-spacer "
                     v-bind:style="{
-                    width: graphPercents.imputedPercent.train[1] + '%'
+                    background: mxBarColors.classOne,
+                    width:  graphPercents.totalPercent.train[1] + '%',
+
                     }"
-                ></div>   
+                    >
 
+                    <!-- Missing -->
+                    <div class="missing class-box imputed-missing-right"
+                        v-bind:style="{
+                        background: mxBarColors.missing,
+                        width: graphPercents.missingPercent.train[1] +'%'
+                        }"
+                    ></div>
 
-                c1: {{graphCounts.total.train[1]}}
-            </div>        
-            <div
-                class="group-box class-box class-box-width"
-                v-bind:style="{
-                background: mxBarColors.classZero,
-                width:  graphPercents.totalPercent.test[0] +'%',
+                    <!-- Imputed -->
+                    <div class="imputed class-box imputed-missing-right"
+                        v-bind:style="{
+                        width: graphPercents.imputedPercent.train[1] + '%'
+                        }"
+                    ></div>   
 
-                }"
-                >
-
-                <!-- Missing -->
-                <div class="missing class-box"
-                    v-bind:style="{
-                    background: mxBarColors.missing,
-                    width: graphPercents.missingPercent.test[0] +'%'
-                    }"
-                ></div>
-
-                <!-- Imputed -->
-                <div class="imputed class-box"
-                    v-bind:style="{
-                    width: graphPercents.imputedPercent.test[0] + '%'
-                    }"
-                ></div>   
-
-
-                c0: {{graphCounts.total.test[0]}}
-            </div>   
-            <div
-                class="group-box class-box class-box-width right-spacer"
-                v-bind:style="{
-                background: mxBarColors.classOne,
-                width: graphPercents.totalPercent.test[1] + '%',
-
-                }"
-                >
-
-                <!-- Missing -->
-                <div class="missing class-box imputed-missing-right"
-                    v-bind:style="{
-                    background: mxBarColors.missing,
-                    width: graphPercents.missingPercent.test[1] +'%'
-                    }"
-                ></div>
-
-                <!-- Imputed -->
-                <div class="imputed class-box imputed-missing-right"
-                    v-bind:style="{
-                    width: graphPercents.imputedPercent.test[1] + '%'
-                    }"
-                ></div>   
-
-                c1: {{graphCounts.total.test[1]}}
-
-            
-            <!-- Remainder CLass -->
-            </div>        
-            <div
-                class="group-box removed-box-width "
-                v-bind:style="{
-                background: mxBarColors.missing,
-                width: graphPercents.totalPercent.remainder[0] + graphPercents.totalPercent.remainder[1] + '%'
-                }"
+                    c1: {{graphCounts.total.train[1]}}
+                </div>        
                 
-                >
+                <!-- Test Class 0 -->
+                <div
+                    class="group-box class-box class-box-width"
+                    v-bind:style="{
+                    background: mxBarColors.classZero,
+                    width:  graphPercents.totalPercent.test[0] +'%',
 
-                {{graphCounts.total.remainder[0] + graphCounts.total.remainder[1]}}
-            </div>   
-        </div>    
-        <div>
+                    }"
+                    >
+
+                    <!-- Missing -->
+                    <div class="missing class-box"
+                        v-bind:style="{
+                        background: mxBarColors.missing,
+                        width: graphPercents.missingPercent.test[0] +'%'
+                        }"
+                    ></div>
+
+                    <!-- Imputed -->
+                    <div class="imputed class-box"
+                        v-bind:style="{
+                        width: graphPercents.imputedPercent.test[0] + '%'
+                        }"
+                    ></div>   
+
+                    c0: {{graphCounts.total.test[0]}}
+                </div>   
+                
+                <!-- Test Class 1 -->
+                <div
+                    class="group-box class-box class-box-width right-spacer"
+                    v-bind:style="{
+                    background: mxBarColors.classOne,
+                    width: graphPercents.totalPercent.test[1] + '%',
+
+                    }"
+                    >
+
+                    <!-- Missing -->
+                    <div class="missing class-box imputed-missing-right"
+                        v-bind:style="{
+                        background: mxBarColors.missing,
+                        width: graphPercents.missingPercent.test[1] +'%'
+                        }"
+                    ></div>
+
+                    <!-- Imputed -->
+                    <div class="imputed class-box imputed-missing-right"
+                        v-bind:style="{
+                        width: graphPercents.imputedPercent.test[1] + '%'
+                        }"
+                    ></div>   
+
+                    c1: {{graphCounts.total.test[1]}}
+                </div>        
+                
+                <!-- Remainder -->
+                <div
+                    class="group-box removed-box-width "
+                    v-bind:style="{
+                    background: mxBarColors.missing,
+                    width: getTotalPercentForGroup('remainder') + '%'
+                    }"
+                    
+                    >
+
+                    {{graphCounts.total.remainder[0] + graphCounts.total.remainder[1]}}
+                </div>
+            </div>
+        </div>
+        <div v-if="graphCounts.isMultiClass">
+            Showing allocation for all {{graphCounts.uniqueClasses.length}} classes combined ({{graphCounts.uniqueClasses.join(', ')}})
+        </div>
+        <div v-else>
             c0 = Class 0, c1 = Class 1
-        </div>        
+        </div>
         </div>
         <v-alert text type="warning" v-if="graphPercents.imputedPercent.train[0] + graphPercents.imputedPercent.train[1] > 30">
             More than 30% of the training data is being imputed. This may cause problems with the model.
@@ -226,6 +299,9 @@
     },
     computed: {
         graphPercents() {
+            console.log('DEBUG VIZ: Received graphCounts:', this.graphCounts);
+            console.log('DEBUG VIZ: isMultiClass:', this.graphCounts?.isMultiClass);
+            console.log('DEBUG VIZ: uniqueClasses:', this.graphCounts?.uniqueClasses);
             let minPercent = 7.5
             let minPercentSum = 0
             let otherPercent = 0
@@ -348,15 +424,62 @@
 
     },
     mounted() {
-
+        console.log('=== TRAIN/TEST BAR DEBUG ===');
+        console.log('graphCounts received:', this.graphCounts);
+        
+        if (this.graphCounts) {
+          console.log('uniqueClasses:', this.graphCounts.uniqueClasses);
+          console.log('total structure:', this.graphCounts.total);
+          console.log('isMultiClass:', this.graphCounts.isMultiClass);
+          
+          // Test accessing data for each class
+          if (this.graphCounts.uniqueClasses) {
+            this.graphCounts.uniqueClasses.forEach(cls => {
+              console.log(`Class ${cls}:`);
+              console.log(`  total.train[${cls}]:`, this.graphCounts.total?.train?.[cls]);
+              console.log(`  total.test[${cls}]:`, this.graphCounts.total?.test?.[cls]);
+              console.log(`  total.remainder[${cls}]:`, this.graphCounts.total?.remainder?.[cls]);
+            });
+          }
+        }
+        console.log('=== END TRAIN/TEST DEBUG ===');
+        
+        // this.change() - removed as this method doesn't exist in this component
     },
 
   
   
     methods: {
-
-    
-  
+        getClassColor(index) {
+            // Generate different colors for each class
+            const colors = [
+                this.mxBarColors.classZero,
+                this.mxBarColors.classOne,
+                '#FF6B6B', // Red
+                '#4ECDC4', // Teal
+                '#45B7D1', // Blue
+                '#96CEB4', // Green
+                '#FFEAA7', // Yellow
+                '#DDA0DD', // Plum
+                '#98D8C8', // Mint
+                '#F7DC6F'  // Light Yellow
+            ];
+            return colors[index % colors.length];
+        },
+        
+        getTotalPercentForGroup(groupType) {
+            if (!this.graphPercents || !this.graphCounts) {
+                return 0;
+            }
+            
+            const groupData = this.graphPercents.totalPercent[groupType];
+            
+            // Always use class-based structure for consistency
+            // Sum percentages for all classes using string keys
+            return this.graphCounts.uniqueClasses.reduce((total, cls) => {
+                return total + (groupData[String(cls)] || 0);
+            }, 0);
+        }
     }
   
   }
@@ -411,4 +534,3 @@
     }
 
   </style>
-  

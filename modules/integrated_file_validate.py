@@ -19,16 +19,15 @@ def check_df_size(df, target):
 
 
     #constructs a list of value counts for the various dfs for front end use
-    table = pd.DataFrame([
+    table_df = pd.DataFrame([
         df[target].value_counts(),
         df_missing[target].value_counts(),
         df_non_missing[target].value_counts()
 
-    ]).fillna(0).transpose().set_axis(
-        ['total', 'missing', 'complete'], 
-        axis=1, 
-        inplace=False
-        ).to_dict(orient='index')    
+    ]).fillna(0).transpose()
+    
+    table_df.columns = ['total', 'missing', 'complete']
+    table = table_df.to_dict(orient='index')
 
 
     result = {}
@@ -62,16 +61,13 @@ def analysis_file_validate(fileObjectArray, target):
 
     size_checks = []
 
-    for file in fileObjectArray:
+    for i, file in enumerate(fileObjectArray):
         df = load_file(file['storageId'])
         size_checks.append(check_df_size(df, target))
 
-
-
-
     individual_file_validation = []
 
-    for file in fileObjectArray:
+    for i, file in enumerate(fileObjectArray):
         checklist = {
             'hasTarget': False,
             'targetValues': None,
@@ -86,12 +82,11 @@ def analysis_file_validate(fileObjectArray, target):
             df = load_file(file['storageId'])
             target_values = list(df[target].unique())
             target_count = len(target_values)
-
             checklist['targetValues'] = int_list_to_string(target_values)
             checklist['targetCount'] = target_count
         
         individual_file_validation.append(checklist)
-    
+        
     #All target values
     all_target_values = []
 
@@ -99,12 +94,11 @@ def analysis_file_validate(fileObjectArray, target):
         if result['hasTarget']:
             all_target_values.append(result['targetValues'])
     
+   
     r = np.array(all_target_values).flatten()
     unique_target_values = int_list_to_string(list(np.unique(r)))
     unique_target_values.sort()
-
     value_map = create_binary_map(unique_target_values)
-
     #mismatched columns
     mismatchedColumns = []
 
@@ -121,20 +115,20 @@ def analysis_file_validate(fileObjectArray, target):
                         'missingCols': comp
                     })
 
+
     #evaluate file data for validity
 
     valid_array = []
     for result in individual_file_validation:
         #check if target present
         valid_array.append(True) if result['hasTarget'] else valid_array.append(False)
-        #ensure at least and only two values per file
-        valid_array.append(True) if result['targetCount'] == 2 else valid_array.append(False)
+        #ensure at least 2 values per file (support multi-class)
+        valid_array.append(True) if result['targetCount'] >= 2 else valid_array.append(False)
     
-    #check if all target value pairs are the same
-    valid_array.append(True) if len(unique_target_values) == 2 else valid_array.append(False)
+    #check if all target values are consistent (at least 2 classes for classification)
+    valid_array.append(True) if len(unique_target_values) >= 2 else valid_array.append(False)
     #check if all files have the same columns
     valid_array.append(True) if len(mismatchedColumns) == 0 else valid_array.append(False)
-
 
 
 
@@ -160,14 +154,14 @@ def transform_file_validate_target_map(fileObjectArray, target, transform):
     for file in fileObjectArray:
         df = load_file(file['storageId'])
 
-        df[target] = df[target].astype('str').map(transform['data']['map']).astype('int')
+        # Convert to string, map values, but handle NaN properly
+        mapped_series = df[target].astype('str').map(transform['data']['map'])
+        
+        # Convert 'nan' strings back to actual NaN, then convert to float (which can handle NaN)
+        mapped_series = mapped_series.replace('nan', np.nan)
+        df[target] = mapped_series.astype('float')
+        
         #store file and generate file object
         result.append(store_file_and_params(df, file['name'], file['type']))
 
     return result
-
-
-    
-
-
-

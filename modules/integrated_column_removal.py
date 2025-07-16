@@ -41,7 +41,14 @@ def analyze_column_removal(fileObjectArray, target):
         #other metrics to use
         d['total'] = d.sum()
         d['percentValues'] = round(d['total'] / (df.shape[0] * df.shape[1]) * 100, 2)
-        d['percentContributions'] = round(d['total'] / df.isnull().sum().sum() * 100, 2)
+        
+        # Avoid division by zero when there are no null values
+        total_null_values = df.isnull().sum().sum()
+        if total_null_values > 0:
+            d['percentContributions'] = round(d['total'] / total_null_values * 100, 2)
+        else:
+            d['percentContributions'] = 0.0
+            
         d['col'] = col
 
         if d['total'] > 0:
@@ -84,4 +91,4 @@ def transform_column_removal(fileObjectArray, target, transform):
         #store file and generate file object
         result.append(store_file_and_params(df, file['name'], file['type']))
 
-    return result    
+    return result

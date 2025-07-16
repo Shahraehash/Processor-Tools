@@ -125,8 +125,14 @@ def integrated_analyze():
 
         return response
     except Exception as e:
+        import traceback
+        error_details = {
+            'error': str(e),
+            'traceback': traceback.format_exc(),
+            'method': analyze.get('method', 'unknown') if 'analyze' in locals() else 'unknown'
+        }
         response = make_response(
-            simplejson.dumps({'error': str(e)}),
+            simplejson.dumps(error_details),
             200,
         )
         response.headers["Content-Type"] = "application/json"
@@ -165,7 +171,6 @@ def integrated_transform():
         target = request.json['target']
         transform = request.json['transform']
 
-
         if transform['method'] == 'file_validate_target_map':
             json = transform_file_validate_target_map(fileObjectArray, target, transform)
 
@@ -190,8 +195,14 @@ def integrated_transform():
         return response      
              
     except Exception as e:
+        import traceback
+        error_details = {
+            'error': str(e),
+            'traceback': traceback.format_exc(),
+            'method': transform.get('method', 'unknown') if 'transform' in locals() else 'unknown'
+        }
         response = make_response(
-            simplejson.dumps({'error': str(e)}),
+            simplejson.dumps(error_details),
             200,
         )
         response.headers["Content-Type"] = "application/json"
@@ -228,7 +239,7 @@ def integrated_export():
                 try:
                     df[col_name] = df[col_name].astype(int)
                 except:
-                    print('error with age casting of ' + col_name)
+                    pass
 
         json.append({
             'type': fileObject['type'],
@@ -249,4 +260,4 @@ def integrated_export():
     )
     response.headers["Content-Type"] = "application/json"
 
-    return response       
+    return response

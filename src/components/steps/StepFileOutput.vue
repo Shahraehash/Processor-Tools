@@ -83,7 +83,7 @@
             <div class="overline">Additional File Outputs</div>
             <div>
               <v-switch
-                label="Export rows with missing data in seperate file (row indexes included)."
+                label="Export rows with missing data in separate file (row indexes included)."
                 v-model="exportSettings.exportMissingRows"
 
 
