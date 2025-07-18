@@ -96,15 +96,44 @@
                     <v-col cols="4">
 
                         <!-- Target Encoding -->
-                        <!-- Hide if not two values -->
-                        <div v-if="analysis.allTargetValues.length == 2">
+                        <!-- Show for binary and multi-class (2 or more values) -->
+                        <div v-if="analysis.allTargetValues.length >= 2">
                             <div class="overline">Target Encoding</div>
-                            <div v-for="(val, cat) in analysis.targetMap" :key="cat">
+                            <div v-for="(val, cat) in analysis.targetMap" :key="cat" class="mb-2">
                                 <v-chip>{{cat}}</v-chip>
                                 <v-icon>mdi-arrow-right</v-icon>
-                                <v-select @change="flipValues($event, cat)" outlined dense v-model="analysis.targetMap[cat]" :items="[0,1]" style="display: inline-flex; width: 80px;"></v-select>
+                                <!-- Binary classification: allow flipping between 0 and 1 -->
+                                <v-select 
+                                    v-if="analysis.allTargetValues.length == 2"
+                                    @change="flipValues($event, cat)" 
+                                    outlined 
+                                    dense 
+                                    v-model="analysis.targetMap[cat]" 
+                                    :items="[0,1]" 
+                                    style="display: inline-flex; width: 80px;">
+                                </v-select>
+                                <!-- Multi-class: dropdown with values 0 to n-1 -->
+                                <v-select
+                                    v-else
+                                    @change="updateMultiClassMapping($event, cat)"
+                                    outlined
+                                    dense
+                                    v-model="analysis.targetMap[cat]"
+                                    :items="getAvailableValues()"
+                                    :error="hasDuplicateValues"
+                                    style="display: inline-flex; width: 80px;"
+                                    class="ml-2">
+                                </v-select>
                             </div>
-                        </div>                        
+                            <!-- Info and error messages -->
+                            <div v-if="analysis.allTargetValues.length > 2" class="caption grey--text mt-2">
+                                Each class is assigned a unique value from 0 to {{analysis.allTargetValues.length - 1}}
+                            </div>
+                            <div v-if="hasDuplicateValues" class="caption red--text mt-1">
+                                <v-icon small color="red">mdi-alert</v-icon>
+                                Each class must have a unique encoding value
+                            </div>
+                        </div>
                         
                     </v-col>
                 </v-row>
@@ -171,11 +200,15 @@ export default {
     computed: {
         complete() {
             return this.analysis.valid && this.sizeValid
-        },        
+        },
+        hasDuplicateValues() {
+            if (this.analysis.allTargetValues.length <= 2) return false
+            const values = Object.values(this.analysis.targetMap)
+            return values.length !== new Set(values).size
+        },
     },
     methods: {
         setSizeValidation(value) {
-            console.log('sizeVaidation',value)
             this.sizeValid = value
         },
         update() {
@@ -198,7 +231,17 @@ export default {
                 }
             }
             this.update()
-        },         
+        },
+        updateMultiClassMapping(newValue, category) {
+            // Update the target map with the new value
+            this.analysis.targetMap[category] = newValue
+            this.update()
+        },
+        getAvailableValues() {
+            // Generate array from 0 to n-1 where n is number of classes
+            const numClasses = this.analysis.allTargetValues.length
+            return Array.from({length: numClasses}, (_, i) => i)
+        },
     }
 }
 </script>
