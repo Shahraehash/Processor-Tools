@@ -137,7 +137,7 @@ export default {
         },
         otherFiles() {
             return this.finalFiles.filter(file => file.type != 'train' && file.type != 'test')
-        },        
+        },
 
         complete() {
             return true

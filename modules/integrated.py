@@ -221,6 +221,21 @@ def integrated_export():
 
     for fileObject in fileObjectArray:
         storage_id = fileObject['storageId']
+        
+        # Handle target encoding audit files differently
+        if fileObject.get('type') == 'target_encoding_audit':
+            # For target encoding files, just read and include the CSV content directly
+            with open(os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id), 'r') as f:
+                csv_content = f.read()
+            
+            json.append({
+                'type': fileObject['type'],
+                'audit': True,
+                'name': fileObject['name'],
+                'content': csv_content
+            })
+            continue
+        
         df = load_file(storage_id)
 
         #move audit columns to front
@@ -253,7 +268,8 @@ def integrated_export():
             'audit': False,            
             'name': fileObject['name'],
             'content': df.to_csv(index=False, index_label="source_row")
-        })        
+        })
+        
     response = make_response(
         simplejson.dumps(json, ignore_nan=True),
         200,

@@ -72,7 +72,6 @@ let transformBypass = (fileObjectArray) => {
 //ANALYSIS
 let analyzeFileArray = async (fileObjectArray, target, analyze) => {
   let json = {fileObjectArray, target, analyze}
-  console.log(json)
   const response = await axios.post('/preprocessor_api/integrated/analyze', json, {
     headers: {
       'Content-Type': 'application/json',

@@ -340,7 +340,11 @@ def analyze_train_test_split_impute(fileObjectArray, target):
 
     
     result_array = []
-    for file in fileObjectArray:
+    
+    # Filter out audit files from analysis
+    data_files = [file for file in fileObjectArray if file.get('type') != 'target_encoding_audit']
+    
+    for file in data_files:
 
         df = load_file(file['storageId'])
         if file['type'] == None:
@@ -404,10 +408,15 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
     }
 
     df_groups = {}
+    audit_files = []
 
     
     result_array = []
     for file in fileObjectArray:
+        # Separate audit files from data files
+        if file.get('type') == 'target_encoding_audit':
+            audit_files.append(file)
+            continue
 
         df = load_file(file['storageId'])   
         
@@ -695,6 +704,8 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
         except:
             pass
     
+    # Add audit files back to the result unchanged
+    result.extend(audit_files)
 
     return result
 

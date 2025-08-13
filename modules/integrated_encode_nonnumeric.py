@@ -10,7 +10,11 @@ from .helpers import load_file, save_file, file_params, int_list_to_string, stor
 
 def analyze_encode_nonnumeric(fileObjectArray, target):
     df_array = []
-    for file in fileObjectArray:
+    
+    # Filter out audit files from analysis
+    data_files = [file for file in fileObjectArray if file.get('type') != 'target_encoding_audit']
+    
+    for file in data_files:
 
         df = load_file(file['storageId'])   
         df_array.append(df)
@@ -121,7 +125,13 @@ def analyze_encode_nonnumeric(fileObjectArray, target):
 #TRANSFORM
 def transform_encode_nonnumeric(fileObjectArray, target, transform):
     df_array = []
+    audit_files = []
+    
     for file in fileObjectArray:
+        # Separate audit files from data files
+        if file.get('type') == 'target_encoding_audit':
+            audit_files.append(file)
+            continue
 
         df_sub = load_file(file['storageId'])
         df_sub['storage_id'] = file['storageId']
@@ -196,12 +206,19 @@ def transform_encode_nonnumeric(fileObjectArray, target, transform):
 
     grouped = df.groupby(df.storage_id)
     for file in fileObjectArray:
+        # Skip audit files in the processing loop
+        if file.get('type') == 'target_encoding_audit':
+            continue
+            
         file_index=0
-        df = grouped.get_group(file['storageId'])
-        df = df.drop('storage_id', axis=1)
+        df_group = grouped.get_group(file['storageId'])
+        df_group = df_group.drop('storage_id', axis=1)
 
-        result.append(store_file_and_params(df, file['name'], file['type']))
+        result.append(store_file_and_params(df_group, file['name'], file['type']))
         file_index += 1
+    
+    # Add audit files back to the result unchanged
+    result.extend(audit_files)
     
     return result
 

@@ -177,3 +177,63 @@ def create_binary_map(unique_column_value_list):
         pick = list(result.keys())[0]
         result[str(pick)] = int(not bool(result[str(pick)]))
         return result
+
+def create_target_encoding_csv(target_column, target_map, fileObjectArray):
+    """
+    Create a CSV file documenting target encodings for audit purposes
+    """
+    from datetime import datetime
+    
+    # Create encoding data
+    encoding_data = []
+    
+    # Add header information
+    encoding_data.append({
+        'Original_Value': 'TARGET_COLUMN',
+        'Encoded_Value': target_column,
+        'Frequency_Count': '',
+        'Source_Files': '',
+        'Encoding_Timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    })
+    
+    # Add separator row
+    encoding_data.append({
+        'Original_Value': '---',
+        'Encoded_Value': '---',
+        'Frequency_Count': '---',
+        'Source_Files': '---',
+        'Encoding_Timestamp': '---'
+    })
+    
+    # Calculate frequency counts from all files
+    value_counts = {}
+    source_files = []
+    
+    for file in fileObjectArray:
+        df = load_file(file['storageId'])
+        source_files.append(file['name'])
+        
+        if target_column in df.columns:
+            file_counts = df[target_column].value_counts()
+            for value, count in file_counts.items():
+                if pd.notna(value):  # Skip NaN values
+                    str_value = str(value)
+                    if str_value in value_counts:
+                        value_counts[str_value] += count
+                    else:
+                        value_counts[str_value] = count
+    
+    # Add encoding mappings with frequency data
+    for original_value, encoded_value in target_map.items():
+        frequency = value_counts.get(original_value, 0)
+        encoding_data.append({
+            'Original_Value': original_value,
+            'Encoded_Value': encoded_value,
+            'Frequency_Count': frequency,
+            'Source_Files': '; '.join(source_files),
+            'Encoding_Timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        })
+    
+    # Convert to DataFrame and then to CSV string
+    df_encoding = pd.DataFrame(encoding_data)
+    return df_encoding.to_csv(index=False)

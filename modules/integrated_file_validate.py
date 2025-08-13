@@ -7,7 +7,7 @@ import numpy as np
 import os
 import uuid
 
-from .helpers import load_file, save_file, file_params, int_list_to_string, store_file_and_params, create_binary_map
+from .helpers import load_file, save_file, file_params, int_list_to_string, store_file_and_params, create_binary_map, create_target_encoding_csv
 
 #ANALYSIS
 
@@ -164,4 +164,29 @@ def transform_file_validate_target_map(fileObjectArray, target, transform):
         #store file and generate file object
         result.append(store_file_and_params(df, file['name'], file['type']))
 
+    # Generate target encoding CSV for audit purposes
+    if transform['data']['map']:
+        # Create the target encoding CSV content
+        csv_content = create_target_encoding_csv(target, transform['data']['map'], fileObjectArray)
+        
+        # Save the CSV content to a file
+        storage_id = str(uuid.uuid4())
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], storage_id)
+        with open(file_path, 'w') as f:
+            f.write(csv_content)
+        
+        # Create file object for the target encoding CSV and add to pipeline
+        encoding_file = {
+            'storageId': storage_id,
+            'name': f'target_encodings_{target}.csv',
+            'type': 'target_encoding_audit',
+            'size': {'rows': len(transform['data']['map']) + 2, 'cols': 5},  # +2 for header rows
+            'missing': {'rows': 0, 'rowsPercent': 0.0, 'cells': 0, 'cellsPercent': 0.0},
+            'names': {'cols': ['Original_Value', 'Encoded_Value', 'Frequency_Count', 'Source_Files', 'Encoding_Timestamp'], 'colsReverse': []},
+            'describe': []
+        }
+        
+        # Add the target encoding file to the result
+        result.append(encoding_file)
+        
     return result

@@ -10,7 +10,10 @@ def analyze_column_removal(fileObjectArray, target):
 
     df_array = []
 
-    for file in fileObjectArray:
+    # Filter out audit files from analysis
+    data_files = [file for file in fileObjectArray if file.get('type') != 'target_encoding_audit']
+
+    for file in data_files:
 
         df = load_file(file['storageId'])   
         df_array.append(df)
@@ -66,7 +69,10 @@ def effect_column_removal(fileObjectArray, target, effect):
 
     result = []
 
-    for file in fileObjectArray:
+    # Filter out audit files from effect analysis
+    data_files = [file for file in fileObjectArray if file.get('type') != 'target_encoding_audit']
+
+    for file in data_files:
         df = load_file(file['storageId'])      
         df_drop = df.drop(effect['selectedColumns'], axis=1)
 
@@ -85,6 +91,11 @@ def transform_column_removal(fileObjectArray, target, transform):
     result = []
 
     for file in fileObjectArray:
+        # Skip processing audit files, but pass them through unchanged
+        if file.get('type') == 'target_encoding_audit':
+            result.append(file)
+            continue
+            
         df = load_file(file['storageId'])
 
         df.drop(transform['data']['selectedColumns'], axis=1, inplace=True)
