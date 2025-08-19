@@ -13,10 +13,7 @@ def analyze_multicolinearity(fileObjectArray, target):
     df_array = []
 
     for file in fileObjectArray:
-
-
-        #only look at training and testing data without audit columns TODO better way of doing this
-        if (file['type'] in ['train', 'test', 'combined']):
+        if file.get('type') != 'target_encoding_audit':
             df = load_file(file['storageId'])   
             df_array.append(df)
 
@@ -84,10 +81,26 @@ def transform_multicolinearity(fileObjectArray, target, transform):
     result = []
 
     for file in fileObjectArray:
+        # Skip processing audit files, but pass them through unchanged
+        if file.get('type') == 'target_encoding_audit':
+            result.append(file)
+            continue
+            
         df = load_file(file['storageId'])
-
-        df.drop(transform['data']['selectedColumns'], axis=1, inplace=True)
+        
+        # Filter selected columns to only include those that exist in the current DataFrame
+        existing_columns = [col for col in transform['data']['selectedColumns'] if col in df.columns]
+        missing_columns = [col for col in transform['data']['selectedColumns'] if col not in df.columns]
+        
+        # Log warning if some columns are missing (helpful for debugging)
+        if missing_columns:
+            print(f"WARNING - Multi-collinearity: Some selected columns don't exist in {file['name']}: {missing_columns}")
+        
+        # Only drop columns that actually exist
+        if existing_columns:
+            df.drop(existing_columns, axis=1, inplace=True)
+        
         #store file and generate file object
         result.append(store_file_and_params(df, file['name'], file['type']))
 
-    return result    
+    return result
