@@ -28,7 +28,13 @@ def load_file(storage_id):
     return df
 
 def int_list_to_string(lst):
-    return list(map(lambda n: str(n), lst))
+    result = []
+    for n in lst:
+        if isinstance(n, (float, np.floating)) and n.is_integer():
+            result.append(str(int(n)))  # 1.0 -> "1"
+        else:
+            result.append(str(n))
+    return result
 
 def file_params(df):
     params = {}

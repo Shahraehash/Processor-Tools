@@ -44,7 +44,7 @@
                     
                     >
                     <v-radio label="Use All Available Data" :value="0"></v-radio>
-                    <v-radio label="Maintain Original Data Prevelence" :value="1"></v-radio>
+                    <v-radio label="Maintain Original Data Prevelence" :value="1" :disabled="!imputeAvailable"></v-radio>
                 </v-radio-group>
             </v-col>                
      

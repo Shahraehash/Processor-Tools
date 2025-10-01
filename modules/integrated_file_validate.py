@@ -80,9 +80,11 @@ def analysis_file_validate(fileObjectArray, target):
             checklist['hasTarget'] = True
 
             df = load_file(file['storageId'])
-            target_values = list(df[target].unique())
-            target_count = len(target_values)
-            checklist['targetValues'] = int_list_to_string(target_values)
+            target_values = list(df[target].dropna().unique())
+            # Use actual string representations as they appear in the data
+            string_values = [str(val) for val in target_values]
+            target_count = len(string_values)
+            checklist['targetValues'] = string_values
             checklist['targetCount'] = target_count
         
         individual_file_validation.append(checklist)
@@ -96,7 +98,8 @@ def analysis_file_validate(fileObjectArray, target):
     
    
     r = np.array(all_target_values).flatten()
-    unique_target_values = int_list_to_string(list(np.unique(r)))
+    # Use the actual string values as they appear, don't normalize them
+    unique_target_values = list(np.unique(r))
     unique_target_values.sort()
     value_map = create_binary_map(unique_target_values)
     #mismatched columns
@@ -155,8 +158,9 @@ def transform_file_validate_target_map(fileObjectArray, target, transform):
         df = load_file(file['storageId'])
 
         # Convert to string, map values, but handle NaN properly
-        mapped_series = df[target].astype('str').map(transform['data']['map'])
-        
+        string_series = df[target].astype('str')
+        mapped_series = string_series.map(transform['data']['map'])
+
         # Convert 'nan' strings back to actual NaN, then convert to float (which can handle NaN)
         mapped_series = mapped_series.replace('nan', np.nan)
         df[target] = mapped_series.astype('float')

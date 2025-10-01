@@ -336,7 +336,10 @@
       },
       trainTestFilesMatchError() {
         if (this.pathSelection == 1 && this.files.length == 2) {
-
+            // Safety checks to prevent TypeError when metadata is still loading
+            if (!this.fileMetadata[0] || !this.fileMetadata[1]) {
+              return false
+            }
             return this.fileMetadata[0].type == this.fileMetadata[1].type && this.fileMetadata[0].type != ''
 
         } 
@@ -359,7 +362,7 @@
         if (this.pathSelection == 1) {
           twoFileValidation = this.fileMetadata.length == 2
           this.fileMetadata.forEach(f => {
-            if (f.type == '' || f.type == null) {
+            if (!f || f.type == '' || f.type == null) {
               twoFileValidation = false
             }
           })
@@ -466,4 +469,3 @@
       text-indent: -1.8em;
   }
   </style>
-  

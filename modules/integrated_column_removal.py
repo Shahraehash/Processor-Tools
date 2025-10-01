@@ -32,9 +32,12 @@ def analyze_column_removal(fileObjectArray, target):
     for col in df.columns:
 
         #determine how many rows have single missing values vs multiple
-        split = df[df[col].isna()].isna().sum(axis=1) > 1
+        filtered_df = df[df[col].isna()]
+        
+        split = filtered_df.isna().sum(axis=1) > 1
+        
         d = split.map(mapDict).value_counts() #group
-
+        
         #complete dictionary
         if 'singleMissing' not in d:
             d['singleMissing'] = 0
@@ -53,7 +56,7 @@ def analyze_column_removal(fileObjectArray, target):
             d['percentContributions'] = 0.0
             
         d['col'] = col
-
+        
         if d['total'] > 0:
             d = d.to_dict()
             result.append(d)

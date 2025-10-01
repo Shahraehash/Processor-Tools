@@ -41,7 +41,7 @@
                     @change="change"
                     >
                     <v-radio label="Use all data" :value="0"></v-radio>
-                    <v-radio label="Match original file prevalence" :value="1"></v-radio>
+                    <v-radio label="Match original file prevalence" :value="1" :disabled="!testHasMissingValues"></v-radio>
                 </v-radio-group>
             </v-col>                      
         </v-row>    
@@ -116,7 +116,13 @@
           (this.train.describe.nan.counts[cls] || 0) > 0 || 
           (this.test.describe.nan.counts[cls] || 0) > 0
         );
-      },      
+      },
+      testHasMissingValues() {
+        // Check if test file has any missing values - used to determine if prevalence matching makes sense
+        return this.uniqueClasses.some(cls => 
+          (this.test.describe.nan.counts[cls] || 0) > 0
+        );
+      },
       
       trainingIsBalanced(){
         if (this.graphCountsWithChanges && this.trainEqualize != 1) {

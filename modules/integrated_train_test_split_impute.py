@@ -36,7 +36,7 @@ def counts_to_percent(df):
     if total > 0:
         return round(df['counts'] / total * 100, 1)
     else:
-        return pd.Series([0] * len(df), index=df.index)
+        return pd.Series([0] * len(df), index=df.index, dtype='float64')
 
 
 def merged_files_describe(df,target):
@@ -82,14 +82,14 @@ def merged_files_describe(df,target):
     if not nan_rows.empty:
         nan_counts = nan_rows[target].value_counts()
     else:
-        nan_counts = pd.Series(dtype='int64')
+        nan_counts = pd.Series(dtype='float64')
     
     # Ensure all classes are represented - create a proper Series with all classes
     nan_counts_dict = {}
     for cls in unique_classes:
         nan_counts_dict[cls] = nan_counts.get(cls, 0)
     
-    nan_counts = pd.Series(nan_counts_dict)
+    nan_counts = pd.Series(nan_counts_dict, dtype='float64')
     nan_df = pd.DataFrame({'counts': nan_counts})
     
     # Safe division to avoid division by zero
@@ -126,14 +126,14 @@ def merged_files_describe(df,target):
     if not non_nan_rows.empty:
         non_nan_counts = non_nan_rows[target].value_counts()
     else:
-        non_nan_counts = pd.Series(dtype='int64')
+        non_nan_counts = pd.Series(dtype='float64')
     
     # Fill in zeros for all classes that might not have non-NaN values - create a proper Series with all classes
     non_nan_counts_dict = {}
     for cls in unique_classes:
         non_nan_counts_dict[cls] = non_nan_counts.get(cls, 0)
     
-    non_nan_counts = pd.Series(non_nan_counts_dict)
+    non_nan_counts = pd.Series(non_nan_counts_dict, dtype='float64')
     non_nan_df = pd.DataFrame({'counts': non_nan_counts})
     
     # Safe division to avoid division by zero
@@ -596,6 +596,8 @@ def transform_train_test_split_impute(fileObjectArray, target, transform):
             for cls in unique_classes:
                 if not df_classes[cls].empty:
                     test_arrays.append(df_classes[cls])
+                    # Clear df_classes to prevent duplication in removed_values
+                    df_classes[cls] = df_classes[cls].iloc[0:0]
 
         #if impute missing value rows
         #TODO handle case if missing values > training class size

@@ -55,7 +55,7 @@
                     </div>
                     <!-- Target Check -->
                     <div v-if="currentFiles.length > 1">
-                        <div v-if="analysis.allTargetValues.length == 2">
+                        <div v-if="analysis.allTargetValues.length >= 2">
                             <v3miniValidate :valid="true"/>
                             All files have target column
                         </div>
